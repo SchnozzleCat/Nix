@@ -51,6 +51,10 @@
     };
   };
 
+  environment.systemPackages = with pkgs; [
+    git
+    neovim
+  ];
 
 
   # You can import other NixOS modules here
