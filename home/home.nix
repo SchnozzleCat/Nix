@@ -61,6 +61,8 @@
   programs.home-manager.enable = true;
   programs.git = {
       enable = true;
+      userName = "SchnozzleCat";
+      userEmail = "git@schnozzlecat.com";
       extraConfig = {
         credential.helper = "${
             pkgs.git.override { withLibsecret = true; }
