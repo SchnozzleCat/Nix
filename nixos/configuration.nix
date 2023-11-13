@@ -59,7 +59,9 @@
     starship
   ];
 
+  # Shell
   users.defaultUserShell = pkgs.fish;
+  programs.fish.enable = true;
 
   # You can import other NixOS modules here
   imports = [
