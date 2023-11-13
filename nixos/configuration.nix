@@ -35,6 +35,10 @@
     LC_TIME = "de_DE.UTF-8";
   };
 
+  # Hyprland
+  programs.hyprland.enable = true;
+  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+
   # TODO: Configure your system-wide user settings (groups, etc), add more users as needed.
   users.users = {
     linus = {

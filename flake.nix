@@ -13,6 +13,10 @@
     home-manager.url = "github:nix-community/home-manager/release-23.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
+    # Hyprland
+    hyprland.url = "github:hyprwm/Hyprland";
+
+
     # TODO: Add any other flake you might need
     # hardware.url = "github:nixos/nixos-hardware";
 
@@ -25,9 +29,11 @@
     self,
     nixpkgs,
     home-manager,
+    hyprland,
     ...
   } @ inputs: let
     inherit (self) outputs;
+    # Supported systems for your flake packages, shell, etc.
     system = "x86_64-linux";
   in {
     # Your custom packages
@@ -49,7 +55,6 @@
     # NixOS configuration entrypoint
     # Available through 'nixos-rebuild --flake .#your-hostname'
     nixosConfigurations = {
-      # FIXME replace with your hostname
       schnozzlecat = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs outputs;};
         modules = [
@@ -69,6 +74,8 @@
         modules = [
           # > Our main home-manager configuration file <
           ./home-manager/home.nix
+          hyprland.homeManagerModules.default
+          {wayland.windowManager.hyprland.enable = true;}
         ];
       };
     };
