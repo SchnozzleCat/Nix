@@ -54,8 +54,12 @@
   environment.systemPackages = with pkgs; [
     git
     neovim
+    foot
+    fish
+    starship
   ];
 
+  users.defaultUserShell = pkgs.fish;
 
   # You can import other NixOS modules here
   imports = [
