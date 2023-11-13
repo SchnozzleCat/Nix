@@ -73,7 +73,7 @@
         extraSpecialArgs = {inherit inputs outputs;};
         modules = [
           # > Our main home-manager configuration file <
-          ./home-manager/home.nix
+          ./home/home.nix
           hyprland.homeManagerModules.default
           {wayland.windowManager.hyprland.enable = true;}
         ];
