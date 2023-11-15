@@ -60,14 +60,14 @@
     # Available through 'nixos-rebuild --flake .#your-hostname'
     nixosConfigurations = {
       ${desktop-hostname} = nixpkgs.lib.nixosSystem {
-        specialArgs = {inherit inputs outputs; hostname = desktop-hostname};
+        specialArgs = {inherit inputs outputs; hostname = desktop-hostname;};
         modules = [
           # > Our main nixos configuration file <
           ./nixos/configuration.nix
         ];
       };
       ${laptop-hostname} = nixpkgs.lib.nixosSystem {
-        specialArgs = {inherit inputs outputs; hostname = laptop-hostname};
+        specialArgs = {inherit inputs outputs; hostname = laptop-hostname;};
         modules = [
           # > Our main nixos configuration file <
           ./nixos/configuration.nix
