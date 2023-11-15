@@ -19,12 +19,7 @@
       enable = true;
       userName = "SchnozzleCat";
       userEmail = "git@schnozzlecat.com";
-      extraConfig = {
-        credential.helper = "${
-            pkgs.git.override { withLibsecret = true; }
-          }/bin/git-credential-libsecret";
-      };
-    };
+  };
 
   programs.neovim = {
     enable = true;
