@@ -35,6 +35,12 @@
     inherit (self) outputs;
     # Supported systems for your flake packages, shell, etc.
     system = "x86_64-linux";
+
+    username = "linus"
+    desktop-hostname = "schnozzlecat"
+    laptop-hostname = "schnozzlecat-laptop"
+
+    do foreach?
   in {
     # Your custom packages
     # Accessible through 'nix build', 'nix shell', etc
@@ -73,7 +79,17 @@
         extraSpecialArgs = {inherit inputs outputs;};
         modules = [
           # > Our main home-manager configuration file <
-          ./home/home.nix
+          ./home/linus.nix
+          hyprland.homeManagerModules.default
+          {wayland.windowManager.hyprland.enable = true;}
+        ];
+      };
+      "linus@schnozzlecat-laptop" = home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
+        extraSpecialArgs = {inherit inputs outputs;};
+        modules = [
+          # > Our main home-manager configuration file <
+          ./home/linus.nix
           hyprland.homeManagerModules.default
           {wayland.windowManager.hyprland.enable = true;}
         ];
