@@ -56,6 +56,8 @@
     foot
     fish
     starship
+    zoxide
+    eza
   ];
 
   # Shell
