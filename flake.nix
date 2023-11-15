@@ -36,11 +36,9 @@
     # Supported systems for your flake packages, shell, etc.
     system = "x86_64-linux";
 
-    username = "linus"
-    desktop-hostname = "schnozzlecat"
-    laptop-hostname = "schnozzlecat-laptop"
-
-    do foreach?
+    username = "linus";
+    desktop-hostname = "schnozzlecat";
+    laptop-hostname = "schnozzlecat-laptop";
   in {
     # Your custom packages
     # Accessible through 'nix build', 'nix shell', etc
@@ -61,13 +59,21 @@
     # NixOS configuration entrypoint
     # Available through 'nixos-rebuild --flake .#your-hostname'
     nixosConfigurations = {
-      schnozzlecat = nixpkgs.lib.nixosSystem {
-        specialArgs = {inherit inputs outputs;};
+      ${desktop-hostname} = nixpkgs.lib.nixosSystem {
+        specialArgs = {inherit inputs outputs; hostname = ${desktop-hostname}};
         modules = [
           # > Our main nixos configuration file <
           ./nixos/configuration.nix
         ];
       };
+      ${laptop-hostname} = nixpkgs.lib.nixosSystem {
+        specialArgs = {inherit inputs outputs; hostname = ${laptop-hostname}};
+        modules = [
+          # > Our main nixos configuration file <
+          ./nixos/configuration.nix
+        ];
+      };
+
     };
 
     # Standalone home-manager configuration entrypoint

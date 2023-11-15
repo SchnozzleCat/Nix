@@ -6,6 +6,7 @@
   lib,
   config,
   pkgs,
+  hostname,
   ...
 }: {
 
@@ -14,7 +15,7 @@
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # Networking
-  networking.hostName = "schnozzlecat";
+  networking.hostName = hostname;
   networking.networkmanager.enable = true;
   networking.firewall.enable = true;
 
@@ -77,7 +78,7 @@
     # ./users.nix
 
     # Import your generated (nixos-generate-config) hardware configuration
-    ./hardware-configuration.nix
+    ./hardware-configuration-${hostname}.nix
   ];
 
   nixpkgs = {
