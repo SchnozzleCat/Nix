@@ -7,7 +7,7 @@
   ...
 }: {
   imports = [
-    "./home.nix";
+    /home.nix
   ];
 
   home = {
