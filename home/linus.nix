@@ -38,6 +38,9 @@
 
   programs.fish = {
     enable = true;
+    interactiveShellInit = ''
+      set -g fish_greeting
+    '';
     shellAbbrs = {
       rebuild-os = "sudo nixos-rebuild switch --flake ~/.nixos/";
       rebuild-home = "home-manager switch --flake ~/.nixos/";
