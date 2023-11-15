@@ -44,6 +44,8 @@
   programs.fish = {
     enable = true;
     shellAbbrs = {
+      rebuild-os = "sudo nixos-rebuild switch --flake ~/.nixos/";
+      rebuild-home = "home-manager switch --flake ~/.nixos/";
       ls = "eza -la";
       cat = "bat";
       which-gpu = ''glxinfo| grep -E "OpenGL vendor|OpenGL renderer"'';
