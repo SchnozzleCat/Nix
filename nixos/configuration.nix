@@ -58,6 +58,8 @@
     starship
     zoxide
     eza
+    gcc
+    cmake
   ];
 
   # Shell
