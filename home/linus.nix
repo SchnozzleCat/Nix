@@ -22,8 +22,50 @@ in
     username = "linus";
     homeDirectory = "/home/linus";
     packages = with pkgs; [
+      # OS
       fuzzel
+      fnott
+      waybar
       jetbrains-mono
+      # Web
+      brave
+      qbittorrent
+      # Dev
+      unityhub
+      jetbrains.rider
+      jetbrains.datagrip
+      sublime-merge
+      lazygit
+      # Files
+      zathura
+
+      # Utilities
+      lm_sensors
+      solaar
+      firewall-config
+      grim
+      slurp
+      swappy
+      wtype
+      gammastep
+
+      # Terminal
+      xdragon
+      btop
+      zellij
+      dust
+      ncspot
+      neofetch
+
+      # Games
+      steam
+      steam-run
+      lutris
+
+      # Misc
+      obsidian
+      helvum
+
     ];
   };
 
@@ -98,4 +140,8 @@ in
       cd = "z";
     };
   };
+
+  programs.steam = {
+    enable = true;
+  }
 }
