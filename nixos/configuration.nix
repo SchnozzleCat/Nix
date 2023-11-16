@@ -58,6 +58,7 @@
     starship
     zoxide
     eza
+    bat
     gcc
     cmake
   ];
