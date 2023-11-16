@@ -13,7 +13,7 @@
   home = {
     username = "linus";
     homeDirectory = "/home/linus";
-    packages = [
+    packages = with pkgs; [
       fuzzel
     ];
   };
