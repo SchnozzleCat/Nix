@@ -83,6 +83,7 @@
 
     # Import your generated (nixos-generate-config) hardware configuration
     ./hardware-configuration-${hostname}.nix
+    ./${hostname}.nix
   ];
 
   nixpkgs = {
