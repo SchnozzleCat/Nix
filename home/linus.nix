@@ -8,7 +8,7 @@
   ...
 }:
 let
-colors = config.colorScheme.colors
+colors = config.colorScheme.colors;
 in
 {
   imports = [
