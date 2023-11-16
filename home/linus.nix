@@ -15,6 +15,7 @@
     homeDirectory = "/home/linus";
     packages = with pkgs; [
       fuzzel
+      jetbrains-mono
     ];
   };
 
@@ -22,6 +23,34 @@
       enable = true;
       userName = "SchnozzleCat";
       userEmail = "git@schnozzlecat.com";
+  };
+
+  programs.fuzzel = {
+    enable = true;
+    settings = {
+      main = {
+        dpi-aware="no";
+        width=35;
+        font="JetBrainsMono Nerd Font:size=16";
+        icon-theme="candy-icons-master";
+        line-height=25;
+        fields="name,generic,comment,categories,filename,keywords";
+        terminal="foot -e";
+        prompt="❯   ";
+        layer="overlay";
+      };
+      colors = {
+        background="1e1d2dee";
+        selection="3d4474fa";
+        border="94E2D5ff";
+      };
+      border = {
+        radius = 1;
+      };
+      dmenu = {
+        exit-immediately-if-empty = "yes"
+      };
+    };
   };
 
   programs.neovim = {
