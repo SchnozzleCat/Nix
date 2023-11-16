@@ -48,9 +48,9 @@ in
         layer="overlay";
       };
       colors = {
-        background="${colors.base00}";
-        selection="${colors.base04}";
-        border="${colors.base08}";
+        background="${colors.base00}ee";
+        selection="${colors.base04}fa";
+        border="${colors.base08}ff";
       };
       border = {
         radius = 1;
