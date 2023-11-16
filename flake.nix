@@ -21,6 +21,8 @@
         inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-colors.url = "github:misterio77/nix-colors";
+
     # TODO: Add any other flake you might need
     # hardware.url = "github:nixos/nixos-hardware";
 
@@ -35,6 +37,7 @@
     home-manager,
     hyprland,
     nixvim,
+    nix-colors,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -87,24 +90,24 @@
       # FIXME replace with your username@hostname
       "linus@schnozzlecat" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
-        extraSpecialArgs = {inherit inputs outputs;};
+        extraSpecialArgs = {inherit inputs outputs nix-colors;};
         modules = [
           # > Our main home-manager configuration file <
           ./home/linus-desktop.nix
           hyprland.homeManagerModules.default
+          nix-colors.homeManagerModules.default
           nixvim.homeManagerModules.nixvim
-          {wayland.windowManager.hyprland.enable = true;}
         ];
       };
       "linus@schnozzlecat-laptop" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
-        extraSpecialArgs = {inherit inputs outputs;};
+        extraSpecialArgs = {inherit inputs outputs nix-colors;};
         modules = [
           # > Our main home-manager configuration file <
           ./home/linus-laptop.nix
           hyprland.homeManagerModules.default
+          nix-colors.homeManagerModules.default
           nixvim.homeManagerModules.nixvim
-          {wayland.windowManager.hyprland.enable = true;}
         ];
       };
     };

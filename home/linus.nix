@@ -4,12 +4,15 @@
   lib,
   config,
   pkgs,
+  nix-colors,
   ...
 }: {
   imports = [
     ./home.nix
     ./neovim.nix
   ];
+
+  colorScheme = nix-colors.colorSchemes.catppuccin-mocha;
 
   home = {
     username = "linus";
@@ -41,9 +44,9 @@
         layer="overlay";
       };
       colors = {
-        background="1e1d2dee";
-        selection="3d4474fa";
-        border="94E2D5ff";
+        background="${config.colorSchemes.colors.base0}";
+        selection="${config.colorSchemes.colors.base4}";
+        border="${config.colorSchemes.colors.base8}";
       };
       border = {
         radius = 1;
