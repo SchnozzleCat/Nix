@@ -103,6 +103,7 @@
           # > Our main home-manager configuration file <
           ./home/linus-laptop.nix
           hyprland.homeManagerModules.default
+          nixvim.homeManagerModules.nixvim
           {wayland.windowManager.hyprland.enable = true;}
         ];
       };
