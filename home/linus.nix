@@ -48,7 +48,7 @@
         radius = 1;
       };
       dmenu = {
-        exit-immediately-if-empty = "yes"
+        exit-immediately-if-empty = "yes";
       };
     };
   };
