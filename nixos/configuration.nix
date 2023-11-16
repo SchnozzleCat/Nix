@@ -61,6 +61,8 @@
     bat
     gcc
     cmake
+    ripgrep
+    fzf
   ];
 
   # Shell
