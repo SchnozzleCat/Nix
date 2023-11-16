@@ -6,7 +6,11 @@
   pkgs,
   nix-colors,
   ...
-}: {
+}:
+let
+colors = config.colorScheme.colors
+in
+{
   imports = [
     ./home.nix
     ./neovim.nix
@@ -44,9 +48,9 @@
         layer="overlay";
       };
       colors = {
-        background="${config.colorSchemes.colors.base0}";
-        selection="${config.colorSchemes.colors.base4}";
-        border="${config.colorSchemes.colors.base8}";
+        background="${colors.base0}";
+        selection="${colors.base4}";
+        border="${colors.base8}";
       };
       border = {
         radius = 1;
