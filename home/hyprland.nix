@@ -256,6 +256,5 @@ bind = $mainMod, w, exec, hyprctl activewindow | wl-copy
 bind = $mainMod, m, exec, foot ranger
 bind = $mainMod Shift,m, exec, ~/.config/sway/calc.sh
     '';
-    };
   };
 }
