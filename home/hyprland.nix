@@ -1,14 +1,4 @@
-{
-  inputs,
-  outputs,
-  lib,
-  config,
-  pkgs,
-  ...
-}: {
-  wayland.windowManager.hyprland = {
-    enable = true;
-    extraConfig = ''
+''
 monitor=DP-1,3440x1440@144,0x0,1
 monitor=DP-2,1920x1080@60,0x-1080,1
 monitor=DP-3,1920x1080@60,1920x-1080,1
@@ -255,6 +245,4 @@ bind = $mainMod, w, exec, hyprctl activewindow | wl-copy
 
 bind = $mainMod, m, exec, foot ranger
 bind = $mainMod Shift,m, exec, ~/.config/sway/calc.sh
-    '';
-  };
-}
+'';

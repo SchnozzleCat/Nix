@@ -16,6 +16,10 @@
     # Hyprland
     hyprland.url = "github:hyprwm/Hyprland";
 
+    nixvim = {
+        url = "github:nix-community/nixvim";
+        inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # TODO: Add any other flake you might need
     # hardware.url = "github:nixos/nixos-hardware";
@@ -30,6 +34,7 @@
     nixpkgs,
     home-manager,
     hyprland,
+    nixvim,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -85,8 +90,9 @@
         extraSpecialArgs = {inherit inputs outputs;};
         modules = [
           # > Our main home-manager configuration file <
-          ./home/linus.nix
+          ./home/linus-desktop.nix
           hyprland.homeManagerModules.default
+          nixvim.homeManagerModules.nixvim
           {wayland.windowManager.hyprland.enable = true;}
         ];
       };
@@ -95,7 +101,7 @@
         extraSpecialArgs = {inherit inputs outputs;};
         modules = [
           # > Our main home-manager configuration file <
-          ./home/linus.nix
+          ./home/linus-laptop.nix
           hyprland.homeManagerModules.default
           {wayland.windowManager.hyprland.enable = true;}
         ];
