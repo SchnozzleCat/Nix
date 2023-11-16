@@ -13,9 +13,9 @@
   home = {
     username = "linus";
     homeDirectory = "/home/linus";
-    packages = {
+    packages = [
       fuzzel
-    };
+    ];
   };
 
   programs.git = {
