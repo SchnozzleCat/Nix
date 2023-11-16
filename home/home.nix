@@ -9,8 +9,9 @@
   ...
 }: {
   imports = [
-    ./hyprland.nix
   ];
+
+  wayland.windowManager.hyprland.enable = true;
 
   nixpkgs = {
     # You can add overlays here
