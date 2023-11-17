@@ -55,6 +55,8 @@ in
       du-dust
       ncspot
       neofetch
+      cbonsai
+      pipes
 
       # Games
       steam
