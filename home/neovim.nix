@@ -8,7 +8,7 @@
 }: {
   programs.nixvim = {
     enable = true;
-    global = {
+    globals = {
       vimtex_view_method = "zathura";
     };
     plugins = {
