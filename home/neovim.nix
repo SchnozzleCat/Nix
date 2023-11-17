@@ -13,7 +13,7 @@
         mode = "n";
         key = "<leader>b";
         action = "<cmd> enew <CR>";
-        desc = "New Buffer";
+        options.desc = "New Buffer";
       }
     ];
     plugins = {
