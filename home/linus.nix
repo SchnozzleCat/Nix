@@ -93,6 +93,8 @@ in
       userEmail = "git@schnozzlecat.com";
   };
 
+  home.file.".config/waybar".source = ./waybar;
+
   programs.foot = {
     enable = true;
     settings = {
