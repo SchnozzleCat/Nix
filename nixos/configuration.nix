@@ -52,17 +52,6 @@
 
   environment.systemPackages = with pkgs; [
     git
-    neovim
-    foot
-    fish
-    starship
-    zoxide
-    eza
-    bat
-    gcc
-    cmake
-    ripgrep
-    fzf
   ];
 
   # Shell

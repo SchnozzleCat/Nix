@@ -27,17 +27,17 @@ in
       fnott
       waybar
       jetbrains-mono
+
       # Web
       brave
       qbittorrent
+
       # Dev
       unityhub
       jetbrains.rider
       jetbrains.datagrip
       sublime-merge
       lazygit
-      # Files
-      zathura
 
       # Utilities
       lm_sensors
@@ -47,8 +47,17 @@ in
       swappy
       wtype
       gammastep
+      ripgrep
+      fzf
 
       # Terminal
+      foot
+      fish
+      starship
+      zoxide
+      eza
+      bat
+      neovim
       xdragon
       btop
       zellij
@@ -59,6 +68,9 @@ in
       pipes
       lf
 
+      # Files
+      zathura
+
       # Games
       steam
       steam-run
@@ -67,7 +79,6 @@ in
       # Misc
       obsidian
       helvum
-
     ];
   };
 
