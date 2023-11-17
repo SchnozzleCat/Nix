@@ -97,7 +97,9 @@ in
   programs.foot = {
     enable = true;
     settings = {
-      font = "JetBrainsMono Nerd Font:size=10";
+      main = {
+        font = "JetBrainsMono Nerd Font:size=10";
+      };
       cursor = {
         color="1A1826 D9E0EE";
       };
