@@ -17,6 +17,10 @@ in
   ];
 
   colorScheme = nix-colors.colorSchemes.catppuccin-mocha;
+  
+  fonts.packages = with pkgs; [
+      (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
+  ];
 
   home = {
     username = "linus";
@@ -28,7 +32,6 @@ in
       waybar
       wl-clipboard
       clipman
-      nerdfonts
 
       # Web
       brave
