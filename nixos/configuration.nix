@@ -38,10 +38,18 @@
   programs.hyprland.enable = true;
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
-  fonts.packages = with pkgs; [
+  fonts = {
+    enableDefaultFonts = true;
+    packages = {
       (nerdfonts.override { fonts = [ "JetBrainsMono" "SourceCodePro" ]; })
       font-awesome
-  ];
+    };
+    fontConfig.defaultFonts = {
+      monospace = [ "JetBrainsMono NerdFont"];
+      emoji = [ "Font Awesome 6 Free"];
+    };
+  };
+
 
   # TODO: Configure your system-wide user settings (groups, etc), add more users as needed.
   users.users = {
