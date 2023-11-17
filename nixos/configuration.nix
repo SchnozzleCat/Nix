@@ -39,7 +39,7 @@
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   fonts = {
-    enableDefaultFonts = true;
+    enableDefaultPackages = true;
     fontDir.enable = true;
     packages = with pkgs; [
       (nerdfonts.override { fonts = [ "JetBrainsMono" "SourceCodePro" ]; })
