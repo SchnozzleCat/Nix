@@ -10,6 +10,7 @@
     enable = true;
     options = {
       number = true;
+      undofile = true;
     };
     globals = {
       mapleader = " ";
