@@ -39,7 +39,7 @@
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   fonts.packages = with pkgs; [
-      (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
+      (nerdfonts.override { fonts = [ "JetBrainsMono" "SauceCodePro" ]; })
   ];
 
   # TODO: Configure your system-wide user settings (groups, etc), add more users as needed.
