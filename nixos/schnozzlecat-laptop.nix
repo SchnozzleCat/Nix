@@ -17,6 +17,7 @@
 
   security.pam.yubico = {
      enable = true;
+     debug = false;
      mode = "challenge-response";
      id = [ "23767516" ];
      control = "required";
