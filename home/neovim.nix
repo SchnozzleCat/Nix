@@ -14,6 +14,7 @@
     globals = {
       mapleader = " ";
     };
+    colorschemes.catppuccin.enable = true;
     keymaps = [
       {
         mode = "n";
