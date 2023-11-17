@@ -57,7 +57,6 @@ in
       zoxide
       eza
       bat
-      neovim
       xdragon
       btop
       zellij
