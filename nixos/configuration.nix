@@ -38,6 +38,10 @@
   programs.hyprland.enable = true;
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
+  fonts.packages = with pkgs; [
+      (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
+  ];
+
   # TODO: Configure your system-wide user settings (groups, etc), add more users as needed.
   users.users = {
     linus = {
