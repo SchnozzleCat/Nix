@@ -40,7 +40,7 @@
 
   fonts = {
     enableDefaultFonts = true;
-    packages = [
+    packages = with pkgs; [
       (nerdfonts.override { fonts = [ "JetBrainsMono" "SourceCodePro" ]; })
       font-awesome
     ];
