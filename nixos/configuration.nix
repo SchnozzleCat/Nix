@@ -40,10 +40,10 @@
 
   fonts = {
     enableDefaultFonts = true;
-    packages = {
+    packages = [
       (nerdfonts.override { fonts = [ "JetBrainsMono" "SourceCodePro" ]; })
       font-awesome
-    };
+    ];
     fontConfig.defaultFonts = {
       monospace = [ "JetBrainsMono NerdFont"];
       emoji = [ "Font Awesome 6 Free"];
