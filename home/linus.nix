@@ -42,7 +42,6 @@ in
       # Utilities
       lm_sensors
       solaar
-      firewall-config
       grim
       slurp
       swappy
