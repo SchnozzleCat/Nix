@@ -52,7 +52,7 @@ in
       xdragon
       btop
       zellij
-      dust
+      du-dust
       ncspot
       neofetch
 
