@@ -78,6 +78,7 @@
         viewMethod = "zathura";
       };
       lsp = {
+        enable = true;
         servers = {
           ltex = {
             enable = true;
