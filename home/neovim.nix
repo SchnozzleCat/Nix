@@ -25,7 +25,7 @@
         mode = "n";
         key = "<leader>fv";
         action = "Telescope dap variables";
-        desc = "Find DAP Variables";
+        options.desc = "Find DAP Variables";
       }
     ];
     plugins = {
