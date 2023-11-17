@@ -15,6 +15,14 @@
 
   services.xserver.videoDrivers = ["nvidia"];
 
+  security.pam.yubico = {
+     enable = true;
+     debug = true;
+     mode = "challenge-response";
+     id = [ "23767516" ];
+     control = "required";
+  };
+
   hardware.nvidia = {
     modesetting.enable = true;
     powerManagement.enable = false;

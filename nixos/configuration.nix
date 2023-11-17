@@ -22,6 +22,7 @@
   # Yubikey
   services.udev.packages = [ pkgs.yubikey-personalization ];
 
+  # GPG
   programs.gnupg.agent = {
     enable = true;
     enableSSHSupport = true;
@@ -93,6 +94,7 @@
   environment.systemPackages = with pkgs; [
     git
     brightnessctl
+    yubikey-manager
   ];
 
   # Shell
