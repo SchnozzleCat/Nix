@@ -23,6 +23,18 @@
         action = "<cmd> enew <CR>";
         options.desc = "New Buffer";
       }
+      {
+        mode = "n";
+        key = "<leader>fa";
+        action = "<cmd> Telescope find_files follow=true no_ignore=true hidden=true <CR>";
+        options.desc = "Find All";
+      }
+      {
+        mode = "n";
+        key = "<leader>fv";
+        action = "<cmd> Telescope dap variables <CR>";
+        options.desc = "Find DAP Variables";
+      }
     ];
     plugins = {
       telescope = {
@@ -35,14 +47,6 @@
           "<leader>fw" = {
             action = "live_grep";
             desc = "Find Word";
-          };
-          "<leader>fa" = {
-            action = "Telescope find_files follow=true no_ignore=true hidden=true";
-            desc = "Find All";
-          };
-          "<leader>fv" = {
-            action = "Telescope dap variables";
-            desc = "Find DAP Variables";
           };
           "<leader>fk" = {
             action = "keymaps";
