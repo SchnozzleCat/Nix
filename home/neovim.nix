@@ -18,8 +18,14 @@
       {
         mode = "n";
         key = "<leader>fa";
-        action = "find_files follow=true no_ignore=true hidden=true";
+        action = "Telescope find_files follow=true no_ignore=true hidden=true";
         options.desc = "Find All";
+      }
+      {
+        mode = "n";
+        key = "<leader>fv";
+        action = "Telescope dap variables";
+        desc = "Find DAP Variables";
       }
     ];
     plugins = {
@@ -33,10 +39,6 @@
           "<leader>fw" = {
             action = "live_grep";
             desc = "Find Word";
-          };
-          "<leader>fv" = {
-            action = "dap variables";
-            desc = "Find DAP Variables";
           };
           "<leader>fk" = {
             action = "find_keymaps";
