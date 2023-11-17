@@ -11,8 +11,6 @@
     plugins = {
       vimtex = {
         enable = true;
-        installTexLive = true;
-        texLivePackage = pkgs.texlive.combined.scheme-full;
         viewMethod = "zathura";
       };
       lsp = {

@@ -84,6 +84,7 @@ in
       cinnamon.warpinator
       discord
       jellyfin-media-player
+      texlive.combined.scheme-full
     ];
   };
 
