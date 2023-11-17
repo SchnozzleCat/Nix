@@ -72,6 +72,8 @@
   # Misc
   programs.dconf.enable = true;
 
+  programs.steam.enable = true;
+
   # You can import other NixOS modules here
   imports = [
     # If you want to use modules your own flake exports (from modules/nixos):

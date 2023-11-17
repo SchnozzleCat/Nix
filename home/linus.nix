@@ -140,8 +140,4 @@ in
       cd = "z";
     };
   };
-
-  programs.steam = {
-    enable = true;
-  };
 }
