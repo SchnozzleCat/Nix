@@ -19,6 +19,14 @@
   networking.networkmanager.enable = true;
   networking.firewall.enable = true;
 
+  # Yubikey
+  services.udev.packages = [ pkgs.yubikey-personalization ];
+
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
+  };
+
   # Localization
   time.timeZone = "Europe/Berlin";
   i18n.defaultLocale = "en_US.UTF-8";
