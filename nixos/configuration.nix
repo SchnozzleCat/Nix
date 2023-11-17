@@ -40,6 +40,7 @@
 
   fonts.packages = with pkgs; [
       (nerdfonts.override { fonts = [ "JetBrainsMono" "SourceCodePro" ]; })
+      font-awesome
   ];
 
   # TODO: Configure your system-wide user settings (groups, etc), add more users as needed.
