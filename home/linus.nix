@@ -79,7 +79,7 @@ in
       obsidian
       helvum
       obs-studio
-      warpinator
+      cinnamon.warpinator
       discord
       jellyfin-media-player
     ];
