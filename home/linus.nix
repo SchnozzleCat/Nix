@@ -78,6 +78,10 @@ in
       # Misc
       obsidian
       helvum
+      obs-studio
+      warpinator
+      discord
+      jellyfin-media-player
     ];
   };
 
