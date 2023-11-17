@@ -8,13 +8,11 @@
 }: {
   programs.nixvim = {
     enable = true;
-    globals = {
-      vimtex_view_method = "zathura";
-    };
     plugins = {
       vimtex = {
         enable = true;
         installTexLive = true;
+        viewMethod = "zathura";
       };
       lsp = {
         servers = {
