@@ -57,6 +57,7 @@ in
       neofetch
       cbonsai
       pipes
+      lf
 
       # Games
       steam
