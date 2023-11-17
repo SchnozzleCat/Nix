@@ -15,6 +15,12 @@
         action = "<cmd> enew <CR>";
         options.desc = "New Buffer";
       }
+      {
+        mode = "n";
+        key = "<leader>fa";
+        action = "find_files follow=true no_ignore=true hidden=true";
+        options.desc = "Find All";
+      }
     ];
     plugins = {
       telescope = {
@@ -39,10 +45,6 @@
           "<leader>fs" = {
             action = "lsp_dynamic_workspace_symbols";
             desc = "Find Symbols";
-          };
-          "<leader>fa" = {
-            action = "find_files follow=true no_ignore=true hidden=true";
-            desc = "Find All";
           };
           "<leader>fb" = {
             action = "buffers";
