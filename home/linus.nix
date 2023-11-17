@@ -17,10 +17,6 @@ in
   ];
 
   colorScheme = nix-colors.colorSchemes.catppuccin-mocha;
-  
-  fonts.packages = with pkgs; [
-      (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
-  ];
 
   home = {
     username = "linus";
