@@ -44,7 +44,7 @@
       (nerdfonts.override { fonts = [ "JetBrainsMono" "SourceCodePro" ]; })
       font-awesome
     ];
-    fontConfig.defaultFonts = {
+    fontconfig.defaultFonts = {
       monospace = [ "JetBrainsMono NerdFont"];
       emoji = [ "Font Awesome 6 Free"];
     };
