@@ -1,438 +1,438 @@
 @import "mocha.css";
 
 * {
-	border: none;
-	border-radius: 10px;
-  font-family: "SauceCodePro Nerd Font" ;
-	font-size: 15px;
-	min-height: 10px;
+  border: none;
+  border-radius: 10px;
+  font-family: "JetBrainsMono Nerd Font";
+  font-size: 15px;
+  min-height: 10px;
 }
 
 window#waybar {
-	background: transparent;
+  background: transparent;
 }
 
 window#waybar.hidden {
-	opacity: 0.2;
+  opacity: 0.2;
 }
 
 #window {
-	margin-top: 6px;
-	padding-left: 10px;
-	padding-right: 10px;
-	border-radius: 10px;
-	transition: none;
-    color: transparent;
-	background: transparent;
+  margin-top: 6px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 10px;
+  transition: none;
+  color: transparent;
+  background: transparent;
 }
 #tags {
-	margin-top: 6px;
-	margin-left: 12px;
-	font-size: 4px;
-	margin-bottom: 0px;
-	border-radius: 10px;
-	min-width: 0;
-	background: #0e1218;
-	transition: none;
+  margin-top: 6px;
+  margin-left: 12px;
+  font-size: 4px;
+  margin-bottom: 0px;
+  border-radius: 10px;
+  min-width: 0;
+  background: #0e1218;
+  transition: none;
 }
 
 #tags button {
-	min-width: 50px;
-	transition: none;
-	color: #dfd2c4;
-	background: transparent;
-	font-size: 16px;
-	border-radius: 2px;
+  min-width: 50px;
+  transition: none;
+  color: #dfd2c4;
+  background: transparent;
+  font-size: 16px;
+  border-radius: 2px;
 }
 
 #tags button.occupied {
-	transition: none;
-	color: #c5663d;
-	background: transparent;
-	font-size: 4px;
+  transition: none;
+  color: #c5663d;
+  background: transparent;
+  font-size: 4px;
 }
 
 #tags button.focused {
-	color: #cc8a5e;
-    border-top: 2px solid #cc8a5e;
-    border-bottom: 2px solid #cc8a5e;
+  color: #cc8a5e;
+  border-top: 2px solid #cc8a5e;
+  border-bottom: 2px solid #cc8a5e;
 }
 
 #tags button:hover {
-	transition: none;
-	box-shadow: inherit;
-	text-shadow: inherit;
-	color: @text;
-    border-color: @text;
-    color: @text;
+  transition: none;
+  box-shadow: inherit;
+  text-shadow: inherit;
+  color: @text;
+  border-color: @text;
+  color: @text;
 }
 
 #tags button.focused:hover {
-    color: @text;
+  color: @text;
 }
 
 #tags button.urgent {
-        border-top: 2px solid #fb4934;
-        border-bottom: 2px solid #fb4934;
+  border-top: 2px solid #fb4934;
+  border-bottom: 2px solid #fb4934;
 }
 
 #workspaces button {
-        padding: 0 0 0 0;
-        margin: 4px 3px 2px 3px;
-        background-color: @surface0;
-        color: @text;
-        min-width: 36px;
+  padding: 0 0 0 0;
+  margin: 4px 3px 2px 3px;
+  background-color: @surface0;
+  color: @text;
+  min-width: 36px;
 }
 
 #workspaces button.active {
-
-        padding: 0 0 0 0;
-        margin: 4px 3px 2px 3px;
-        background-color: #8e9ebe;
-        color: #0e1218;
-        min-width: 36px;
+  padding: 0 0 0 0;
+  margin: 4px 3px 2px 3px;
+  background-color: #8e9ebe;
+  color: #0e1218;
+  min-width: 36px;
 }
 
 #workspaces button:hover {
-        background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 #workspaces button.focused {
-        background-color: @mauve;
-        color: @base;
+  background-color: @mauve;
+  color: @base;
 }
 
 #workspaces button.urgent {
-        background-color: #E64553;
+  background-color: #e64553;
 }
 
 #window,
 #workspaces {
-        margin: 0 4px;
+  margin: 0 4px;
 }
 
 .modules-left > widget:first-child > #workspaces {
-        margin-left: 0;
+  margin-left: 0;
 }
 
 .modules-right > widget:first-child > #workspaces {
-        margin-right: 0;
+  margin-right: 0;
 }
 
 #network {
-	margin-top: 6px;
-	margin-left: 8px;
-	padding-left: 10px;
-	padding-right: 10px;
-	margin-bottom: 0px;
-	border-radius: 10px;
-	transition: none;
-	color: @text;
-	background: #c5663d;
+  margin-top: 6px;
+  margin-left: 8px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-bottom: 0px;
+  border-radius: 10px;
+  transition: none;
+  color: @text;
+  background: #c5663d;
 }
 
 #pulseaudio {
-	margin-top: 6px;
-	margin-left: 8px;
-	padding-left: 10px;
-	padding-right: 10px;
-	margin-bottom: 0px;
-	border-radius: 10px;
-	transition: none;
-	color: @base;
-	background: @yellow;
+  margin-top: 6px;
+  margin-left: 8px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-bottom: 0px;
+  border-radius: 10px;
+  transition: none;
+  color: @base;
+  background: @yellow;
 }
 
 #battery {
-	margin-top: 6px;
-	margin-left: 8px;
-	padding-left: 10px;
-	padding-right: 10px;
-	margin-bottom: 0px;
-	border-radius: 10px;
-	transition: none;
-	color: @text;
-	background: #9F9C9D;
+  margin-top: 6px;
+  margin-left: 8px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-bottom: 0px;
+  border-radius: 10px;
+  transition: none;
+  color: @text;
+  background: #9f9c9d;
 }
 
-#battery.charging, #battery.plugged {
-	color: @text;
-    background-color: #9F9C9D;
+#battery.charging,
+#battery.plugged {
+  color: @text;
+  background-color: #9f9c9d;
 }
 
 #battery.critical:not(.charging) {
-    background-color: #9F9C9D;
-    color: @text;
-    animation-name: blink;
-    animation-duration: 0.5s;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
+  background-color: #9f9c9d;
+  color: @text;
+  animation-name: blink;
+  animation-duration: 0.5s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
 }
 
 @keyframes blink {
-    to {
-        background-color: #BF616A;
-        color: #9F9C9D;
-    }
+  to {
+    background-color: #bf616a;
+    color: #9f9c9d;
+  }
 }
 
 #backlight {
-	margin-top: 6px;
-	margin-left: 8px;
-	padding-left: 10px;
-	padding-right: 10px;
-	margin-bottom: 0px;
-	border-radius: 10px;
-	transition: none;
-	color: @text;
-	background: #D3A46E;
+  margin-top: 6px;
+  margin-left: 8px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-bottom: 0px;
+  border-radius: 10px;
+  transition: none;
+  color: @text;
+  background: #d3a46e;
 }
 #clock {
-	margin-top: 6px;
-	margin-left: 8px;
-	padding-left: 10px;
-	padding-right: 10px;
-	margin-bottom: 0px;
-	border-radius: 10px;
-	transition: none;
-	color: @base;
-	background: @maroon;
-	/*background: #1A1826;*/
+  margin-top: 6px;
+  margin-left: 8px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-bottom: 0px;
+  border-radius: 10px;
+  transition: none;
+  color: @base;
+  background: @maroon;
+  /*background: #1A1826;*/
 }
 
 #custom-notification {
-	margin-top: 6px;
-	margin-left: 8px;
-	padding-left: 10px;
-	padding-right: 10px;
-	margin-bottom: 0px;
-	border-radius: 10px;
-	transition: none;
-	color: @base;
-	background: @maroon;
-	/*background: #1A1826;*/
+  margin-top: 6px;
+  margin-left: 8px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-bottom: 0px;
+  border-radius: 10px;
+  transition: none;
+  color: @base;
+  background: @maroon;
+  /*background: #1A1826;*/
 }
 
 #memory {
-	margin-top: 6px;
-	margin-left: 8px;
-	padding-left: 10px;
-	margin-bottom: 0px;
-	padding-right: 10px;
-	border-radius: 10px;
-	transition: none;
-	color: @base;
-	background: @sky;
+  margin-top: 6px;
+  margin-left: 8px;
+  padding-left: 10px;
+  margin-bottom: 0px;
+  padding-right: 10px;
+  border-radius: 10px;
+  transition: none;
+  color: @base;
+  background: @sky;
 }
 #scratchpad {
-	margin-top: 6px;
-	margin-left: 8px;
-	padding-left: 10px;
-	margin-bottom: 0px;
-	padding-right: 10px;
-	border-radius: 10px;
-	transition: none;
-	color: @base;
-	background: @sky;
+  margin-top: 6px;
+  margin-left: 8px;
+  padding-left: 10px;
+  margin-bottom: 0px;
+  padding-right: 10px;
+  border-radius: 10px;
+  transition: none;
+  color: @base;
+  background: @sky;
 }
 #cpu {
-	margin-top: 6px;
-	margin-left: 8px;
-	padding-left: 10px;
-	margin-bottom: 0px;
-	padding-right: 10px;
-	border-radius: 10px;
-	transition: none;
-	color: @base;
-	background: @sapphire;
+  margin-top: 6px;
+  margin-left: 8px;
+  padding-left: 10px;
+  margin-bottom: 0px;
+  padding-right: 10px;
+  border-radius: 10px;
+  transition: none;
+  color: @base;
+  background: @sapphire;
 }
 
 #custom-spotify {
-	margin-top: 6px;
-	margin-left: 8px;
-	padding-left: 10px;
-	margin-bottom: 0px;
-	padding-right: 10px;
-	border-radius: 10px;
-	transition: none;
-	color: @base;
-	background: @sapphire;
+  margin-top: 6px;
+  margin-left: 8px;
+  padding-left: 10px;
+  margin-bottom: 0px;
+  padding-right: 10px;
+  border-radius: 10px;
+  transition: none;
+  color: @base;
+  background: @sapphire;
 }
 
 #custom-vpn {
-	margin-top: 6px;
-	margin-left: 8px;
-	padding-left: 10px;
-	margin-bottom: 0px;
-	padding-right: 10px;
-	border-radius: 10px;
-	transition: none;
-	color: @base;
-	background: @sapphire;
+  margin-top: 6px;
+  margin-left: 8px;
+  padding-left: 10px;
+  margin-bottom: 0px;
+  padding-right: 10px;
+  border-radius: 10px;
+  transition: none;
+  color: @base;
+  background: @sapphire;
 }
 #idle_inhibitor {
-	margin-top: 6px;
-	margin-left: 8px;
-	padding-left: 10px;
-	margin-bottom: 0px;
-	padding-right: 10px;
-	border-radius: 10px;
-	transition: none;
-	color: @base;
-	background: @teal;
+  margin-top: 6px;
+  margin-left: 8px;
+  padding-left: 10px;
+  margin-bottom: 0px;
+  padding-right: 10px;
+  border-radius: 10px;
+  transition: none;
+  color: @base;
+  background: @teal;
 }
 
 #disk {
-	margin-top: 6px;
-	margin-left: 8px;
-	padding-left: 10px;
-	margin-bottom: 0px;
-	padding-right: 10px;
-	border-radius: 10px;
-	transition: none;
-	color: @base;
-	background: @teal;
+  margin-top: 6px;
+  margin-left: 8px;
+  padding-left: 10px;
+  margin-bottom: 0px;
+  padding-right: 10px;
+  border-radius: 10px;
+  transition: none;
+  color: @base;
+  background: @teal;
 }
 
 #custom-containers {
-	margin-top: 6px;
-	margin-left: 8px;
-	padding-left: 10px;
-	margin-bottom: 0px;
-	padding-right: 10px;
-	border-radius: 10px;
-	transition: none;
-	color: @base;
-	background: @teal;
+  margin-top: 6px;
+  margin-left: 8px;
+  padding-left: 10px;
+  margin-bottom: 0px;
+  padding-right: 10px;
+  border-radius: 10px;
+  transition: none;
+  color: @base;
+  background: @teal;
 }
 #custom-vm {
-	margin-top: 6px;
-	margin-left: 8px;
-	padding-left: 10px;
-	margin-bottom: 0px;
-	padding-right: 10px;
-	border-radius: 10px;
-	transition: none;
-	color: @base;
-	background: @teal;
+  margin-top: 6px;
+  margin-left: 8px;
+  padding-left: 10px;
+  margin-bottom: 0px;
+  padding-right: 10px;
+  border-radius: 10px;
+  transition: none;
+  color: @base;
+  background: @teal;
 }
 #temperature {
-	margin-top: 6px;
-	margin-left: 8px;
-	padding-left: 10px;
-	margin-bottom: 0px;
-	padding-right: 10px;
-	border-radius: 10px;
-	transition: none;
-	color: @base;
-	background: @blue;
+  margin-top: 6px;
+  margin-left: 8px;
+  padding-left: 10px;
+  margin-bottom: 0px;
+  padding-right: 10px;
+  border-radius: 10px;
+  transition: none;
+  color: @base;
+  background: @blue;
 }
 #custom-gpu-temperature {
-	margin-top: 6px;
-	margin-left: 8px;
-	padding-left: 10px;
-	margin-bottom: 0px;
-	padding-right: 10px;
-	border-radius: 10px;
-	transition: none;
-	color: @base;
-	background: @lavender;
+  margin-top: 6px;
+  margin-left: 8px;
+  padding-left: 10px;
+  margin-bottom: 0px;
+  padding-right: 10px;
+  border-radius: 10px;
+  transition: none;
+  color: @base;
+  background: @lavender;
 }
 
 #custom-bluelightfilter {
-	margin-top: 6px;
-	margin-left: 8px;
-	padding-left: 10px;
-	margin-bottom: 0px;
-	padding-right: 10px;
-	border-radius: 10px;
-	transition: none;
-	color: @base;
-	background: @green;
+  margin-top: 6px;
+  margin-left: 8px;
+  padding-left: 10px;
+  margin-bottom: 0px;
+  padding-right: 10px;
+  border-radius: 10px;
+  transition: none;
+  color: @base;
+  background: @green;
 }
 #tray {
-	margin-top: 6px;
-	margin-left: 8px;
-	padding-left: 10px;
-	margin-bottom: 0px;
-	padding-right: 10px;
-	border-radius: 10px;
-	transition: none;
-	color: @base;
-	background: @overlay0;
+  margin-top: 6px;
+  margin-left: 8px;
+  padding-left: 10px;
+  margin-bottom: 0px;
+  padding-right: 10px;
+  border-radius: 10px;
+  transition: none;
+  color: @base;
+  background: @overlay0;
 }
 
 #custom-launcher {
-	font-size: 24px;
-	margin-top: 6px;
-	margin-left: 8px;
-	padding-left: 10px;
-	padding-right: 5px;
-	border-radius: 10px;
-	transition: none;
-    color: #cc8a5e;
-    background: #202937;
+  font-size: 24px;
+  margin-top: 6px;
+  margin-left: 8px;
+  padding-left: 10px;
+  padding-right: 5px;
+  border-radius: 10px;
+  transition: none;
+  color: #cc8a5e;
+  background: #202937;
 }
 
 #custom-power {
-	font-size: 20px;
-	margin-top: 6px;
-	margin-left: 8px;
-	margin-right: 8px;
-	padding-left: 10px;
-	/* padding-right: 5px; */
-        padding-right: 10px;
-	margin-bottom: 0px;
-	border-radius: 10px;
-	transition: none;
-	color: #cc8a5e;
-	background: #202937;
+  font-size: 20px;
+  margin-top: 6px;
+  margin-left: 8px;
+  margin-right: 8px;
+  padding-left: 10px;
+  /* padding-right: 5px; */
+  padding-right: 10px;
+  margin-bottom: 0px;
+  border-radius: 10px;
+  transition: none;
+  color: #cc8a5e;
+  background: #202937;
 }
 
 #custom-wallpaper {
-	margin-top: 6px;
-	margin-left: 8px;
-	padding-left: 10px;
-	padding-right: 10px;
-	margin-bottom: 0px;
-	border-radius: 10px;
-	transition: none;
-	color: @text;
-	background: #C9CBFF;
+  margin-top: 6px;
+  margin-left: 8px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-bottom: 0px;
+  border-radius: 10px;
+  transition: none;
+  color: @text;
+  background: #c9cbff;
 }
 
 #custom-updates {
-	margin-top: 6px;
-	margin-left: 8px;
-	padding-left: 10px;
-	padding-right: 10px;
-	margin-bottom: 0px;
-	border-radius: 10px;
-	transition: none;
-	color: @text;
-	background: #E8A2AF;
+  margin-top: 6px;
+  margin-left: 8px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-bottom: 0px;
+  border-radius: 10px;
+  transition: none;
+  color: @text;
+  background: #e8a2af;
 }
 
 #custom-media {
-	margin-top: 6px;
-	margin-left: 8px;
-	padding-left: 10px;
-	padding-right: 10px;
-	margin-bottom: 0px;
-	border-radius: 10px;
-	transition: none;
-	color: @text;
-	background: #7A7E86;
+  margin-top: 6px;
+  margin-left: 8px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-bottom: 0px;
+  border-radius: 10px;
+  transition: none;
+  color: @text;
+  background: #7a7e86;
 }
 #custom-mpc {
-	margin-top: 6px;
-	margin-left: 8px;
-	padding-left: 10px;
-	padding-right: 10px;
-	margin-bottom: 0px;
-	border-radius: 10px;
-	transition: none;
-	color: @text;
-	background: #926D54;
+  margin-top: 6px;
+  margin-left: 8px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-bottom: 0px;
+  border-radius: 10px;
+  transition: none;
+  color: @text;
+  background: #926d54;
 }
