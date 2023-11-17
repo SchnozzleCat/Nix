@@ -92,6 +92,7 @@
 
   environment.systemPackages = with pkgs; [
     git
+    brightnessctl
   ];
 
   # Shell
