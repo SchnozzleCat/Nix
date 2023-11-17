@@ -8,6 +8,12 @@
 }: {
   programs.nixvim = {
     enable = true;
+    options = {
+      number = true;
+    };
+    globals = {
+      mapleader = " ";
+    };
     keymaps = [
       {
         mode = "n";
