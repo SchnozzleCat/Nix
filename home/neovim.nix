@@ -12,6 +12,7 @@
       vimtex = {
         enable = true;
         installTexLive = true;
+        texLivePackage = nixpkgs.texlive.combined.scheme-full;
         viewMethod = "zathura";
       };
       lsp = {
