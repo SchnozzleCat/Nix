@@ -26,6 +26,8 @@ in
       fuzzel
       fnott
       waybar
+      wl-clipboard
+      clipman
       jetbrains-mono
 
       # Web
