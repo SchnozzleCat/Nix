@@ -28,7 +28,7 @@ in
       waybar
       wl-clipboard
       clipman
-      jetbrains-mono
+      nerdfonts
 
       # Web
       brave
