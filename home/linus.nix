@@ -18,6 +18,14 @@ in
 
   colorScheme = nix-colors.colorSchemes.catppuccin-mocha;
 
+  gtk = {
+    enable = true;
+    iconTheme = {
+      package = pkgs.tela-circle-icon-theme;
+      name = "Tela-circle-dark";
+    };
+  };
+
   home = {
     username = "linus";
     homeDirectory = "/home/linus";
@@ -149,7 +157,7 @@ in
         dpi-aware="no";
         width=35;
         font="JetBrainsMono Nerd Font:size=16";
-        icon-theme="candy-icons-master";
+        icon-theme="Tela-circle-dark";
         line-height=25;
         fields="name,generic,comment,categories,filename,keywords";
         terminal="foot -e";
