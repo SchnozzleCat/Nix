@@ -50,6 +50,7 @@ in
       gammastep
       ripgrep
       fzf
+      git-crypt
 
       # Terminal
       foot
@@ -67,6 +68,8 @@ in
       cbonsai
       pipes
       lf
+      pistol
+      imv
 
       # Files
       zathura
