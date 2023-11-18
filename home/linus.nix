@@ -20,6 +20,14 @@ in
 
   gtk = {
     enable = true;
+    theme = {
+      package = pkgs.layan-gtk-theme;
+      name = "Layan";
+    };
+    cursorTheme = {
+      package = pkgs.bibata-cursors;
+      name = "Bibata-Modern-Classic";
+    };
     iconTheme = {
       package = pkgs.tela-circle-icon-theme;
       name = "Tela-circle-dark";
