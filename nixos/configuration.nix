@@ -28,6 +28,9 @@
     enableSSHSupport = true;
   };
 
+  # USB
+  services.udisks2.enable = true;
+
   # Localization
   time.timeZone = "Europe/Berlin";
   i18n.defaultLocale = "en_US.UTF-8";
