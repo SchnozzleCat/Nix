@@ -10,6 +10,8 @@ workspace=DP-1,3
 workspace=DP-2,4
 workspace=DP-3,5
 
+exec-once = hyprctl setcursor Bibata-Modern-Clasic 1
+
 exec-once = waybar
 exec-once = fnott
 exec-once = swaybg -i /home/linus/.config/hypr/blobs-d.svg -m fill
