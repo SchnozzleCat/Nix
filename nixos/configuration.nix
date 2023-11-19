@@ -10,6 +10,7 @@
   ...
 }: {
 
+  # Boot
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_latest;
@@ -30,6 +31,15 @@
 
   # USB
   services.udisks2.enable = true;
+  
+  # Pipewire
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+  };
 
   # Localization
   time.timeZone = "Europe/Berlin";
