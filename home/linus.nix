@@ -115,6 +115,16 @@ in
 
   home.file.".config/waybar".source = ./waybar;
 
+  programs.gpg = {
+    enable = true;
+    publicKeys = [
+      {
+        trust = 5;
+        source = ./pub.asc;
+      }
+    ];
+  };
+
   programs.foot = {
     enable = true;
     settings = {
