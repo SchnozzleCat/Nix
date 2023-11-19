@@ -1,0 +1,3 @@
+[submodule "repos/sddm-chili"]
+	path = repos/sddm-chili
+	url = git@github.com:SchnozzleCat/sddm-chili
