@@ -114,7 +114,6 @@ in
   };
 
   home.file.".config/waybar".source = ./waybar;
-  home.file.".face".source = ../secrets/wallpapers/SchnozzleCat.jpg;
 
   programs.gpg = {
     enable = true;
