@@ -31,7 +31,18 @@
 
   # USB
   services.udisks2.enable = true;
-  
+
+  # SDDM
+  services.xserver = {
+    enable = true;
+    displayManager.sddm = {
+      enable = true;
+      settings.Theme.FacesDir = "${../secrets/avatars}";
+      wayland.enable = true;
+      theme = "chili";
+    };
+  };
+
   # Pipewire
   security.rtkit.enable = true;
   services.pipewire = {
