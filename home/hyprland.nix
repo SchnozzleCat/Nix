@@ -11,6 +11,7 @@ workspace=DP-2,4
 workspace=DP-3,5
 
 exec-once = hyprctl setcursor Bibata-Modern-Clasic 1
+exec-once = hyprpaper
 
 exec-once = waybar
 exec-once = fnott
@@ -67,6 +68,7 @@ input {
 
 misc {
         key_press_enables_dpms = true
+        disable_hyprland_logo = true
 }
 
 general {

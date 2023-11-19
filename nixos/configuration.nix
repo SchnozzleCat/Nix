@@ -97,6 +97,7 @@
   environment.systemPackages = with pkgs; [
     git
     brightnessctl
+    hyprpaper
     yubikey-manager
   ];
 
