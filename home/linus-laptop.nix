@@ -16,6 +16,8 @@ in
   ];
 
   wayland.windowManager.hyprland.extraConfig = hyprlandConf + ''
+monitor=eDP-1,1920x1080@144,0x0,1
+
 bind = $mainMod, 1, exec, hyprctl hyprpaper wallpaper "eDP-1,${../secrets/wallpapers/flowers1.png}"
 bind = $mainMod, 2, exec, hyprctl hyprpaper wallpaper "eDP-1,${../secrets/wallpapers/flowers2.png}"
 bind = $mainMod, 3, exec, hyprctl hyprpaper wallpaper "eDP-1,${../secrets/wallpapers/flowers3.png}"
