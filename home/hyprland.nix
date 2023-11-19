@@ -1,5 +1,5 @@
 ''
-exec-once = hyprctl setcursor Bibata-Modern-Clasic 1
+exec-once = hyprctl setcursor Bibata-Modern-Classic 1
 exec-once = hyprpaper
 
 exec-once = waybar
