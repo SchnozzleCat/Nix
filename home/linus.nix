@@ -110,7 +110,11 @@ in
   programs.git = {
       enable = true;
       userName = "SchnozzleCat";
-      userEmail = "git@schnozzlecat.com";
+      userEmail = "linus@schnozzlecat.xyz";
+      signing = {
+      	key = "537B FDDE 066D 4D00 E6B1  5D90 21FB 9DA7 99F8 7226";
+	signByDefault = true;
+      };
   };
 
   home.file.".config/waybar".source = ./waybar;
