@@ -10,6 +10,7 @@
     enable = true;
     extraPlugins = with pkgs.vimPlugins; [
       vim-move
+      lazygit-nvim
     ];
     extraConfigVim = ''
       autocmd BufWritePre * lua vim.lsp.buf.format()
@@ -239,6 +240,13 @@
         key = "<leader>tl";
         action = "<cmd> TroubleToggle loclist<cr>";
         options.desc = "Toggle Trouble Loclist";
+      }
+      # Lazygit
+      {
+        mode = ["n"];
+        key = "<leader>gg";
+        action = "<cmd> LazyGit <cr>";
+        options.desc = "LazyGit";
       }
     ];
     plugins = {
