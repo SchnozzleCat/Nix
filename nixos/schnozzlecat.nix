@@ -7,5 +7,25 @@
   hostname,
   ...
 }: {
+  services.xserver = {
+    displayManager.sddm = {
+      enable = true;
+      settings.Theme.FacesDir = "${../secrets/avatars}";
+      wayland.enable = true;
+      theme = "chili";
+    };
+  };
 
+  services.xserver.displayManager.autoLogin = {
+    enable = true;
+    user = "linus";
+  };
+
+  boot.blacklistedKernelModules = ["nouveau"];
+  hardware.cpu.intel.updateMicrocode = true;
+
+  hardware.opengl.driSupport = true;
+  hardware.opengl.driSupport32Bit = true;
+
+  boot.initrd.kernelModules = ["amdgpu"];
 }
