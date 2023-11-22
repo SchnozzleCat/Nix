@@ -14,8 +14,6 @@ in {
     ./neovim.nix
   ];
 
-  colorScheme = nix-colors.colorSchemes.catppuccin-mocha;
-
   gtk = {
     enable = true;
     theme = {

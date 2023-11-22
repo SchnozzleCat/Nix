@@ -4,15 +4,17 @@
   lib,
   config,
   pkgs,
-  colors,
+  nix-colors,
   ...
 }: {
   imports = [
     ./linus.nix
   ];
 
+  colorScheme = nix-colors.colorSchemes.catppuccin-mocha;
+
   wayland.windowManager.hyprland.extraConfig =
-    (import ./hyprland.nix)
+    (import ./hyprland.nix {inherit config;})
     + ''
       monitor=DP-1,3440x1440@144,0x0,1
       monitor=DP-2,1920x1080@60,0x-1080,1

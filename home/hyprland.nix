@@ -1,4 +1,6 @@
-''
+{config}: let
+  colors = config.colorScheme.colors;
+in ''
   $mainMod = SUPER
 
   exec-once = hyprctl setcursor Bibata-Modern-Classic 1
@@ -228,7 +230,7 @@
   bind = $mainMod Shift Ctrl, p, exec, slurp | grim -g - - | swappy -f - -o - | wl-copy && wl-paste > ~/Screenshots/$(date +'%Y-%m-%d-%H%M%S_grim_annotated.png')
   bind = $mainMod Shift,c,exec, ~/.config/hypr/hyprpicker | head -c 7 | wl-copy
 
-  bind = $mainMod, i, exec, swaylock --screenshots --clock --indicator --indicator-radius 100 --indicator-thickness 7 --effect-blur 9x7 --effect-vignette 0.5:0.5 --ring-color bb00cc --key-hl-color 880033 --line-color 00000000 --inside-color 00000088 --separator-color 00000000 --grace 2 --fade-in 0.2
+  bind = $mainMod, i, exec, swaylock --screenshots --clock --indicator --indicator-radius 100 --indicator-thickness 7 --effect-blur 9x7 --effect-vignette 0.5:0.5 --ring-color ${colors.base00}ff --key-hl-color ${colors.base0C}ff --line-color 00000000 --inside-color 00000088 --separator-color ${colors.base02}ff --text-color ${colors.base05}ff --grace 1 --fade-in 0.2
 
   bind = $mainMod, n, exec, fnottctl dismiss
   bind = $mainMod, c, exec, clipman pick --tool=CUSTOM --tool-args="fuzzel -d"
