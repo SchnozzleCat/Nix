@@ -69,14 +69,12 @@ in {
       # Terminal
       eza
       bat
-      xdragon
       zellij
       du-dust
       ncspot
       neofetch
       cbonsai
       pipes
-      lf
       pistol
       imv
       taskwarrior-tui
@@ -121,6 +119,24 @@ in {
     };
   };
 
+  programs.lf = {
+    enable = true;
+    settings = {
+      preview = true;
+      hidden = true;
+      drawbox = true;
+      icons = true;
+      ignorecase = true;
+    };
+    commands = with pkgs; {
+      dragon-out = ''%${xdragon}/bin/xdragon -a -x "$fx"'';
+    };
+    keybindings = {
+      "do" = "dragon-out";
+      "<enter>" = "open";
+    };
+  };
+
   programs.taskwarrior = {
     enable = true;
   };
@@ -134,6 +150,7 @@ in {
     };
   };
 
+  home.file.".config/lf/icons".source = ./lf-icons.nix;
   home.file.".config/waybar".source = ./waybar;
   home.file.".config/hypr/pyprland.toml".text = ''
     [pyprland]
