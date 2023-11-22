@@ -21,6 +21,7 @@
 
   # Yubikey
   services.udev.packages = [pkgs.yubikey-personalization];
+  services.pcscd.enable = true;
 
   # GPG
   programs.gnupg.agent = {
