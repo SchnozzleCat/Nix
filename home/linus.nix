@@ -100,6 +100,7 @@ in {
       discord
       jellyfin-media-player
       texlive.combined.scheme-full
+      jabref
 
       # Shell Scripts
       (writeShellApplication {
