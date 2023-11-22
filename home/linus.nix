@@ -6,11 +6,9 @@
   pkgs,
   nix-colors,
   ...
-}:
-let
-colors = config.colorScheme.colors;
-in
-{
+}: let
+  colors = config.colorScheme.colors;
+in {
   imports = [
     ./home.nix
     ./neovim.nix
@@ -22,7 +20,7 @@ in
     enable = true;
     theme = {
       package = pkgs.layan-gtk-theme;
-      name = "Layan";
+      name = "Layan-Dark";
     };
     cursorTheme = {
       package = pkgs.bibata-cursors;
@@ -40,11 +38,13 @@ in
     homeDirectory = "/home/linus";
     packages = with pkgs; [
       # OS
-      fuzzel
       fnott
       waybar
       wl-clipboard
       clipman
+      pavucontrol
+      pyprland
+      swaylock-effects
 
       # Web
       brave
@@ -64,20 +64,14 @@ in
       slurp
       swappy
       wtype
-      gammastep
       ripgrep
       fzf
       git-crypt
 
       # Terminal
-      foot
-      fish
-      starship
-      zoxide
       eza
       bat
       xdragon
-      btop
       zellij
       du-dust
       ncspot
@@ -87,37 +81,76 @@ in
       lf
       pistol
       imv
+      taskwarrior-tui
 
       # Files
-      zathura
 
       # Games
       steam
       steam-run
-      lutris
+      (lutris.override {
+        extraPkgs = pkgs: [
+          wine
+          winetricks
+        ];
+      })
 
       # Misc
       obsidian
       helvum
       obs-studio
+      whatsapp-for-linux
       cinnamon.warpinator
       discord
       jellyfin-media-player
       texlive.combined.scheme-full
+
+      # Shell Scripts
+      (writeShellApplication {
+        name = "power-menu";
+        text = import ./scripts/power-menu.nix;
+      })
     ];
   };
 
   programs.git = {
+    enable = true;
+    userName = "SchnozzleCat";
+    userEmail = "linus@schnozzlecat.xyz";
+    signing = {
+      key = "537B FDDE 066D 4D00 E6B1  5D90 21FB 9DA7 99F8 7226";
+      signByDefault = true;
+    };
+  };
+
+  programs.taskwarrior = {
+    enable = true;
+  };
+
+  services = {
+    gammastep = {
       enable = true;
-      userName = "SchnozzleCat";
-      userEmail = "linus@schnozzlecat.xyz";
-      signing = {
-      	key = "537B FDDE 066D 4D00 E6B1  5D90 21FB 9DA7 99F8 7226";
-	signByDefault = true;
-      };
+      tray = true;
+      latitude = 48.10373065283809;
+      longitude = 11.596935278032168;
+    };
   };
 
   home.file.".config/waybar".source = ./waybar;
+  home.file.".config/hypr/pyprland.toml".text = ''
+    [pyprland]
+    plugins = ["scratchpads", "expose", "magnify"]
+
+    [scratchpads.term]
+    command = "foot -a foot-float"
+    animation = "fromBottom"
+    margin = 50
+    unfocus = "hide"
+
+    [scratchpads.volume]
+    command = "pavucontrol"
+    animation = "fromRight"
+  '';
 
   programs.gpg = {
     enable = true;
@@ -136,28 +169,28 @@ in
         font = "JetBrainsMono Nerd Font:size=10";
       };
       cursor = {
-        color="1A1826 D9E0EE";
+        color = "1A1826 D9E0EE";
       };
       colors = {
-        alpha=0.95;
-        foreground=colors.base05;
-        background=colors.base00;
-        regular0=colors.base02;
-        regular1=colors.base08;
-        regular2=colors.base0B;
-        regular3=colors.base09;
-        regular4=colors.base0D;
-        regular5=colors.base0E;
-        regular6=colors.base0C;
-        regular7=colors.base06;
-        bright0=colors.base02;
-        bright1=colors.base08;
-        bright2=colors.base0B;
-        bright3=colors.base09;
-        bright4=colors.base0D;
-        bright5=colors.base0E;
-        bright6=colors.base0C;
-        bright7=colors.base06;
+        alpha = 0.95;
+        foreground = colors.base05;
+        background = colors.base00;
+        regular0 = colors.base02;
+        regular1 = colors.base08;
+        regular2 = colors.base0B;
+        regular3 = colors.base09;
+        regular4 = colors.base0D;
+        regular5 = colors.base0E;
+        regular6 = colors.base0C;
+        regular7 = colors.base06;
+        bright0 = colors.base02;
+        bright1 = colors.base08;
+        bright2 = colors.base0B;
+        bright3 = colors.base09;
+        bright4 = colors.base0D;
+        bright5 = colors.base0E;
+        bright6 = colors.base0C;
+        bright7 = colors.base06;
       };
     };
   };
@@ -177,20 +210,20 @@ in
     enable = true;
     settings = {
       main = {
-        dpi-aware="no";
-        width=35;
-        font="JetBrainsMono Nerd Font:size=16";
-        icon-theme="Tela-circle-dark";
-        line-height=25;
-        fields="name,generic,comment,categories,filename,keywords";
-        terminal="foot -e";
-        prompt="❯   ";
-        layer="overlay";
+        dpi-aware = "no";
+        width = 35;
+        font = "JetBrainsMono Nerd Font:size=16";
+        icon-theme = "Tela-circle-dark";
+        line-height = 25;
+        fields = "name,generic,comment,categories,filename,keywords";
+        terminal = "foot -e";
+        prompt = "       ";
+        layer = "overlay";
       };
       colors = {
-        background="${colors.base00}ee";
-        selection="${colors.base04}fa";
-        border="${colors.base08}ff";
+        background = "${colors.base00}ee";
+        selection = "${colors.base04}fa";
+        border = "${colors.base08}ff";
       };
       border = {
         radius = 1;
@@ -206,6 +239,20 @@ in
     enableFishIntegration = true;
   };
 
+  programs.zathura = {
+    enable = true;
+    options = {
+      recolor = 1;
+      recolor-lightcolor = "#1E1D2D";
+      recolor-darkcolor = "#838796";
+      default-bg = "#838796";
+      selection-clipboard = "clipboard";
+    };
+    mappings = {
+      "<C-z>" = "recolor";
+    };
+  };
+
   programs.zoxide = {
     enable = true;
     enableFishIntegration = true;
@@ -215,6 +262,7 @@ in
     enable = true;
     interactiveShellInit = ''
       set -g fish_greeting
+      task list
     '';
     shellAbbrs = {
       rebuild-os = "sudo nixos-rebuild switch --flake ~/.nixos/";

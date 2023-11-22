@@ -9,7 +9,6 @@
   hostname,
   ...
 }: {
-
   # Boot
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -21,7 +20,7 @@
   networking.firewall.enable = true;
 
   # Yubikey
-  services.udev.packages = [ pkgs.yubikey-personalization ];
+  services.udev.packages = [pkgs.yubikey-personalization];
 
   # GPG
   programs.gnupg.agent = {
@@ -42,6 +41,9 @@
       theme = "chili";
     };
   };
+
+  # Swaylock
+  security.pam.services.swaylock = {};
 
   # Pipewire
   security.rtkit.enable = true;
@@ -75,12 +77,12 @@
     enableDefaultPackages = true;
     fontDir.enable = true;
     packages = with pkgs; [
-      (nerdfonts.override { fonts = [ "JetBrainsMono" "SourceCodePro" ]; })
+      (nerdfonts.override {fonts = ["JetBrainsMono" "SourceCodePro"];})
       font-awesome
     ];
     fontconfig.defaultFonts = {
-      monospace = [ "JetBrainsMono NerdFont"];
-      emoji = [ "Font Awesome 6 Free"];
+      monospace = ["JetBrainsMono NerdFont"];
+      emoji = ["Font Awesome 6 Free"];
     };
   };
 
@@ -89,28 +91,27 @@
   systemd = {
     user.services.polkit-gnome-authentication-agent-1 = {
       description = "polkit-gnome-authentication-agent-1";
-      wantedBy = [ "graphical-session.target" ];
-      wants = [ "graphical-session.target" ];
-      after = [ "graphical-session.target" ];
+      wantedBy = ["graphical-session.target"];
+      wants = ["graphical-session.target"];
+      after = ["graphical-session.target"];
       serviceConfig = {
-          Type = "simple";
-          ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-          Restart = "on-failure";
-          RestartSec = 1;
-          TimeoutStopSec = 10;
-        };
+        Type = "simple";
+        ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+        Restart = "on-failure";
+        RestartSec = 1;
+        TimeoutStopSec = 10;
+      };
     };
   };
-
 
   # TODO: Configure your system-wide user settings (groups, etc), add more users as needed.
   users.users = {
     linus = {
       isNormalUser = true;
       openssh.authorizedKeys.keys = [
-  # TODO: Add your SSH public key(s) here, if you plan on using SSH to connect
+        # TODO: Add your SSH public key(s) here, if you plan on using SSH to connect
       ];
-  # TODO: Be sure to add any other groups you need (such as networkmanager, audio, docker, etc)
+      # TODO: Be sure to add any other groups you need (such as networkmanager, audio, docker, etc)
       extraGroups = ["wheel" "networkmanager" "audio" "docker"];
     };
   };
@@ -120,6 +121,13 @@
     brightnessctl
     hyprpaper
     yubikey-manager
+    (sddm-chili-theme.overrideAttrs (old: {
+      src = builtins.fetchGit {
+        url = "file:///home/linus/.nixos/repos/sddm-chili";
+        ref = "master";
+        rev = "4e662978bf69daa555cd418e5ee3b6444be7115c";
+      };
+    }))
   ];
 
   # Shell
