@@ -109,6 +109,11 @@ in {
     ];
   };
 
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+  };
+
   programs.git = {
     enable = true;
     userName = "SchnozzleCat";
@@ -117,10 +122,6 @@ in {
       key = "537B FDDE 066D 4D00 E6B1  5D90 21FB 9DA7 99F8 7226";
       signByDefault = true;
     };
-  };
-
-  home.sessionVariables = {
-    OPENER = "rifle";
   };
 
   programs.lf = {
@@ -137,10 +138,10 @@ in {
     '';
     commands = with pkgs; {
       dragon-out = ''%${xdragon}/bin/xdragon -a -x "$fx"'';
-      rifle = ''            
+      rifle = ''              
         ''${{rifle $f}}'';
       copy-path = ''&{{echo -n $f | wl-copy}}'';
-      on-select = ''          
+      on-select = ''            
         &{{
           lf -remote "send $id set statfmt \"$(eza -ld --color=always "$f")\""
         }}'';
