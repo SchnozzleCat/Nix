@@ -94,6 +94,7 @@ in {
       obsidian
       helvum
       obs-studio
+      spotify
       whatsapp-for-linux
       cinnamon.warpinator
       discord
@@ -138,10 +139,24 @@ in {
     '';
     commands = with pkgs; {
       dragon-out = ''%${xdragon}/bin/xdragon -a -x "$fx"'';
-      rifle = ''              
+      rifle = ''        
         ''${{rifle $f}}'';
       copy-path = ''&{{echo -n $f | wl-copy}}'';
-      on-select = ''            
+      mkdir = ''
+        %{{
+          printf "Directory Name > "
+          read DIR
+          mkdir $DIR
+        }}
+      '';
+      mkfile = ''
+        %{{
+          printf "File Name > "
+          read FILE
+          touch $FILE
+        }}
+      '';
+      on-select = ''              
         &{{
           lf -remote "send $id set statfmt \"$(eza -ld --color=always "$f")\""
         }}'';
@@ -182,6 +197,9 @@ in {
       pp = ": paste; clear";
       S = "push :shell<enter>$SHELL<enter>";
       p = "";
+      t = "";
+      tt = "mkfile";
+      td = "mkdir";
       "<enter>" = "rifle";
     };
   };
@@ -200,7 +218,6 @@ in {
   };
 
   home.file.".config/lf/icons".source = ./lf-icons.nix;
-  home.file.".config/waybar".source = ./waybar;
   home.file.".config/hypr/pyprland.toml".text = ''
     [pyprland]
     plugins = ["scratchpads", "expose", "magnify"]
@@ -215,6 +232,12 @@ in {
     command = "pavucontrol"
     animation = "fromRight"
   '';
+
+  programs.waybar = {
+    enable = true;
+    settings = import ./waybar-config.nix;
+    style = import ./waybar-style.nix {inherit config;};
+  };
 
   programs.gpg = {
     enable = true;
