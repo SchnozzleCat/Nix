@@ -259,7 +259,7 @@ in {
         color = "1A1826 D9E0EE";
       };
       colors = {
-        alpha = 0.95;
+        alpha = 0.70;
         foreground = colors.base05;
         background = colors.base00;
         regular0 = colors.base02;
@@ -308,12 +308,13 @@ in {
         layer = "overlay";
       };
       colors = {
-        background = "${colors.base00}ee";
+        background = "${colors.base00}ff";
         selection = "${colors.base04}fa";
         border = "${colors.base08}ff";
       };
       border = {
-        radius = 1;
+        radius = 5;
+        width = 2;
       };
       dmenu = {
         exit-immediately-if-empty = "yes";
