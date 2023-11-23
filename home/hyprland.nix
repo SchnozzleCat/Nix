@@ -1,4 +1,7 @@
-{config}: let
+{
+  config,
+  pkgs,
+}: let
   colors = config.colorScheme.colors;
 in ''
   $mainMod = SUPER
@@ -9,7 +12,6 @@ in ''
   exec-once = waybar
   exec-once = pypr
   exec-once = fnott
-  exec-once = swaybg -i /home/linus/.config/hypr/blobs-d.svg -m fill
   exec-once = hyprctrl dispatch layoutmsg "preselect r"
   exec-once = wl-paste -t text --watch clipman store --max-items 1024
   exec-once = /home/linus/Downloads/MoonDeckBuddy-1.5.7-x86_64.AppImage
@@ -21,8 +23,6 @@ in ''
   exec-once = systemctl --user start app-solaar@autostart.service
 
   exec-once = corectrl
-
-  exec-once=/usr/lib/polkit-1/polkit-agent-helper-1
 
   env = XCURSOR_SIZE,24
   env = XDG_CURRENT_DESKTOP,Hyprland
@@ -226,21 +226,23 @@ in ''
   bind = $mainMod, minus, togglespecialworkspace
 
 
-  bind = $mainMod Shift, p, exec, slurp | grim -g - - | wl-copy && wl-paste > ~/Screenshots/$(date +'%Y-%m-%d-%H%M%S_grim.png')
-  bind = $mainMod Shift Ctrl, p, exec, slurp | grim -g - - | swappy -f - -o - | wl-copy && wl-paste > ~/Screenshots/$(date +'%Y-%m-%d-%H%M%S_grim_annotated.png')
-  bind = $mainMod Shift,c,exec, ~/.config/hypr/hyprpicker | head -c 7 | wl-copy
+  bind = $mainMod, p, exec, ${pkgs.slurp}/bin/slurp | ${pkgs.grim}/bin/grim -g - - | wl-copy && wl-paste > ~/Screenshots/$(date +'%Y-%m-%d-%H%M%S_grim.png')
+  bind = $mainMod Shift, p, exec, ${pkgs.slurp}/bin/slurp | ${pkgs.grim}/bin/grim -g - - | ${pkgs.swappy}/bin/swappy -f - -o - | wl-copy && wl-paste > ~/Screenshots/$(date +'%Y-%m-%d-%H%M%S_grim_annotated.png')
+  bind = $mainMod Shift Ctrl, p, exec, pkill -SIGINT wf-recorder
+  bind = $mainMod Shift Ctrl, p, exec, file=~/Videos/$(date +'%Y-%m-%d-%H%M%S_grim_annotated.mp4'); ${pkgs.wf-recorder}/bin/wf-recorder -g "$(${pkgs.slurp}/bin/slurp)" -f $file; wl-copy < $file
 
-  bind = $mainMod, i, exec, swaylock --screenshots --clock --indicator --indicator-radius 100 --indicator-thickness 7 --effect-blur 9x7 --effect-vignette 0.5:0.5 --ring-color ${colors.base00}ff --key-hl-color ${colors.base0C}ff --line-color 00000000 --inside-color 00000088 --separator-color ${colors.base02}ff --text-color ${colors.base05}ff --grace 1 --fade-in 0.2
+  bind = $mainMod Shift,c,exec, ${pkgs.hyprpicker}/bin/hyprpicker | head -c 7 | wl-copy
+
+  bind = $mainMod, i, exec, ${pkgs.swaylock-effects}/bin/swaylock --screenshots --clock --indicator --indicator-radius 100 --indicator-thickness 7 --effect-blur 9x7 --effect-vignette 0.5:0.5 --ring-color ${colors.base00}ff --key-hl-color ${colors.base0C}ff --line-color 00000000 --inside-color 00000088 --separator-color ${colors.base02}ff --text-color ${colors.base05}ff --grace 1 --fade-in 0.2
 
   bind = $mainMod, n, exec, fnottctl dismiss
-  bind = $mainMod, c, exec, clipman pick --tool=CUSTOM --tool-args="fuzzel -d"
-  bind = $mainMod, XKB_KEY_semicolon, exec, BEMOJI_PICKER_CMD='fuzzel --dmenu' bemoji -t
+  bind = $mainMod, c, exec, ${pkgs.clipman}/bin/clipman pick --tool=CUSTOM --tool-args="fuzzel -d"
+  bind = $mainMod, XKB_KEY_semicolon, exec, BEMOJI_PICKER_CMD='fuzzel --dmenu' ${pkgs.bemoji}/bin/bemoji -t
 
   bind = $mainMod,t, exec, ~/.config/sway/translate-en-to-de.sh
   bind = $mainMod Shift,t, exec, ~/.config/sway/translate-de-to-en.sh
   bind = $mainMod Ctrl Shift,t, exec, ~/.config/sway/synonym.sh
 
-  bind = $mainMod, p, exec, ~/.config/sway/bwmenu
 
   bind = $mainMod,o,exec, ~/.config/sway/swap-audio.sh
   bind = $mainMod Shift, v, exec, ~/.config/sway/looking-glass-client -F

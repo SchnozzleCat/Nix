@@ -39,10 +39,9 @@ in {
       fnott
       waybar
       wl-clipboard
-      clipman
       pavucontrol
       pyprland
-      swaylock-effects
+      corectrl
 
       # Web
       brave
@@ -58,9 +57,6 @@ in {
       # Utilities
       lm_sensors
       solaar
-      grim
-      slurp
-      swappy
       wtype
       ripgrep
       fzf
@@ -78,16 +74,19 @@ in {
       pistol
       imv
       taskwarrior-tui
+      ranger
 
       # Files
+      mpv
 
       # Games
       steam
       steam-run
       (lutris.override {
         extraPkgs = pkgs: [
-          wine
+          wineWowPackages.stable
           winetricks
+          gamescope
         ];
       })
 
@@ -120,6 +119,10 @@ in {
     };
   };
 
+  home.sessionVariables = {
+    OPENER = "rifle";
+  };
+
   programs.lf = {
     enable = true;
     settings = {
@@ -129,12 +132,56 @@ in {
       icons = true;
       ignorecase = true;
     };
+    previewer.source = pkgs.writeShellScript "scope.sh" ''
+      pistol "$1"
+    '';
     commands = with pkgs; {
       dragon-out = ''%${xdragon}/bin/xdragon -a -x "$fx"'';
+      rifle = ''            
+        ''${{rifle $f}}'';
+      copy-path = ''&{{echo -n $f | wl-copy}}'';
+      on-select = ''          
+        &{{
+          lf -remote "send $id set statfmt \"$(eza -ld --color=always "$f")\""
+        }}'';
+      fzf_jump = ''
+        ''${{
+            res="$(fzf --header='Jump to location')"
+            if [ -n "$res" ]; then
+                if [ -d "$res" ]; then
+                    cmd="cd"
+                else
+                    cmd="select"
+                fi
+                res="$(printf '%s' "$res" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+                lf -remote "send $id $cmd \"$res\""
+            fi
+        }}
+      '';
+      fzf_search = ''
+        ''${{
+            RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case "
+            res="$(
+                FZF_DEFAULT_COMMAND="$RG_PREFIX ''\'''\'" \
+                    fzf --bind "change:reload:$RG_PREFIX {q} || true" \
+                    --ansi --layout=reverse --header 'Search in files' \
+                    | cut -d':' -f1 | sed 's/\\/\\\\/g;s/"/\\"/g'
+            )"[ -n "$res" ] && lf -remote "send $id select \"$res\""
+        }}
+      '';
     };
     keybindings = {
-      "do" = "dragon-out";
-      "<enter>" = "open";
+      yd = "dragon-out";
+      yy = "copy";
+      yp = "copy-path";
+      y = "";
+      dd = "cut";
+      d = "";
+      dD = "delete";
+      pp = ": paste; clear";
+      S = "push :shell<enter>$SHELL<enter>";
+      p = "";
+      "<enter>" = "rifle";
     };
   };
 
@@ -277,6 +324,8 @@ in {
   programs.fish = {
     enable = true;
     interactiveShellInit = ''
+      export OPENER=rifle
+      export EDITOR=nvim
       set -g fish_greeting
       task list
     '';
@@ -300,6 +349,7 @@ in {
       zj = "zellij -l compact";
       tmux = "zellij -l compact";
       cd = "z";
+      ranger = "lf";
     };
   };
 }
