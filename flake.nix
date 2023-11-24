@@ -17,8 +17,8 @@
     hyprland.url = "github:hyprwm/Hyprland";
 
     nixvim = {
-        url = "github:nix-community/nixvim";
-        inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nix-colors.url = "github:misterio77/nix-colors";
@@ -68,20 +68,25 @@
     # Available through 'nixos-rebuild --flake .#your-hostname'
     nixosConfigurations = {
       ${desktop-hostname} = nixpkgs.lib.nixosSystem {
-        specialArgs = {inherit inputs outputs; hostname = desktop-hostname;};
+        specialArgs = {
+          inherit inputs outputs;
+          hostname = desktop-hostname;
+        };
         modules = [
           # > Our main nixos configuration file <
           ./nixos/configuration.nix
         ];
       };
       ${laptop-hostname} = nixpkgs.lib.nixosSystem {
-        specialArgs = {inherit inputs outputs; hostname = laptop-hostname;};
+        specialArgs = {
+          inherit inputs outputs;
+          hostname = laptop-hostname;
+        };
         modules = [
           # > Our main nixos configuration file <
           ./nixos/configuration.nix
         ];
       };
-
     };
 
     # Standalone home-manager configuration entrypoint
