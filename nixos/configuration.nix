@@ -27,7 +27,7 @@
   programs.gnupg.agent = {
     enable = true;
     enableSSHSupport = true;
-    pinentryFlavor = "curses";
+    pinentryFlavor = "gnome3";
   };
 
   # USB
@@ -79,8 +79,10 @@
     enableDefaultPackages = true;
     fontDir.enable = true;
     packages = with pkgs; [
-      (nerdfonts.override {fonts = ["JetBrainsMono" "SourceCodePro"];})
+      (nerdfonts.override {fonts = ["JetBrainsMono" "NerdFontsSymbolsOnly"];})
       font-awesome
+      noto-fonts
+      noto-fonts-emoji
     ];
     fontconfig.defaultFonts = {
       monospace = ["JetBrainsMono NerdFont"];
@@ -123,6 +125,7 @@
     brightnessctl
     hyprpaper
     yubikey-manager
+    pinentry-gnome
     (sddm-chili-theme.overrideAttrs (old: {
       src = builtins.fetchGit {
         url = "file:///home/linus/.nixos/repos/sddm-chili";
