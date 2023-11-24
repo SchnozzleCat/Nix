@@ -11,13 +11,22 @@
     extraPlugins = with pkgs.vimPlugins; [
       vim-move
       lazygit-nvim
+      ChatGPT-nvim
     ];
     extraConfigVim = ''
       autocmd BufWritePre * lua vim.lsp.buf.format()
       autocmd FileType nix setlocal commentstring=#\ %s
+      sign define DiagnosticSignError text= numhl=DiagnosticDefaultErro
+      sign define DiagnosticSignWarn text= numhl=DiagnosticDefaultWarn
+      sign define DiagnosticSignInfo text= numhl=DiagnosticDefaultInfo
+      sign define DiagnosticSignHint text= numhl=DiagnosticDefaultHint
     '';
     extraConfigLua = ''
       vim.opt.pumheight = 10
+
+      require("chatgpt").setup({
+        api_key_cmd = "gpg --decrypt ${../secrets/keys/openapi.gpg}"
+      })
     '';
     options = {
       number = true;
@@ -33,7 +42,13 @@
     globals = {
       mapleader = " ";
     };
-    colorschemes.catppuccin.enable = true;
+    colorschemes.rose-pine = {
+      enable = true;
+      transparentBackground = true;
+      transparentFloat = true;
+      style = "moon";
+      disableItalics = true;
+    };
     keymaps = [
       # Misc
       {
@@ -350,11 +365,11 @@
       trouble = {
         enable = true;
         signs = {
-          error = "";
-          warning = "";
+          error = "";
+          warning = " ";
           hint = "";
-          information = "";
-          other = "";
+          information = " ";
+          other = " ";
         };
       };
       undotree.enable = true;
@@ -364,6 +379,7 @@
         lightbulb.enable = false;
       };
       floaterm.enable = true;
+      nvim-colorizer.enable = true;
       flash.enable = true;
       which-key.enable = true;
       gitsigns.enable = true;
@@ -374,7 +390,7 @@
         layout = [
           {
             type = "padding";
-            val = 2;
+            val = 5;
           }
           {
             opts = {
@@ -383,12 +399,36 @@
             };
             type = "text";
             val = [
-              "  ███╗   ██╗██╗██╗  ██╗██╗   ██╗██╗███╗   ███╗  "
-              "  ████╗  ██║██║╚██╗██╔╝██║   ██║██║████╗ ████║  "
-              "  ██╔██╗ ██║██║ ╚███╔╝ ██║   ██║██║██╔████╔██║  "
-              "  ██║╚██╗██║██║ ██╔██╗ ╚██╗ ██╔╝██║██║╚██╔╝██║  "
-              "  ██║ ╚████║██║██╔╝ ██╗ ╚████╔╝ ██║██║ ╚═╝ ██║  "
-              "  ╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝  ╚═══╝  ╚═╝╚═╝     ╚═╝  "
+              ''؜   ___       ___       ___       ___       ___       ___       ___       ___       ___    ''
+              ''؜  /\  \     /\  \     /\__\     /\__\     /\  \     /\  \     /\  \     /\__\     /\  \   ''
+              ''؜ /::\  \   /::\  \   /:/__/_   /:| _|_   /::\  \   _\:\  \   _\:\  \   /:/  /    /::\  \  ''
+              ''؜/\:\:\__\ /:/\:\__\ /::\/\__\ /::|/\__\ /:/\:\__\ /::::\__\ /::::\__\ /:/__/    /::\:\__\ ''
+              ''؜\:\:\/__/ \:\ \/__/ \/\::/  / \/|::/  / \:\/:/  / \::;;/__/ \::;;/__/ \:\  \    \:\:\/  / ''
+              ''؜ \::/  /   \:\__\     /:/  /    |:/  /   \::/  /   \:\__\    \:\__\    \:\__\    \:\/  /  ''
+              ''؜  \/__/     \/__/     \/__/     \/__/     \/__/     \/__/     \/__/     \/__/     \/__/   ''
+              ''؜                                ___       ___       ___                                   ''
+              ''؜                               /\  \     /\  \     /\  \                                  ''
+              ''؜                              /::\  \   /::\  \    \:\  \                                 ''
+              ''؜                             /:/\:\__\ /::\:\__\   /::\__\                                ''
+              ''؜                             \:\ \/__/ \/\::/  /  /:/\/__/                                ''
+              ''؜                              \:\__\     /:/  /  / /  /                                   ''
+              ''؜                               \/__/     \/__/   \/__/                                    ''
+              ''؜                                                                                          ''
+              ''؜                                 _                                                        ''
+              ''؜                                 \`*-.                                                    ''
+              ''؜                                  )  _`-.                                                 ''
+              ''؜                                 .  : `. .                                                ''
+              ''؜                                 : _   '  \                                               ''
+              ''؜                                 ; *` _.   `*-._                                          ''
+              ''؜                                 `-.-'          `-.                                       ''
+              ''؜                                   ;       `       `.                                     ''
+              ''؜                                   :.       .        \                                    ''
+              ''؜                                   . \  .   :   .-'   .                                   ''
+              ''؜                                   '  `+.;  ;  '                                          ''
+              ''؜                                   :  '  |    ;       ;-.                                 ''
+              ''؜                                   ; '   : :`-:     _.`* ;                                ''
+              ''؜                          [bug] .*' /  .*' ; .*`- +'  `*'                                 ''
+              ''؜                                `*-*   `*-*  `*-*'                                        ''
             ];
           }
           {

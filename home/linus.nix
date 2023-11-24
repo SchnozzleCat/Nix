@@ -36,7 +36,6 @@ in {
     homeDirectory = "/home/linus";
     packages = with pkgs; [
       # OS
-      fnott
       waybar
       wl-clipboard
       pavucontrol
@@ -101,11 +100,22 @@ in {
       jellyfin-media-player
       texlive.combined.scheme-full
       jabref
+      openblas
+      (pkgs.ollama.override {
+        llama-cpp = pkgs.llama-cpp.override {
+          rocmSupport = true;
+          openblasSupport = false;
+        };
+      })
 
       # Shell Scripts
       (writeShellApplication {
         name = "power-menu";
         text = import ./scripts/power-menu.nix;
+      })
+      (writeShellApplication {
+        name = "record-screen";
+        text = import ./scripts/record-screen.nix {inherit pkgs;};
       })
     ];
   };
@@ -139,7 +149,7 @@ in {
     '';
     commands = with pkgs; {
       dragon-out = ''%${xdragon}/bin/xdragon -a -x "$fx"'';
-      rifle = ''        
+      rifle = ''              
         ''${{rifle $f}}'';
       copy-path = ''&{{echo -n $f | wl-copy}}'';
       mkdir = ''
@@ -156,7 +166,8 @@ in {
           touch $FILE
         }}
       '';
-      on-select = ''              
+      rename = ''%[ -e $1 ] && printf "file exists" || mv $f $1'';
+      on-select = ''            
         &{{
           lf -remote "send $id set statfmt \"$(eza -ld --color=always "$f")\""
         }}'';
@@ -200,6 +211,7 @@ in {
       t = "";
       tt = "mkfile";
       td = "mkdir";
+      a = "push :rename<space>";
       "<enter>" = "rifle";
     };
   };
@@ -236,7 +248,7 @@ in {
   programs.waybar = {
     enable = true;
     settings = import ./waybar-config.nix;
-    style = import ./waybar-style.nix {inherit config;};
+    style = import ./waybar-style.nix;
   };
 
   programs.gpg = {
@@ -259,7 +271,7 @@ in {
         color = "1A1826 D9E0EE";
       };
       colors = {
-        alpha = 0.70;
+        alpha = 0.8;
         foreground = colors.base05;
         background = colors.base00;
         regular0 = colors.base02;
@@ -308,8 +320,8 @@ in {
         layer = "overlay";
       };
       colors = {
-        background = "${colors.base00}ff";
-        selection = "${colors.base04}fa";
+        background = "${colors.base00}aa";
+        selection = "${colors.base01}aa";
         border = "${colors.base08}ff";
       };
       border = {
@@ -325,6 +337,24 @@ in {
   programs.starship = {
     enable = true;
     enableFishIntegration = true;
+  };
+
+  services.fnott = {
+    enable = true;
+    settings = {
+      main = {
+        background = "${colors.base00}ff";
+        icon-theme = "Tela-circle-dark";
+        selection-helper = "fuzzel --dmenu";
+        border-size = 1;
+        border-color = "${colors.base08}ff";
+        title-color = "${colors.base0A}ff";
+        body-color = "${colors.base05}ff";
+        body-font = "JetBrainsMono Nerd Font";
+        title-font = "JetBrainsMono Nerd Font";
+        output = "DP-1";
+      };
+    };
   };
 
   programs.zathura = {

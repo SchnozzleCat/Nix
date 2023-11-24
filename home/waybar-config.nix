@@ -6,34 +6,31 @@
     name = "top";
     layer = "top";
     position = "top";
-    modules-right = ["custom/notification" "sway/mode" "custom/spotify" "clock" "tray" "pulseaudio" "backlight" "battery"];
+    modules-right = ["clock" "pulseaudio" "backlight" "battery" "tray"];
     modules-center = ["hyprland/workspaces"];
-    "modules-left" = ["disk" "memory" "cpu" "temperature" "custom/gpu-temperature" "custom/containers" "custom/vm" "custom/vpn"];
+    modules-left = ["disk" "memory" "cpu" "temperature" "custom/gpu-temperature" "custom/containers" "custom/vm" "custom/vpn" "sway/scratchpad"];
     "hyprland/workspaces" = {
     };
 
     "clock" = {
       format = "{:%a %d %b %H:%M}";
       tooltip = true;
-      on-click = "swaync-client -t -sw";
     };
+
     "clock#utc" = {
       format = "{=%H=%M UTC}";
       timezone = "Etc/UTC";
-      on-click = "swaync-client -t -sw";
     };
-    "sway/mode" = {
-      format = "";
-    };
+
     "temperature" = {
-      thermal-zone = 2;
+      thermal-zone = 0;
       format = "󱃃 {temperatureC}°C";
     };
 
     "custom/gpu-temperature" = {
       format = "{}";
       interval = 10;
-      exec = "sensors amdgpu-pci-0300 | grep junction | awk '{print $2}'";
+      exec = "sensors amdgpu-pci-0300 | grep junction | awk '{print substr($2,2)}' | sed 's/\\\.0//g' | sed 's/^/󰎓 /'";
     };
     "battery" = {
       format = "{icon} {capacity}%";
@@ -48,38 +45,6 @@
         critical = 20;
       };
     };
-    "custom/spotify" = {
-      format = "{}";
-      escape = true;
-      return-type = "json";
-      max-length = 100;
-      interval = 10;
-      on-click = "playerctl -p spotify play-pause";
-      on-click-right = "killall spotify";
-      smooth-scrolling-threshold = 5;
-      on-scroll-up = "playerctl -p spotify next";
-      on-scroll-down = "playerctl -p spotify previous";
-      exec = "$HOME/.config/waybar/custom/spotify.sh";
-      exec-if = "pgrep spotify";
-    };
-    "network" = {
-      format = "{icon}";
-      format-icons = {
-        wifi = ["﬉"];
-        ethernet = [""];
-        disconnected = [""];
-      };
-      format-alt-click = "click-right";
-      format-wifi = "﬉";
-      format-ethernet = "";
-      format-disconnected = "睊";
-      tooltip-format = "{ifname} via {gwaddr}";
-      tooltip-format-wifi = "    {essid} ﬉\n{ipaddr} {signalStrength}%";
-      tooltip-format-ethernet = "{ifname} {ipaddr} ";
-      tooltip-format-disconnected = "Disconnected";
-      on-click = "gnome-control-center network";
-      tooltip = true;
-    };
     "backlight" = {
       device = "intel_backlight";
       format = "{icon}";
@@ -93,6 +58,7 @@
       };
       smooth-scrolling-threshold = 1.0;
     };
+
     "pulseaudio" = {
       format = "{icon}";
       format-alt-click = "click-right";
@@ -113,7 +79,7 @@
     };
     "cpu" = {
       interval = 10;
-      format = " {usage}%";
+      format = "  {usage}%";
       format-alt-click = "click-right";
       states = {
         low = 0;
@@ -123,8 +89,8 @@
     };
     "memory" = {
       interval = 30;
-      format = " {used:0.1f}G/{total:0.1f}G";
-      tooltip-format = "{used:0.1f}G used\n{avail:0.1f}G available\n{total:0.1f}G total";
+      format = "  {used:0.1f}G  {total:0.1f}G";
+      tooltip-format = ''{used:0.1f}G used\n{avail:0.1f}G available\n{total:0.1f}G total'';
       format-alt-click = "click-right";
       states = {
         low = 0;
@@ -134,7 +100,7 @@
     };
     "disk" = {
       interval = 30;
-      format = "󰨣 {used}/{free}";
+      format = "󱛟 {used}  {free}";
       format-alt-click = "click-right";
       tooltip-format = "{used} used\n{free} free\n{total} total";
       path = "/";
@@ -163,13 +129,6 @@
       return-type = "json";
       exec = "~/.config/waybar/custom/containers-monitor.sh";
     };
-    "custom/bluelightfilter" = {
-      format = "";
-      interval = 10;
-      return-type = "json";
-      on-click = "~/.config/waybar/custom/bluelightfilter-toggle.sh";
-      signal = 8;
-    };
     "idle_inhibitor" = {
       format = "{icon}";
       format-icons = {
@@ -196,38 +155,6 @@
     "tray" = {
       icon-size = 12;
       spacing = 10;
-    };
-    "custom/spotify-metadata" = {
-      format = "{}  ";
-      max-length = 60;
-      interval = 30;
-      return-type = "json";
-      exec = "~/.config/waybar/custom/spotify/metadata.sh";
-      on-click = "~/.config/waybar/custom/spotify/controls.sh";
-      on-scroll-up = "~/.config/waybar/custom/spotify/controls.sh next";
-      on-scroll-down = "~/.config/waybar/custom/spotify/controls.sh previous";
-      signal = 5;
-      smooth-scrolling-threshold = 1.0;
-    };
-    "wlr/taskbar" = {
-      format = "{icon}";
-      sort-by-app-id = true;
-      icon-size = 13;
-      icon-theme = "Numix-Circle";
-      tooltip-format = "{title}";
-      on-click = "activate";
-      on-click-right = "close";
-      markup = true;
-      ignore-list = [
-        "kitty"
-      ];
-    };
-    "sway/scratchpad" = {
-      format = "{icon}";
-      show-empty = false;
-      format-icons = ["" ""];
-      tooltip = true;
-      tooltip-format = "{app}= {title}";
     };
   };
 }

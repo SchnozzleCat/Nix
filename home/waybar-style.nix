@@ -1,109 +1,58 @@
-{config}: let
-  colors = config.colorScheme.colors;
-in ''
+''
+  @define-color text     #ecc78e;
+
   * {
     border: none;
-    border-radius: 10px;
-    font-family: "SauceCodePro Nerd Font";
+    border-radius: 0px;
+    font-family: "JetBrainsMono Nerd Font";
     font-size: 15px;
-    min-height: 10px;
+    background: none;
   }
 
-  window#waybar {
-    background: transparent;
-  }
-
-  window#waybar.hidden {
-    opacity: 0.2;
-  }
-
-  #window {
-    margin-top: 6px;
-    padding-left: 10px;
-    padding-right: 10px;
-    border-radius: 10px;
-    transition: none;
-    color: transparent;
-    background: transparent;
-  }
-  #tags {
-    margin-top: 6px;
-    margin-left: 12px;
-    font-size: 4px;
-    margin-bottom: 0px;
-    border-radius: 10px;
-    min-width: 0;
-    background: #0e1218;
-    transition: none;
-  }
-
-  #tags button {
-    min-width: 50px;
-    transition: none;
-    color: #dfd2c4;
-    background: transparent;
-    font-size: 16px;
-    border-radius: 2px;
-  }
-
-  #tags button.occupied {
-    transition: none;
-    color: #c5663d;
-    background: transparent;
-    font-size: 4px;
-  }
-
-  #tags button.focused {
-    color: #cc8a5e;
-    border-top: 2px solid #cc8a5e;
-    border-bottom: 2px solid #cc8a5e;
-  }
-
-  #tags button:hover {
-    transition: none;
-    box-shadow: inherit;
-    text-shadow: inherit;
-    color: #${colors.base05};
-    border-color: #${colors.base05};
-    color: #${colors.base05};
-  }
-
-  #tags button.focused:hover {
-    color: #${colors.base05};
-  }
-
-  #tags button.urgent {
-    border-top: 2px solid #fb4934;
-    border-bottom: 2px solid #fb4934;
+  #waybar {
+    border-radius: 0px;
+    background: none;
   }
 
   #workspaces button {
     padding: 0 0 0 0;
-    margin: 4px 3px 2px 3px;
-    background-color: @surface0;
-    color: #${colors.base05};
+    margin: 6px 4px 4px 4px;
+    background-color: transparent;
+    border-radius: 0px;
+    border-top: 2px solid transparent;
+    border-bottom: 2px solid transparent;
+    color: @text;
     min-width: 36px;
+    background: rgba(0, 0, 0, 0.3);
   }
 
   #workspaces button.active {
     padding: 0 0 0 0;
-    margin: 4px 3px 2px 3px;
-    background-color: #8e9ebe;
-    color: #0e1218;
+    margin: 6px 4px 4px 4px;
+    border-top: 2px solid #b84b4d;
+    border-bottom: 2px solid #b84b4d;
+    border-radius: 0px;
     min-width: 36px;
+    background: rgba(0, 0, 0, 0.7);
   }
 
   #workspaces button:hover {
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.3);
   }
 
   #workspaces button.focused {
     background-color: @mauve;
-    color: #${colors.base00};
+    color: @base;
   }
 
   #workspaces button.urgent {
-    background-color: #e64553;
+    padding: 0 0 0 0;
+    margin: 6px 4px 4px 4px;
+    border-top: 2px solid #e64553;
+    border-bottom: 2px solid #e64553;
+    border-radius: 0px;
+    min-width: 36px;
+    background: rgba(0, 0, 0, 0.7);
   }
 
   #window,
@@ -119,322 +68,47 @@ in ''
     margin-right: 0;
   }
 
-  #network {
-    margin-top: 6px;
-    margin-left: 8px;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-bottom: 0px;
-    border-radius: 10px;
+  #network,
+  #pulseaudio,
+  #battery,
+  #battery,
+  #backlight,
+  #clock,
+  #memory,
+  #cpu,
+  #custom-vpn,
+  #disk,
+  #custom-containers,
+  #custom-vm,
+  #temperature,
+  #tray,
+  #custom-gpu-temperature {
     transition: none;
-    color: #${colors.base05};
-    background: #c5663d;
+    color: @text;
+    margin: 6px 16px 4px 16px;
+    padding: 1px 15px 1px 15px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
   }
 
-  #pulseaudio {
-    margin-top: 6px;
-    margin-left: 8px;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-bottom: 0px;
-    border-radius: 10px;
-    transition: none;
-    color: #${colors.base00};
-    background: #${colors.base0A};
+  #tray menu {
+    background: rgba(0.3, 0.3, 0.3, 0.7);
+    border-radius: 15px;
   }
 
-  #battery {
-    margin-top: 6px;
-    margin-left: 8px;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-bottom: 0px;
-    border-radius: 10px;
-    transition: none;
-    color: #${colors.base05};
-    background: #9f9c9d;
-  }
-
-  #battery.charging,
-  #battery.plugged {
-    color: #${colors.base05};
-    background-color: #9f9c9d;
+  .active {
+    padding: 14px;
+    margin: 14px;
   }
 
   #battery.critical:not(.charging) {
     background-color: #9f9c9d;
-    color: #${colors.base05};
+    color: @text;
     animation-name: blink;
     animation-duration: 0.5s;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
     animation-direction: alternate;
-  }
-
-  @keyframes blink {
-    to {
-      background-color: #bf616a;
-      color: #9f9c9d;
-    }
-  }
-
-  #backlight {
-    margin-top: 6px;
-    margin-left: 8px;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-bottom: 0px;
-    border-radius: 10px;
-    transition: none;
-    color: #${colors.base05};
-    background: #d3a46e;
-  }
-  #clock {
-    margin-top: 6px;
-    margin-left: 8px;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-bottom: 0px;
-    border-radius: 10px;
-    transition: none;
-    color: #${colors.base00};
-    background: #${colors.base07};
-    /*background: #1A1826;*/
-  }
-
-  #custom-notification {
-    margin-top: 6px;
-    margin-left: 8px;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-bottom: 0px;
-    border-radius: 10px;
-    transition: none;
-    color: #${colors.base00};
-    background: #${colors.base07};
-    /*background: #1A1826;*/
-  }
-
-  #memory {
-    margin-top: 6px;
-    margin-left: 8px;
-    padding-left: 10px;
-    margin-bottom: 0px;
-    padding-right: 10px;
-    border-radius: 10px;
-    transition: none;
-    color: #${colors.base00};
-    background: #${colors.base0A};
-  }
-  #scratchpad {
-    margin-top: 6px;
-    margin-left: 8px;
-    padding-left: 10px;
-    margin-bottom: 0px;
-    padding-right: 10px;
-    border-radius: 10px;
-    transition: none;
-    color: #${colors.base00};
-    background: #${colors.base0A};
-  }
-  #cpu {
-    margin-top: 6px;
-    margin-left: 8px;
-    padding-left: 10px;
-    margin-bottom: 0px;
-    padding-right: 10px;
-    border-radius: 10px;
-    transition: none;
-    color: #${colors.base00};
-    background: #${colors.base0F};
-  }
-
-  #custom-spotify {
-    margin-top: 6px;
-    margin-left: 8px;
-    padding-left: 10px;
-    margin-bottom: 0px;
-    padding-right: 10px;
-    border-radius: 10px;
-    transition: none;
-    color: #${colors.base00};
-    background: #${colors.base0F};
-  }
-
-  #custom-vpn {
-    margin-top: 6px;
-    margin-left: 8px;
-    padding-left: 10px;
-    margin-bottom: 0px;
-    padding-right: 10px;
-    border-radius: 10px;
-    transition: none;
-    color: #${colors.base00};
-    background: #${colors.base0F};
-  }
-  #idle_inhibitor {
-    margin-top: 6px;
-    margin-left: 8px;
-    padding-left: 10px;
-    margin-bottom: 0px;
-    padding-right: 10px;
-    border-radius: 10px;
-    transition: none;
-    color: #${colors.base00};
-    background: #${colors.base0C};
-  }
-
-  #disk {
-    margin-top: 6px;
-    margin-left: 8px;
-    padding-left: 10px;
-    margin-bottom: 0px;
-    padding-right: 10px;
-    border-radius: 10px;
-    transition: none;
-    color: #${colors.base00};
-    background: #${colors.base0C};
-  }
-
-  #custom-containers {
-    margin-top: 6px;
-    margin-left: 8px;
-    padding-left: 10px;
-    margin-bottom: 0px;
-    padding-right: 10px;
-    border-radius: 10px;
-    transition: none;
-    color: #${colors.base00};
-    background: #${colors.base0C};
-  }
-  #custom-vm {
-    margin-top: 6px;
-    margin-left: 8px;
-    padding-left: 10px;
-    margin-bottom: 0px;
-    padding-right: 10px;
-    border-radius: 10px;
-    transition: none;
-    color: #${colors.base00};
-    background: #${colors.base0C};
-  }
-  #temperature {
-    margin-top: 6px;
-    margin-left: 8px;
-    padding-left: 10px;
-    margin-bottom: 0px;
-    padding-right: 10px;
-    border-radius: 10px;
-    transition: none;
-    color: #${colors.base00};
-    background: #${colors.base0D};
-  }
-  #custom-gpu-temperature {
-    margin-top: 6px;
-    margin-left: 8px;
-    padding-left: 10px;
-    margin-bottom: 0px;
-    padding-right: 10px;
-    border-radius: 10px;
-    transition: none;
-    color: #${colors.base00};
-    background: @lavender;
-  }
-
-  #custom-bluelightfilter {
-    margin-top: 6px;
-    margin-left: 8px;
-    padding-left: 10px;
-    margin-bottom: 0px;
-    padding-right: 10px;
-    border-radius: 10px;
-    transition: none;
-    color: #${colors.base00};
-    background: @green;
-  }
-  #tray {
-    margin-top: 6px;
-    margin-left: 8px;
-    padding-left: 10px;
-    margin-bottom: 0px;
-    padding-right: 10px;
-    border-radius: 10px;
-    transition: none;
-    color: #${colors.base00};
-    background: @overlay0;
-  }
-
-  #custom-launcher {
-    font-size: 24px;
-    margin-top: 6px;
-    margin-left: 8px;
-    padding-left: 10px;
-    padding-right: 5px;
-    border-radius: 10px;
-    transition: none;
-    color: #cc8a5e;
-    background: #202937;
-  }
-
-  #custom-power {
-    font-size: 20px;
-    margin-top: 6px;
-    margin-left: 8px;
-    margin-right: 8px;
-    padding-left: 10px;
-    /* padding-right: 5px; */
-    padding-right: 10px;
-    margin-bottom: 0px;
-    border-radius: 10px;
-    transition: none;
-    color: #cc8a5e;
-    background: #202937;
-  }
-
-  #custom-wallpaper {
-    margin-top: 6px;
-    margin-left: 8px;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-bottom: 0px;
-    border-radius: 10px;
-    transition: none;
-    color: #${colors.base05};
-    background: #c9cbff;
-  }
-
-  #custom-updates {
-    margin-top: 6px;
-    margin-left: 8px;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-bottom: 0px;
-    border-radius: 10px;
-    transition: none;
-    color: #${colors.base05};
-    background: #e8a2af;
-  }
-
-  #custom-media {
-    margin-top: 6px;
-    margin-left: 8px;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-bottom: 0px;
-    border-radius: 10px;
-    transition: none;
-    color: #${colors.base05};
-    background: #7a7e86;
-  }
-  #custom-mpc {
-    margin-top: 6px;
-    margin-left: 8px;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-bottom: 0px;
-    border-radius: 10px;
-    transition: none;
-    color: #${colors.base05};
-    background: #926d54;
+    margin: 6px 4px 4px 4px;
   }
 ''

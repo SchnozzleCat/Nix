@@ -11,7 +11,6 @@ in ''
 
   exec-once = waybar
   exec-once = pypr
-  exec-once = fnott
   exec-once = hyprctrl dispatch layoutmsg "preselect r"
   exec-once = wl-paste -t text --watch clipman store --max-items 1024
   exec-once = /home/linus/Downloads/MoonDeckBuddy-1.5.7-x86_64.AppImage
@@ -83,7 +82,7 @@ in ''
       gaps_in = 4
       gaps_out = 5
       border_size = 1
-      col.active_border = rgba(33ccffee) rgba(00ff99ee) 45deg
+      col.active_border = rgba(ff00d0ee) rgba(00ff99ee) 45deg
       col.inactive_border = rgba(595959aa)
 
       layout = dwindle
@@ -96,17 +95,22 @@ in ''
 
       blur {
           enabled = true
-          size = 5
-          passes = 2
+          size = 7
+          passes = 3
           special = true
           xray = true
       }
 
+      rounding = 5
       drop_shadow = yes
       shadow_range = 4
       shadow_render_power = 3
       col.shadow = rgba(1a1a1aee)
   }
+
+  # layerrule = blur, waybar
+  layerrule = blur, launcher
+  layerrule = xray, launcher
 
   animations {
       enabled = yes
@@ -228,8 +232,7 @@ in ''
 
   bind = $mainMod, p, exec, ${pkgs.slurp}/bin/slurp | ${pkgs.grim}/bin/grim -g - - | wl-copy && wl-paste > ~/Screenshots/$(date +'%Y-%m-%d-%H%M%S_grim.png')
   bind = $mainMod Shift, p, exec, ${pkgs.slurp}/bin/slurp | ${pkgs.grim}/bin/grim -g - - | ${pkgs.swappy}/bin/swappy -f - -o - | wl-copy && wl-paste > ~/Screenshots/$(date +'%Y-%m-%d-%H%M%S_grim_annotated.png')
-  bind = $mainMod Shift Ctrl, p, exec, pkill -SIGINT wf-recorder
-  bind = $mainMod Shift Ctrl, p, exec, file=~/Videos/$(date +'%Y-%m-%d-%H%M%S_grim_annotated.mp4'); ${pkgs.wf-recorder}/bin/wf-recorder -g "$(${pkgs.slurp}/bin/slurp)" -f $file; wl-copy < $file
+  bind = $mainMod Shift Ctrl, p, exec, record-screen
 
   bind = $mainMod Shift,c,exec, ${pkgs.hyprpicker}/bin/hyprpicker | head -c 7 | wl-copy
 
