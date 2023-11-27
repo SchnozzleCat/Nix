@@ -20,6 +20,7 @@
       sign define DiagnosticSignWarn text= numhl=DiagnosticDefaultWarn
       sign define DiagnosticSignInfo text= numhl=DiagnosticDefaultInfo
       sign define DiagnosticSignHint text= numhl=DiagnosticDefaultHint
+      highlight NotifyBackground guibg=#000000
     '';
     extraConfigLua = ''
       vim.opt.pumheight = 10
@@ -96,6 +97,47 @@
         mode = "n";
         key = "<c-l>";
         action = "<c-w>l";
+      }
+      # Floaterm
+      {
+        mode = "n";
+        key = "<a-i>";
+        action = "<cmd> FloatermToggle <cr>";
+      }
+      {
+        mode = "t";
+        key = "<a-i>";
+        action = "<c-\\><c-n><cmd> FloatermToggle <cr>";
+      }
+      {
+        mode = "t";
+        key = "<C-x>";
+        action = "<c-\\><c-n>";
+      }
+      {
+        mode = "t";
+        key = "<a-]>";
+        action = "<cmd> FloatermNext <cr>";
+      }
+      {
+        mode = "t";
+        key = "<a-[>";
+        action = "<cmd> FloatermPrev <cr>";
+      }
+      {
+        mode = "t";
+        key = "<a-d>";
+        action = "<cmd> FloatermKill <cr>";
+      }
+      {
+        mode = "t";
+        key = "<a-n>";
+        action = "<cmd> FloatermNew <cr>";
+      }
+      {
+        mode = "n";
+        key = "<c-n>";
+        action = "<cmd> FloatermNew --height=0.8 --width=0.8 --wintype=float --name=Files lf <cr>";
       }
       # LSP
       {
@@ -379,6 +421,7 @@
         lightbulb.enable = false;
       };
       floaterm.enable = true;
+      notify.enable = true;
       nvim-colorizer.enable = true;
       flash.enable = true;
       which-key.enable = true;
