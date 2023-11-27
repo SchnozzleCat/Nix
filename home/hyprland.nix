@@ -110,7 +110,7 @@ in ''
 
   # layerrule = blur, waybar
   layerrule = blur, launcher
-  layerrule = xray, launcher
+  layerrule = xray on, launcher
 
   animations {
       enabled = yes
