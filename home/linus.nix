@@ -40,7 +40,6 @@ in {
       wl-clipboard
       pavucontrol
       pyprland
-      corectrl
 
       # Web
       brave
@@ -74,9 +73,9 @@ in {
       imv
       taskwarrior-tui
       ranger
+      shell_gpt
 
       # Files
-      mpv
 
       # Games
       steam
@@ -100,7 +99,6 @@ in {
       jellyfin-media-player
       texlive.combined.scheme-full
       jabref
-      openblas
       (pkgs.ollama.override {
         llama-cpp = pkgs.llama-cpp.override {
           rocmSupport = true;
@@ -118,6 +116,13 @@ in {
         text = import ./scripts/record-screen.nix {inherit pkgs;};
       })
     ];
+  };
+
+  programs.mpv = {
+    enable = true;
+    config = {
+      audio-device = "pulse";
+    };
   };
 
   programs.direnv = {
@@ -149,9 +154,9 @@ in {
     '';
     commands = with pkgs; {
       dragon-out = ''%${xdragon}/bin/xdragon -a -x "$fx"'';
-      rifle = ''              
-        ''${{rifle $f}}'';
-      copy-path = ''&{{echo -n $f | wl-copy}}'';
+      open = ''        
+        ''${{rifle "$f"}}'';
+      copy-path = ''&{{echo -n "$f" | wl-copy}}'';
       mkdir = ''
         %{{
           printf "Directory Name > "
@@ -166,14 +171,20 @@ in {
           touch $FILE
         }}
       '';
-      rename = ''%[ -e $1 ] && printf "file exists" || mv $f $1'';
-      on-select = ''            
+      rename = ''%[ -e $1 ] && printf "file exists" || mv "$f" "$1"'';
+      on-select = ''              
         &{{
           lf -remote "send $id set statfmt \"$(eza -ld --color=always "$f")\""
         }}'';
-      fzf_jump = ''
+      on-cd = ''              
+        &{{
+          export STARSHIP_SHELL=
+          fmt="$(starship prompt)"
+          lf -remote "send $id set promptfmt \"$fmt\""
+        }}'';
+      fzf_find = ''
         ''${{
-            res="$(fzf --header='Jump to location')"
+            res="$(rg --files | fzf --header='Jump to location')"
             if [ -n "$res" ]; then
                 if [ -d "$res" ]; then
                     cmd="cd"
@@ -185,15 +196,18 @@ in {
             fi
         }}
       '';
-      fzf_search = ''
+      fzf_exact = ''
         ''${{
-            RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case "
-            res="$(
-                FZF_DEFAULT_COMMAND="$RG_PREFIX ''\'''\'" \
-                    fzf --bind "change:reload:$RG_PREFIX {q} || true" \
-                    --ansi --layout=reverse --header 'Search in files' \
-                    | cut -d':' -f1 | sed 's/\\/\\\\/g;s/"/\\"/g'
-            )"[ -n "$res" ] && lf -remote "send $id select \"$res\""
+            res="$(rg --files | fzf --exact --header='Jump to location')"
+            if [ -n "$res" ]; then
+                if [ -d "$res" ]; then
+                    cmd="cd"
+                else
+                    cmd="select"
+                fi
+                res="$(printf '%s' "$res" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+                lf -remote "send $id $cmd \"$res\""
+            fi
         }}
       '';
     };
@@ -212,7 +226,9 @@ in {
       tt = "mkfile";
       td = "mkdir";
       a = "push :rename<space>";
-      "<enter>" = "rifle";
+      "<c-f>" = "fzf_find";
+      "<c-e>" = "fzf_exact";
+      "<enter>" = "open";
     };
   };
 
@@ -230,6 +246,7 @@ in {
   };
 
   home.file.".config/lf/icons".source = ./lf-icons.nix;
+  home.file.".config/ranger/rifle".source = ./rifle.nix;
   home.file.".config/hypr/pyprland.toml".text = ''
     [pyprland]
     plugins = ["scratchpads", "expose", "magnify"]
@@ -381,9 +398,13 @@ in {
     interactiveShellInit = ''
       export OPENER=rifle
       export EDITOR=nvim
+      export OPENAI_API_KEY_DIR=${../secrets/keys/openapi.gpg}
       set -g fish_greeting
       task list
     '';
+    shellAliases = {
+      gpt = "DEFAULT_MODEL=gpt-4-1106-preview OPENAI_API_KEY=$(gpg -q --decrypt $OPENAI_API_KEY_DIR) sgpt";
+    };
     shellAbbrs = {
       rebuild-os = "sudo nixos-rebuild switch --flake ~/.nixos/";
       rebuild-home = "home-manager switch --flake ~/.nixos/";

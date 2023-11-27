@@ -28,4 +28,11 @@
   hardware.opengl.driSupport32Bit = true;
 
   boot.initrd.kernelModules = ["amdgpu"];
+
+  programs.corectrl = {
+    enable = true;
+    gpuOverclock = {
+      enable = true;
+    };
+  };
 }
