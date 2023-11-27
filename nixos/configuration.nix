@@ -126,6 +126,7 @@
     hyprpaper
     yubikey-manager
     pinentry-gnome
+    sshfs
     (sddm-chili-theme.overrideAttrs (old: {
       src = builtins.fetchGit {
         url = "file:///home/linus/.nixos/repos/sddm-chili";
