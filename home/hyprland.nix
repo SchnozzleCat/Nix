@@ -247,7 +247,6 @@ in ''
   bind = $mainMod Ctrl Shift,t, exec, ~/.config/sway/synonym.sh
 
 
-  bind = $mainMod,o,exec, ~/.config/sway/swap-audio.sh
   bind = $mainMod Shift, v, exec, ~/.config/sway/looking-glass-client -F
   bind = $mainMod Ctrl Shift,v, exec, ~/.config/sway/toggle-vm.sh
 

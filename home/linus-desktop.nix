@@ -34,6 +34,21 @@
     };
   };
 
+  home.packages = with pkgs; [
+    (writeShellApplication {
+      name = "swap-audio";
+      text = ''
+        #!/bin/bash
+        sink=$(${pkgs.pulseaudio}/bin/pactl get-default-sink)
+        if [[ $sink == "alsa_output.pci-0000_00_1f.3.analog-stereo" ]]; then
+          ${pkgs.pulseaudio}/bin/pactl set-default-sink alsa_output.usb-C-Media_Electronics_Inc._USB_Multimedia_Audio_Device-00.analog-stereo
+        else
+          ${pkgs.pulseaudio}/bin/pactl set-default-sink alsa_output.pci-0000_00_1f.3.analog-stereo
+        fi
+      '';
+    })
+  ];
+
   wayland.windowManager.hyprland.extraConfig =
     (import ./hyprland.nix {inherit config pkgs;})
     + ''
@@ -51,6 +66,7 @@
       bind = $mainMod, 1, exec, hyprctl hyprpaper wallpaper "DP-1,${../secrets/wallpapers/flowers1.png}"
       bind = $mainMod, 2, exec, hyprctl hyprpaper wallpaper "DP-1,${../secrets/wallpapers/flowers5.png}"
       bind = $mainMod, 3, exec, hyprctl hyprpaper wallpaper "DP-1,${../secrets/wallpapers/flowers6.png}"
+      bind = $mainMod,o,exec, swap-audio
     '';
 
   home.file.".config/hypr/hyprpaper.conf".text =
