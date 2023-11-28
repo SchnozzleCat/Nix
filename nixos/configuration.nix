@@ -12,7 +12,7 @@
   # Boot
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  # boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # Networking
   networking.hostName = hostname;
@@ -91,7 +91,9 @@
     };
   };
 
-  security.polkit.enable = true;
+  security.polkit = {
+    enable = true;
+  };
 
   systemd = {
     user.services.polkit-gnome-authentication-agent-1 = {
@@ -117,7 +119,7 @@
         # TODO: Add your SSH public key(s) here, if you plan on using SSH to connect
       ];
       # TODO: Be sure to add any other groups you need (such as networkmanager, audio, docker, etc)
-      extraGroups = ["wheel" "networkmanager" "audio" "docker"];
+      extraGroups = ["wheel" "networkmanager" "audio" "docker" "corectrl"];
     };
   };
 
