@@ -12,6 +12,7 @@
       vim-move
       lazygit-nvim
       ChatGPT-nvim
+      ltex_extra-nvim
     ];
     extraConfigVim = ''
       autocmd BufWritePre * lua vim.lsp.buf.format()
@@ -520,7 +521,25 @@
       lsp = {
         enable = true;
         servers = {
-          ltex.enable = true;
+          ltex = {
+            enable = true;
+            onAttach = {
+              function = ''
+                require("ltex_extra").setup {
+                  load_langs = { "en-US" },
+                  path = "ltex",
+                  init_check = true,
+                }
+              '';
+            };
+            settings = {
+              language = "en-US";
+              dictionary = {
+                "en-US" = ["Neovim" "ltex-ls"];
+              };
+              checkFrequency = "save";
+            };
+          };
           digestif.enable = true;
           nil_ls.enable = true;
           omnisharp.enable = true;
