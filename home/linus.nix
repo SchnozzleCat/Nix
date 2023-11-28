@@ -155,7 +155,7 @@ in {
     '';
     commands = with pkgs; {
       dragon-out = ''%${xdragon}/bin/xdragon -a -x "$fx"'';
-      open = ''          
+      open = ''        
         ''${{rifle "$f"}}'';
       copy-path = ''&{{echo -n "$f" | wl-copy}}'';
       mkdir = ''
@@ -173,11 +173,11 @@ in {
         }}
       '';
       rename = ''%[ -e $1 ] && printf "file exists" || mv "$f" "$1"'';
-      on-select = ''        
+      on-select = ''              
         &{{
           lf -remote "send $id set statfmt \"$(eza -ld --color=always "$f")\""
         }}'';
-      on-cd = ''        
+      on-cd = ''              
         &{{
           export STARSHIP_SHELL=
           fmt="$(starship prompt)"
@@ -407,19 +407,18 @@ in {
       gpt = "DEFAULT_MODEL=gpt-4-1106-preview OPENAI_API_KEY=$(gpg -q --decrypt $OPENAI_API_KEY_DIR) sgpt";
     };
     shellAbbrs = {
-      rebuild-os = "sudo nixos-rebuild switch --flake ~/.nixos/";
-      rebuild-home = "home-manager switch --flake ~/.nixos/";
+      os-rebuild = "sudo nixos-rebuild switch --flake ~/.nixos/";
+      home-rebuild = "home-manager switch --flake ~/.nixos/";
       ls = "eza -la";
       cat = "bat";
-      which-gpu = ''glxinfo| grep -E "OpenGL vendor|OpenGL renderer"'';
-      cleargit = "~/Applications/cleargitcredentials.sh";
-      docker-stop-containers = "docker stop $(docker ps -a -q)";
+      # which-gpu = ''glxinfo| grep -E "OpenGL vendor|OpenGL renderer"'';
+      # docker-stop-containers = "docker stop $(docker ps -a -q)";
       pi = "ssh pi@192.168.200.41 -p 6969";
-      alert = "paplay /usr/share/sounds/freedesktop/stereo/complete.oga";
-      boot-win11 = ''sudo grub2-reboot "Windows Boot Manager (on /dev/nvme1n1p1)" && reboot'';
-      nvim-unity = "nvim --listen /tmp/nvimunity";
-      enable-displays = ''swaymsg output "DP-2" enable && swaymsg output "DP-3" enable && swaymsg output "HDMI-A-1" enable'';
-      disable-displays = ''swaymsg output "DP-2" disable && swaymsg output "DP-3" disable && swaymsg output "HDMI-A-1" disable'';
+      # alert = "paplay /usr/share/sounds/freedesktop/stereo/complete.oga";
+      # boot-win11 = ''sudo grub2-reboot "Windows Boot Manager (on /dev/nvme1n1p1)" && reboot'';
+      # nvim-unity = "nvim --listen /tmp/nvimunity";
+      # enable-displays = ''swaymsg output "DP-2" enable && swaymsg output "DP-3" enable && swaymsg output "HDMI-A-1" enable'';
+      # disable-displays = ''swaymsg output "DP-2" disable && swaymsg output "DP-3" disable && swaymsg output "HDMI-A-1" disable'';
       rm = "rm -I";
       mv = "mv -i";
       untar = "tar -xvf";
