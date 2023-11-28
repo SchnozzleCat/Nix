@@ -10,6 +10,9 @@ in ''
   exec-once = hyprpaper
 
   exec-once = waybar
+  exec-once = whatsapp-for-linux
+  exec-once = solaar --window=hide
+  exec-once = xwaylandvideobridge
   exec-once = pypr
   exec-once = hyprctrl dispatch layoutmsg "preselect r"
   exec-once = wl-paste -t text --watch clipman store --max-items 1024
@@ -40,6 +43,11 @@ in ''
   windowrulev2=size 40% 90%,class:^(pavucontrol)$
   windowrulev2=workspace special:scratch_volume silent,class:^(pavucontrol)$
   windowrulev2=move 200% 5%,class:^(pavucontrol)$
+
+  windowrulev2 = opacity 0.0 override 0.0 override,class:^(xwaylandvideobridge)$
+  windowrulev2 = noanim,class:^(xwaylandvideobridge)$
+  windowrulev2 = nofocus,class:^(xwaylandvideobridge)$
+  windowrulev2 = noinitialfocus,class:^(xwaylandvideobridge)$
 
   windowrulev2=float,class:^(UnrealEditor)$
   windowrulev2=unset,class:^(UnrealEditor)$,title:^\w*$

@@ -58,6 +58,7 @@ in {
       wtype
       ripgrep
       fzf
+      xwaylandvideobridge
       git-crypt
 
       # Terminal
@@ -154,7 +155,7 @@ in {
     '';
     commands = with pkgs; {
       dragon-out = ''%${xdragon}/bin/xdragon -a -x "$fx"'';
-      open = ''        
+      open = ''          
         ''${{rifle "$f"}}'';
       copy-path = ''&{{echo -n "$f" | wl-copy}}'';
       mkdir = ''
@@ -172,11 +173,11 @@ in {
         }}
       '';
       rename = ''%[ -e $1 ] && printf "file exists" || mv "$f" "$1"'';
-      on-select = ''              
+      on-select = ''        
         &{{
           lf -remote "send $id set statfmt \"$(eza -ld --color=always "$f")\""
         }}'';
-      on-cd = ''              
+      on-cd = ''        
         &{{
           export STARSHIP_SHELL=
           fmt="$(starship prompt)"

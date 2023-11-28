@@ -32,6 +32,7 @@
 
   # USB
   services.udisks2.enable = true;
+  hardware.logitech.wireless.enable = true;
 
   # SDDM
   services.xserver = {
