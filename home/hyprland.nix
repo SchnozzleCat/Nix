@@ -15,7 +15,7 @@ in ''
   exec-once = xwaylandvideobridge
   exec-once = pypr
   exec-once = hyprctrl dispatch layoutmsg "preselect r"
-  exec-once = wl-paste -t text --watch clipman store --max-items 1024
+  exec-once = wl-paste -t text --watch ${pkgs.clipman}/bin/clipman store --max-items 1024
   exec-once = /home/linus/Downloads/MoonDeckBuddy-1.5.7-x86_64.AppImage
 
   exec-once = systemctl --user start sunshine
