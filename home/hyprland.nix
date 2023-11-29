@@ -6,6 +6,8 @@
 in ''
   $mainMod = SUPER
 
+  workspace=name:special,gapsout:150
+
   exec-once = hyprctl setcursor Bibata-Modern-Classic 1
   exec-once = hyprpaper
 
@@ -250,9 +252,9 @@ in ''
   bind = $mainMod, c, exec, ${pkgs.clipman}/bin/clipman pick --tool=CUSTOM --tool-args="fuzzel -d"
   bind = $mainMod, XKB_KEY_semicolon, exec, BEMOJI_PICKER_CMD='fuzzel --dmenu' ${pkgs.bemoji}/bin/bemoji -t
 
-  bind = $mainMod,t, exec, ~/.config/sway/translate-en-to-de.sh
-  bind = $mainMod Shift,t, exec, ~/.config/sway/translate-de-to-en.sh
-  bind = $mainMod Ctrl Shift,t, exec, ~/.config/sway/synonym.sh
+  bind = $mainMod,t, exec, translate-en-to-de
+  bind = $mainMod Shift,t, exec, translate-de-to-en
+  bind = $mainMod Ctrl Shift,t, exec, synonym
 
 
   bind = $mainMod Shift, v, exec, ~/.config/sway/looking-glass-client -F

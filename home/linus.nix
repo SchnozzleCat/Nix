@@ -116,6 +116,30 @@ in {
         name = "record-screen";
         text = import ./scripts/record-screen.nix {inherit pkgs;};
       })
+      (writeShellApplication {
+        name = "translate-en-to-de";
+        text = ''
+          text=$(echo "" | fuzzel --dmenu --dmenu --prompt="EN -> DE: " --lines=0)
+          if [ -z "$text" ]; then exit; fi
+          ${pkgs.translate-shell}/bin/trans -no-ansi en:de "$text" | fuzzel --dmenu --width=50 --lines=20
+        '';
+      })
+      (writeShellApplication {
+        name = "translate-de-to-en";
+        text = ''
+          text=$(echo "" | fuzzel --dmenu --dmenu --prompt="DE -> EN: " --lines=0)
+          if [ -z "$text" ]; then exit; fi
+          ${pkgs.translate-shell}/bin/trans -no-ansi de:en "$text" | fuzzel --dmenu --width=50 --lines=20
+        '';
+      })
+      (writeShellApplication {
+        name = "synonym";
+        text = ''
+          text=$(echo "" | fuzzel --dmenu --dmenu --prompt="Synonym: " --lines=0)
+          if [ -z "$text" ]; then exit; fi
+          ${pkgs.wordnet}/bin/wn "$text" -synsn -synsv -synsa -synsr | fuzzel --dmenu --width=50 --lines=20
+        '';
+      })
     ];
   };
 
