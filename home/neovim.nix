@@ -369,6 +369,7 @@
           {name = "path";}
           {name = "buffer";}
         ];
+        snippet.expand = "luasnip";
         mapping = {
           "<CR>" = "cmp.mapping.confirm({ select = true })";
           "<C-Space>" = {
@@ -377,17 +378,18 @@
           };
           "<Tab>" = {
             action = ''
-                          function(fallback)
-                            if cmp.visible() then
-                              if #cmp.get_entries() == 1 then
-                                cmp.confirm({ select = true })
-                              else
-                                cmp.select_next_item()
-                              end
-                            else
-                              fallback()
-              end
-                          end
+              function(fallback)
+                      luasnip = require("luasnip")
+                      if cmp.visible() then
+                        cmp.select_next_item()
+                      elseif luasnip.expandable() then
+                        luasnip.expand()
+                      elseif luasnip.expand_or_jumpable() then
+                        luasnip.expand_or_jump()
+                      else
+                        fallback()
+                      end
+                    end
             '';
             modes = ["i" "s"];
           };
