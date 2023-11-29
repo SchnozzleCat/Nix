@@ -28,6 +28,10 @@
   hardware.opengl.driSupport32Bit = true;
 
   boot.initrd.kernelModules = ["amdgpu"];
+  boot.kernelModules = ["hid-nintendo" "v4l2loopoback"];
+
+  virtualisation.libvirtd.enable = true;
+  programs.virt-manager.enable = true;
 
   programs.corectrl = {
     enable = true;
