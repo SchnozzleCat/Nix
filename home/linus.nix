@@ -177,7 +177,7 @@ in {
     '';
     commands = with pkgs; {
       dragon-out = ''%${xdragon}/bin/xdragon -a -x "$fx"'';
-      open = ''          
+      open = ''            
         ''${{rifle "$f"}}'';
       copy-path = ''&{{echo -n "$f" | wl-copy}}'';
       mkdir = ''
@@ -195,11 +195,11 @@ in {
         }}
       '';
       rename = ''%[ -e $1 ] && printf "file exists" || mv "$f" "$1"'';
-      on-select = ''        
+      on-select = ''          
         &{{
           lf -remote "send $id set statfmt \"$(eza -ld --color=always "$f")\""
         }}'';
-      on-cd = ''        
+      on-cd = ''          
         &{{
           export STARSHIP_SHELL=
           fmt="$(starship prompt)"
@@ -427,6 +427,7 @@ in {
     '';
     shellAliases = {
       gpt = "DEFAULT_MODEL=gpt-4-1106-preview OPENAI_API_KEY=$(gpg -q --decrypt $OPENAI_API_KEY_DIR) sgpt";
+      pi-hdd = ''sshfs -o sftp_server="/usr/bin/sudo /usr/lib/openssh/sftp-server" -p 6969 pi@192.168.200.41:/mnt/hdd ~/Mounts/hdd'';
     };
     shellAbbrs = {
       os-rebuild = "sudo nixos-rebuild switch --flake ~/.nixos/";
