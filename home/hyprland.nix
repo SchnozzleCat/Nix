@@ -46,6 +46,12 @@ in ''
   windowrulev2=workspace special:scratch_volume silent,class:^(pavucontrol)$
   windowrulev2=move 200% 5%,class:^(pavucontrol)$
 
+  bind = $mainMod,N,exec,pypr toggle ncspot
+  windowrulev2=float,class:^(foot-ncspot)$
+  windowrulev2=size 40% 90%,class:^(foot-ncspot)$
+  windowrulev2=workspace special:scratch_volume silent,class:^(foot-ncspot)$
+  windowrulev2=move 200% 5%,class:^(foot-ncspot)$
+
   windowrulev2 = opacity 0.0 override 0.0 override,class:^(xwaylandvideobridge)$
   windowrulev2 = noanim,class:^(xwaylandvideobridge)$
   windowrulev2 = nofocus,class:^(xwaylandvideobridge)$
@@ -267,6 +273,6 @@ in ''
 
   bind = $mainMod, w, exec, hyprctl activewindow | wl-copy
 
-  bind = $mainMod, m, exec, foot lf
+  bind = $mainMod, m, exec, [float;size 60% 60%;center] foot lf
   bind = $mainMod Shift,m, exec, ~/.config/sway/calc.sh
 ''

@@ -177,8 +177,7 @@ in {
     '';
     commands = with pkgs; {
       dragon-out = ''%${xdragon}/bin/xdragon -a -x "$fx"'';
-      open = ''            
-        ''${{rifle "$f"}}'';
+      open = ''''${{rifle "$f"}}'';
       copy-path = ''&{{echo -n "$f" | wl-copy}}'';
       mkdir = ''
         %{{
@@ -195,11 +194,11 @@ in {
         }}
       '';
       rename = ''%[ -e $1 ] && printf "file exists" || mv "$f" "$1"'';
-      on-select = ''          
+      on-select = ''
         &{{
           lf -remote "send $id set statfmt \"$(eza -ld --color=always "$f")\""
         }}'';
-      on-cd = ''          
+      on-cd = ''
         &{{
           export STARSHIP_SHELL=
           fmt="$(starship prompt)"
@@ -276,6 +275,12 @@ in {
 
     [scratchpads.term]
     command = "foot -a foot-float"
+    animation = "fromBottom"
+    margin = 50
+    unfocus = "hide"
+
+    [scratchpads.ncspot]
+    command = "foot -a foot-ncspot ncspot"
     animation = "fromBottom"
     margin = 50
     unfocus = "hide"
