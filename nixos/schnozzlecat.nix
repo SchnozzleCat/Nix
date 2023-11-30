@@ -33,6 +33,20 @@
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;
 
+  # Printers
+  services.printing = {
+    enable = true;
+    drivers = with pkgs; [
+      brgenml1lpr
+      brlaser
+    ];
+  };
+  services.avahi = {
+    enable = true;
+    nssmdns = true;
+    openFirewall = true;
+  };
+
   programs.corectrl = {
     enable = true;
     gpuOverclock = {
