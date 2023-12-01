@@ -66,7 +66,6 @@ in {
       bat
       zellij
       du-dust
-      ncspot
       neofetch
       cbonsai
       pipes
@@ -139,6 +138,17 @@ in {
         '';
       })
     ];
+  };
+
+  programs.ncspot = {
+    enable = true;
+    settings = {
+      keybindings = {
+        "Ctrl+f" = "focus search";
+        "Ctrl+q" = "focus queue";
+        "Ctrl+l" = "focus library";
+      };
+    };
   };
 
   programs.mpv = {
