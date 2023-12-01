@@ -439,6 +439,7 @@ in {
       export OPENAI_API_KEY_DIR=${../secrets/keys/openapi.gpg}
       set -g fish_greeting
       task list
+      bind \ce nvim
     '';
     shellAliases = {
       gpt = "DEFAULT_MODEL=gpt-4-1106-preview OPENAI_API_KEY=$(gpg -q --decrypt $OPENAI_API_KEY_DIR) sgpt";
