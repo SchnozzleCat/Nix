@@ -30,6 +30,13 @@
     pinentryFlavor = "gnome3";
   };
 
+  # TPM
+  security.tpm2 = {
+    enable = true;
+    pkcs11.enable = true;
+    tctiEnvironment.enable = true;
+  };
+
   # USB
   services.udisks2.enable = true;
   hardware.logitech.wireless.enable = true;
@@ -119,7 +126,7 @@
         # TODO: Add your SSH public key(s) here, if you plan on using SSH to connect
       ];
       # TODO: Be sure to add any other groups you need (such as networkmanager, audio, docker, etc)
-      extraGroups = ["wheel" "networkmanager" "audio" "docker" "corectrl" "libvirtd"];
+      extraGroups = ["wheel" "networkmanager" "audio" "docker" "corectrl" "libvirtd" "tss"];
     };
   };
 

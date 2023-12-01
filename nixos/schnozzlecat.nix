@@ -29,9 +29,20 @@
 
   boot.initrd.kernelModules = ["amdgpu"];
   boot.kernelModules = ["hid-nintendo" "v4l2loopoback"];
+  boot.kernelParams = ["intel_iommu=on"];
 
-  virtualisation.libvirtd.enable = true;
+  virtualisation.libvirtd = {
+    enable = true;
+    qemu.ovmf.enable = true;
+    qemu.runAsRoot = false;
+    onBoot = "ignore";
+    onShutdown = "shutdown";
+  };
   programs.virt-manager.enable = true;
+
+  systemd.tmpfiles.rules = [
+    "f /dev/shm/looking-glass 0660 linus qemu-libvirtd -"
+  ];
 
   # Printers
   services.printing = {
