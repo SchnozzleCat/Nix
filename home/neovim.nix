@@ -13,6 +13,7 @@
       lazygit-nvim
       ChatGPT-nvim
       ltex_extra-nvim
+      vim-visual-multi
     ];
     extraConfigVim = ''
       autocmd BufWritePre * lua vim.lsp.buf.format()
@@ -137,7 +138,7 @@
       }
       {
         mode = "n";
-        key = "<c-n>";
+        key = "<leader>n";
         action = "<cmd> FloatermNew --height=0.8 --width=0.8 --wintype=float --name=Files lf <cr>";
       }
       # LSP
@@ -153,6 +154,13 @@
         action = "<cmd> lua vim.lsp.buf.implementation() <cr>";
         options.desc = "LSP Definition";
       }
+      # Oil
+      {
+        mode = "n";
+        key = "<leader>o";
+        action = "<cmd> Oil <cr>";
+        options.desc = "Oil";
+      }
       # Buffers
       {
         mode = "n";
@@ -163,6 +171,11 @@
       {
         key = "<leader>x";
         action = "<cmd> bd <cr>";
+        options.desc = "Close Buffer";
+      }
+      {
+        key = "<leader>X";
+        action = "<cmd> bd! <cr>";
         options.desc = "Close Buffer";
       }
       # Bufferline
@@ -425,6 +438,7 @@
       };
       floaterm.enable = true;
       notify.enable = true;
+      oil.enable = true;
       nvim-colorizer.enable = true;
       flash.enable = true;
       which-key.enable = true;
