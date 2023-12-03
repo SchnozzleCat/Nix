@@ -11,11 +11,11 @@ in ''
   exec-once = hyprctl setcursor Bibata-Modern-Classic 1
   exec-once = hyprpaper
 
-  exec-once = waybar
-  exec-once = whatsapp-for-linux
+  exec-once = ${pkgs.waybar}/bin/waybar
+  exec-once = ${pkgs.pyprland}/bin/pypr
+  exec-once = sleep 3 && ${pkgs.whatsapp-for-linux}/bin/whatsapp-for-linux
   exec-once = solaar --window=hide
-  exec-once = xwaylandvideobridge
-  exec-once = pypr
+  exec-once = ${pkgs.xwaylandvideobridge}/bin/xwaylandvideobridge
   exec-once = hyprctrl dispatch layoutmsg "preselect r"
   exec-once = wl-paste -t text --watch ${pkgs.clipman}/bin/clipman store --max-items 1024
   exec-once = /home/linus/Downloads/MoonDeckBuddy-1.5.7-x86_64.AppImage
@@ -51,6 +51,9 @@ in ''
   windowrulev2=size 40% 90%,class:^(foot-ncspot)$
   windowrulev2=workspace special:scratch_volume silent,class:^(foot-ncspot)$
   windowrulev2=move 200% 5%,class:^(foot-ncspot)$
+
+  windowrulev2 = stayfocused, title:^()$,class:^(steam)$
+  windowrulev2 = minsize 1 1, title:^()$,class:^(steam)$
 
   windowrulev2 = opacity 0.0 override 0.0 override,class:^(xwaylandvideobridge)$
   windowrulev2 = noanim,class:^(xwaylandvideobridge)$

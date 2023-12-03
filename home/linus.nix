@@ -36,10 +36,8 @@ in {
     homeDirectory = "/home/linus";
     packages = with pkgs; [
       # OS
-      waybar
       wl-clipboard
       pavucontrol
-      pyprland
 
       # Web
       brave
@@ -47,8 +45,8 @@ in {
 
       # Dev
       unityhub
-      jetbrains.rider
-      jetbrains.datagrip
+      dotnet-sdk
+      godot-4-mono
       sublime-merge
       lazygit
 
@@ -58,7 +56,6 @@ in {
       wtype
       ripgrep
       fzf
-      xwaylandvideobridge
       git-crypt
 
       # Terminal
@@ -72,14 +69,14 @@ in {
       pistol
       imv
       taskwarrior-tui
-      ranger
       shell_gpt
 
       # Files
 
       # Games
-      steam
       steam-run
+      steam-tui
+      steamcmd
       (lutris.override {
         extraPkgs = pkgs: [
           wineWowPackages.stable
@@ -92,7 +89,6 @@ in {
       obsidian
       helvum
       spotify
-      whatsapp-for-linux
       cinnamon.warpinator
       discord
       jellyfin-media-player
@@ -187,7 +183,7 @@ in {
     '';
     commands = with pkgs; {
       dragon-out = ''%${xdragon}/bin/xdragon -a -x "$fx"'';
-      open = ''''${{rifle "$f"}}'';
+      open = ''''${{${pkgs.ranger}/bin/rifle "$f"}}'';
       copy-path = ''&{{echo -n "$f" | wl-copy}}'';
       mkdir = ''
         %{{
@@ -290,7 +286,7 @@ in {
     unfocus = "hide"
 
     [scratchpads.ncspot]
-    command = "foot -a foot-ncspot ncspot"
+    command = "sleep 3 && foot -a foot-ncspot ncspot"
     animation = "fromBottom"
     margin = 50
     unfocus = "hide"

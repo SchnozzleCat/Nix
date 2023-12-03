@@ -529,7 +529,10 @@
             isort.enable = true;
             jq.enable = true;
             markdownlint.enable = true;
-            prettier.enable = true;
+            prettier = {
+              enable = true;
+              disableTsServerFormatter = true;
+            };
             stylua.enable = true;
           };
         };
