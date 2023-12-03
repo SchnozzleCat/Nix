@@ -38,6 +38,7 @@ in {
       # OS
       wl-clipboard
       pavucontrol
+      pyprland
 
       # Web
       brave

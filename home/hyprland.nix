@@ -12,7 +12,7 @@ in ''
   exec-once = hyprpaper
 
   exec-once = ${pkgs.waybar}/bin/waybar
-  exec-once = ${pkgs.pyprland}/bin/pypr
+  exec-once = pypr
   exec-once = sleep 3 && ${pkgs.whatsapp-for-linux}/bin/whatsapp-for-linux
   exec-once = solaar --window=hide
   exec-once = ${pkgs.xwaylandvideobridge}/bin/xwaylandvideobridge
