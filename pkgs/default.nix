@@ -1,5 +1,5 @@
 # Custom packages, that can be defined similarly to ones from nixpkgs
 # You can build them using 'nix build .#example'
-pkgs: {
-  materia-transparent-gtk-theme = pkgs.callPackage ./materia-transparent.nix {};
+{pkgs, ...}: {
+  godot-4-mono = pkgs.callPackage ./godot4-mono {};
 }
