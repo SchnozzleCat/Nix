@@ -71,6 +71,8 @@ in ''
   windowrulev2=windowdance,initialclass:^(jetbrains-rider)$
   windowrulev2=noinitialfocus,initialclass:^(jetbrains-rider)$
 
+  bind = $mainMod, Z, pin
+
   # For all categories, see https://wiki.hyprland.org/Configuring/Variables/
   input {
       kb_layout = us
@@ -266,8 +268,8 @@ in ''
   bind = $mainMod Ctrl Shift,t, exec, synonym
 
 
-  bind = $mainMod Shift, v, exec, ~/.config/sway/looking-glass-client -F
-  bind = $mainMod Ctrl Shift,v, exec, ~/.config/sway/toggle-vm.sh
+  bind = $mainMod Shift, v, exec, ${pkgs.looking-glass-client}/bin/looking-glass-client -F
+  bind = $mainMod Ctrl Shift,v, exec, toggle-vm
 
   bind = $mainMod, b, exec, hyprctl dispatch layoutmsg "preselect r"
   bind = $mainMod, v, exec, hyprctl dispatch layoutmsg "preselect d"
