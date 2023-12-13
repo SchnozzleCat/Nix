@@ -6,14 +6,20 @@
   pkgs,
   ...
 }: {
+  home.packages = with pkgs; [netcoredbg];
+
   programs.nixvim = {
     enable = true;
-    extraPlugins = with pkgs.vimPlugins; [
-      vim-move
-      lazygit-nvim
-      ChatGPT-nvim
-      ltex_extra-nvim
-      vim-visual-multi
+    extraPlugins = with pkgs; [
+      vimPlugins.vim-move
+      vimPlugins.lazygit-nvim
+      vimPlugins.ChatGPT-nvim
+      vimPlugins.ltex_extra-nvim
+      vimPlugins.vim-visual-multi
+      vimPlugins.neotest
+      vimPlugins.neotest-python
+      vimPlugins.telescope-dap-nvim
+      obsidian-nvim
     ];
     extraConfigVim = ''
       autocmd BufWritePre * lua vim.lsp.buf.format()
@@ -29,6 +35,21 @@
 
       require("chatgpt").setup({
         api_key_cmd = "gpg --decrypt ${../secrets/keys/openapi.gpg}"
+      })
+      require("neotest").setup({
+        adapters = {
+          require("neotest-python")({
+            dap = { justMyCode = false }
+          })
+        }
+      })
+      require("obsidian").setup({
+        workspaces = {
+          {
+            name = "work",
+            path = "~/Repositories/ObsidianVault",
+          },
+        },
       })
     '';
     options = {
@@ -100,6 +121,49 @@
         key = "<c-l>";
         action = "<c-w>l";
       }
+      # DAP
+      {
+        mode = "n";
+        key = "<leader>dc";
+        action = "<cmd> DapContinue <cr>";
+        options.desc = "DAP Continue";
+      }
+      {
+        mode = "n";
+        key = "<leader>db";
+        action = "<cmd> DapToggleBreakpoint <cr>";
+        options.desc = "Toggle Breakpoint";
+      }
+      {
+        mode = "n";
+        key = "<leader>dv";
+        action = ''<cmd> lua require("dapui").toggle() <cr>'';
+        options.desc = "Toggle DAP UI";
+      }
+      {
+        mode = "n";
+        key = "<leader>do";
+        action = "<cmd> DapStepOver <cr>";
+        options.desc = "Step Over";
+      }
+      {
+        mode = "n";
+        key = "<leader>d<s-o>";
+        action = "<cmd> DapStepOut <cr>";
+        options.desc = "Step Out";
+      }
+      {
+        mode = "n";
+        key = "<leader>di";
+        action = "<cmd> DapStepInto <cr>";
+        options.desc = "Step Into";
+      }
+      {
+        mode = "n";
+        key = "<leader>dx";
+        action = "<cmd> DapTerminate <cr>";
+        options.desc = "DAP Terminate";
+      }
       # Floaterm
       {
         mode = "n";
@@ -120,26 +184,31 @@
         mode = "t";
         key = "<a-]>";
         action = "<cmd> FloatermNext <cr>";
+        options.desc = "Next Terminal";
       }
       {
         mode = "t";
         key = "<a-[>";
         action = "<cmd> FloatermPrev <cr>";
+        options.desc = "Previous Terminal";
       }
       {
         mode = "t";
         key = "<a-d>";
         action = "<cmd> FloatermKill <cr>";
+        options.desc = "Kill Terminal";
       }
       {
         mode = "t";
         key = "<a-n>";
         action = "<cmd> FloatermNew <cr>";
+        options.desc = "New Terminal";
       }
       {
         mode = "n";
         key = "<leader>n";
         action = "<cmd> FloatermNew --height=0.8 --width=0.8 --wintype=float --name=Files lf <cr>";
+        options.desc = "LF";
       }
       # LSP
       {
@@ -204,6 +273,42 @@
         action = "<cmd> Telescope dap variables <cr>";
         options.desc = "Find DAP Variables";
       }
+      {
+        mode = "n";
+        key = "<leader>fu";
+        action = "<cmd> Telescope undo <cr>";
+        options.desc = "Find Undo";
+      }
+      {
+        mode = "n";
+        key = "<leader>fr";
+        action = "<cmd> Telescope lsp_references <cr>";
+        options.desc = "Find References";
+      }
+      {
+        mode = "n";
+        key = "<leader>fi";
+        action = "<cmd> Telescope lsp_implementations <cr>";
+        options.desc = "Find Implementations";
+      }
+      {
+        mode = "n";
+        key = "<leader>fd";
+        action = "<cmd> Telescope lsp_definitions <cr>";
+        options.desc = "Find Definitions";
+      }
+      {
+        mode = "n";
+        key = "<leader>fci";
+        action = "<cmd> Telescope lsp_incoming_calls <cr>";
+        options.desc = "Find Incoming Calls";
+      }
+      {
+        mode = "n";
+        key = "<leader>fco";
+        action = "<cmd> Telescope lsp_outgoing_calls <cr>";
+        options.desc = "Find Outgoing Calls";
+      }
       # Move
       {
         mode = ["n" "v"];
@@ -247,7 +352,7 @@
         mode = ["n"];
         key = "<leader>u";
         action = "<cmd> UndotreeToggle <cr>";
-        options.desc = "Flash Treesitter";
+        options.desc = "Undo Tree";
       }
       # Gitsigns
       {
@@ -290,6 +395,36 @@
       }
       {
         mode = ["n"];
+        key = "gd";
+        action = "<cmd> Trouble lsp_definitions <cr>";
+        options.desc = "LSP Definitions";
+      }
+      {
+        mode = ["n"];
+        key = "gi";
+        action = "<cmd> Trouble lsp_implementations <cr>";
+        options.desc = "LSP Implementations";
+      }
+      {
+        mode = ["n"];
+        key = "gr";
+        action = "<cmd> Trouble lsp_references <cr>";
+        options.desc = "LSP References";
+      }
+      {
+        mode = ["n"];
+        key = "]t";
+        action = ''<cmd> lua require("trouble").next({skip_groups=true,jump=true}) <cr>'';
+        options.desc = "Next Trouble";
+      }
+      {
+        mode = ["n"];
+        key = "[t";
+        action = ''<cmd> lua require("trouble").previous({skip_groups=true,jump=true}) <cr>'';
+        options.desc = "Previous Trouble";
+      }
+      {
+        mode = ["n"];
         key = "<leader>tw";
         action = "<cmd> TroubleToggle workspace_diagnostics<cr>";
         options.desc = "Workspace Trouble";
@@ -326,6 +461,21 @@
       };
       telescope = {
         enable = true;
+        extraOptions = {
+          defaults = {
+            mappings.__raw = ''
+              {
+                i = { ["<c-t>"] = require("trouble.providers.telescope").open_with_trouble },
+                n = { ["<c-t>"] = require("trouble.providers.telescope").open_with_trouble },
+              }
+            '';
+          };
+        };
+        extensions = {
+          undo = {
+            enable = true;
+          };
+        };
         keymaps = {
           "<leader>ff" = {
             action = "find_files";
@@ -506,6 +656,116 @@
       fidget.enable = true;
       dap = {
         enable = true;
+        adapters = {
+          executables = {
+            "cppdbg" = {
+              command = "${pkgs.vscode-extensions.ms-vscode.cpptools}/bin/OpenDebugAD7";
+            };
+            "coreclr" = {
+              command = "${pkgs.netcoredbg}/bin/netcoredbg";
+              args = ["--interpreter=vscode"];
+            };
+          };
+        };
+        configurations = {
+          cpp = [
+            {
+              name = "Launch default file";
+              type = "cppdbg";
+              request = "launch";
+              program.__raw = ''
+                function()
+                  return vim.fn.getcwd() .. "/" .. vim.fn.system "cat debug_entry"
+                end
+              '';
+              cwd = ''''${workspaceFolder}'';
+              stopAtEntry = true;
+            }
+            {
+              name = "Launch file";
+              type = "cppdbg";
+              request = "launch";
+              program.__raw = ''
+                function()
+                  return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+                end
+              '';
+              cwd = ''''${workspaceFolder}'';
+              stopAtEntry = true;
+            }
+            {
+              name = "Attach to gdbserver :1234";
+              type = "cppdbg";
+              request = "launch";
+              MIMode = "gdb";
+              miDebuggerServerAddress = "localhost:1234";
+              miDebuggerPath = "${pkgs.gdb}/bin/gdb";
+              cwd = ''''${workspaceFolder}'';
+              program.__raw = ''
+                function()
+                  return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+                end
+              '';
+            }
+          ];
+          cs = [
+            {
+              type = "coreclr";
+              name = "launch - netcoredbg";
+              request = "launch";
+              program.__raw = ''
+                function()
+                    local cwd = vim.fn.getcwd()
+                    local debugPath = cwd .. '/bin/Debug/'
+                    local highestVersionFolder = ""
+                    local highestVersion = 0
+
+                    -- Scan the directory for .NET version folders using ipairs
+                    for _, folder in ipairs(vim.fn.readdir(debugPath)) do
+                        -- Adjusted pattern matching to handle missing minor or patch versions
+                        local major, minor, patch = string.match(folder, "net(%d+)%.*(%d*)%.*(%d*)")
+                        major, minor, patch = tonumber(major), tonumber(minor) or 0, tonumber(patch) or 0
+
+                        if major then
+                            local version = major * 10000 + minor * 100 + patch
+                            if version > highestVersion then
+                                highestVersion = version
+                                highestVersionFolder = folder
+                            end
+                        end
+                    end
+
+                    if highestVersionFolder == "" then
+                        error("No .NET version folder found in " .. debugPath)
+                    end
+
+                    return debugPath .. highestVersionFolder .. '/csharp.dll'
+                end
+              '';
+            }
+          ];
+        };
+        signs = {
+          dapBreakpoint = {
+            text = "";
+            texthl = "DiagnosticSignError";
+          };
+          dapStopped = {
+            text = "";
+            texthl = "DiagnosticSignInfo";
+          };
+        };
+        extensions = {
+          dap-python = {
+            enable = true;
+          };
+          dap-ui = {
+            enable = true;
+          };
+          dap-virtual-text = {
+            enable = true;
+          };
+        };
       };
       luasnip = {
         enable = true;
@@ -542,6 +802,8 @@
         servers = {
           ltex = {
             enable = true;
+            filetypes = ["tex" "markdown"];
+            autostart = false;
             onAttach = {
               function = ''
                 require("ltex_extra").setup {
