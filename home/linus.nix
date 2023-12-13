@@ -39,6 +39,7 @@ in {
       wl-clipboard
       pavucontrol
       pyprland
+      wally-cli
 
       # Web
       brave

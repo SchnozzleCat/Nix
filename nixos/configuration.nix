@@ -23,6 +23,25 @@
   services.udev.packages = [pkgs.yubikey-personalization];
   services.pcscd.enable = true;
 
+  hardware.keyboard.zsa.enable = true;
+
+  virtualisation = {
+    podman = {
+      enable = true;
+      dockerCompat = true;
+      defaultNetwork.settings.dns_enabled = true;
+    };
+  };
+
+  users.groups.plugdev = {
+    name = "plugdev";
+    members = ["linus"];
+  };
+
+  services.udev.extraRules = ''
+    SUBSYSTEMS=="usb", ATTRS{idVendor}=="3297", MODE:="0666", SYMLINK+="ignition_dfu"
+  '';
+
   # GPG
   programs.gnupg.agent = {
     enable = true;
@@ -36,6 +55,8 @@
     pkcs11.enable = true;
     tctiEnvironment.enable = true;
   };
+
+  services.gnome.gnome-keyring.enable = true;
 
   # USB
   services.udisks2.enable = true;
