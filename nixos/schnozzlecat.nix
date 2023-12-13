@@ -28,7 +28,8 @@
   hardware.opengl.driSupport32Bit = true;
 
   boot.initrd.kernelModules = ["amdgpu"];
-  boot.kernelModules = ["hid-nintendo" "v4l2loopoback"];
+  boot.kernelModules = ["hid-nintendo" "v4l2loopback" "uinput"];
+  boot.extraModulePackages = with config.boot.kernelPackages; [v4l2loopback];
   boot.kernelParams = ["intel_iommu=on"];
 
   virtualisation.libvirtd = {
@@ -57,6 +58,9 @@
     nssmdns = true;
     openFirewall = true;
   };
+
+  services.flatpak.enable = true;
+  services.avahi.publish.userServices = true;
 
   programs.corectrl = {
     enable = true;
