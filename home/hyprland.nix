@@ -10,6 +10,7 @@ in ''
 
   exec-once = hyprctl setcursor Bibata-Modern-Classic 1
   exec-once = hyprpaper
+  exec-once = ollama serve
 
   exec-once = ${pkgs.waybar}/bin/waybar
   exec-once = pypr
@@ -34,7 +35,7 @@ in ''
   env = XDG_SESSION_TYPE,wayland
   env = WLR_NO_HARDWARE_CURSORS,1
 
-  bind = $mainMod,A,exec,pypr toggle term
+  bind = $mainMod,g,exec,pypr toggle term
   windowrulev2=float,class:^(foot-float)$
   windowrulev2=size 75% 60%,class:^(foot-float)$
   windowrulev2=workspace special:scratch_term silent,class:^(foot-float)$
@@ -46,7 +47,7 @@ in ''
   windowrulev2=workspace special:scratch_volume silent,class:^(pavucontrol)$
   windowrulev2=move 200% 5%,class:^(pavucontrol)$
 
-  bind = $mainMod,N,exec,pypr toggle ncspot
+  bind = $mainMod,m,exec,pypr toggle ncspot
   windowrulev2=float,class:^(foot-ncspot)$
   windowrulev2=size 40% 90%,class:^(foot-ncspot)$
   windowrulev2=workspace special:scratch_volume silent,class:^(foot-ncspot)$
@@ -182,7 +183,7 @@ in ''
   # See https://wiki.hyprland.org/Configuring/Keywords/ for more
 
   # Example binds, see https://wiki.hyprland.org/Configuring/Binds/ for more
-  bind = $mainMod, return, exec, foot
+  bind = $mainMod, a, exec, foot
   bind = $mainMod, d, exec, fuzzel
   bind = $mainModSHIFT, Q, killactive,
   bind = $mainMod, b, exec, pypr expose
@@ -259,7 +260,7 @@ in ''
 
   bind = $mainMod, i, exec, ${pkgs.swaylock-effects}/bin/swaylock --screenshots --clock --indicator --indicator-radius 100 --indicator-thickness 7 --effect-blur 9x7 --effect-vignette 0.5:0.5 --ring-color ${colors.base00}ff --key-hl-color ${colors.base0C}ff --line-color 00000000 --inside-color 00000088 --separator-color ${colors.base02}ff --text-color ${colors.base05}ff --grace 1 --fade-in 0.2
 
-  bind = $mainMod, n, exec, fnottctl dismiss
+  bind = $mainMod, u, exec, fnottctl dismiss
   bind = $mainMod, c, exec, ${pkgs.clipman}/bin/clipman pick --tool=CUSTOM --tool-args="fuzzel -d"
   bind = $mainMod, XKB_KEY_semicolon, exec, BEMOJI_PICKER_CMD='fuzzel --dmenu' ${pkgs.bemoji}/bin/bemoji -t
 
@@ -274,10 +275,11 @@ in ''
   bind = $mainMod, b, exec, hyprctl dispatch layoutmsg "preselect r"
   bind = $mainMod, v, exec, hyprctl dispatch layoutmsg "preselect d"
 
-  bind = $mainMod, q, exec, power-menu
+  bind = $mainMod Ctrl Shift, q, exec, power-menu
+  bind = $mainMod, q, exec,  echo "" | fuzzel --dmenu --dmenu --prompt="Ask: " --lines=0 --width=125 | ollama run mistral | pipe-notify
 
   bind = $mainMod, w, exec, hyprctl activewindow | wl-copy
 
-  bind = $mainMod, m, exec, [float;size 60% 60%;center] foot lf
+  bind = $mainMod, n, exec, [float;size 60% 60%;center] foot lf
   bind = $mainMod Shift,m, exec, ~/.config/sway/calc.sh
 ''

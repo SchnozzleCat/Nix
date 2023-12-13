@@ -34,6 +34,9 @@ in {
   home = {
     username = "linus";
     homeDirectory = "/home/linus";
+    sessionVariables = {
+      EDITOR = "nvim";
+    };
     packages = with pkgs; [
       # OS
       wl-clipboard
@@ -135,6 +138,21 @@ in {
           ${pkgs.wordnet}/bin/wn "$text" -synsn -synsv -synsa -synsr | fuzzel --dmenu --width=50 --lines=20
         '';
       })
+      (writeShellApplication {
+        name = "pipe-notify";
+        text = ''
+          NID=''$(${pkgs.libnotify}/bin/notify-send -p "...")
+          MESSAGE=""
+          while IFS= read -r -n 1 char || [[ -n "$char" ]]; do
+            if [[ -z "$char" ]]; then
+              MESSAGE="$MESSAGE\n"
+            else
+              MESSAGE="$MESSAGE$char"
+            fi
+            ${pkgs.libnotify}/bin/notify-send -r "$NID" "Shell" "$MESSAGE"
+          done
+        '';
+      })
     ];
   };
 
@@ -147,6 +165,10 @@ in {
         "Ctrl+l" = "focus library";
       };
     };
+  };
+
+  services.pulseeffects = {
+    enable = true;
   };
 
   programs.mpv = {
@@ -405,6 +427,8 @@ in {
         body-color = "${colors.base05}ff";
         body-font = "JetBrainsMono Nerd Font";
         title-font = "JetBrainsMono Nerd Font";
+        min-width = 600;
+        max-width = 600;
         output = "DP-1";
       };
     };
@@ -432,8 +456,6 @@ in {
   programs.fish = {
     enable = true;
     interactiveShellInit = ''
-      export OPENER=rifle
-      export EDITOR=nvim
       export OPENAI_API_KEY_DIR=${../secrets/keys/openapi.gpg}
       set -g fish_greeting
       task list
