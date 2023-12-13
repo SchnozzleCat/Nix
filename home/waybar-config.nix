@@ -117,11 +117,10 @@
       exec = "~/.config/waybar/custom/vpn.sh";
     };
     "custom/vm" = {
-      format = "";
+      format = "";
       interval = 10;
       return-type = "json";
-      exec = "~/.config/waybar/custom/kvm-monitor.sh";
-      on-click = "~/.config/waybar/custom/kvm.sh";
+      exec = "kvm-monitor";
     };
     "custom/containers" = {
       format = " ";

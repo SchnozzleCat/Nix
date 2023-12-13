@@ -91,6 +91,10 @@
     border-radius: 10px;
   }
 
+  #custom-vm {
+    padding: 1px 17px 1px 15px;
+  }
+
   #tray menu {
     background: rgba(0.3, 0.3, 0.3, 0.7);
     border-radius: 15px;

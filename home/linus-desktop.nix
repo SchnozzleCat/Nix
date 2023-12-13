@@ -62,18 +62,34 @@
         fi
       '';
     })
-    (writeShellApplication {
-      name = "toggle-vm";
-      text = ''
-        running=$(virsh --connect qemu:///system list --all | grep running | awk '{print $3}')
+    (writeShellScriptBin "toggle-vm" ''
+      nets=$(virsh --connect qemu:///system net-list | grep default)
+      running=$(virsh --connect qemu:///system list --all | grep running)
+      if [[ -z "$nets" ]]; then
+        echo "Starting network..."
+        virsh --connect qemu:///system net-start default
+      fi
 
-        if [[ -z "$running" ]]; then
-          virsh --connect qemu:///system start win11
-        else
-          virsh --connect qemu:///system shutdown win11
-        fi
-      '';
-    })
+      if [[ -z "$running" ]]; then
+        virsh --connect qemu:///system start win11
+      else
+        virsh --connect qemu:///system shutdown win11
+      fi
+    '')
+    (writeShellScriptBin "kvm-monitor" ''
+      vms=($(virsh --connect qemu:///system list | grep -e "[0-9]\+"))
+      n=''${#vms[@]}
+      tooltip="Virtual Machines:"
+      for vm in "''${vms[@]}";
+      do
+          tooltip="$tooltip\n$vm"
+      done
+      if [[ n -gt 0 ]]
+      then
+         echo "{\"class\": \"running\", \"text\": \"$n\", \"tooltip\": \"$tooltip\"}"
+         exit
+      fi
+    '')
   ];
 
   wayland.windowManager.hyprland.extraConfig =
