@@ -6,7 +6,10 @@
   pkgs,
   ...
 }: {
-  home.packages = with pkgs; [netcoredbg];
+  home.packages = with pkgs; [
+    netcoredbg
+    python311Packages.pytest
+  ];
 
   programs.nixvim = {
     enable = true;
@@ -19,6 +22,7 @@
       vimPlugins.neotest
       vimPlugins.neotest-python
       vimPlugins.telescope-dap-nvim
+      vimPlugins.tabout-nvim
       obsidian-nvim
     ];
     extraConfigVim = ''
@@ -29,9 +33,24 @@
       sign define DiagnosticSignInfo text= numhl=DiagnosticDefaultInfo
       sign define DiagnosticSignHint text= numhl=DiagnosticDefaultHint
       highlight NotifyBackground guibg=#000000
+      let &t_TI = "\<Esc>[>4;2m"
+      let &t_TE = "\<Esc>[>4;m"
     '';
     extraConfigLua = ''
       vim.opt.pumheight = 10
+
+      require("tabout").setup({
+        ignore_beginning = false;
+        tabouts = {
+          {open = "'", close = "'"},
+          {open = '"', close = '"'},
+          {open = '`', close = '`'},
+          {open = '(', close = ')'},
+          {open = '[', close = ']'},
+          {open = '{', close = '}'},
+          {open = '<', close = '>'}
+        }
+      })
 
       require("chatgpt").setup({
         api_key_cmd = "gpg --decrypt ${../secrets/keys/openapi.gpg}"
@@ -51,6 +70,57 @@
           },
         },
       })
+      local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+      local cmp = require('cmp')
+      local handlers = require('nvim-autopairs.completion.handlers')
+      local Rule = require('nvim-autopairs.rule')
+      local npairs = require('nvim-autopairs')
+      local cond = require('nvim-autopairs.conds')
+
+      cmp.event:on(
+        'confirm_done',
+        cmp_autopairs.on_confirm_done({
+          filetypes = {
+            -- "*" is a alias to all filetypes
+            ["*"] = {
+              ["("] = {
+                kind = {
+                  cmp.lsp.CompletionItemKind.Function,
+                  cmp.lsp.CompletionItemKind.Method,
+                },
+                handler = handlers["*"]
+              },
+              ["<"] = {
+                kind = {
+                  cmp.lsp.CompletionItemKind.Function,
+                  cmp.lsp.CompletionItemKind.Class,
+                  cmp.lsp.CompletionItemKind.Method,
+                },
+                handler = function(char, item, bufnr, rules, commit_character)
+                  if string.find(item.label, "<>") then
+                    print("hello")
+                    local r = {Rule("<",">",{"cs"})
+                    :with_move(cond.done())
+                    :with_cr(cond.done())
+                    :use_key("<")
+                    :replace_endpair(function(opts)
+                    return ">()"
+                    end)
+                    }
+                    handlers["*"](char, item, bufnr, r)
+                  end
+                end
+              }
+            },
+            tex = false
+          }
+        })
+      )
+
+
+      npairs.add_rule(Rule("$$","$$","tex"))
+
+      -- you can use some built-in conditions
     '';
     options = {
       number = true;
@@ -120,6 +190,19 @@
         mode = "n";
         key = "<c-l>";
         action = "<c-w>l";
+      }
+      # SnipRun
+      {
+        mode = "n";
+        key = "<leader>rs";
+        action = "<cmd> SnipRun <cr>";
+        options.desc = "Run Snippet";
+      }
+      {
+        mode = "v";
+        key = "<leader>rs";
+        action = ":SnipRun <cr>";
+        options.desc = "Run Snippet";
       }
       # DAP
       {
@@ -250,7 +333,7 @@
       # Bufferline
       {
         mode = "n";
-        key = "<Tab>";
+        key = "<c-Tab>";
         action = "<cmd> BufferLineCycleNext <cr>";
         options.desc = "Next Buffer";
       }
@@ -346,6 +429,25 @@
         key = "R";
         action = ''<cmd> lua require("flash").treesitter_search({ remote_op={restore=true,motion=true}}) <cr>'';
         options.desc = "Flash Treesitter Search";
+      }
+      # NeoTest
+      {
+        mode = ["n"];
+        key = "<leader>td";
+        action = ''<cmd> lua require("neotest").run.run({strategy = "dap"}) <cr>'';
+        options.desc = "debug nearest test";
+      }
+      {
+        mode = ["n"];
+        key = "<leader>tr";
+        action = ''<cmd> lua require("neotest").run.run() <cr>'';
+        options.desc = "debug nearest test";
+      }
+      {
+        mode = ["n"];
+        key = "<leader>tf";
+        action = ''<cmd> lua require("neotest").run.run(vim.fn.expand("%")) <cr>'';
+        options.desc = "debug nearest test";
       }
       # Undotree
       {
@@ -523,7 +625,9 @@
         enable = true;
         viewMethod = "zathura";
       };
-      nvim-autopairs.enable = true;
+      nvim-autopairs = {
+        enable = true;
+      };
       nvim-cmp = {
         enable = true;
         sources = [
@@ -590,6 +694,7 @@
       notify.enable = true;
       oil.enable = true;
       nvim-colorizer.enable = true;
+      sniprun.enable = true;
       flash.enable = true;
       which-key.enable = true;
       gitsigns.enable = true;
@@ -834,7 +939,10 @@
           eslint.enable = true;
         };
       };
-      treesitter.enable = true;
+      treesitter = {
+        enable = true;
+        indent = true;
+      };
     };
   };
 }
