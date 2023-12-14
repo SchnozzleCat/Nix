@@ -114,7 +114,7 @@
       format = "";
       interval = 10;
       return-type = "json";
-      exec = "~/.config/waybar/custom/vpn.sh";
+      exec = "vpn-status";
     };
     "custom/vm" = {
       format = "";

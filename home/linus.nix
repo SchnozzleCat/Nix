@@ -16,6 +16,21 @@ in {
 
   gtk = {
     enable = true;
+    gtk2.extraConfig = ''
+      gtk-error-bell = 0
+      gtk-enable-event-sounds=0
+      gtk-enable-input-feedback-sounds=0
+    '';
+    gtk3.extraConfig = {
+      gtk-error-bell = 0;
+      gtk-enable-event-sounds = 0;
+      gtk-enable-input-feedback-sounds = 0;
+    };
+    gtk4.extraConfig = {
+      gtk-error-bell = 0;
+      gtk-enable-event-sounds = 0;
+      gtk-enable-input-feedback-sounds = 0;
+    };
     theme = {
       package = pkgs.layan-gtk-theme;
       name = "Layan-Dark";
@@ -54,6 +69,8 @@ in {
       godot-4-mono
       sublime-merge
       lazygit
+      jetbrains.rider
+      jetbrains.datagrip
 
       # Utilities
       lm_sensors
@@ -62,6 +79,7 @@ in {
       ripgrep
       fzf
       git-crypt
+      neovim-remote
 
       # Terminal
       eza
@@ -151,6 +169,25 @@ in {
             fi
             ${pkgs.libnotify}/bin/notify-send -r "$NID" "Shell" "$MESSAGE"
           done
+        '';
+      })
+      (writeShellApplication {
+        name = "code";
+        text = ''
+          IFS=':' read -r -a array <<< "$3"
+          foot --title="nvimunity" -- nvr --servername "/tmp/nvimunity" --remote-tab-silent "+''${array[1]}" "''${array[0]}"
+        '';
+      })
+      (writeShellApplication {
+        name = "vpn-status";
+        text = ''
+          vpn=$(ifconfig | grep tun)
+
+          if [[ $vpn ]]
+          then
+             echo "{\"class\": \"running\", \"text\": \"\", \"tooltip\": \"\"}"
+             exit
+          fi
         '';
       })
     ];
