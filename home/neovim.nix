@@ -23,6 +23,7 @@
       vimPlugins.neotest-python
       vimPlugins.telescope-dap-nvim
       vimPlugins.tabout-nvim
+      vimPlugins.friendly-snippets
       obsidian-nvim
     ];
     extraConfigVim = ''
@@ -293,19 +294,6 @@
         action = "<cmd> FloatermNew --height=0.8 --width=0.8 --wintype=float --name=Files lf <cr>";
         options.desc = "LF";
       }
-      # LSP
-      {
-        mode = "n";
-        key = "gr";
-        action = "<cmd> lua vim.lsp.buf.references() <cr>";
-        options.desc = "LSP References";
-      }
-      {
-        mode = "n";
-        key = "gd";
-        action = "<cmd> lua vim.lsp.buf.implementation() <cr>";
-        options.desc = "LSP Definition";
-      }
       # Oil
       {
         mode = "n";
@@ -488,18 +476,18 @@
         action = "<cmd> Lspsaga diagnostic_jump_prev <cr>";
         options.desc = "Previous Diagnostic";
       }
+      {
+        mode = ["n"];
+        key = "gd";
+        action = "<cmd> lua vim.lsp.buf.definition() <cr>";
+        options.desc = "LSP Definition";
+      }
       # Trouble
       {
         mode = ["n"];
         key = "<leader>tt";
         action = "<cmd> TroubleToggle <cr>";
         options.desc = "Toggle Trouble";
-      }
-      {
-        mode = ["n"];
-        key = "gd";
-        action = "<cmd> Trouble lsp_definitions <cr>";
-        options.desc = "LSP Definitions";
       }
       {
         mode = ["n"];
@@ -628,13 +616,28 @@
       nvim-autopairs = {
         enable = true;
       };
+      cmp_luasnip.enable = true;
       nvim-cmp = {
         enable = true;
+        window.completion.border = ["╭" "─" "╮" "│" "╯" "─" "╰" "│"];
+        window.documentation.border = ["╭" "─" "╮" "│" "╯" "─" "╰" "│"];
         sources = [
-          {name = "nvim_lsp";}
-          {name = "luasnip";}
-          {name = "path";}
-          {name = "buffer";}
+          {
+            name = "nvim_lsp";
+            groupIndex = 2;
+          }
+          {
+            name = "copilot";
+            groupIndex = 2;
+          }
+          {
+            name = "path";
+            groupIndex = 2;
+          }
+          {
+            name = "luasnip";
+            groupIndex = 2;
+          }
         ];
         snippet.expand = "luasnip";
         mapping = {
@@ -691,6 +694,12 @@
         lightbulb.enable = false;
       };
       floaterm.enable = true;
+      copilot-lua = {
+        enable = true;
+        panel.enabled = false;
+        suggestion.enabled = false;
+      };
+      copilot-cmp.enable = true;
       notify.enable = true;
       oil.enable = true;
       nvim-colorizer.enable = true;
@@ -762,6 +771,12 @@
       dap = {
         enable = true;
         adapters = {
+          servers = {
+            "godot" = {
+              host = "127.0.0.1";
+              port = 6006;
+            };
+          };
           executables = {
             "cppdbg" = {
               command = "${pkgs.vscode-extensions.ms-vscode.cpptools}/bin/OpenDebugAD7";
@@ -773,6 +788,15 @@
           };
         };
         configurations = {
+          gdscript = [
+            {
+              type = "godot";
+              request = "launch";
+              name = "Launch scene";
+              project = ''''${workspaceFolder}'';
+              launch_scene = true;
+            }
+          ];
           cpp = [
             {
               name = "Launch default file";
@@ -848,6 +872,23 @@
                 end
               '';
             }
+            {
+              name = "Godot";
+              request = "launch";
+              type = "coreclr";
+              program = ''${pkgs.godot-4-mono}/bin/godot4-mono'';
+              stopAtEntry = false;
+              args = [
+                "--path"
+                ''''${workspaceFolder}''
+              ];
+            }
+            {
+              type = "coreclr";
+              request = "attach";
+              name = "Attach";
+              processId.__raw = ''require('dap.utils').pick_process({filter="godot"})'';
+            }
           ];
         };
         signs = {
@@ -874,6 +915,7 @@
       };
       luasnip = {
         enable = true;
+        fromVscode = [{paths = ./friendly-snippets/snippets;}];
       };
       none-ls = {
         enable = true;
