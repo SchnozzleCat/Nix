@@ -460,6 +460,12 @@
       }
       {
         mode = ["n"];
+        key = "<leader>ra";
+        action = "<cmd> Lspsaga rename <cr>";
+        options.desc = "Rename";
+      }
+      {
+        mode = ["n"];
         key = "<leader>ca";
         action = "<cmd> Lspsaga code_action <cr>";
         options.desc = "Show Code Actions";
@@ -616,7 +622,7 @@
       nvim-autopairs = {
         enable = true;
       };
-      cmp_luasnip.enable = true;
+      # cmp_luasnip.enable = true;
       nvim-cmp = {
         enable = true;
         window.completion.border = ["╭" "─" "╮" "│" "╯" "─" "╰" "│"];
@@ -626,10 +632,10 @@
             name = "nvim_lsp";
             groupIndex = 2;
           }
-          {
-            name = "copilot";
-            groupIndex = 2;
-          }
+          # {
+          #   name = "copilot";
+          #   groupIndex = 2;
+          # }
           {
             name = "path";
             groupIndex = 2;
@@ -696,10 +702,10 @@
       floaterm.enable = true;
       copilot-lua = {
         enable = true;
-        panel.enabled = false;
-        suggestion.enabled = false;
+        # panel.enabled = false;
+        # suggestion.enabled = false;
       };
-      copilot-cmp.enable = true;
+      # copilot-cmp.enable = true;
       notify.enable = true;
       oil.enable = true;
       nvim-colorizer.enable = true;
@@ -915,10 +921,16 @@
       };
       luasnip = {
         enable = true;
-        fromVscode = [{paths = ./friendly-snippets/snippets;}];
+        fromVscode = [
+          {
+            # paths = ./friendly-snippets;
+            # include = ["python"];
+          }
+        ];
       };
       none-ls = {
         enable = true;
+        sourcesItems = [{__raw = ''require("null-ls").builtins.formatting.csharpier'';}];
         sources = {
           code_actions = {
             gitsigns.enable = true;
@@ -946,6 +958,29 @@
       };
       lsp = {
         enable = true;
+        onAttach = ''
+          client.server_capabilities.documentFormattingProvider = false
+          client.server_capabilities.documentRangeFormattingProvider = false
+        '';
+        capabilities = ''
+          capabilities.textDocument.completion.completionItem = {
+            documentationFormat = { "markdown", "plaintext" },
+              snippetSupport = true,
+              preselectSupport = true,
+              insertReplaceSupport = true,
+              labelDetailsSupport = true,
+              deprecatedSupport = true,
+              commitCharactersSupport = true,
+              tagSupport = { valueSet = { 1 } },
+              resolveSupport = {
+                properties = {
+                  "documentation",
+                  "detail",
+                  "additionalTextEdits",
+                },
+              }
+          }
+        '';
         servers = {
           ltex = {
             enable = true;
