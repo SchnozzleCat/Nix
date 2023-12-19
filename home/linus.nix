@@ -75,6 +75,7 @@ in {
       lazygit
       jetbrains.rider
       jetbrains.datagrip
+      podman-tui
 
       (buildDotnetGlobalTool {
         pname = "dotnet-csharpier";
