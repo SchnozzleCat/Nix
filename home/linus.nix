@@ -46,6 +46,10 @@ in {
     };
   };
 
+  nixpkgs.config.permittedInsecurePackages = [
+    "electron-25.9.0"
+  ];
+
   home = {
     username = "linus";
     homeDirectory = "/home/linus";
@@ -71,6 +75,13 @@ in {
       lazygit
       jetbrains.rider
       jetbrains.datagrip
+
+      (buildDotnetGlobalTool {
+        pname = "dotnet-csharpier";
+        version = "0.26.7";
+        nugetName = "CSharpier";
+        nugetSha256 = "sha256-QVfbEtkj41/b8urLx8X274KWjawyfgPTIb9HOLfduB8=";
+      })
 
       # Utilities
       lm_sensors
@@ -171,11 +182,22 @@ in {
           done
         '';
       })
+      # (writeShellApplication {
+      #   name = "code";
+      #   text = ''
+      #     ifs=':' read -r -a array <<< "$3"
+      #     foot --title="nvimunity" -- nvr --servername "/tmp/nvimunity" --remote-tab-silent "+''${array[1]}" "''${array[0]}"
+      #   '';
+      # })
       (writeShellApplication {
-        name = "code";
+        name = "godot-nvim";
         text = ''
-          IFS=':' read -r -a array <<< "$3"
-          foot --title="nvimunity" -- nvr --servername "/tmp/nvimunity" --remote-tab-silent "+''${array[1]}" "''${array[0]}"
+          FILE=/tmp/nvimgodot
+          if test -e "$FILE"; then
+            nvr --servername "$FILE" --remote-tab-silent "+''$1" "''$2"
+          else
+            foot --title="nvimgodot" -- nvr --servername "$FILE" --remote-tab-silent "+''$1" "''$2"
+          fi
         '';
       })
       (writeShellApplication {
@@ -356,6 +378,20 @@ in {
     command = "pavucontrol"
     animation = "fromRight"
   '';
+  home.file.".config/nvim/after/ftplugin/gdscript.lua".text = ''
+    local port = os.getenv('GDScript_Port') or '6005'
+    local cmd = vim.lsp.rpc.connect('127.0.0.1', port)
+    local pipe = '/path/to/godot.pipe' -- I use /tmp/godot.pipe
+
+    vim.lsp.start({
+      name = 'Godot',
+      cmd = cmd,
+      root_dir = vim.fs.dirname(vim.fs.find({ 'project.godot', '.git' }, { upward = true })[1]),
+      on_attach = function(client, bufnr)
+        vim.api.nvim_command('echo serverstart("' .. pipe .. '")')
+      end
+    })
+  '';
 
   programs.waybar = {
     enable = true;
@@ -501,6 +537,7 @@ in {
     shellAliases = {
       gpt = "DEFAULT_MODEL=gpt-4-1106-preview OPENAI_API_KEY=$(gpg -q --decrypt $OPENAI_API_KEY_DIR) sgpt";
       pi-hdd = ''sshfs -o sftp_server="/usr/bin/sudo /usr/lib/openssh/sftp-server" -p 6969 pi@192.168.200.41:/mnt/hdd ~/Mounts/hdd'';
+      pi-ssd = ''sshfs -o sftp_server="/usr/bin/sudo /usr/lib/openssh/sftp-server" -p 6969 pi@192.168.200.41:/mnt/ssd ~/Mounts/sdd'';
     };
     shellAbbrs = {
       os-rebuild = "sudo nixos-rebuild switch --flake ~/.nixos/";
