@@ -938,13 +938,11 @@
           diagnostics = {
             luacheck.enable = true;
             flake8.enable = true;
-            eslint.enable = true;
             cppcheck.enable = true;
           };
           formatting = {
             alejandra.enable = true;
             black.enable = true;
-            eslint.enable = true;
             isort.enable = true;
             jq.enable = true;
             markdownlint.enable = true;
@@ -952,6 +950,7 @@
               enable = true;
               disableTsServerFormatter = true;
             };
+            phpcbf.enable = true;
             stylua.enable = true;
           };
         };
@@ -1012,6 +1011,7 @@
           cssls.enable = true;
           html.enable = true;
           java-language-server.enable = true;
+          phpactor.enable = true;
           tsserver.enable = true;
           eslint.enable = true;
         };

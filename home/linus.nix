@@ -76,6 +76,7 @@ in {
       jetbrains.rider
       jetbrains.datagrip
       podman-tui
+      ctop
 
       (buildDotnetGlobalTool {
         pname = "dotnet-csharpier";

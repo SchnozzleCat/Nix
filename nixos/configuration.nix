@@ -25,12 +25,9 @@
 
   hardware.keyboard.zsa.enable = true;
 
-  virtualisation = {
-    podman = {
-      enable = true;
-      dockerCompat = true;
-      defaultNetwork.settings.dns_enabled = true;
-    };
+  virtualisation.docker.rootless = {
+    enable = true;
+    setSocketVariable = true;
   };
 
   users.groups.plugdev = {
@@ -158,6 +155,7 @@
     hyprpaper
     yubikey-manager
     pinentry-gnome
+    docker-compose
     sshfs
     (sddm-chili-theme.overrideAttrs (old: {
       src = builtins.fetchGit {
