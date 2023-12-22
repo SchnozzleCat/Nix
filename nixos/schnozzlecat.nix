@@ -59,6 +59,8 @@
     openFirewall = true;
   };
 
+  services.sunshine.enable = true;
+
   services.flatpak.enable = true;
   services.avahi.publish.userServices = true;
 

@@ -39,6 +39,8 @@
     enable = true;
   };
 
+  services.sunshine.enable = true;
+
   dconf.settings = {
     "org/virt-manager/virt-manager/connections" = {
       autoconnect = ["qemu:///system"];

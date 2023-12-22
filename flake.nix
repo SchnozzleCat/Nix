@@ -6,7 +6,7 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     # You can access packages and modules from different nixpkgs revs
     # at the same time. Here's an working example:
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    master.url = "github:nixos/nixpkgs/master";
     # Also see the 'unstable-packages' overlay at 'overlays/default.nix'.
 
     # Home manager
@@ -22,13 +22,6 @@
     };
 
     nix-colors.url = "github:misterio77/nix-colors";
-
-    # TODO: Add any other flake you might need
-    # hardware.url = "github:nixos/nixos-hardware";
-
-    # Shameless plug: looking for a way to nixify your themes and make
-    # everything match nicely? Try nix-colors!
-    # nix-colors.url = "github:misterio77/nix-colors";
   };
 
   outputs = {
@@ -37,6 +30,7 @@
     home-manager,
     hyprland,
     nixvim,
+    master,
     nix-colors,
     ...
   } @ inputs: let
@@ -54,7 +48,6 @@
     # Formatter for your nix files, available through 'nix fmt'
     # Other options beside 'alejandra' include 'nixpkgs-fmt'
     formatter = nixpkgs.legacyPackages.${system}.alejandra;
-
     # Your custom packages and modifications, exported as overlays
     overlays = import ./overlays {inherit inputs;};
     # Reusable nixos modules you might want to export
@@ -64,17 +57,21 @@
     # These are usually stuff you would upstream into home-manager
     homeManagerModules = import ./modules/home-manager;
 
+    master = inputs.master.legacyPackages.${system};
+
     # NixOS configuration entrypoint
     # Available through 'nixos-rebuild --flake .#your-hostname'
     nixosConfigurations = {
       ${desktop-hostname} = nixpkgs.lib.nixosSystem {
         specialArgs = {
           inherit inputs outputs;
+          master = self.master;
           hostname = desktop-hostname;
         };
         modules = [
           # > Our main nixos configuration file <
           ./nixos/configuration.nix
+          self.nixosModules.sunshine
         ];
       };
       ${laptop-hostname} = nixpkgs.lib.nixosSystem {
@@ -102,6 +99,7 @@
           hyprland.homeManagerModules.default
           nix-colors.homeManagerModules.default
           nixvim.homeManagerModules.nixvim
+          self.homeManagerModules.sunshine
         ];
       };
       "linus@schnozzlecat-laptop" = home-manager.lib.homeManagerConfiguration {
