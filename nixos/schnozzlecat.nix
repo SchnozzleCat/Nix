@@ -16,6 +16,11 @@
     };
   };
 
+  networking.interfaces."enp8s0".wakeOnLan = {
+    enable = true;
+    policy = ["magic"];
+  };
+
   services.xserver.displayManager.autoLogin = {
     enable = true;
     user = "linus";
@@ -55,7 +60,7 @@
   };
   services.avahi = {
     enable = true;
-    nssmdns = true;
+    nssmdns4 = true;
     openFirewall = true;
   };
 
