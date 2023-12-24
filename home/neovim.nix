@@ -29,6 +29,7 @@
     extraConfigVim = ''
       autocmd BufWritePre * lua vim.lsp.buf.format()
       autocmd FileType nix setlocal commentstring=#\ %s
+      autocmd FileType gdscript setlocal commentstring=#\ %s
       sign define DiagnosticSignError text= numhl=DiagnosticDefaultErro
       sign define DiagnosticSignWarn text= numhl=DiagnosticDefaultWarn
       sign define DiagnosticSignInfo text= numhl=DiagnosticDefaultInfo
@@ -711,6 +712,23 @@
       nvim-colorizer.enable = true;
       sniprun.enable = true;
       flash.enable = true;
+      harpoon = {
+        enable = true;
+        keymaps = {
+          addFile = "<leader>hy";
+          toggleQuickMenu = "<leader>hh";
+          navFile = {
+            "1" = "<leader><leader>a";
+            "2" = "<leader><leader>s";
+            "3" = "<leader><leader>d";
+            "4" = "<leader><leader>f";
+            "5" = "<leader><leader>j";
+            "6" = "<leader><leader>k";
+            "7" = "<leader><leader>l";
+            "8" = "<leader><leader>;";
+          };
+        };
+      };
       which-key.enable = true;
       gitsigns.enable = true;
       nvim-lightbulb.enable = true;
@@ -889,12 +907,12 @@
                 ''''${workspaceFolder}''
               ];
             }
-            {
-              type = "coreclr";
-              request = "attach";
-              name = "Attach";
-              processId.__raw = ''require('dap.utils').pick_process({filter="godot"})'';
-            }
+            # {
+            #   type = "coreclr";
+            #   request = "attach";
+            #   name = "Attach";
+            #   processId.__raw = ''require('dap.utils').pick_process({filter="godot"})'';
+            # }
           ];
         };
         signs = {
@@ -930,7 +948,10 @@
       };
       none-ls = {
         enable = true;
-        sourcesItems = [{__raw = ''require("null-ls").builtins.formatting.csharpier'';}];
+        sourcesItems = [
+          {__raw = ''require("null-ls").builtins.formatting.csharpier'';}
+          {__raw = ''require("null-ls").builtins.formatting.gdformat'';}
+        ];
         sources = {
           code_actions = {
             gitsigns.enable = true;
@@ -1006,6 +1027,7 @@
           nil_ls.enable = true;
           omnisharp.enable = true;
           clangd.enable = true;
+          gdscript.enable = true;
           lua-ls.enable = true;
           pyright.enable = true;
           cssls.enable = true;
