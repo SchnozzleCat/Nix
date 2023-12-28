@@ -84,6 +84,7 @@ in {
         nugetName = "CSharpier";
         nugetSha256 = "sha256-QVfbEtkj41/b8urLx8X274KWjawyfgPTIb9HOLfduB8=";
       })
+      gdtoolkit
 
       # Utilities
       lm_sensors
