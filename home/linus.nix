@@ -50,6 +50,10 @@ in {
     "electron-25.9.0"
   ];
 
+  nixpkgs.overlays = [
+    inputs.neovim-nightly-overlay.overlay
+  ];
+
   home = {
     username = "linus";
     homeDirectory = "/home/linus";
@@ -69,7 +73,7 @@ in {
 
       # Dev
       unityhub
-      dotnet-sdk
+      dotnet-sdk_7
       godot-4-mono
       sublime-merge
       lazygit
@@ -123,21 +127,19 @@ in {
           gamescope
         ];
       })
+      runelite
 
       # Misc
       obsidian
       helvum
       spotify
       cinnamon.warpinator
-      discord
+      armcord
       jellyfin-media-player
       texlive.combined.scheme-full
       jabref
-      (pkgs.ollama.override {
-        llama-cpp = pkgs.llama-cpp.override {
-          openblasSupport = false;
-        };
-      })
+      ollama
+      distrobox
 
       # Shell Scripts
       (writeShellApplication {
