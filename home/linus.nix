@@ -94,6 +94,8 @@ in {
       fzf
       git-crypt
       neovim-remote
+      zip
+      unzip
 
       # Terminal
       eza
@@ -271,6 +273,25 @@ in {
       dragon-out = ''%${xdragon}/bin/xdragon -a -x "$fx"'';
       open = ''''${{${pkgs.ranger}/bin/rifle "$f"}}'';
       copy-path = ''&{{echo -n "$f" | wl-copy}}'';
+      zip = ''
+        %{{
+          printf "Archive name >"
+          read ARCHIVE
+          if [ -n "$ARCHIVE" ]; then
+              zip "$ARCHIVE" $fx
+          fi
+        }}
+      '';
+      unzip = ''
+        %{{
+          printf "Unarchive directory >"
+          read ARCHIVE
+          if [ -n "$ARCHIVE" ]; then
+              mkdir -p "$ARCHIVE"
+              unzip "$f"
+          fi
+        }}
+      '';
       mkdir = ''
         %{{
           printf "Directory Name > "
@@ -340,6 +361,8 @@ in {
       tt = "mkfile";
       td = "mkdir";
       a = "push :rename<space>";
+      zz = "zip";
+      zu = "unzip";
       "<c-f>" = "fzf_find";
       "<c-e>" = "fzf_exact";
       "<enter>" = "open";
