@@ -3,6 +3,7 @@
   outputs,
   lib,
   config,
+  nix-colors,
   pkgs,
   ...
 }: {
@@ -11,8 +12,17 @@
     python311Packages.pytest
   ];
 
+  home.file.".config/nvim/after/queries/c_sharp/highlights.scm".text = ''
+    ;; extends
+    (struct_declaration
+      name: (identifier) @struct_declaration)
+
+    "return" @return_statement
+  '';
+
   programs.nixvim = {
     enable = true;
+    package = pkgs.neovim-nightly;
     extraPlugins = with pkgs; [
       vimPlugins.vim-move
       vimPlugins.lazygit-nvim
@@ -25,6 +35,7 @@
       vimPlugins.tabout-nvim
       vimPlugins.friendly-snippets
       obsidian-nvim
+      roslyn-nvim
     ];
     extraConfigVim = ''
       autocmd BufWritePre * lua vim.lsp.buf.format()
@@ -37,9 +48,23 @@
       highlight NotifyBackground guibg=#000000
       let &t_TI = "\<Esc>[>4;2m"
       let &t_TE = "\<Esc>[>4;m"
+
+      highlight @type.qualifier.c_sharp guifg=#7AA8fF guibg=none
+      highlight @type.c_sharp guifg=#98cb6C guibg=none
+      highlight @struct_declaration guifg=#aaff9C guibg=none
+      highlight @attribute guifg=#cb6fe2 guibg=none
+      highlight @return_statement guifg=#eb6f92 guibg=none
+
     '';
     extraConfigLua = ''
       vim.opt.pumheight = 10
+
+      require("roslyn").setup({
+          dotnet_cmd = "dotnet", -- this is the default
+          roslyn_version = "4.9.0-3.23604.10", -- this is the default
+      })
+
+      print(__lspCapabilities)
 
       require("tabout").setup({
         ignore_beginning = false;
@@ -72,57 +97,6 @@
           },
         },
       })
-      local cmp_autopairs = require('nvim-autopairs.completion.cmp')
-      local cmp = require('cmp')
-      local handlers = require('nvim-autopairs.completion.handlers')
-      local Rule = require('nvim-autopairs.rule')
-      local npairs = require('nvim-autopairs')
-      local cond = require('nvim-autopairs.conds')
-
-      cmp.event:on(
-        'confirm_done',
-        cmp_autopairs.on_confirm_done({
-          filetypes = {
-            -- "*" is a alias to all filetypes
-            ["*"] = {
-              ["("] = {
-                kind = {
-                  cmp.lsp.CompletionItemKind.Function,
-                  cmp.lsp.CompletionItemKind.Method,
-                },
-                handler = handlers["*"]
-              },
-              ["<"] = {
-                kind = {
-                  cmp.lsp.CompletionItemKind.Function,
-                  cmp.lsp.CompletionItemKind.Class,
-                  cmp.lsp.CompletionItemKind.Method,
-                },
-                handler = function(char, item, bufnr, rules, commit_character)
-                  if string.find(item.label, "<>") then
-                    print("hello")
-                    local r = {Rule("<",">",{"cs"})
-                    :with_move(cond.done())
-                    :with_cr(cond.done())
-                    :use_key("<")
-                    :replace_endpair(function(opts)
-                    return ">()"
-                    end)
-                    }
-                    handlers["*"](char, item, bufnr, r)
-                  end
-                end
-              }
-            },
-            tex = false
-          }
-        })
-      )
-
-
-      npairs.add_rule(Rule("$$","$$","tex"))
-
-      -- you can use some built-in conditions
     '';
     options = {
       number = true;
@@ -204,6 +178,12 @@
         mode = "v";
         key = "<leader>rs";
         action = ":SnipRun <cr>";
+        options.desc = "Run Snippet";
+      }
+      {
+        mode = "n";
+        key = "<leader>p";
+        action = '':lua vim.fn.jobstart("dotnet build", {cwd = vim.loop.cwd(), on_exit = function(job_id, data, event) print(data == 0 and "Build Succeeded" or "Build Failed") end}) <CR>'';
         options.desc = "Run Snippet";
       }
       # DAP
@@ -486,7 +466,7 @@
       {
         mode = ["n"];
         key = "gd";
-        action = "<cmd> lua vim.lsp.buf.definition() <cr>";
+        action = "<cmd> Lspsaga goto_definition <cr>";
         options.desc = "LSP Definition";
       }
       # Trouble
@@ -704,7 +684,10 @@
       copilot-lua = {
         enable = true;
         # panel.enabled = false;
-        # suggestion.enabled = false;
+        suggestion = {
+          enabled = true;
+          autoTrigger = true;
+        };
       };
       # copilot-cmp.enable = true;
       notify.enable = true;
@@ -978,6 +961,10 @@
       };
       lsp = {
         enable = true;
+        postConfig = ''
+          _G["__lspCapabilities"] = __lspCapabilities
+          _G["__lspOnAttach"] = __lspOnAttach
+        '';
         onAttach = ''
           client.server_capabilities.documentFormattingProvider = false
           client.server_capabilities.documentRangeFormattingProvider = false
@@ -1025,7 +1012,7 @@
           };
           digestif.enable = true;
           nil_ls.enable = true;
-          omnisharp.enable = true;
+          # omnisharp.enable = true;
           clangd.enable = true;
           gdscript.enable = true;
           lua-ls.enable = true;
