@@ -50,7 +50,7 @@ in
   stdenv.mkDerivation rec {
     pname = "godot4-mono";
     version = "4.2";
-    commitHash = "46dc277917a93cbf601bbcf0d27d00f6feeec0d5";
+    commitHash = "40e5d7892b8311845b5ea2f5bcb842958c6cb676";
 
     nugetDeps = mkNugetDeps {
       name = "deps";
@@ -73,10 +73,10 @@ in
     '';
 
     src = fetchFromGitHub {
-      owner = "godotengine";
+      owner = "SchnozzleCat";
       repo = "godot";
       rev = commitHash;
-      hash = "sha256-eon9GOmOafOcPjyBqnrAUXwVBUOnYFBQy8o5dnumDDs";
+      hash = "sha256-jGke7Lblv3XMlxfBu/E69P0XSb7H6Cr7K3HSTOI/TcY=";
     };
 
     nativeBuildInputs = [
@@ -152,6 +152,8 @@ in
     '';
 
     buildPhase = ''
+      export GODOT_VERSION_STATUS=GodotNuGetSource
+
       echo "Starting Build"
       scons p=${withPlatform} target=${withTarget} precision=${withPrecision} module_mono_enabled=yes module_text_server_fb_enabled=yes mono_glue=no
 

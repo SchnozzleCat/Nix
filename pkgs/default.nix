@@ -3,6 +3,17 @@
 {pkgs, ...}: let
 in {
   godot-4-mono = pkgs.callPackage ./godot4-mono {};
+  roslyn-nvim = pkgs.vimUtils.buildVimPlugin {
+    pname = "roslyn.nvim";
+    version = "4.9.0-3.23604.10";
+    src = pkgs.fetchFromGitHub {
+      owner = "jmederosalvarado";
+      repo = "roslyn.nvim";
+      rev = "4.9.0-3.23604.10";
+      sha256 = "sha256-LWe20cUtZKWJr9tWZgBP2/oZb9ipJTvKJFL5K+TZCrI=";
+    };
+    meta.homepage = "https://github.com/epwalsh/obsidian.nvim";
+  };
   obsidian-nvim = pkgs.vimUtils.buildVimPlugin {
     pname = "obsidian-nvim";
     version = "v2.3.1";
