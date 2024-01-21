@@ -62,9 +62,9 @@
       require("roslyn").setup({
           dotnet_cmd = "dotnet", -- this is the default
           roslyn_version = "4.9.0-3.23604.10", -- this is the default
+          on_attach = __lspOnAttach,
+          capabilities = __lspCapabilities(),
       })
-
-      print(__lspCapabilities)
 
       require("tabout").setup({
         ignore_beginning = false;
@@ -676,6 +676,7 @@
       };
       undotree.enable = true;
       commentary.enable = true;
+      fugitive.enable = true;
       lspsaga = {
         enable = true;
         lightbulb.enable = false;
@@ -687,6 +688,9 @@
         suggestion = {
           enabled = true;
           autoTrigger = true;
+          keymap = {
+            accept = "<C-f>";
+          };
         };
       };
       # copilot-cmp.enable = true;
@@ -785,6 +789,10 @@
             };
           };
           executables = {
+            "php" = {
+              command = "node";
+              args = ["/home/linus/Repositories/pina-checkout-integration-exploration/vscode-php-debug/out/phpDebug.js"];
+            };
             "cppdbg" = {
               command = "${pkgs.vscode-extensions.ms-vscode.cpptools}/bin/OpenDebugAD7";
             };
@@ -795,6 +803,17 @@
           };
         };
         configurations = {
+          php = [
+            {
+              type = "php";
+              request = "launch";
+              name = "Listen for Xdebug";
+              port = 9003;
+              pathMappings = {
+                "/var/www/html" = ''''${workspaceFolder}'';
+              };
+            }
+          ];
           gdscript = [
             {
               type = "godot";
@@ -1015,6 +1034,7 @@
           # omnisharp.enable = true;
           clangd.enable = true;
           gdscript.enable = true;
+          svelte.enable = true;
           lua-ls.enable = true;
           pyright.enable = true;
           cssls.enable = true;

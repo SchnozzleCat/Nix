@@ -81,6 +81,7 @@ in {
       jetbrains.datagrip
       podman-tui
       ctop
+      android-studio
 
       (buildDotnetGlobalTool {
         pname = "dotnet-csharpier";
@@ -125,6 +126,7 @@ in {
           wineWowPackages.stable
           winetricks
           gamescope
+          mesa
         ];
       })
       runelite
@@ -140,6 +142,8 @@ in {
       jabref
       ollama
       distrobox
+      wonderdraft
+      krita
 
       # Shell Scripts
       (writeShellApplication {
@@ -258,6 +262,8 @@ in {
       signByDefault = true;
     };
   };
+
+  programs.mangohud.enable = true;
 
   programs.lf = {
     enable = true;
