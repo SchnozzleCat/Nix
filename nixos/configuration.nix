@@ -145,6 +145,11 @@
 
   # TODO: Configure your system-wide user settings (groups, etc), add more users as needed.
   users.users = {
+    test = {
+      isNormalUser = true;
+      # TODO: Be sure to add any other groups you need (such as networkmanager, audio, docker, etc)
+      extraGroups = ["wheel" "networkmanager" "audio"];
+    };
     linus = {
       isNormalUser = true;
       openssh.authorizedKeys.keys = [
