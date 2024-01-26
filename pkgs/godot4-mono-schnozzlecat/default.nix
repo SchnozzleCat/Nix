@@ -48,9 +48,9 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision ["single" "double"]
     else "${k}=${builtins.toJSON v}");
 in
   stdenv.mkDerivation rec {
-    pname = "godot4-mono";
+    pname = "godot4-mono-schnozzlecat";
     version = "4.2";
-    commitHash = "b09f793f564a6c95dc76acc654b390e68441bd01";
+    commitHash = "315208a82eb0781f28e5348bdc59bf53b7796406";
 
     nugetDeps = mkNugetDeps {
       name = "deps";
@@ -73,10 +73,10 @@ in
     '';
 
     src = fetchFromGitHub {
-      owner = "godotengine";
+      owner = "SchnozzleCat";
       repo = "godot";
       rev = commitHash;
-      hash = "sha256-jGke7Lblv3XMlxfBu/E69P0XSb7H6Cr7K3HSTOI/TcY=";
+      hash = "sha256-e9hosgfLxmRDTeocGLyHu+pzDi2TCrWmfrxUHFh1AgY=";
     };
 
     nativeBuildInputs = [
@@ -152,6 +152,8 @@ in
     '';
 
     buildPhase = ''
+      export GODOT_VERSION_STATUS=SchnozzleCat
+
       echo "Starting Build"
       scons p=${withPlatform} target=${withTarget} precision=${withPrecision} module_mono_enabled=yes module_text_server_fb_enabled=yes mono_glue=no
 
@@ -171,16 +173,16 @@ in
 
     installPhase = ''
       mkdir -p "$out/bin"
-      cp bin/godot.* $out/bin/godot4-mono
-      cp -r bin/GodotSharp/ $out/bin/
+      cp bin/godot.* $out/bin/godot4-mono-schnozzlecat
+      cp -r bin/GodotSharp/ $out/bin/GodotSharp
 
       installManPage misc/dist/linux/godot.6
 
       mkdir -p "$out"/share/{applications,icons/hicolor/scalable/apps}
-      cp misc/dist/linux/org.godotengine.Godot.desktop "$out/share/applications/org.godotengine.Godot4-Mono.desktop"
-      substituteInPlace "$out/share/applications/org.godotengine.Godot4-Mono.desktop" \
-        --replace "Exec=godot" "Exec=$out/bin/godot4-mono" \
-        --replace "Godot Engine" "Godot Engine ${version} (Mono, $(echo "${withPrecision}" | sed 's/.*/\u&/') Precision)"
+      cp misc/dist/linux/org.godotengine.Godot.desktop "$out/share/applications/org.godotengine.Godot4-Mono-SchnozzleCat.desktop"
+      substituteInPlace "$out/share/applications/org.godotengine.Godot4-Mono-SchnozzleCat.desktop" \
+        --replace "Exec=godot" "Exec=$out/bin/godot4-mono-schnozzlecat" \
+        --replace "Godot Engine" "SchnozzleCat Godot Engine ${version} (Mono, $(echo "${withPrecision}" | sed 's/.*/\u&/') Precision)"
       cp icon.svg "$out/share/icons/hicolor/scalable/apps/godot.svg"
       cp icon.png "$out/share/icons/godot.png"
     '';
