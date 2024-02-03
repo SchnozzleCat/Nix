@@ -33,6 +33,7 @@
     ];
     # Configure your nixpkgs instance
     config = {
+      android_sdk.accept_license = true;
       # Disable if you don"t want unfree packages
       allowUnfree = true;
       # Workaround for https://github.com/nix-community/home-manager/issues/2942
@@ -48,7 +49,6 @@
 
   # Enable home-manager and git
   programs.home-manager.enable = true;
-
 
   # Nicely reload system units when changing configs
   systemd.user.startServices = "sd-switch";
