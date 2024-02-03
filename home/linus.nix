@@ -73,8 +73,19 @@ in {
 
       # Dev
       unityhub
-      dotnet-sdk_7
-      godot-4-mono
+      (pkgs.buildEnv {
+        name = "combinedSdk";
+        paths = [
+          (with pkgs.dotnetCorePackages;
+            combinePackages [
+              sdk_6_0
+              sdk_7_0
+              sdk_8_0
+            ])
+        ];
+      })
+      # godot-4-mono
+      godot-4-mono-schnozzlecat
       sublime-merge
       lazygit
       jetbrains.rider
@@ -82,6 +93,7 @@ in {
       podman-tui
       ctop
       android-studio
+      jdk17
 
       (buildDotnetGlobalTool {
         pname = "dotnet-csharpier";
@@ -144,6 +156,7 @@ in {
       distrobox
       wonderdraft
       krita
+      aseprite
 
       # Shell Scripts
       (writeShellApplication {
@@ -412,20 +425,20 @@ in {
     command = "pavucontrol"
     animation = "fromRight"
   '';
-  home.file.".config/nvim/after/ftplugin/gdscript.lua".text = ''
-    local port = os.getenv('GDScript_Port') or '6005'
-    local cmd = vim.lsp.rpc.connect('127.0.0.1', port)
-    local pipe = '/path/to/godot.pipe' -- I use /tmp/godot.pipe
+  # home.file.".config/nvim/after/ftplugin/gdscript.lua".text = ''
+  #   local port = os.getenv('GDScript_Port') or '6005'
+  #   local cmd = vim.lsp.rpc.connect('127.0.0.1', port)
+  #   local pipe = '/path/to/godot.pipe' -- I use /tmp/godot.pipe
 
-    vim.lsp.start({
-      name = 'Godot',
-      cmd = cmd,
-      root_dir = vim.fs.dirname(vim.fs.find({ 'project.godot', '.git' }, { upward = true })[1]),
-      on_attach = function(client, bufnr)
-        vim.api.nvim_command('echo serverstart("' .. pipe .. '")')
-      end
-    })
-  '';
+  #   vim.lsp.start({
+  #     name = 'Godot',
+  #     cmd = cmd,
+  #     root_dir = vim.fs.dirname(vim.fs.find({ 'project.godot', '.git' }, { upward = true })[1]),
+  #     on_attach = function(client, bufnr)
+  #       vim.api.nvim_command('echo serverstart("' .. pipe .. '")')
+  #     end
+  #   })
+  # '';
 
   programs.waybar = {
     enable = true;
@@ -570,8 +583,8 @@ in {
     '';
     shellAliases = {
       gpt = "DEFAULT_MODEL=gpt-4-1106-preview OPENAI_API_KEY=$(gpg -q --decrypt $OPENAI_API_KEY_DIR) sgpt";
-      pi-hdd = ''sshfs -o sftp_server="/usr/bin/sudo /usr/lib/openssh/sftp-server" -p 6969 pi@192.168.200.41:/mnt/hdd ~/Mounts/hdd'';
-      pi-ssd = ''sshfs -o sftp_server="/usr/bin/sudo /usr/lib/openssh/sftp-server" -p 6969 pi@192.168.200.41:/mnt/ssd ~/Mounts/ssd'';
+      pi-hdd = ''sshfs -o sftp_server="/usr/bin/sudo /usr/lib/openssh/sftp-server" -p 6969 pi@192.168.200.48:/mnt/hdd ~/Mounts/hdd'';
+      pi-ssd = ''sshfs -o sftp_server="/usr/bin/sudo /usr/lib/openssh/sftp-server" -p 6969 pi@192.168.200.48:/mnt/ssd ~/Mounts/ssd'';
     };
     shellAbbrs = {
       os-rebuild = "sudo nixos-rebuild switch --flake ~/.nixos/";
@@ -580,7 +593,7 @@ in {
       cat = "bat";
       # which-gpu = ''glxinfo| grep -E "OpenGL vendor|OpenGL renderer"'';
       # docker-stop-containers = "docker stop $(docker ps -a -q)";
-      pi = "ssh pi@192.168.200.41 -p 6969";
+      pi = "ssh pi@192.168.200.48 -p 6969";
       # alert = "paplay /usr/share/sounds/freedesktop/stereo/complete.oga";
       # boot-win11 = ''sudo grub2-reboot "Windows Boot Manager (on /dev/nvme1n1p1)" && reboot'';
       # nvim-unity = "nvim --listen /tmp/nvimunity";
