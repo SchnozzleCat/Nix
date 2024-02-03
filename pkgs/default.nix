@@ -13,7 +13,6 @@ in {
       rev = "4.9.0-3.23604.10";
       sha256 = "sha256-LWe20cUtZKWJr9tWZgBP2/oZb9ipJTvKJFL5K+TZCrI=";
     };
-    meta.homepage = "https://github.com/epwalsh/obsidian.nvim";
   };
   obsidian-nvim = pkgs.vimUtils.buildVimPlugin {
     pname = "obsidian-nvim";
@@ -24,6 +23,15 @@ in {
       rev = "v2.3.1";
       sha256 = "sha256-g9GFq5FMaCcJ6HbnhRgCmioLvaJ4SK6jSioDi5lXeP4=";
     };
-    meta.homepage = "https://github.com/epwalsh/obsidian.nvim";
+  };
+  copilotchat-nvim = pkgs.vimUtils.buildVimPlugin {
+    pname = "copilotchat-nvim";
+    version = "main";
+    src = pkgs.fetchFromGitHub {
+      owner = "jellydn";
+      repo = "CopilotChat.nvim";
+      rev = "90fe665555e529e3bf653ab59cb5cd72ba6174a0";
+      sha256 = "sha256-n+iK97uSOYdlQZSZV3JJHBWKHi7UPPKpKUZm4eUDIGs=";
+    };
   };
 }

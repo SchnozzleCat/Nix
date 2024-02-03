@@ -9,7 +9,6 @@
 }: {
   home.packages = with pkgs; [
     netcoredbg
-    python311Packages.pytest
   ];
 
   home.file.".config/nvim/after/queries/c_sharp/highlights.scm".text = ''
@@ -23,10 +22,16 @@
   programs.nixvim = {
     enable = true;
     package = pkgs.neovim-nightly;
+    extraPython3Packages = python-pkgs: [
+      python-pkgs.pytest
+      python-pkgs.python-dotenv
+      python-pkgs.pynvim
+      python-pkgs.prompt-toolkit
+      python-pkgs.requests
+    ];
     extraPlugins = with pkgs; [
       vimPlugins.vim-move
       vimPlugins.lazygit-nvim
-      vimPlugins.ChatGPT-nvim
       vimPlugins.ltex_extra-nvim
       vimPlugins.vim-visual-multi
       vimPlugins.neotest
@@ -36,6 +41,7 @@
       vimPlugins.friendly-snippets
       obsidian-nvim
       roslyn-nvim
+      copilotchat-nvim
     ];
     extraConfigVim = ''
       autocmd BufWritePre * lua vim.lsp.buf.format()
@@ -79,9 +85,6 @@
         }
       })
 
-      require("chatgpt").setup({
-        api_key_cmd = "gpg --decrypt ${../secrets/keys/openapi.gpg}"
-      })
       require("neotest").setup({
         adapters = {
           require("neotest-python")({
@@ -95,6 +98,16 @@
             name = "work",
             path = "~/Repositories/ObsidianVault",
           },
+        },
+      })
+      require("CopilotChat").setup({
+        mode = "split",
+        show_help = "yes",
+        prompts = {
+          Explain = "Explain how it works.",
+          Review = "Review the following code and provide concise suggestions.",
+          Tests = "Briefly explain how the selected code works, then generate unit tests.",
+          Refactor = "Refactor the code to improve clarity and readability.",
         },
       })
     '';
@@ -432,6 +445,38 @@
         action = "<cmd> Gitsigns diffthis <cr>";
         options.desc = "Git Diff";
       }
+
+      # Copilot
+      {
+        mode = ["v"];
+        key = "<leader>cc";
+        action = ":CopilotChatInPlace <cr>";
+        options.desc = "Copilot Chat";
+      }
+      {
+        mode = ["n"];
+        key = "<leader>ce";
+        action = "<cmd> CopilotChatExplain <cr>";
+        options.desc = "Copilot Explain";
+      }
+      {
+        mode = ["n"];
+        key = "<leader>cr";
+        action = "<cmd> CopilotChatRefactor <cr>";
+        options.desc = "Copilot Refactor";
+      }
+      {
+        mode = ["n"];
+        key = "<leader>cq";
+        action = ":CopilotChat ";
+        options.desc = "Copilot Question";
+      }
+      {
+        mode = ["n"];
+        key = "<leader>ct";
+        action = "<cmd> CopilotChatTests <cr>";
+        options.desc = "Copilot Tests";
+      }
       # LSP Saga
       {
         mode = ["n"];
@@ -466,7 +511,7 @@
       {
         mode = ["n"];
         key = "gd";
-        action = "<cmd> Lspsaga goto_definition <cr>";
+        action = "<cmd> Trouble lsp_definitions <cr>";
         options.desc = "LSP Definition";
       }
       # Trouble
