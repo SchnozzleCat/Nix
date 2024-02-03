@@ -29,6 +29,11 @@
 
   hardware.keyboard.zsa.enable = true;
 
+  programs.gamemode = {
+    enable = true;
+    settings.general.inhibit_screensaver = 0;
+  };
+
   virtualisation.docker.rootless = {
     enable = true;
     setSocketVariable = true;
@@ -145,11 +150,6 @@
 
   # TODO: Configure your system-wide user settings (groups, etc), add more users as needed.
   users.users = {
-    test = {
-      isNormalUser = true;
-      # TODO: Be sure to add any other groups you need (such as networkmanager, audio, docker, etc)
-      extraGroups = ["wheel" "networkmanager" "audio"];
-    };
     linus = {
       isNormalUser = true;
       openssh.authorizedKeys.keys = [
@@ -168,6 +168,7 @@
     pinentry-gnome
     docker-compose
     sshfs
+    gamescope
     (sddm-chili-theme.overrideAttrs (old: {
       src = builtins.fetchGit {
         url = "file:///home/linus/.nixos/repos/sddm-chili";
@@ -225,8 +226,26 @@
       #   });
       # })
     ];
+
     # Configure your nixpkgs instance
     config = {
+      # packageOverrides = pkgs: {
+      #   steam = pkgs.steam.override {
+      #     extraPkgs = pkgs:
+      #       with pkgs; [
+      #         xorg.libXcursor
+      #         xorg.libXi
+      #         xorg.libXinerama
+      #         xorg.libXScrnSaver
+      #         libpng
+      #         libpulseaudio
+      #         libvorbis
+      #         stdenv.cc.cc.lib
+      #         libkrb5
+      #         keyutils
+      #       ];
+      #   };
+      # };
       # Disable if you don't want unfree packages
       allowUnfree = true;
     };
