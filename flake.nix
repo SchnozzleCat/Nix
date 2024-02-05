@@ -91,14 +91,6 @@
     # Standalone home-manager configuration entrypoint
     # Available through 'home-manager --flake .#your-username@your-hostname'
     homeConfigurations = {
-      "test@schnozzlecat" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.x86_64-linux;
-        extraSpecialArgs = {inherit inputs outputs;};
-        modules = [
-          ./home/test.nix
-          hyprland.homeManagerModules.default
-        ];
-      };
       # FIXME replace with your username@hostname
       "linus@schnozzlecat" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
@@ -110,6 +102,7 @@
           nix-colors.homeManagerModules.default
           nixvim.homeManagerModules.nixvim
           self.homeManagerModules.sunshine
+          self.homeManagerModules.godot4-mono-schnozzlecat
         ];
       };
       "linus@schnozzlecat-laptop" = home-manager.lib.homeManagerConfiguration {

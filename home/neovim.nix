@@ -947,7 +947,7 @@
               name = "Godot";
               request = "launch";
               type = "coreclr";
-              program = ''${pkgs.godot-4-mono}/bin/godot4-mono'';
+              program = ''${pkgs.godot4-mono-schnozzlecat}/bin/godot4-mono-schnozzlecat'';
               stopAtEntry = false;
               args = [
                 "--path"

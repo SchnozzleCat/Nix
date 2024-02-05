@@ -36,6 +36,9 @@
   withFontconfig ? true,
   withUdev ? true,
   withTouch ? true,
+  withVersion ? "4.2.2",
+  withCommitHash ? "6435848db846ff93bfdcbc6b3d984ddb5d9c0d2c",
+  withHash ? "sha256-+NsDnRhckt//1m6akNaZwaSe0qJyg10rrKTmN7cvlPs=",
   dotnet-sdk,
   mono,
   dotnet-runtime,
@@ -49,8 +52,8 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision ["single" "double"]
 in
   stdenv.mkDerivation rec {
     pname = "godot4-mono-schnozzlecat";
-    version = "4.2";
-    commitHash = "315208a82eb0781f28e5348bdc59bf53b7796406";
+    version = withVersion;
+    commitHash = withCommitHash;
 
     nugetDeps = mkNugetDeps {
       name = "deps";
@@ -76,7 +79,7 @@ in
       owner = "SchnozzleCat";
       repo = "godot";
       rev = commitHash;
-      hash = "sha256-e9hosgfLxmRDTeocGLyHu+pzDi2TCrWmfrxUHFh1AgY=";
+      hash = withHash;
     };
 
     nativeBuildInputs = [
@@ -152,7 +155,7 @@ in
     '';
 
     buildPhase = ''
-      export GODOT_VERSION_STATUS=SchnozzleCat
+      export GODOT_VERSION_STATUS=SchnozzleCat-${commitHash}
 
       echo "Starting Build"
       scons p=${withPlatform} target=${withTarget} precision=${withPrecision} module_mono_enabled=yes module_text_server_fb_enabled=yes mono_glue=no
@@ -168,14 +171,21 @@ in
       scons p=${withPlatform} target=${withTarget} precision=${withPrecision} module_mono_enabled=yes module_text_server_fb_enabled=yes mono_glue=yes
 
       echo "Building C#/.NET Assemblies"
-      python modules/mono/build_scripts/build_assemblies.py --godot-output-dir bin --precision=${withPrecision}
+      python modules/mono/build_scripts/build_assemblies.py --godot-output-dir bin --precision=${withPrecision} --push-nupkgs-local schnozzlecat
+
+      echo "Building Export Templates"
+      scons platform=linuxbsd target=template_release arch=x86_64 module_mono_enabled=yes
+      scons platform=linuxbsd target=template_debug arch=x86_64 module_mono_enabled=yes
     '';
 
     installPhase = ''
       mkdir -p "$out/bin"
-      cp bin/godot.* $out/bin/godot4-mono-schnozzlecat
+      cp bin/godot.${withPlatform}.${withTarget}.x86_64.mono $out/bin/godot4-mono-schnozzlecat
       cp -r bin/GodotSharp/ $out/bin/GodotSharp
-
+      cp -r schnozzlecat $out/schnozzlecat
+      mkdir -p $out/godot-export-templates
+      cp bin/godot.${withPlatform}.template_debug.x86_64.mono $out/godot-export-templates/linux_release.x86_64
+      cp bin/godot.${withPlatform}.template_release.x86_64.mono $out/godot-export-templates/linux_debug.x86_64
       installManPage misc/dist/linux/godot.6
 
       mkdir -p "$out"/share/{applications,icons/hicolor/scalable/apps}

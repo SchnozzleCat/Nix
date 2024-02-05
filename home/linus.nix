@@ -85,7 +85,6 @@ in {
         ];
       })
       # godot-4-mono
-      godot-4-mono-schnozzlecat
       sublime-merge
       lazygit
       jetbrains.rider
@@ -237,6 +236,13 @@ in {
         '';
       })
     ];
+  };
+
+  programs.godot4-mono-schnozzlecat = {
+    enable = true;
+    version = "4.2.2";
+    commitHash = "6435848db846ff93bfdcbc6b3d984ddb5d9c0d2c";
+    hash = "sha256-+NsDnRhckt//1m6akNaZwaSe0qJyg10rrKTmN7cvlPs=";
   };
 
   programs.ncspot = {

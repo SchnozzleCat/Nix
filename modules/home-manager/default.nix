@@ -4,4 +4,5 @@
   # List your module files here
   # my-module = import ./my-module.nix;
   sunshine = import ./sunshine.nix;
+  godot4-mono-schnozzlecat = import ./godot4-mono-schnozzlecat.nix;
 }
