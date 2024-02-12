@@ -36,9 +36,9 @@
   withFontconfig ? true,
   withUdev ? true,
   withTouch ? true,
-  withVersion ? "4.2.2",
-  withCommitHash ? "6435848db846ff93bfdcbc6b3d984ddb5d9c0d2c",
-  withHash ? "sha256-+NsDnRhckt//1m6akNaZwaSe0qJyg10rrKTmN7cvlPs=",
+  withVersion,
+  withCommitHash,
+  withHash,
   dotnet-sdk,
   mono,
   dotnet-runtime,
@@ -80,6 +80,7 @@ in
       repo = "godot";
       rev = commitHash;
       hash = withHash;
+      fetchSubmodules = true;
     };
 
     nativeBuildInputs = [
@@ -155,7 +156,8 @@ in
     '';
 
     buildPhase = ''
-      export GODOT_VERSION_STATUS=SchnozzleCat-${commitHash}
+      export GODOT_VERSION_STATUS=SchnozzleCat-${builtins.substring 0 10 commitHash}
+      echo "Exporting NuGet with version $GODOT_VERSION_STATUS"
 
       echo "Starting Build"
       scons p=${withPlatform} target=${withTarget} precision=${withPrecision} module_mono_enabled=yes module_text_server_fb_enabled=yes mono_glue=no
@@ -171,7 +173,7 @@ in
       scons p=${withPlatform} target=${withTarget} precision=${withPrecision} module_mono_enabled=yes module_text_server_fb_enabled=yes mono_glue=yes
 
       echo "Building C#/.NET Assemblies"
-      python modules/mono/build_scripts/build_assemblies.py --godot-output-dir bin --precision=${withPrecision} --push-nupkgs-local schnozzlecat
+      python modules/mono/build_scripts/build_assemblies.py --godot-output-dir bin --precision=${withPrecision} --push-nupkgs-local $GODOT_VERSION_STATUS
 
       echo "Building Export Templates"
       scons platform=linuxbsd target=template_release arch=x86_64 module_mono_enabled=yes
@@ -182,7 +184,7 @@ in
       mkdir -p "$out/bin"
       cp bin/godot.${withPlatform}.${withTarget}.x86_64.mono $out/bin/godot4-mono-schnozzlecat
       cp -r bin/GodotSharp/ $out/bin/GodotSharp
-      cp -r schnozzlecat $out/schnozzlecat
+      cp -r $GODOT_VERSION_STATUS $out/$GODOT_VERSION_STATUS
       mkdir -p $out/godot-export-templates
       cp bin/godot.${withPlatform}.template_debug.x86_64.mono $out/godot-export-templates/linux_release.x86_64
       cp bin/godot.${withPlatform}.template_release.x86_64.mono $out/godot-export-templates/linux_debug.x86_64
