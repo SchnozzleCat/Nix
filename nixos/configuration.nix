@@ -12,7 +12,22 @@
   # Boot
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  # boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
+  systemd.services.create-modules-alias-symlink = {
+    description = "Create symlink for kernel modules.alias";
+    after = ["systemd-tmpfiles-setup.service"];
+    wantedBy = ["multi-user.target"];
+    script = let
+      source = "/run/booted-system/kernel-modules/lib/modules/6.7.3/modules.alias";
+      target = "/lib/modules/6.7.3/modules.alias";
+    in ''
+      mkdir -p $(dirname ${target})
+      ln -sfn ${source} ${target}
+    '';
+    serviceConfig.Type = "oneshot";
+    serviceConfig.RemainAfterExit = true;
+  };
 
   # Networking
   networking.hostName = hostname;
@@ -125,7 +140,7 @@
 
   # Hyprland
   programs.hyprland.enable = true;
-  # environment.sessionVariables.NIXOS_OZONE_WL = "1";
+  environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   hardware.opentabletdriver.enable = true;
 
@@ -168,6 +183,7 @@
     pinentry-gnome
     docker-compose
     sshfs
+    firewalld-gui
     gamescope
     (sddm-chili-theme.overrideAttrs (old: {
       src = builtins.fetchGit {
