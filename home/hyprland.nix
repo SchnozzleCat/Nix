@@ -2,7 +2,7 @@
   config,
   pkgs,
 }: let
-  colors = config.colorScheme.colors;
+  colors = config.colorScheme.palette;
 in ''
   $mainMod = SUPER
 

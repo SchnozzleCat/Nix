@@ -7,7 +7,7 @@
   nix-colors,
   ...
 }: let
-  colors = config.colorScheme.colors;
+  colors = config.colorScheme.palette;
 in {
   imports = [
     ./home.nix
@@ -132,6 +132,8 @@ in {
       steam-run
       steam-tui
       steamcmd
+      protonup-qt
+      protontricks
       (lutris.override {
         extraPkgs = pkgs: [
           wineWowPackages.stable
@@ -241,8 +243,8 @@ in {
   programs.godot4-mono-schnozzlecat = {
     enable = true;
     version = "4.2.2";
-    commitHash = "6435848db846ff93bfdcbc6b3d984ddb5d9c0d2c";
-    hash = "sha256-+NsDnRhckt//1m6akNaZwaSe0qJyg10rrKTmN7cvlPs=";
+    commitHash = "315208a82eb0781f28e5348bdc59bf53b7796406";
+    hash = "sha256-e9hosgfLxmRDTeocGLyHu+pzDi2TCrWmfrxUHFh1AgY=";
   };
 
   programs.ncspot = {
