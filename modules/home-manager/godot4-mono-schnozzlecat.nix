@@ -6,6 +6,12 @@
 }:
 with lib; let
   cfg = config.programs.godot4-mono-schnozzlecat;
+  version = "SchnozzleCat-${lib.substring 0 10 cfg.commitHash}";
+  pkg = pkgs.callPackage ../../pkgs/godot4-mono-schnozzlecat {
+    withVersion = cfg.version;
+    withCommitHash = cfg.commitHash;
+    withHash = cfg.hash;
+  };
 in {
   options.programs.godot4-mono-schnozzlecat = {
     enable = mkEnableOption (lib.mdDoc ''Godot4-mono SchnozzleCat'');
@@ -24,18 +30,14 @@ in {
 
   config = mkIf cfg.enable {
     home.packages = [
-      (pkgs.godot4-mono-schnozzlecat.override {
-        withVersion = cfg.version;
-        withCommitHash = cfg.commitHash;
-        withHash = cfg.hash;
-      })
+      pkg
     ];
-    home.file.".local/share/godot/export_templates/${cfg.version}.SchnozzleCat-${cfg.commitHash}.mono".source = "${pkgs.godot4-mono-schnozzlecat}/godot-export-templates";
+    home.file.".local/share/godot/export_templates/${cfg.version}.${version}.mono".source = "${pkg}/godot-export-templates";
     home.file."NuGet.Config".text = ''
       <?xml version="1.0" encoding="utf-8"?>
       <configuration>
         <packageSources>
-          <add key="SchnozzleCat-${cfg.commitHash}" value="${pkgs.godot4-mono-schnozzlecat}/schnozzlecat/"/>
+          <add key="${version}" value="${pkg}/${version}"/>
         </packageSources>
       </configuration>
     '';
