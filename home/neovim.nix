@@ -108,6 +108,7 @@
           Review = "Review the following code and provide concise suggestions.",
           Tests = "Briefly explain how the selected code works, then generate unit tests.",
           Refactor = "Refactor the code to improve clarity and readability.",
+          Documentation = "Create a docstring for the code in the appropriate format.",
         },
       })
     '';
@@ -452,6 +453,12 @@
         key = "<leader>cc";
         action = ":CopilotChatInPlace <cr>";
         options.desc = "Copilot Chat";
+      }
+      {
+        mode = ["v"];
+        key = "<leader>cd";
+        action = ":CopilotChatVsplitVisual write documentation in correct format and nothing else<cr><c-l>";
+        options.desc = "Write Documentation";
       }
       {
         mode = ["n"];
@@ -943,17 +950,17 @@
                 end
               '';
             }
-            {
-              name = "Godot";
-              request = "launch";
-              type = "coreclr";
-              program = ''${pkgs.godot4-mono-schnozzlecat}/bin/godot4-mono-schnozzlecat'';
-              stopAtEntry = false;
-              args = [
-                "--path"
-                ''''${workspaceFolder}''
-              ];
-            }
+            # {
+            #   name = "Godot";
+            #   request = "launch";
+            #   type = "coreclr";
+            #   program = ''${pkgs.godot4-mono-schnozzlecat}/bin/godot4-mono-schnozzlecat'';
+            #   stopAtEntry = false;
+            #   args = [
+            #     "--path"
+            #     ''''${workspaceFolder}''
+            #   ];
+            # }
             # {
             #   type = "coreclr";
             #   request = "attach";
@@ -998,6 +1005,7 @@
         sourcesItems = [
           {__raw = ''require("null-ls").builtins.formatting.csharpier'';}
           {__raw = ''require("null-ls").builtins.formatting.gdformat'';}
+          {__raw = ''require("null-ls").builtins.formatting.prismaFmt'';}
         ];
         sources = {
           code_actions = {
