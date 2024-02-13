@@ -9,6 +9,7 @@
 }: {
   home.packages = with pkgs; [
     netcoredbg
+    gh
   ];
 
   home.file.".config/nvim/after/queries/c_sharp/highlights.scm".text = ''
@@ -39,6 +40,8 @@
       vimPlugins.telescope-dap-nvim
       vimPlugins.tabout-nvim
       vimPlugins.friendly-snippets
+      vimPlugins.octo-nvim
+      vimPlugins.plenary-nvim
       obsidian-nvim
       roslyn-nvim
       copilotchat-nvim
@@ -111,6 +114,7 @@
           Documentation = "Create a docstring for the code in the appropriate format.",
         },
       })
+      require("octo").setup()
     '';
     options = {
       number = true;
@@ -715,6 +719,7 @@
         };
       };
       bufferline.enable = true;
+      markdown-preview.enable = true;
       surround.enable = true;
       trouble = {
         enable = true;
