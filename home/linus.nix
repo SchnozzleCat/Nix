@@ -147,6 +147,7 @@ in {
       # Misc
       obsidian
       helvum
+      easyeffects
       spotify
       cinnamon.warpinator
       armcord
