@@ -734,6 +734,7 @@
       undotree.enable = true;
       commentary.enable = true;
       fugitive.enable = true;
+      neogen.enable = true;
       lspsaga = {
         enable = true;
         lightbulb.enable = false;
