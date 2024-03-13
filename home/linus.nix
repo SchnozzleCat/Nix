@@ -84,7 +84,7 @@ in {
             ])
         ];
       })
-      # godot-4-mono
+      # godot4-mono
       sublime-merge
       lazygit
       jetbrains.rider
@@ -112,6 +112,9 @@ in {
       neovim-remote
       zip
       unzip
+      wget
+      cabextract
+      insomnia
 
       # Terminal
       eza
@@ -142,7 +145,7 @@ in {
           mesa
         ];
       })
-      runelite
+      # runelite
 
       # Misc
       obsidian
@@ -152,6 +155,9 @@ in {
       cinnamon.warpinator
       armcord
       jellyfin-media-player
+      jellyfin-mpv-shim
+      mpv
+      mpv-shim-default-shaders
       texlive.combined.scheme-full
       jabref
       ollama

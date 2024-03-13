@@ -447,10 +447,21 @@
       {
         mode = ["n"];
         key = "<leader>gd";
-        action = "<cmd> Gitsigns diffthis <cr>";
+        action = "<cmd> DiffviewOpen <cr>";
         options.desc = "Git Diff";
       }
-
+      {
+        mode = ["n"];
+        key = "<leader>gh";
+        action = "<cmd> DiffviewFileHistory <cr>";
+        options.desc = "Git File History";
+      }
+      {
+        mode = ["n"];
+        key = "<leader>gfh";
+        action = "<cmd> DiffviewFileHistory % <cr>";
+        options.desc = "Git Current File History";
+      }
       # Copilot
       {
         mode = ["v"];
@@ -509,13 +520,13 @@
       }
       {
         mode = ["n"];
-        key = "]d";
+        key = "]]";
         action = "<cmd> Lspsaga diagnostic_jump_next <cr>";
         options.desc = "Next Diagnostic";
       }
       {
         mode = ["n"];
-        key = "[d";
+        key = "[[";
         action = "<cmd> Lspsaga diagnostic_jump_prev <cr>";
         options.desc = "Previous Diagnostic";
       }
@@ -660,61 +671,38 @@
         enable = true;
       };
       # cmp_luasnip.enable = true;
-      nvim-cmp = {
+      cmp = {
         enable = true;
-        window.completion.border = ["╭" "─" "╮" "│" "╯" "─" "╰" "│"];
-        window.documentation.border = ["╭" "─" "╮" "│" "╯" "─" "╰" "│"];
-        sources = [
-          {
-            name = "nvim_lsp";
-            groupIndex = 2;
-          }
-          # {
-          #   name = "copilot";
-          #   groupIndex = 2;
-          # }
-          {
-            name = "path";
-            groupIndex = 2;
-          }
-          {
-            name = "luasnip";
-            groupIndex = 2;
-          }
-        ];
-        snippet.expand = "luasnip";
-        mapping = {
-          "<CR>" = "cmp.mapping.confirm({ select = true })";
-          "<C-Space>" = {
-            action = "cmp.mapping.complete()";
-            modes = ["i" "s"];
-          };
-          "<Tab>" = {
-            action = ''
-              function(fallback)
-                      luasnip = require("luasnip")
-                      if cmp.visible() then
-                        cmp.select_next_item()
-                      elseif luasnip.expandable() then
-                        luasnip.expand()
-                      elseif luasnip.expand_or_jumpable() then
-                        luasnip.expand_or_jump()
-                      else
-                        fallback()
-                      end
-                    end
-            '';
-            modes = ["i" "s"];
-          };
-          "<S-Tab>" = {
-            action = ''
-              function(fallback)
-                if cmp.visible() then
-                  cmp.select_prev_item()
-                end
-              end
-            '';
-            modes = ["i" "s"];
+        settings = {
+          window.completion.border = ["╭" "─" "╮" "│" "╯" "─" "╰" "│"];
+          window.documentation.border = ["╭" "─" "╮" "│" "╯" "─" "╰" "│"];
+          sources = [
+            {
+              name = "nvim_lsp";
+              groupIndex = 2;
+            }
+            # {
+            #   name = "copilot";
+            #   groupIndex = 2;
+            # }
+            {
+              name = "path";
+              groupIndex = 2;
+            }
+            {
+              name = "luasnip";
+              groupIndex = 2;
+            }
+          ];
+          snippet.expand = "luasnip";
+          mapping = {
+            "<C-Space>" = "cmp.mapping.complete()";
+            "<C-d>" = "cmp.mapping.scroll_docs(-4)";
+            "<C-e>" = "cmp.mapping.close()";
+            "<C-f>" = "cmp.mapping.scroll_docs(4)";
+            "<CR>" = "cmp.mapping.confirm({ select = true })";
+            "<S-Tab>" = "cmp.mapping(cmp.mapping.select_prev_item(), {'i', 's'})";
+            "<Tab>" = "cmp.mapping(cmp.mapping.select_next_item(), {'i', 's'})";
           };
         };
       };
@@ -1006,6 +994,7 @@
           }
         ];
       };
+      diffview.enable = true;
       none-ls = {
         enable = true;
         sourcesItems = [
@@ -1018,19 +1007,18 @@
             gitsigns.enable = true;
           };
           diagnostics = {
-            luacheck.enable = true;
-            flake8.enable = true;
             cppcheck.enable = true;
           };
           formatting = {
             alejandra.enable = true;
             black.enable = true;
             isort.enable = true;
-            jq.enable = true;
             markdownlint.enable = true;
-            prettier = {
+            prettierd = {
               enable = true;
-              disableTsServerFormatter = true;
+              withArgs = ''
+                { extra_filetypes = { "svelte" } }
+              '';
             };
             phpcbf.enable = true;
             stylua.enable = true;

@@ -67,7 +67,7 @@
   programs.gnupg.agent = {
     enable = true;
     enableSSHSupport = true;
-    pinentryFlavor = "gnome3";
+    pinentryPackage = pkgs.pinentry-gnome3;
   };
 
   # TPM
@@ -140,7 +140,7 @@
 
   # Hyprland
   programs.hyprland.enable = true;
-  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+  # environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   hardware.opentabletdriver.enable = true;
 
@@ -180,7 +180,7 @@
     brightnessctl
     hyprpaper
     yubikey-manager
-    pinentry-gnome
+    pinentry-gnome3
     docker-compose
     sshfs
     firewalld-gui

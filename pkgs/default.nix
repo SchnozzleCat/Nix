@@ -2,7 +2,7 @@
 # You can build them using 'nix build .#example'
 {pkgs, ...}: let
 in {
-  # godot4-mono = pkgs.callPackage ./godot4-mono {};
+  godot4-mono = pkgs.callPackage ./godot4-mono {};
   # godot4-mono-schnozzlecat = pkgs.callPackage ./godot4-mono-schnozzlecat {};
   roslyn-nvim = pkgs.vimUtils.buildVimPlugin {
     pname = "roslyn.nvim";
