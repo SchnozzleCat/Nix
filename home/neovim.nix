@@ -63,7 +63,6 @@
       highlight @struct_declaration guifg=#aaff9C guibg=none
       highlight @attribute guifg=#cb6fe2 guibg=none
       highlight @return_statement guifg=#eb6f92 guibg=none
-
     '';
     extraConfigLua = ''
       vim.opt.pumheight = 10
@@ -112,6 +111,12 @@
           Tests = "Briefly explain how the selected code works, then generate unit tests.",
           Refactor = "Refactor the code to improve clarity and readability.",
           Documentation = "Create a docstring for the code in the appropriate format.",
+          CommitStaged = {
+            prompt = 'Write commit message for the change with commitizen convention. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.',
+            selection = function(source)
+              return require("CopilotChat.select").gitdiff(source, true)
+            end,
+          },
         },
       })
       require("octo").setup()
@@ -462,6 +467,36 @@
         action = "<cmd> DiffviewFileHistory % <cr>";
         options.desc = "Git Current File History";
       }
+      {
+        mode = ["n"];
+        key = "]h";
+        action = "<cmd> Gitsigns next_hunk <cr> <cmd> Gitsigns preview_hunk_inline <cr>";
+        options.desc = "Next Hunk";
+      }
+      {
+        mode = ["n"];
+        key = "[h";
+        action = "<cmd> Gitsigns prev_hunk <cr> <cmd> Gitsigns preview_hunk_inline <cr>";
+        options.desc = "Previous Hunk";
+      }
+      {
+        mode = ["n"];
+        key = "<leader>hs";
+        action = "<cmd> Gitsigns stage_hunk <cr>";
+        options.desc = "Stage Hunk";
+      }
+      {
+        mode = ["n"];
+        key = "<leader>hr";
+        action = "<cmd> Gitsigns reset_hunk <cr>";
+        options.desc = "Reset Hunk";
+      }
+      {
+        mode = ["n"];
+        key = "<leader>hu";
+        action = "<cmd> Gitsigns undo_stage_hunk <cr>";
+        options.desc = "Undo Stage Hunk";
+      }
       # Copilot
       {
         mode = ["v"];
@@ -602,6 +637,10 @@
     plugins = {
       noice = {
         enable = true;
+        presets = {
+          bottom_search = true;
+          command_palette = true;
+        };
       };
       telescope = {
         enable = true;
@@ -765,7 +804,18 @@
       which-key.enable = true;
       gitsigns.enable = true;
       nvim-lightbulb.enable = true;
-      lualine.enable = true;
+      lualine = {
+        enable = true;
+        sections = {
+          lualine_x = [
+            {
+              name.__raw = ''require("noice").api.statusline.mode.get'';
+              extraConfig = {cond.__raw = ''require("noice").api.statusline.mode.has'';};
+              color = {fg = "#ff9e64";};
+            }
+          ];
+        };
+      };
       alpha = {
         enable = true;
         layout = [
