@@ -94,7 +94,10 @@
       # FIXME replace with your username@hostname
       "linus@schnozzlecat" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
-        extraSpecialArgs = {inherit inputs outputs nix-colors;};
+        extraSpecialArgs = {
+          inherit inputs outputs nix-colors;
+          master = inputs.master.legacyPackages.${system};
+        };
         modules = [
           # > Our main home-manager configuration file <
           ./home/linus-desktop.nix
@@ -107,7 +110,10 @@
       };
       "linus@schnozzlecat-laptop" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
-        extraSpecialArgs = {inherit inputs outputs nix-colors;};
+        extraSpecialArgs = {
+          inherit inputs outputs nix-colors;
+          master = inputs.master.legacyPackages.${system};
+        };
         modules = [
           # > Our main home-manager configuration file <
           ./home/linus-laptop.nix

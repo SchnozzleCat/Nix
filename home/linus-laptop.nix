@@ -5,6 +5,7 @@
   config,
   pkgs,
   nix-colors,
+  master,
   ...
 }: {
   imports = [
@@ -35,7 +36,7 @@
   };
 
   wayland.windowManager.hyprland.extraConfig =
-    (import ./hyprland.nix {inherit config pkgs;})
+    (import ./hyprland.nix {inherit config pkgs master;})
     + ''
       monitor=eDP-1,1920x1080@144,0x0,1
 

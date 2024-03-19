@@ -813,12 +813,14 @@
       surround.enable = true;
       trouble = {
         enable = true;
-        signs = {
-          error = "";
-          warning = " ";
-          hint = "";
-          information = " ";
-          other = " ";
+        settings = {
+          signs = {
+            error = "";
+            warning = " ";
+            hint = "";
+            information = " ";
+            other = " ";
+          };
         };
       };
       undotree.enable = true;

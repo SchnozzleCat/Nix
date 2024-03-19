@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  master,
 }: let
   colors = config.colorScheme.palette;
 in ''
@@ -12,7 +13,7 @@ in ''
   exec-once = hyprpaper
   exec-once = ollama serve
 
-  exec-once = ${pkgs.waybar}/bin/waybar
+  exec-once = ${master.waybar}/bin/waybar
   exec-once = pypr
   exec-once = sleep 3 && ${pkgs.whatsapp-for-linux}/bin/whatsapp-for-linux
   exec-once = solaar --window=hide

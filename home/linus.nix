@@ -5,6 +5,7 @@
   config,
   pkgs,
   nix-colors,
+  master,
   ...
 }: let
   colors = config.colorScheme.palette;
@@ -454,6 +455,7 @@ in {
     enable = true;
     settings = import ./waybar-config.nix;
     style = import ./waybar-style.nix;
+    package = master.waybar;
   };
 
   programs.gpg = {
