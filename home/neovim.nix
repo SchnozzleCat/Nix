@@ -42,7 +42,7 @@
       vimPlugins.friendly-snippets
       vimPlugins.octo-nvim
       vimPlugins.plenary-nvim
-      obsidian-nvim
+      vimPlugins.lsp_signature-nvim
       roslyn-nvim
       copilotchat-nvim
     ];
@@ -63,6 +63,7 @@
       highlight @struct_declaration guifg=#aaff9C guibg=none
       highlight @attribute guifg=#cb6fe2 guibg=none
       highlight @return_statement guifg=#eb6f92 guibg=none
+      set conceallevel=2
     '';
     extraConfigLua = ''
       vim.opt.pumheight = 10
@@ -72,6 +73,12 @@
           roslyn_version = "4.9.0-3.23604.10", -- this is the default
           on_attach = __lspOnAttach,
           capabilities = __lspCapabilities(),
+          settings = {
+            inlay_hints = {
+              dotnet_enable_inlay_hints_for_parameters = true,
+              csharp_enable_inlay_hints_for_types = true,
+            }
+          },
       })
 
       require("tabout").setup({
@@ -94,14 +101,6 @@
           })
         }
       })
-      require("obsidian").setup({
-        workspaces = {
-          {
-            name = "work",
-            path = "~/Repositories/ObsidianVault",
-          },
-        },
-      })
       require("CopilotChat").setup({
         mode = "split",
         show_help = "yes",
@@ -119,7 +118,16 @@
           },
         },
       })
-      require("octo").setup()
+      require("octo").setup({
+        mappings = {
+          review_diff = {
+            toggle_viewed = { lhs = "<leader><space><space>", desc = "toggle viewer viewed state"}
+          }
+        }
+      })
+      require("lsp_signature").setup({
+        hint_enable = false
+      })
     '';
     options = {
       number = true;
@@ -207,7 +215,7 @@
         mode = "n";
         key = "<leader>p";
         action = '':lua vim.fn.jobstart("dotnet build", {cwd = vim.loop.cwd(), on_exit = function(job_id, data, event) print(data == 0 and "Build Succeeded" or "Build Failed") end}) <CR>'';
-        options.desc = "Run Snippet";
+        options.desc = "Dotnet Build";
       }
       # DAP
       {
@@ -633,6 +641,56 @@
         action = "<cmd> LazyGit <cr>";
         options.desc = "LazyGit";
       }
+      # Obsidian
+      {
+        mode = ["n"];
+        key = "<leader>ft";
+        action = "<cmd> ObsidianTags <cr>";
+        options.desc = "Obsidian Tags";
+      }
+      {
+        mode = ["n"];
+        key = "<leader>fn";
+        action = "<cmd> ObsidianSearch <cr>";
+        options.desc = "Obsidian Search";
+      }
+      {
+        mode = ["n"];
+        key = "<leader>zn";
+        action = "<cmd> ObsidianNew <cr>";
+        options.desc = "Obsidian New";
+      }
+      {
+        mode = ["n"];
+        key = "<leader>zo";
+        action = "<cmd> ObsidianOpen <cr>";
+        options.desc = "Obsidian Open";
+      }
+      {
+        mode = ["n"];
+        key = "<leader>zl";
+        action = "<cmd> ObsidianLinks <cr>";
+        options.desc = "Obsidian Links";
+      }
+      {
+        mode = ["n"];
+        key = "<leader>zt";
+        action = "<cmd> ObsidianTemplate <cr>";
+        options.desc = "Obsidian Template";
+      }
+      {
+        mode = ["n"];
+        key = "<leader>zd";
+        action = "<cmd> ObsidianToday <cr>";
+        options.desc = "Obsidian Today";
+      }
+      # Misc
+      {
+        mode = ["n"];
+        key = "<leader>hi";
+        action = "lua vim.lsp.inlay_hint.enable(0, vim.lsp.inlay_hint.is_enabled()) <cr>";
+        options.desc = "Toggle Inlay Hints";
+      }
     ];
     plugins = {
       noice = {
@@ -641,6 +699,7 @@
           bottom_search = true;
           command_palette = true;
         };
+        lsp.signature.enabled = false;
       };
       telescope = {
         enable = true;
@@ -733,7 +792,11 @@
               groupIndex = 2;
             }
           ];
-          snippet.expand = "luasnip";
+          snippet.expand = ''
+            function(args)
+              require('luasnip').lsp_expand(args.body)
+            end
+          '';
           mapping = {
             "<C-Space>" = "cmp.mapping.complete()";
             "<C-d>" = "cmp.mapping.scroll_docs(-4)";
@@ -807,13 +870,13 @@
       lualine = {
         enable = true;
         sections = {
-          lualine_x = [
-            {
-              name.__raw = ''require("noice").api.statusline.mode.get'';
-              extraConfig = {cond.__raw = ''require("noice").api.statusline.mode.has'';};
-              color = {fg = "#ff9e64";};
-            }
-          ];
+          # lualine_x = [
+          #   {
+          #     name.__raw = ''require("noice").api.statusline.mode.get'';
+          #     extraConfig = {cond.__raw = ''require("noice").api.statusline.mode.has'';};
+          #     color = {fg = "#ff9e64";};
+          #   }
+          # ];
         };
       };
       alpha = {
@@ -1035,6 +1098,44 @@
           };
         };
       };
+      rustaceanvim = {
+        enable = true;
+        server.onAttach = ''__lspOnAttach'';
+      };
+      obsidian = {
+        enable = true;
+        settings = {
+          note_id_func = ''
+            function(title)
+              -- Create note IDs in a Zettelkasten format with a timestamp and a suffix.
+              -- In this case a note with the title 'My new note' will be given an ID that looks
+              -- like '1657296016-my-new-note', and therefore the file name '1657296016-my-new-note.md'
+              local suffix = ""
+              if title ~= nil then
+                -- If title is given, transform it into valid file name.
+                suffix = title:gsub(" ", "-"):gsub("[^A-Za-z0-9-]", ""):lower()
+              else
+                -- If title is nil, just add 4 random uppercase letters to the suffix.
+                for _ = 1, 4 do
+                  suffix = suffix .. string.char(math.random(65, 90))
+                end
+              end
+              return tostring(os.time()) .. "-" .. suffix
+            end
+          '';
+          ui = {
+            enable = true;
+          };
+        };
+        extraOptions = {
+          workspaces = [
+            {
+              name = "Obsidian Vault";
+              path = "~/Repositories/ObsidianVault";
+            }
+          ];
+        };
+      };
       luasnip = {
         enable = true;
         fromVscode = [
@@ -1138,7 +1239,23 @@
           html.enable = true;
           java-language-server.enable = true;
           phpactor.enable = true;
-          tsserver.enable = true;
+          tsserver = {
+            enable = true;
+            extraOptions = {
+              init_options = {
+                preferences = {
+                  includeInlayParameterNameHints = "all";
+                  includeInlayParameterNameHintsWhenArgumentMatchesName = true;
+                  includeInlayFunctionParameterTypeHints = true;
+                  includeInlayVariableTypeHints = true;
+                  includeInlayPropertyDeclarationTypeHints = true;
+                  includeInlayFunctionLikeReturnTypeHints = true;
+                  includeInlayEnumMemberValueHints = true;
+                  importModuleSpecifierPreference = "non-relative";
+                };
+              };
+            };
+          };
           eslint.enable = true;
         };
       };

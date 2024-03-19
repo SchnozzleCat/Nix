@@ -119,14 +119,12 @@ in {
       # Terminal
       eza
       bat
-      zellij
       du-dust
       neofetch
       cbonsai
       pipes
       pistol
       imv
-      taskwarrior-tui
       shell_gpt
 
       # Files
@@ -165,6 +163,7 @@ in {
       wonderdraft
       krita
       aseprite
+      vscode.fhs
 
       # Shell Scripts
       (writeShellApplication {
@@ -306,7 +305,7 @@ in {
       pistol "$1"
     '';
     commands = with pkgs; {
-      dragon-out = ''%${xdragon}/bin/xdragon -a -x "$fx"'';
+      dragon-out = ''%${xdragon}/bin/xdragon -a -x $fx'';
       open = ''''${{${pkgs.ranger}/bin/rifle "$f"}}'';
       copy-path = ''&{{echo -n "$f" | wl-copy}}'';
       zip = ''
@@ -403,10 +402,6 @@ in {
       "<c-e>" = "fzf_exact";
       "<enter>" = "open";
     };
-  };
-
-  programs.taskwarrior = {
-    enable = true;
   };
 
   services = {
@@ -583,9 +578,64 @@ in {
     };
   };
 
+  home.file.".config/zellij/plugins/room.wasm".source = ./room.wasm;
+
+  programs.zellij = {
+    enable = true;
+    settings = {
+      ui = {
+        pane_frames = {
+        };
+      };
+      on_force_close = "quit";
+      "keybinds clear-defaults=true" = {
+        "shared_except \"locked\"" = {
+          "bind \"Alt n\"" = {NewPane = {};};
+          "bind \"Alt t\"" = {NewTab = {};};
+          "bind \"Alt m\"" = {ToggleFloatingPanes = {};};
+          "bind \"Alt j\"" = {"MoveFocus \"Down\"" = {};};
+          "bind \"Alt k\"" = {"MoveFocus \"Up\"" = {};};
+          "bind \"Alt h\"" = {"MoveFocus \"Left\"" = {};};
+          "bind \"Alt l\"" = {"MoveFocus \"Right\"" = {};};
+          "bind \"Alt f\"" = {ToggleFocusFullscreen = {};};
+          "bind \"Alt u\"" = {GoToPreviousTab = {};};
+          "bind \"Alt i\"" = {GoToNextTab = {};};
+          "bind \"Alt r\"" = {
+            "SwitchToMode \"RenameTab\"" = {};
+            "TabNameInput 0" = {};
+          };
+          "bind \"Alt y\"" = {
+            "LaunchOrFocusPlugin \"zellij:session-manager\"" = {
+              floating = true;
+              move_to_focused_tab = true;
+            };
+          };
+        };
+        renametab = {
+          "bind \"Esc\"" = {"SwitchToMode \"Normal\"" = {};};
+        };
+      };
+      theme = "catppuccin-mocha";
+      themes = {
+        catppuccin-mocha = {
+          bg = "#585b70";
+          fg = "#cdd6f4";
+          red = "#f38ba8";
+          green = "#a6e3a1";
+          blue = "#89b4fa";
+          yellow = "#f9e2af";
+          magenta = "#f5c2e7";
+          orange = "#fab387";
+          cyan = "#89dceb";
+          black = "#181825";
+          white = "#cdd6f4";
+        };
+      };
+    };
+  };
+
   programs.zoxide = {
     enable = true;
-    enableFishIntegration = true;
   };
 
   programs.fish = {
@@ -593,8 +643,11 @@ in {
     interactiveShellInit = ''
       export OPENAI_API_KEY_DIR=${../secrets/keys/openapi.gpg}
       set -g fish_greeting
-      task list
       bind \ce nvim
+      if set -q ZELLIJ
+      else
+        zellij --layout compact
+      end
     '';
     shellAliases = {
       gpt = "DEFAULT_MODEL=gpt-4-1106-preview OPENAI_API_KEY=$(gpg -q --decrypt $OPENAI_API_KEY_DIR) sgpt";
