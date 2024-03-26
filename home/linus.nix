@@ -165,6 +165,9 @@ in {
       krita
       aseprite
       vscode.fhs
+      proton-mail
+      protonvpn-gui
+      github-copilot-cli
 
       # Shell Scripts
       (writeShellApplication {
@@ -226,9 +229,7 @@ in {
         text = ''
           FILE=/tmp/nvimgodot
           if test -e "$FILE"; then
-            nvr --servername "$FILE" --remote-tab-silent "+''$1" "''$2"
-          else
-            foot --title="nvimgodot" -- nvr --servername "$FILE" --remote-tab-silent "+''$1" "''$2"
+            nvr --servername "$FILE" --remote-silent "+''$1" "''$2"
           fi
         '';
       })
@@ -242,6 +243,13 @@ in {
              echo "{\"class\": \"running\", \"text\": \"\", \"tooltip\": \"\"}"
              exit
           fi
+        '';
+      })
+      (writeShellApplication {
+        name = "dvt";
+        text = ''
+          nix flake init -t "github:the-nix-way/dev-templates#$1"
+          direnv allow
         '';
       })
     ];
@@ -599,9 +607,14 @@ in {
           "bind \"Alt k\"" = {"MoveFocus \"Up\"" = {};};
           "bind \"Alt h\"" = {"MoveFocus \"Left\"" = {};};
           "bind \"Alt l\"" = {"MoveFocus \"Right\"" = {};};
+          "bind \"Alt J\"" = {"Resize \"Increase Down\"" = {};};
+          "bind \"Alt K\"" = {"Resize \"Increase Up\"" = {};};
+          "bind \"Alt H\"" = {"Resize \"Increase Left\"" = {};};
+          "bind \"Alt L\"" = {"Resize \"Increase Right\"" = {};};
           "bind \"Alt f\"" = {ToggleFocusFullscreen = {};};
           "bind \"Alt u\"" = {GoToPreviousTab = {};};
           "bind \"Alt i\"" = {GoToNextTab = {};};
+          "bind \"Alt d\"" = {Detach = {};};
           "bind \"Alt r\"" = {
             "SwitchToMode \"RenameTab\"" = {};
             "TabNameInput 0" = {};
