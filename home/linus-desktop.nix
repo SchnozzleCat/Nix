@@ -102,11 +102,11 @@
       monitor=DP-3,1920x1080@60,1920x-1080,1
       monitor=HDMI-A-1,3840x2160@120,3440x-1080,1
 
-      workspace=DP-1,1
-      workspace=DP-1,2
-      workspace=DP-1,3
-      workspace=DP-2,4
-      workspace=DP-3,5
+      workspace=1, monitor:DP-1, persistent:true
+      workspace=2, monitor:DP-1, persistent:true
+      workspace=3, monitor:DP-1, persistent:true
+      workspace=4, monitor:DP-2, persistent:true
+      workspace=5, monitor:DP-3, persistent:true
 
       bind = $mainMod, 1, exec, hyprctl hyprpaper wallpaper "DP-1,${../secrets/wallpapers/flowers1.png}"
       bind = $mainMod, 2, exec, hyprctl hyprpaper wallpaper "DP-1,${../secrets/wallpapers/flowers5.png}"
