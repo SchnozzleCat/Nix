@@ -29,8 +29,14 @@
   boot.blacklistedKernelModules = ["nouveau"];
   hardware.cpu.intel.updateMicrocode = true;
 
-  hardware.opengl.driSupport = true;
-  hardware.opengl.driSupport32Bit = true;
+  hardware.opengl = {
+    driSupport = true;
+    driSupport32Bit = true;
+    extraPackages = with pkgs; [
+      vulkan-tools
+      amdvlk
+    ];
+  };
 
   boot.initrd.kernelModules = ["amdgpu"];
   boot.kernelModules = ["hid-nintendo" "v4l2loopback" "uinput"];
