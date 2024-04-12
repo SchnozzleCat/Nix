@@ -144,6 +144,10 @@ in {
           mesa
         ];
       })
+      (wineWowPackages.full.override {
+        wineRelease = "staging";
+        mingwSupport = true;
+      })
       # runelite
 
       # Misc
@@ -152,16 +156,23 @@ in {
       easyeffects
       spotify
       cinnamon.warpinator
-      armcord
+      (vesktop.overrideAttrs (oldAttrs: {
+        src = pkgs.fetchFromGitHub {
+          owner = "Vencord";
+          repo = "Vesktop";
+          rev = "d0ff6192cbf81f1a0b497e16dff9ac7c23616436";
+          hash = "sha256-/qd++djD5LQaDzxslAA55A6jZHCT6NLQ+RYofqn1x28=";
+        };
+      }))
       jellyfin-media-player
       jellyfin-mpv-shim
       mpv
       mpv-shim-default-shaders
-      texlive.combined.scheme-full
+      # texlive.combined.scheme-full
       jabref
       ollama
       distrobox
-      wonderdraft
+      # wonderdraft
       krita
       aseprite
       vscode.fhs
@@ -299,7 +310,22 @@ in {
     };
   };
 
-  programs.mangohud.enable = true;
+  programs.mangohud = {
+    enable = true;
+    settings = {
+      vulkan_driver = true;
+      gpu_temp = true;
+      gpu_mem_temp = true;
+      vram = true;
+      cpu_temp = true;
+      cpu_power = true;
+      cpu_mhz = true;
+      ram = true;
+      io_read = true;
+      io_write = true;
+      gamemode = true;
+    };
+  };
 
   programs.lf = {
     enable = true;
