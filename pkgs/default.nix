@@ -4,7 +4,6 @@
 in {
   godot4-mono = pkgs.callPackage ./godot4-mono {};
   # godot4-mono-schnozzlecat = pkgs.callPackage ./godot4-mono-schnozzlecat {};
-  roslyn-ls = pkgs.callPackage ./roslyn-ls {};
   roslyn-nvim = pkgs.vimUtils.buildVimPlugin {
     pname = "roslyn.nvim";
     version = "";
