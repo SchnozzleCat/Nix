@@ -176,7 +176,6 @@ in {
       krita
       aseprite
       vscode.fhs
-      proton-mail
       protonvpn-gui
       github-copilot-cli
 
