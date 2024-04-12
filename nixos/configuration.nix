@@ -70,6 +70,8 @@
     pinentryPackage = pkgs.pinentry-gnome3;
   };
 
+  programs.nix-ld.enable = true;
+
   # TPM
   security.tpm2 = {
     enable = true;
@@ -194,6 +196,15 @@
     }))
   ];
 
+  programs.firefox = {
+    enable = true;
+    autoConfig = ''
+      pref("general.config.filename", "autoconfig.cfg");
+      pref("general.config.obscure_value", 0);
+      pref("general.config.sandbox_enabled", false);
+    '';
+  };
+
   # Shell
   users.defaultUserShell = pkgs.fish;
   programs.fish.enable = true;
@@ -205,6 +216,12 @@
     enable = true;
     remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
     dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+    package = pkgs.steam.override {
+      extraPkgs = pkgs:
+        with pkgs; [
+          gamescope
+        ];
+    };
   };
 
   # You can import other NixOS modules here
