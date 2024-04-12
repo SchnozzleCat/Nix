@@ -9,6 +9,7 @@
 }: {
   home.packages = with pkgs; [
     netcoredbg
+    roslyn-ls
     gh
   ];
 
@@ -721,50 +722,70 @@
         keymaps = {
           "<leader>ff" = {
             action = "find_files";
-            desc = "Find Files";
+            options = {
+              desc = "Find Files";
+            };
           };
           "<leader>fw" = {
             action = "live_grep";
-            desc = "Find Word";
+            options = {
+              desc = "Find Word";
+            };
           };
           "<leader>fk" = {
             action = "keymaps";
-            desc = "Find Keymaps";
+            options = {
+              desc = "Find Keymaps";
+            };
           };
           "<leader>fs" = {
             action = "lsp_dynamic_workspace_symbols";
-            desc = "Find Symbols";
+            options = {
+              desc = "Find Symbols";
+            };
           };
           "<leader>fb" = {
             action = "buffers";
-            desc = "Find Buffers";
+            options = {
+              desc = "Find Buffers";
+            };
           };
           "<leader>fm" = {
             action = "marks";
-            desc = "Find Marks";
+            options = {
+              desc = "Find Marks";
+            };
           };
           "<leader>fo" = {
             action = "oldfiles";
-            desc = "Find Recent";
+            options = {
+              desc = "Find Recent";
+            };
           };
           "<leader>gs" = {
             action = "git_status";
-            desc = "Git Status";
+            options = {
+              desc = "Git Status";
+            };
           };
           "<leader>gb" = {
             action = "git_branches";
-            desc = "Git Branches";
+            options = {
+              desc = "Git Branches";
+            };
           };
           "<leader>gc" = {
             action = "git_commits";
-            desc = "Git Commits";
+            options = {
+              desc = "Git Commits";
+            };
           };
         };
       };
-      vimtex = {
-        enable = true;
-        viewMethod = "zathura";
-      };
+      # vimtex = {
+      #   enable = true;
+      #   viewMethod = "zathura";
+      # };
       nvim-autopairs = {
         enable = true;
       };
@@ -872,13 +893,13 @@
       lualine = {
         enable = true;
         sections = {
-          # lualine_x = [
-          #   {
-          #     name.__raw = ''require("noice").api.statusline.mode.get'';
-          #     extraConfig = {cond.__raw = ''require("noice").api.statusline.mode.has'';};
-          #     color = {fg = "#ff9e64";};
-          #   }
-          # ];
+          lualine_x = [
+            {
+              name.__raw = ''require("noice").api.statusline.mode.get'';
+              extraConfig = {cond.__raw = ''require("noice").api.statusline.mode.has'';};
+              color = {fg = "#ff9e64";};
+            }
+          ];
         };
       };
       alpha = {

@@ -13,9 +13,6 @@
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    # Hyprland
-    hyprland.url = "github:hyprwm/Hyprland";
-
     nixvim = {
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -101,7 +98,6 @@
         modules = [
           # > Our main home-manager configuration file <
           ./home/linus-desktop.nix
-          hyprland.homeManagerModules.default
           nix-colors.homeManagerModules.default
           nixvim.homeManagerModules.nixvim
           self.homeManagerModules.sunshine
@@ -117,7 +113,6 @@
         modules = [
           # > Our main home-manager configuration file <
           ./home/linus-laptop.nix
-          hyprland.homeManagerModules.default
           nix-colors.homeManagerModules.default
           nixvim.homeManagerModules.nixvim
         ];
