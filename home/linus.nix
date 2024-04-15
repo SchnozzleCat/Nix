@@ -613,8 +613,6 @@ in {
     };
   };
 
-  home.file.".config/zellij/plugins/room.wasm".source = ./room.wasm;
-
   programs.zellij = {
     enable = true;
     settings = {
