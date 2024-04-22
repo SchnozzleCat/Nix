@@ -160,8 +160,8 @@ in {
         src = pkgs.fetchFromGitHub {
           owner = "Vencord";
           repo = "Vesktop";
-          rev = "d0ff6192cbf81f1a0b497e16dff9ac7c23616436";
-          hash = "sha256-/qd++djD5LQaDzxslAA55A6jZHCT6NLQ+RYofqn1x28=";
+          rev = "26495983615b7493928065163d5d0cab3ad745e9";
+          hash = "sha256-3wIzULOba8TRE7yT9wAVW1zSR0L7HTdXQgXVxI+vKRU=";
         };
       }))
       jellyfin-media-player

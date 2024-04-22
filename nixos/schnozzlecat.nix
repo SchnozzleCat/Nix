@@ -7,21 +7,12 @@
   hostname,
   ...
 }: {
-  services.xserver = {
-    displayManager.sddm = {
-      enable = true;
-      settings.Theme.FacesDir = "${../secrets/avatars}";
-      wayland.enable = true;
-      theme = "chili";
-    };
-  };
-
   networking.interfaces."enp8s0".wakeOnLan = {
     enable = true;
     policy = ["magic"];
   };
 
-  services.xserver.displayManager.autoLogin = {
+  services.displayManager.autoLogin = {
     enable = true;
     user = "linus";
   };
@@ -33,8 +24,10 @@
     driSupport = true;
     driSupport32Bit = true;
     extraPackages = with pkgs; [
-      vulkan-tools
       amdvlk
+    ];
+    extraPackages32 = with pkgs; [
+      driversi686Linux.amdvlk
     ];
   };
 

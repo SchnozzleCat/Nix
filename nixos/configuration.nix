@@ -9,6 +9,11 @@
   hostname,
   ...
 }: {
+  imports = [
+    ./hardware-configuration-${hostname}.nix
+    ./${hostname}.nix
+  ];
+
   # Boot
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -86,14 +91,11 @@
   hardware.logitech.wireless.enable = true;
 
   # SDDM
-  services.xserver = {
+  services.displayManager.sddm = {
     enable = true;
-    displayManager.sddm = {
-      enable = true;
-      settings.Theme.FacesDir = "${../secrets/avatars}";
-      wayland.enable = true;
-      theme = "chili";
-    };
+    settings.Theme.FacesDir = "${../secrets/avatars}";
+    wayland.enable = true;
+    theme = "chili";
   };
 
   # Swaylock
@@ -223,23 +225,6 @@
         ];
     };
   };
-
-  # You can import other NixOS modules here
-  imports = [
-    # If you want to use modules your own flake exports (from modules/nixos):
-    # outputs.nixosModules.example
-
-    # Or modules from other flakes (such as nixos-hardware):
-    # inputs.hardware.nixosModules.common-cpu-amd
-    # inputs.hardware.nixosModules.common-ssd
-
-    # You can also split up your configuration and import pieces of it here:
-    # ./users.nix
-
-    # Import your generated (nixos-generate-config) hardware configuration
-    ./hardware-configuration-${hostname}.nix
-    ./${hostname}.nix
-  ];
 
   nixpkgs = {
     # You can add overlays here

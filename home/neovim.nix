@@ -130,7 +130,7 @@
         hint_enable = false
       })
     '';
-    options = {
+    opts = {
       number = true;
       undofile = true;
       shiftwidth = 2;
@@ -146,10 +146,13 @@
     };
     colorschemes.rose-pine = {
       enable = true;
-      transparentBackground = true;
-      transparentFloat = true;
-      style = "moon";
-      disableItalics = true;
+      settings = {
+        dark_variant = "moon";
+        styles = {
+          italic = false;
+          transparency = true;
+        };
+      };
     };
     keymaps = [
       # Misc
@@ -704,7 +707,7 @@
       };
       telescope = {
         enable = true;
-        extraOptions = {
+        settings = {
           defaults = {
             mappings.__raw = ''
               {
@@ -956,8 +959,10 @@
       };
       indent-blankline = {
         enable = true;
-        indent = {
-          char = "▏";
+        settings = {
+          indent = {
+            char = "▏";
+          };
         };
       };
       fidget.enable = true;
@@ -1150,7 +1155,7 @@
             enable = true;
           };
         };
-        extraOptions = {
+        settings = {
           workspaces = [
             {
               name = "Obsidian Vault";
