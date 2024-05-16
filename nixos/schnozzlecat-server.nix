@@ -15,6 +15,14 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
+  hardware = {
+    raspberry-pi."4".apply-overlays-dtmerge.enable = true;
+    deviceTree = {
+      enable = true;
+      filter = "*rpi-4-*.dtb";
+    };
+  };
+
   systemd.services.create-modules-alias-symlink = {
     description = "Create symlink for kernel modules.alias";
     after = ["systemd-tmpfiles-setup.service"];
@@ -62,8 +70,12 @@
     };
   };
 
+  console.enable = false;
+
   environment.systemPackages = with pkgs; [
     git
+    libraspberrypi
+    raspberrypi-eeprom
   ];
 
   users.defaultUserShell = pkgs.fish;
