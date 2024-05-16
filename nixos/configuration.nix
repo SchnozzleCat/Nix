@@ -18,6 +18,10 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernel.sysctl = {
+    "vm.max_map_count" = 16777216;
+    "fs.file-max" = 524288;
+  };
 
   systemd.services.create-modules-alias-symlink = {
     description = "Create symlink for kernel modules.alias";
@@ -201,9 +205,33 @@
   programs.firefox = {
     enable = true;
     autoConfig = ''
-      pref("general.config.filename", "autoconfig.cfg");
-      pref("general.config.obscure_value", 0);
-      pref("general.config.sandbox_enabled", false);
+      let { classes: Cc, interfaces: Ci, manager: Cm  } = Components;
+      let Services = globalThis.Services || ChromeUtils.import("resource://gre/modules/Services.jsm").Services;
+      function ConfigJS() { Services.obs.addObserver(this, 'chrome-document-global-created', false); }
+      ConfigJS.prototype = {
+        observe: function (aSubject) { aSubject.addEventListener('DOMContentLoaded', this, {once: true}); },
+        handleEvent: function (aEvent) {
+          let document = aEvent.originalTarget;
+          let window = document.defaultView;
+          let location = window.location;
+          if (/^(chrome:(?!\/\/(global\/content\/commonDialog|browser\/content\/webext-panels)\.x?html)|about:(?!blank))/i.test(location.href)) {
+            if (window._gBrowser) {
+              let keys = ["key_newNavigatorTab", "openFileKb", "key_viewInfo"];
+              for (var i=0; i < keys.length; i++) {
+                let keyCommand = window.document.getElementById(keys[i]);
+                if (keyCommand != undefined) {
+                  keyCommand.removeAttribute("command");
+                  keyCommand.removeAttribute("key");
+                  keyCommand.removeAttribute("modifiers");
+                  keyCommand.removeAttribute("oncommand");
+                  keyCommand.removeAttribute("data-l10n-id");
+                }
+              }
+            }
+          }
+        }
+      };
+      if (!Services.appinfo.inSafeMode) { new ConfigJS(); }
     '';
   };
 

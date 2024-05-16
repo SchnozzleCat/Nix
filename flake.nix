@@ -20,6 +20,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-citizen.url = "github:LovingMelody/nix-citizen";
+
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
 
     nix-colors.url = "github:misterio77/nix-colors";
@@ -33,15 +35,12 @@
     nixvim,
     master,
     nix-colors,
+    nix-citizen,
     ...
   } @ inputs: let
     inherit (self) outputs;
     # Supported systems for your flake packages, shell, etc.
     system = "x86_64-linux";
-
-    username = "linus";
-    desktop-hostname = "schnozzlecat";
-    laptop-hostname = "schnozzlecat-laptop";
   in {
     # Your custom packages
     # Accessible through 'nix build', 'nix shell', etc
@@ -63,11 +62,11 @@
     # NixOS configuration entrypoint
     # Available through 'nixos-rebuild --flake .#your-hostname'
     nixosConfigurations = {
-      ${desktop-hostname} = nixpkgs.lib.nixosSystem {
+      schnozzlecat = nixpkgs.lib.nixosSystem {
         specialArgs = {
           inherit inputs outputs;
           master = self.master;
-          hostname = desktop-hostname;
+          hostname = "schnozzlecat";
         };
         modules = [
           # > Our main nixos configuration file <
@@ -75,10 +74,20 @@
           self.nixosModules.sunshine
         ];
       };
-      ${laptop-hostname} = nixpkgs.lib.nixosSystem {
+      schnozzlecat-laptop = nixpkgs.lib.nixosSystem {
         specialArgs = {
           inherit inputs outputs;
-          hostname = laptop-hostname;
+          hostname = "schnozzlecat-laptop";
+        };
+        modules = [
+          # > Our main nixos configuration file <
+          ./nixos/configuration.nix
+        ];
+      };
+      schnozzlecat-server = nixpkgs.lib.nixosSystem {
+        specialArgs = {
+          inherit inputs outputs;
+          hostname = "schnozzlecat-server";
         };
         modules = [
           # > Our main nixos configuration file <

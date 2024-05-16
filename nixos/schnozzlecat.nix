@@ -23,13 +23,11 @@
   hardware.opengl = {
     driSupport = true;
     driSupport32Bit = true;
-    extraPackages = with pkgs; [
-      amdvlk
-    ];
-    extraPackages32 = with pkgs; [
-      driversi686Linux.amdvlk
-    ];
   };
+
+  services.udev.extraRules = ''
+    SUBSYSTEM=="usb", ATTR{idVendor}=="04e8", ATTR{idProduct}=="6860", MODE="0666", GROUP="plugdev"
+  '';
 
   boot.initrd.kernelModules = ["amdgpu"];
   boot.kernelModules = ["hid-nintendo" "v4l2loopback" "uinput"];
@@ -70,6 +68,10 @@
 
   services.flatpak.enable = true;
   services.avahi.publish.userServices = true;
+
+  environment.systemPackages = with pkgs; [
+    inputs.nix-citizen.packages.x86_64-linux.star-citizen
+  ];
 
   programs.corectrl = {
     enable = true;

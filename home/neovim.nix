@@ -46,6 +46,7 @@
       vimPlugins.lsp_signature-nvim
       roslyn-nvim
       copilotchat-nvim
+      tsc-nvim
     ];
     extraConfigVim = ''
       autocmd BufWritePre * lua vim.lsp.buf.format()
@@ -56,6 +57,7 @@
       sign define DiagnosticSignInfo text= numhl=DiagnosticDefaultInfo
       sign define DiagnosticSignHint text= numhl=DiagnosticDefaultHint
       highlight NotifyBackground guibg=#000000
+      highlight TroubleNormal guibg=clear
       let &t_TI = "\<Esc>[>4;2m"
       let &t_TE = "\<Esc>[>4;m"
 
@@ -129,6 +131,7 @@
       require("lsp_signature").setup({
         hint_enable = false
       })
+      require("tsc").setup()
     '';
     opts = {
       number = true;

@@ -115,7 +115,7 @@ in {
       unzip
       wget
       cabextract
-      insomnia
+      bruno
 
       # Terminal
       eza
@@ -126,7 +126,6 @@ in {
       pipes
       pistol
       imv
-      shell_gpt
 
       # Files
 
@@ -156,14 +155,7 @@ in {
       easyeffects
       spotify
       cinnamon.warpinator
-      (vesktop.overrideAttrs (oldAttrs: {
-        src = pkgs.fetchFromGitHub {
-          owner = "Vencord";
-          repo = "Vesktop";
-          rev = "26495983615b7493928065163d5d0cab3ad745e9";
-          hash = "sha256-3wIzULOba8TRE7yT9wAVW1zSR0L7HTdXQgXVxI+vKRU=";
-        };
-      }))
+      vesktop-patched
       jellyfin-media-player
       jellyfin-mpv-shim
       mpv
