@@ -31,6 +31,7 @@ in ''
   exec-once = corectrl
 
   env = XCURSOR_SIZE,24
+  env = XCURSOR_THEME,Bibata-Modern-Classic
   env = XDG_CURRENT_DESKTOP,Hyprland
   env = XDG_SESSION_DESKTOP,Hyprland
   env = XDG_SESSION_TYPE,wayland
