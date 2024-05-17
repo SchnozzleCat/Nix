@@ -126,6 +126,18 @@
           nixvim.homeManagerModules.nixvim
         ];
       };
+      "linus@schnozzlecat-server" = home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages.aarch64-linux; # Home-manager requires 'pkgs' instance
+        extraSpecialArgs = {
+          inherit inputs outputs nix-colors;
+        };
+        modules = [
+          # > Our main home-manager configuration file <
+          ./home/home.nix
+          nix-colors.homeManagerModules.default
+          nixvim.homeManagerModules.nixvim
+        ];
+      };
     };
   };
 }
