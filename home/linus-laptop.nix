@@ -36,7 +36,7 @@
   };
 
   wayland.windowManager.hyprland.extraConfig =
-    (import ./hyprland.nix {inherit config pkgs master;})
+    (import ./hyprland.nix {inherit config pkgs;})
     + ''
       monitor=eDP-1,1920x1080@144,0x0,1
 

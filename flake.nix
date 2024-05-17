@@ -33,21 +33,24 @@
     home-manager,
     hyprland,
     nixvim,
-    master,
     nix-colors,
     nix-citizen,
     ...
   } @ inputs: let
     inherit (self) outputs;
     # Supported systems for your flake packages, shell, etc.
-    system = "x86_64-linux";
+    forAllSystems = function:
+      nixpkgs.lib.genAttrs [
+        "x86_64-linux"
+        "aarch64-linux"
+      ] (system: function nixpkgs.legacyPackages.${system});
   in {
     # Your custom packages
     # Accessible through 'nix build', 'nix shell', etc
-    packages = import ./pkgs nixpkgs.legacyPackages.${system};
+    packages = forAllSystems (pkgs: import ./pkgs pkgs);
     # Formatter for your nix files, available through 'nix fmt'
     # Other options beside 'alejandra' include 'nixpkgs-fmt'
-    formatter = nixpkgs.legacyPackages.${system}.alejandra;
+    formatter = forAllSystems (pkgs: pkgs.alejandra);
     # Your custom packages and modifications, exported as overlays
     overlays = import ./overlays {inherit inputs;};
     # Reusable nixos modules you might want to export
@@ -57,15 +60,12 @@
     # These are usually stuff you would upstream into home-manager
     homeManagerModules = import ./modules/home-manager;
 
-    master = inputs.master.legacyPackages.${system};
-
     # NixOS configuration entrypoint
     # Available through 'nixos-rebuild --flake .#your-hostname'
     nixosConfigurations = {
       schnozzlecat = nixpkgs.lib.nixosSystem {
         specialArgs = {
           inherit inputs outputs;
-          master = self.master;
           hostname = "schnozzlecat";
         };
         modules = [
@@ -104,7 +104,6 @@
         pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
         extraSpecialArgs = {
           inherit inputs outputs nix-colors;
-          master = inputs.master.legacyPackages.${system};
         };
         modules = [
           # > Our main home-manager configuration file <
@@ -119,7 +118,6 @@
         pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
         extraSpecialArgs = {
           inherit inputs outputs nix-colors;
-          master = inputs.master.legacyPackages.${system};
         };
         modules = [
           # > Our main home-manager configuration file <

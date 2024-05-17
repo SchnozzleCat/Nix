@@ -95,7 +95,7 @@
   ];
 
   wayland.windowManager.hyprland.extraConfig =
-    (import ./hyprland.nix {inherit config pkgs master;})
+    (import ./hyprland.nix {inherit config pkgs;})
     + ''
       monitor=DP-1,3440x1440@144,0x0,1
       monitor=DP-2,1920x1080@60,0x-1080,1

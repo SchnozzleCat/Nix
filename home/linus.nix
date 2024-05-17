@@ -480,7 +480,6 @@ in {
     enable = true;
     settings = import ./waybar-config.nix;
     style = import ./waybar-style.nix;
-    package = master.waybar;
   };
 
   programs.gpg = {
