@@ -11,8 +11,6 @@
   imports = [
   ];
 
-  wayland.windowManager.hyprland.enable = true;
-
   nixpkgs = {
     # You can add overlays here
     overlays = [
@@ -33,7 +31,6 @@
     ];
     # Configure your nixpkgs instance
     config = {
-      android_sdk.accept_license = true;
       # Disable if you don"t want unfree packages
       allowUnfree = true;
       # Workaround for https://github.com/nix-community/home-manager/issues/2942
