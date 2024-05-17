@@ -37,14 +37,16 @@
   nix.settings = {
     experimental-features = "nix-command flakes";
     auto-optimise-store = true;
+    trusted-users = ["linus"];
   };
 
   environment.systemPackages = with pkgs; [
     git
-    neovim
   ];
 
   networking.hostName = "schnozzlecat-server";
+
+  security.sudo.wheelNeedsPassword = false;
 
   users.users = {
     linus = {
