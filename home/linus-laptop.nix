@@ -13,7 +13,6 @@
   ];
 
   colorScheme = {
-    slug = "schnozzlecat";
     name = "schnozzlecat";
     colors = {
       base00 = "#1F1F28";
@@ -35,10 +34,16 @@
     };
   };
 
+  home.packages = with pkgs; [
+    wireguard-tools
+    parsec-bin
+  ];
+
   wayland.windowManager.hyprland.extraConfig =
     (import ./hyprland.nix {inherit config pkgs;})
     + ''
       monitor=eDP-1,1920x1080@144,0x0,1
+      monitor=HDMI-A-1,1920x1080@60,1920x0,1
 
       bind = $mainMod, 1, exec, hyprctl hyprpaper wallpaper "eDP-1,${../secrets/wallpapers/flowers1.png}"
       bind = $mainMod, 2, exec, hyprctl hyprpaper wallpaper "eDP-1,${../secrets/wallpapers/flowers2.png}"
@@ -52,5 +57,6 @@
     (import ./hyprpaper.nix)
     + ''
       wallpaper = eDP-1,${../secrets/wallpapers/flowers1.png}
+      wallpaper = HDMI-A-1,${../secrets/wallpapers/flowers3.png}
     '';
 }
