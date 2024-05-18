@@ -47,6 +47,8 @@
       roslyn-nvim
       copilotchat-nvim
       tsc-nvim
+      tetris-nvim
+      cellular-nvim
     ];
     extraConfigVim = ''
       autocmd BufWritePre * lua vim.lsp.buf.format()

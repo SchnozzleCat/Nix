@@ -33,6 +33,24 @@ in {
       repo = "tsc.nvim";
       rev = "c37d7b3ed954e4db13814f0ed7aa2a83b2b7e9dd";
       sha256 = "sha256-ifJXtYCA04lt0z+JDWSesCPBn6OLpqnzJarK+wuo9m8=";
+  tetris-nvim = pkgs.vimUtils.buildVimPlugin {
+    pname = "tetris-nvim";
+    version = "main";
+    src = pkgs.fetchFromGitHub {
+      owner = "alec-gibson";
+      repo = "nvim-tetris";
+      rev = "d17c99fb527ada98ffb0212ffc87ccda6fd4f7d9";
+      sha256 = "sha256-+69Fq5aMMzg9nV05rZxlLTFwQmDyN5/5HmuL2SGu9xQ=";
+    };
+  };
+  cellular-nvim = pkgs.vimUtils.buildVimPlugin {
+    pname = "cellular-nvim";
+    version = "main";
+    src = pkgs.fetchFromGitHub {
+      owner = "Eandrju";
+      repo = "cellular-automaton.nvim";
+      rev = "b7d056dab963b5d3f2c560d92937cb51db61cb5b";
+      sha256 = "sha256-szbd6m7hH7NFI0UzjWF83xkpSJeUWCbn9c+O8F8S/Fg=";
     };
   };
 }
