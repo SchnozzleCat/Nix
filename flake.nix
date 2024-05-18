@@ -133,7 +133,7 @@
         };
         modules = [
           # > Our main home-manager configuration file <
-          ./home/home.nix
+          ./home/linus-server.nix
           nix-colors.homeManagerModules.default
           nixvim.homeManagerModules.nixvim
         ];
