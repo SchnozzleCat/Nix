@@ -54,7 +54,7 @@ in {
   networking.nat.externalInterface = "eth0";
   networking.nat.internalInterfaces = ["wg0"];
   networking.firewall = {
-    allowedUDPPorts = [51820];
+    allowedUDPPorts = [51111];
   };
 
   networking.wireguard.interfaces = {
