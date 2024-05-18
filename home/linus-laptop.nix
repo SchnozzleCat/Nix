@@ -14,7 +14,7 @@
 
   colorScheme = {
     name = "schnozzlecat";
-    colors = {
+    palette = {
       base00 = "#1F1F28";
       base01 = "#2a273f";
       base02 = "#393552";
