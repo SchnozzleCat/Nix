@@ -1,7 +1,6 @@
 # Custom packages, that can be defined similarly to ones from nixpkgs
 # You can build them using 'nix build .#example'
-{pkgs, ...}: let
-in {
+{pkgs, ...}: {
   godot4-mono = pkgs.callPackage ./godot4-mono {};
   # godot4-mono-schnozzlecat = pkgs.callPackage ./godot4-mono-schnozzlecat {};
   roslyn-nvim = pkgs.vimUtils.buildVimPlugin {
@@ -33,6 +32,8 @@ in {
       repo = "tsc.nvim";
       rev = "c37d7b3ed954e4db13814f0ed7aa2a83b2b7e9dd";
       sha256 = "sha256-ifJXtYCA04lt0z+JDWSesCPBn6OLpqnzJarK+wuo9m8=";
+    };
+  };
   tetris-nvim = pkgs.vimUtils.buildVimPlugin {
     pname = "tetris-nvim";
     version = "main";
