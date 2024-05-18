@@ -13,6 +13,8 @@ in {
 
   boot.loader.grub.enable = false;
   boot.loader.generic-extlinux-compatible.enable = true;
+  boot.kernel.sysctl."net.ipv4.ip_forward" = 1;
+  boot.kernel.sysctl."net.ipv6.conf.all.forwarding" = 1;
 
   nixpkgs = {
     config = {
@@ -49,49 +51,47 @@ in {
     };
   };
 
-  # enable NAT
-  networking.nat.enable = true;
-  networking.nat.externalInterface = "eth0";
-  networking.nat.internalInterfaces = ["wg0"];
+  # Enable NAT
+  networking.nat = {
+    enable = true;
+    enableIPv6 = true;
+    externalInterface = "end0";
+    internalInterfaces = ["wg0"];
+  };
+  # Open ports in the firewall
   networking.firewall = {
-    allowedUDPPorts = [51111];
+    enable = true;
+    allowedTCPPorts = [53];
+    allowedUDPPorts = [53 51111];
+  };
+
+  fileSystems."/mnt/ssd" = {
+    device = "/dev/disk/by-uuid/7d2166ba-5e9a-402a-af11-8a72b31bd96a";
+    fsType = "ext4";
+  };
+
+  fileSystems."/mnt/hdd" = {
+    device = "/dev/disk/by-uuid/8C72-148E";
+    fsType = "exfat";
   };
 
   networking.wireguard.interfaces = {
-    # "wg0" is the network interface name. You can name the interface arbitrarily.
     wg0 = {
-      # Determines the IP address and subnet of the server's end of the tunnel interface.
-      ips = ["10.100.0.1/24"];
-
-      # The port that WireGuard listens to. Must be accessible by the client.
-      listenPort = 51820;
-
-      # This allows the wireguard server to route your traffic to the internet and hence be like a VPN
-      # For this to work you have to set the dnsserver IP of your router (or dnsserver of choice) in your clients
-      postSetup = ''
-        ${pkgs.iptables}/bin/iptables -t nat -A POSTROUTING -s 10.100.0.0/24 -o eth0 -j MASQUERADE
-      '';
-
-      # This undoes the above command
-      postShutdown = ''
-        ${pkgs.iptables}/bin/iptables -t nat -D POSTROUTING -s 10.100.0.0/24 -o eth0 -j MASQUERADE
-      '';
-
-      # Path to the private key file.
-      #
-      # Note: The private key can also be included inline via the privateKey option,
-      # but this makes the private key world-readable; thus, using privateKeyFile is
-      # recommended.
+      ips = ["10.10.10.1/24"];
+      listenPort = 51111;
       privateKeyFile = "/home/linus/wireguard-keys/private.key";
-
+      postSetup = ''
+        ${pkgs.iptables}/bin/iptables -A FORWARD -i wg0 -j ACCEPT
+        ${pkgs.iptables}/bin/iptables -t nat -A POSTROUTING -s 10.10.10.0/24 -o end0 -j MASQUERADE
+      '';
+      postShutdown = ''
+        ${pkgs.iptables}/bin/iptables -D FORWARD -i wg0 -j ACCEPT
+        ${pkgs.iptables}/bin/iptables -t nat -D POSTROUTING -s 10.10.10.0/24 -o end0 -j MASQUERADE
+      '';
       peers = [
-        # List of allowed peers.
         {
-          # Feel free to give a meaning full name
-          # Public key of the peer (not a file path).
           publicKey = "Jq90boTS2KFk0NDDSTPuQV6wKUF9PjRMQPzbsHdfe0U=";
-          # List of IPs assigned to this peer within the tunnel subnet. Used to configure routing.
-          allowedIPs = ["10.100.0.2/32"];
+          allowedIPs = ["10.10.10.2/32"];
         }
       ];
     };
@@ -123,6 +123,7 @@ in {
   ];
 
   networking.hostName = "schnozzlecat-server";
+  networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
 
   security.sudo.wheelNeedsPassword = false;
 
@@ -141,14 +142,13 @@ in {
 
   services.openssh = {
     enable = true;
-    passwordAuthentication = false;
+    settings.PasswordAuthentication = false;
     ports = [
       6969
     ];
   };
 
   # networking.hostName = "nixos"; # Define your hostname.
-  # networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
 
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
   system.stateVersion = "24.05"; # Did you read the comment?
