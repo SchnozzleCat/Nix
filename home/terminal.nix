@@ -254,6 +254,7 @@ in {
       gpt = "DEFAULT_MODEL=gpt-4-1106-preview OPENAI_API_KEY=$(gpg -q --decrypt $OPENAI_API_KEY_DIR) sgpt";
       pi-hdd = ''sshfs -o sftp_server="/usr/bin/sudo /usr/lib/openssh/sftp-server" -p 6969 pi@192.168.200.48:/mnt/hdd ~/Mounts/hdd'';
       pi-ssd = ''sshfs -o sftp_server="/usr/bin/sudo /usr/lib/openssh/sftp-server" -p 6969 pi@192.168.200.48:/mnt/ssd ~/Mounts/ssd'';
+      pi-build = ''NIX_SSHOPTS="-p 6969" nixos-rebuild switch --target-host linus@192.168.200.48 --flake ~/.nixos#schnozzlecat-server --use-remote-sudo'';
     };
     shellAbbrs = {
       os-rebuild = "sudo nixos-rebuild switch --flake ~/.nixos/";
@@ -262,7 +263,7 @@ in {
       cat = "bat";
       # which-gpu = ''glxinfo| grep -E "OpenGL vendor|OpenGL renderer"'';
       # docker-stop-containers = "docker stop $(docker ps -a -q)";
-      pi = "ssh pi@192.168.200.48 -p 6969";
+      pi = "ssh linus@192.168.200.48 -p 6969";
       # alert = "paplay /usr/share/sounds/freedesktop/stereo/complete.oga";
       # boot-win11 = ''sudo grub2-reboot "Windows Boot Manager (on /dev/nvme1n1p1)" && reboot'';
       # nvim-unity = "nvim --listen /tmp/nvimunity";
