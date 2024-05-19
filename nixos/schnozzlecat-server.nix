@@ -65,6 +65,11 @@ in {
     allowedUDPPorts = [53 51111];
   };
 
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+  };
+
   fileSystems."/mnt/ssd" = {
     device = "/dev/disk/by-uuid/7d2166ba-5e9a-402a-af11-8a72b31bd96a";
     fsType = "ext4";
@@ -83,14 +88,24 @@ in {
   services.home-assistant = {
     enable = true;
     openFirewall = true;
+    extraComponents = [
+      "esphome"
+      "met"
+      "radio_browser"
+      "tradfri"
+      "govee_ble"
+      "tplink"
+      "tplink_tapo"
+    ];
     config = {
+      default_config = {};
       homeassistant = {
         name = "Home";
         latitude = "48.10372829240035";
         longitude = "11.597223701105742";
         elevation = "520";
         unit_system = "metric";
-        time_zone = "GMT+2";
+        time_zone = "Europe/Berlin";
       };
     };
   };
