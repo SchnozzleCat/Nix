@@ -75,23 +75,45 @@ in {
     fsType = "exfat";
   };
 
+  services.jellyfin = {
+    enable = true;
+    openFirewall = true;
+  };
+
+  services.home-assistant = {
+    enable = true;
+    openFirewall = true;
+    config = {
+      homeassistant = {
+        name = "Home";
+        latitude = "48.10372829240035";
+        longitude = "11.597223701105742";
+        elevation = "520";
+        unit_system = "metric";
+        time_zone = "GMT+2";
+      };
+    };
+  };
+
   networking.wireguard.interfaces = {
     wg0 = {
-      ips = ["10.10.10.1/24"];
+      ips = ["10.0.0.1/24"];
       listenPort = 51111;
       privateKeyFile = "/home/linus/wireguard-keys/private.key";
       postSetup = ''
         ${pkgs.iptables}/bin/iptables -A FORWARD -i wg0 -j ACCEPT
-        ${pkgs.iptables}/bin/iptables -t nat -A POSTROUTING -s 10.10.10.0/24 -o end0 -j MASQUERADE
+        ${pkgs.iptables}/bin/iptables -A FORWARD -o wg0 -j ACCEPT
+        ${pkgs.iptables}/bin/iptables -t nat -A POSTROUTING -s 10.0.0.0/24 -o end0 -j MASQUERADE
       '';
       postShutdown = ''
         ${pkgs.iptables}/bin/iptables -D FORWARD -i wg0 -j ACCEPT
-        ${pkgs.iptables}/bin/iptables -t nat -D POSTROUTING -s 10.10.10.0/24 -o end0 -j MASQUERADE
+        ${pkgs.iptables}/bin/iptables -D FORWARD -o wg0 -j ACCEPT
+        ${pkgs.iptables}/bin/iptables -t nat -D POSTROUTING -s 10.0.0.0/24 -o end0 -j MASQUERADE
       '';
       peers = [
         {
           publicKey = "Jq90boTS2KFk0NDDSTPuQV6wKUF9PjRMQPzbsHdfe0U=";
-          allowedIPs = ["10.10.10.2/32"];
+          allowedIPs = ["10.0.0.2/32"];
         }
       ];
     };

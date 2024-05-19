@@ -20,24 +20,16 @@
 
   # Enable WireGuard
   networking.wireguard.interfaces = {
-    # "wg0" is the network interface name. You can name the interface arbitrarily.
     wg0 = {
-      # Determines the IP address and subnet of the client's end of the tunnel interface.
       ips = ["10.100.0.2/24"];
-      listenPort = 51111; # to match firewall allowedUDPPorts (without this wg uses random port numbers)
-
-      # Path to the private key file.
-      #
-      # Note: The private key can also be included inline via the privateKey option,
-      # but this makes the private key world-readable; thus, using privateKeyFile is
-      # recommended.
+      listenPort = 51111;
       privateKeyFile = "home/linus/.nixos/secrets/wireguard/private.key";
 
       peers = [
         {
           publicKey = "+t7XYAuU5TXUgzffTdATF14bP/Yi92exQrIqF2ZjmC8=";
-          allowedIPs = ["0.0.0.0/0"];
-          endpoint = "roamer.servebeer.com:51111"; # ToDo: route to endpoint not automatically configured https://wiki.archlinux.org/index.php/WireGuard#Loop_routing https://discourse.nixos.org/t/solved-minimal-firewall-setup-for-wireguard-client/7577
+          allowedIPs = ["192.168.200.0/24"];
+          endpoint = "roamer.servebeer.com:51111";
           persistentKeepalive = 25;
         }
       ];
