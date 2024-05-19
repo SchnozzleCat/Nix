@@ -22,6 +22,7 @@
     "vm.max_map_count" = 16777216;
     "fs.file-max" = 524288;
   };
+  boot.binfmt.emulatedSystems = ["aarch64-linux"];
 
   systemd.services.create-modules-alias-symlink = {
     description = "Create symlink for kernel modules.alias";

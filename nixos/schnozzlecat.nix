@@ -18,7 +18,6 @@
   };
 
   boot.blacklistedKernelModules = ["nouveau"];
-  boot.binfmt.emulatedSystems = ["aarch64-linux"];
   hardware.cpu.intel.updateMicrocode = true;
 
   hardware.opengl = {
