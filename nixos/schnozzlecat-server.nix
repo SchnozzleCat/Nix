@@ -112,7 +112,7 @@ in {
       '';
       peers = [
         {
-          publicKey = "Jq90boTS2KFk0NDDSTPuQV6wKUF9PjRMQPzbsHdfe0U=";
+          publicKey = "Bsd/uDa5T6AZbdwUYjDJkI2YQdph/Mj5f0t8cnyJdxo=";
           allowedIPs = ["10.0.0.2/32"];
         }
       ];
