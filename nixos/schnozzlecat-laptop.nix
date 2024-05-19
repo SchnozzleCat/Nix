@@ -21,7 +21,7 @@
   # Enable WireGuard
   networking.wireguard.interfaces = {
     wg0 = {
-      ips = ["10.100.0.2/24"];
+      ips = ["10.0.0.2/24"];
       listenPort = 51111;
       privateKeyFile = "home/linus/.nixos/secrets/wireguard/private.key";
 
