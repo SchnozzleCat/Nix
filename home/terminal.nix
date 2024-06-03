@@ -15,7 +15,7 @@ in {
   ];
 
   nixpkgs.overlays = [
-    inputs.neovim-nightly-overlay.overlay
+    inputs.neovim-nightly-overlay.overlays.default
   ];
 
   home.packages = with pkgs; [
@@ -252,8 +252,8 @@ in {
     '';
     shellAliases = {
       gpt = "DEFAULT_MODEL=gpt-4-1106-preview OPENAI_API_KEY=$(gpg -q --decrypt $OPENAI_API_KEY_DIR) sgpt";
-      pi-hdd = ''sshfs -o sftp_server="/usr/bin/sudo /usr/lib/openssh/sftp-server" -p 6969 pi@192.168.200.48:/mnt/hdd ~/Mounts/hdd'';
-      pi-ssd = ''sshfs -o sftp_server="/usr/bin/sudo /usr/lib/openssh/sftp-server" -p 6969 pi@192.168.200.48:/mnt/ssd ~/Mounts/ssd'';
+      pi-hdd = ''sshfs -o sftp_server="/run/wrappers/bin/sudo $(ssh linus@192.168.200.48 -p 6969 'nix eval nixpkgs#openssh --raw')/libexec/sftp-server" -p 6969 linus@192.168.200.48:/mnt/hdd ~/Mounts/hdd'';
+      pi-ssd = ''sshfs -o sftp_server="/run/wrappers/bin/sudo $(ssh linus@192.168.200.48 -p 6969 'nix eval nixpkgs#openssh --raw')/libexec/sftp-server" -p 6969 linus@192.168.200.48:/mnt/ssd ~/Mounts/ssd'';
       pi-build = ''NIX_SSHOPTS="-p 6969" nixos-rebuild switch --target-host linus@192.168.200.48 --flake ~/.nixos#schnozzlecat-server --use-remote-sudo'';
     };
     shellAbbrs = {
