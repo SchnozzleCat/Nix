@@ -16,7 +16,17 @@
   home.file.".config/nvim/after/queries/c_sharp/highlights.scm".text = ''
     ;; extends
     (struct_declaration
-      name: (identifier) @struct_declaration)
+      name: (identifier) @type.c_sharp)
+
+    (record_struct_declaration
+      name: (identifier) @type.c_sharp)
+
+    (record_struct_declaration
+      (modifier) @keyword.c_sharp)
+
+    (variable_declaration
+      type: (array_type
+        type: (identifier) @type.c_sharp))
 
     "return" @return_statement
   '';
@@ -842,6 +852,17 @@
       surround.enable = true;
       trouble = {
         enable = true;
+        package = pkgs.vimUtils.buildVimPlugin {
+          pname = "trouble.nvim";
+          version = "2024-06-01";
+          src = pkgs.fetchFromGitHub {
+            owner = "folke";
+            repo = "trouble.nvim";
+            rev = "46a19388d3507f4c4bebb9994bf821a79b3bc342";
+            sha256 = "sha256-Kl/VtpmgiZD637odbm0WAaUwCc7x9fCIhra5AyJn1B8=";
+          };
+          meta.homepage = "https://github.com/folke/trouble.nvim/";
+        };
         settings = {
           signs = {
             error = "";
@@ -1062,6 +1083,15 @@
               request = "launch";
               program.__raw = ''
                 function()
+                  return vim.fn.input('Path to dll', vim.fn.getcwd() .. '/bin/Debug/', 'file')
+                end'';
+            }
+            {
+              type = "coreclr";
+              name = "launch - netcoredbg";
+              request = "launch";
+              program.__raw = ''
+                function()
                     local cwd = vim.fn.getcwd()
                     local debugPath = cwd .. '/bin/Debug/'
                     local highestVersionFolder = ""
@@ -1090,23 +1120,27 @@
                 end
               '';
             }
-            # {
-            #   name = "Godot";
-            #   request = "launch";
-            #   type = "coreclr";
-            #   program = ''${pkgs.godot4-mono-schnozzlecat}/bin/godot4-mono-schnozzlecat'';
-            #   stopAtEntry = false;
-            #   args = [
-            #     "--path"
-            #     ''''${workspaceFolder}''
-            #   ];
-            # }
-            # {
-            #   type = "coreclr";
-            #   request = "attach";
-            #   name = "Attach";
-            #   processId.__raw = ''require('dap.utils').pick_process({filter="godot"})'';
-            # }
+            {
+              name = "Godot";
+              request = "launch";
+              type = "coreclr";
+              program.__raw = ''
+                function()
+                  local path = '/home/linus/.nix-profile/bin/godot4-mono-schnozzlecat'
+                  vim.notify(path)
+                  return path
+                end
+              '';
+            }
+            {
+              type = "coreclr";
+              request = "attach";
+              name = "Attach";
+              processId.__raw = ''
+                function()
+                  return require('dap.utils').pick_process({filter="godot"})
+                end'';
+            }
           ];
         };
         signs = {
@@ -1198,11 +1232,9 @@
             black.enable = true;
             isort.enable = true;
             markdownlint.enable = true;
-            prettierd = {
+            prettier = {
               enable = true;
-              withArgs = ''
-                { extra_filetypes = { "svelte" } }
-              '';
+              disableTsServerFormatter = true;
             };
             phpcbf.enable = true;
             stylua.enable = true;
@@ -1266,6 +1298,7 @@
           clangd.enable = true;
           gdscript.enable = true;
           svelte.enable = true;
+          tailwindcss.enable = true;
           lua-ls.enable = true;
           pyright.enable = true;
           cssls.enable = true;
