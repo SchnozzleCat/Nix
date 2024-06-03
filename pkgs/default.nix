@@ -7,10 +7,10 @@
     pname = "roslyn.nvim";
     version = "";
     src = pkgs.fetchFromGitHub {
-      owner = "SchnozzleCat";
+      owner = "jmederosalvarado";
       repo = "roslyn.nvim";
-      rev = "42a5661dc4403e0c414f8d5081fd65d17a6fd1bb";
-      sha256 = "sha256-oG3hCszFhvR/rhP2Iz0Vtf8rim1byY/XsDdGYfNRX/w=";
+      rev = "3e360ea5a15f3cf7ddef02ff003ef24244cdff3a";
+      sha256 = "sha256-0mvlEE3/qGkv2dLzthWwGgdVTmp2Y/WJLv9ihcPumBo=";
     };
   };
   vesktop-patched = pkgs.callPackage ./vesktop-patched {};
