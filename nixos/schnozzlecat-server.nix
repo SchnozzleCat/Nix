@@ -48,6 +48,31 @@ in {
         ];
         workdir = "/var/lib/pihole/";
       };
+      home-assistant = {
+        autoStart = true;
+        image = "homeassistant/home-assistant:latest";
+        volumes = [
+          "/run/dbus:/run/dbus:ro"
+          "/var/lib/home-asssitant.yaml:/config"
+        ];
+        environment = {
+          TZ = "Europe/Berlin";
+        };
+        extraOptions = [
+          "--network=host"
+          "--privileged"
+        ];
+      };
+    };
+  };
+
+  systemd.services.foundry = {
+    wantedBy = ["multi-user.target"];
+    enable = true;
+    serviceConfig = {
+      User = "linus";
+      Group = "users";
+      ExecStart = ''${pkgs.nodejs_21}/bin/node /home/linus/foundry/resources/app/main.js --dataPath=/mnt/ssd/files/shared/foundrydata --port=30000'';
     };
   };
 
@@ -61,7 +86,7 @@ in {
   # Open ports in the firewall
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [53];
+    allowedTCPPorts = [53 42069 8123];
     allowedUDPPorts = [53 51111];
   };
 
@@ -85,30 +110,30 @@ in {
     openFirewall = true;
   };
 
-  services.home-assistant = {
-    enable = true;
-    openFirewall = true;
-    extraComponents = [
-      "esphome"
-      "met"
-      "radio_browser"
-      "tradfri"
-      "govee_ble"
-      "tplink"
-      "tplink_tapo"
-    ];
-    config = {
-      default_config = {};
-      homeassistant = {
-        name = "Home";
-        latitude = "48.10372829240035";
-        longitude = "11.597223701105742";
-        elevation = "520";
-        unit_system = "metric";
-        time_zone = "Europe/Berlin";
-      };
-    };
-  };
+  # services.home-assistant = {
+  #   enable = true;
+  #   openFirewall = true;
+  #   extraComponents = [
+  #     "esphome"
+  #     "met"
+  #     "radio_browser"
+  #     "tradfri"
+  #     "govee_ble"
+  #     "tplink"
+  #     "tplink_tapo"
+  #   ];
+  #   config = {
+  #     default_config = {};
+  #     homeassistant = {
+  #       name = "Home";
+  #       latitude = "48.10372829240035";
+  #       longitude = "11.597223701105742";
+  #       elevation = "520";
+  #       unit_system = "metric";
+  #       time_zone = "Europe/Berlin";
+  #     };
+  #   };
+  # };
 
   networking.wireguard.interfaces = {
     wg0 = {
