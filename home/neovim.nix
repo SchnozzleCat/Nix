@@ -11,6 +11,7 @@
     netcoredbg
     roslyn-ls
     gh
+    postgresql_16
   ];
 
   home.file.".config/nvim/after/queries/c_sharp/highlights.scm".text = ''
@@ -54,6 +55,9 @@
       vimPlugins.octo-nvim
       vimPlugins.plenary-nvim
       vimPlugins.lsp_signature-nvim
+      vimPlugins.vim-dadbod
+      vimPlugins.vim-dadbod-ui
+      vimPlugins.vim-dadbod-completion
       roslyn-nvim
       copilotchat-nvim
       tsc-nvim
@@ -144,6 +148,7 @@
         hint_enable = false
       })
       require("tsc").setup()
+      require("trouble").toggle_refresh()
     '';
     opts = {
       number = true;
@@ -322,9 +327,15 @@
       {
         mode = "n";
         key = "<leader>n";
-        action = "<cmd> FloatermNew --height=0.8 --width=0.8 --wintype=float --name=Files lf <cr>";
+        action = "<cmd> NvimTreeToggle <cr>";
         options.desc = "LF";
       }
+      # {
+      #   mode = "n";
+      #   key = "<leader>n";
+      #   action = "<cmd> FloatermNew --height=0.8 --width=0.8 --wintype=float --name=Files lf <cr>";
+      #   options.desc = "LF";
+      # }
       # Oil
       {
         mode = "n";
@@ -626,7 +637,7 @@
       {
         mode = ["n"];
         key = "[t";
-        action = ''<cmd> lua require("trouble").previous({skip_groups=true,jump=true}) <cr>'';
+        action = ''<cmd> lua require("trouble").prev({skip_groups=true,jump=true}) <cr>'';
         options.desc = "Previous Trouble";
       }
       {
@@ -726,8 +737,8 @@
           defaults = {
             mappings.__raw = ''
               {
-                i = { ["<c-t>"] = require("trouble.providers.telescope").open_with_trouble },
-                n = { ["<c-t>"] = require("trouble.providers.telescope").open_with_trouble },
+                i = { ["<c-t>"] = require("trouble.sources.telescope").open },
+                n = { ["<c-t>"] = require("trouble.sources.telescope").open },
               }
             '';
           };
@@ -830,6 +841,10 @@
               name = "luasnip";
               groupIndex = 2;
             }
+            {
+              name = "vim-dadbod-completion";
+              groupIndex = 2;
+            }
           ];
           snippet.expand = ''
             function(args)
@@ -858,8 +873,8 @@
           src = pkgs.fetchFromGitHub {
             owner = "folke";
             repo = "trouble.nvim";
-            rev = "46a19388d3507f4c4bebb9994bf821a79b3bc342";
-            sha256 = "sha256-Kl/VtpmgiZD637odbm0WAaUwCc7x9fCIhra5AyJn1B8=";
+            rev = "38915023a777b7f2422e503dc603f6a64b465bf5";
+            sha256 = "sha256-kB5PGDGr5zo9nn2146GGi16rP7FXfzLIUIY9MOhmHmY=";
           };
           meta.homepage = "https://github.com/folke/trouble.nvim/";
         };
@@ -871,6 +886,7 @@
             information = " ";
             other = " ";
           };
+          auto_refresh = false;
         };
       };
       undotree.enable = true;
@@ -895,6 +911,7 @@
       };
       # copilot-cmp.enable = true;
       notify.enable = true;
+      nvim-tree.enable = true;
       oil.enable = true;
       nvim-colorizer.enable = true;
       sniprun.enable = true;
