@@ -149,6 +149,8 @@ in {
       aseprite
       protonvpn-gui
       github-copilot-cli
+      svp
+      rocmPackages.rocm-smi
 
       # Shell Scripts
       (writeShellApplication {

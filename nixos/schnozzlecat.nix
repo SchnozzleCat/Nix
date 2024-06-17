@@ -17,6 +17,15 @@
     user = "linus";
   };
 
+  hardware.opengl.extraPackages = with pkgs; [
+    rocmPackages.clr.icd
+    amdvlk
+  ];
+
+  hardware.opengl.extraPackages32 = with pkgs; [
+    driversi686Linux.amdvlk
+  ];
+
   boot.blacklistedKernelModules = ["nouveau"];
   hardware.cpu.intel.updateMicrocode = true;
 
