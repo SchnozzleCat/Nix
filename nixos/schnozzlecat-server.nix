@@ -72,7 +72,7 @@ in {
     serviceConfig = {
       User = "linus";
       Group = "users";
-      ExecStart = ''${pkgs.nodejs_21}/bin/node /home/linus/foundry/resources/app/main.js --dataPath=/mnt/ssd/files/shared/foundrydata --port=30000'';
+      ExecStart = ''${pkgs.nodejs_21}/bin/node /home/linus/foundry/resources/app/main.js --dataPath=/mnt/ssd/files/shared/foundrydata --port=42069'';
     };
   };
 
