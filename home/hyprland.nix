@@ -78,6 +78,7 @@ in ''
   # For all categories, see https://wiki.hyprland.org/Configuring/Variables/
   input {
       kb_layout = us
+      kb_variant = altgr-intl
 
       follow_mouse = 1
       kb_options = caps:escape
@@ -234,14 +235,6 @@ in ''
   # Move/resize windows with mainMod + LMB/RMB and dragging
   bindm = $mainMod, mouse:272, movewindow
   bindm = $mainMod, mouse:273, resizewindow
-
-  # Umlauts
-  bind = $mainMod CTRL, o, exec, wtype ö
-  bind = $mainMod CTRL SHIFT, o, exec, wtype Ö
-  bind = $mainMod CTRL, u, exec, wtype ü
-  bind = $mainMod CTRL SHIFT, u, exec, wtype Ü
-  bind = $mainMod CTRL, a, exec, wtype ä
-  bind = $mainMod CTRL SHIFT, a, exec, wtype Ä
 
   bind = $mainMod SHIFT, minus, movetoworkspacesilent, special
   bind = $mainMod, minus, togglespecialworkspace
