@@ -92,6 +92,22 @@
          exit
       fi
     '')
+    (writeShellScriptBin "lock-monitor" ''
+      state="/home/linus/.togglemonitorlock"
+      booleanvalue="false"
+
+      if [[ -f ''${state} ]]; then
+           booleanvalue=$(cat ''${state})
+      fi
+
+      if [[ ''${booleanvalue} == "true" ]]; then
+           ${pkgs.wlr-randr}/bin/wlr-randr --output DP-1 --pos 0,0
+           echo "false" > ''${state}
+      else
+           ${pkgs.wlr-randr}/bin/wlr-randr --output DP-1 --pos 0,4000
+           echo "true" > ''${state}
+      fi
+    '')
   ];
 
   wayland.windowManager.hyprland.extraConfig =

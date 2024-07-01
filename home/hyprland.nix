@@ -183,6 +183,7 @@ in ''
   bind = $mainMod, d, exec, fuzzel
   bind = $mainModSHIFT, Q, killactive,
   bind = $mainMod, b, exec, pypr expose
+  bind = $mainModSHIFT, b, exec, lock-monitor
 
   bind = $mainMod, comma, exec, ~/.config/hypr/dec-brightness.sh
   bind = $mainMod, period, exec, ~/.config/hypr/inc-brightness.sh
