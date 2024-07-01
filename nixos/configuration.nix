@@ -203,35 +203,30 @@
 
   programs.firefox = {
     enable = true;
-    # autoConfig = ''
-    #   let { classes: Cc, interfaces: Ci, manager: Cm  } = Components;
-    #   let Services = globalThis.Services || ChromeUtils.import("resource://gre/modules/Services.jsm").Services;
-    #   function ConfigJS() { Services.obs.addObserver(this, 'chrome-document-global-created', false); }
-    #   ConfigJS.prototype = {
-    #     observe: function (aSubject) { aSubject.addEventListener('DOMContentLoaded', this, {once: true}); },
-    #     handleEvent: function (aEvent) {
-    #       let document = aEvent.originalTarget;
-    #       let window = document.defaultView;
-    #       let location = window.location;
-    #       if (/^(chrome:(?!\/\/(global\/content\/commonDialog|browser\/content\/webext-panels)\.x?html)|about:(?!blank))/i.test(location.href)) {
-    #         if (window._gBrowser) {
-    #           let keys = ["key_newNavigatorTab", "openFileKb", "key_viewInfo"];
-    #           for (var i=0; i < keys.length; i++) {
-    #             let keyCommand = window.document.getElementById(keys[i]);
-    #             if (keyCommand != undefined) {
-    #               keyCommand.removeAttribute("command");
-    #               keyCommand.removeAttribute("key");
-    #               keyCommand.removeAttribute("modifiers");
-    #               keyCommand.removeAttribute("oncommand");
-    #               keyCommand.removeAttribute("data-l10n-id");
-    #             }
-    #           }
-    #         }
-    #       }
-    #     }
-    #   };
-    #   if (!Services.appinfo.inSafeMode) { new ConfigJS(); }
-    # '';
+    autoConfig = ''
+      try {
+        let { classes: Cc, interfaces: Ci, manager: Cm  } = Components;
+        const Services = globalThis.Services;
+        const {SessionStore} = Components.utils.import('resource:///modules/sessionstore/SessionStore.jsm');
+        function ConfigJS() { Services.obs.addObserver(this, 'chrome-document-global-created', false); }
+        ConfigJS.prototype = {
+          observe: function (aSubject) { aSubject.addEventListener('DOMContentLoaded', this, {once: true}); },
+          handleEvent: function (aEvent) {
+            let document = aEvent.originalTarget; let window = document.defaultView; let location = window.location;
+            if (/^(chrome:(?!\/\/(global\/content\/commonDialog|browser\/content\/webext-panels)\.x?html)|about:(?!blank))/i.test(location.href)) {
+              if (window._gBrowser) {
+                let keys = ["key_newNavigatorTab", "openFileKb", "key_viewInfo"];
+                for (var i=0; i < keys.length; i++) {
+                  let keyCommand = window.document.getElementById(keys[i]);
+                  keyCommand?.remove();
+                }
+              }
+            }
+          }
+        };
+        if (!Services.appinfo.inSafeMode) { new ConfigJS(); }
+      } catch(ex) {};
+    '';
   };
 
   # Shell
