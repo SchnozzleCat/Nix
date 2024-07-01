@@ -178,7 +178,7 @@
         # TODO: Add your SSH public key(s) here, if you plan on using SSH to connect
       ];
       # TODO: Be sure to add any other groups you need (such as networkmanager, audio, docker, etc)
-      extraGroups = ["wheel" "networkmanager" "audio" "docker" "corectrl" "libvirtd" "tss"];
+      extraGroups = ["wheel" "networkmanager" "audio" "docker" "corectrl" "libvirtd" "tss" "storage"];
     };
   };
 
@@ -203,35 +203,35 @@
 
   programs.firefox = {
     enable = true;
-    autoConfig = ''
-      let { classes: Cc, interfaces: Ci, manager: Cm  } = Components;
-      let Services = globalThis.Services || ChromeUtils.import("resource://gre/modules/Services.jsm").Services;
-      function ConfigJS() { Services.obs.addObserver(this, 'chrome-document-global-created', false); }
-      ConfigJS.prototype = {
-        observe: function (aSubject) { aSubject.addEventListener('DOMContentLoaded', this, {once: true}); },
-        handleEvent: function (aEvent) {
-          let document = aEvent.originalTarget;
-          let window = document.defaultView;
-          let location = window.location;
-          if (/^(chrome:(?!\/\/(global\/content\/commonDialog|browser\/content\/webext-panels)\.x?html)|about:(?!blank))/i.test(location.href)) {
-            if (window._gBrowser) {
-              let keys = ["key_newNavigatorTab", "openFileKb", "key_viewInfo"];
-              for (var i=0; i < keys.length; i++) {
-                let keyCommand = window.document.getElementById(keys[i]);
-                if (keyCommand != undefined) {
-                  keyCommand.removeAttribute("command");
-                  keyCommand.removeAttribute("key");
-                  keyCommand.removeAttribute("modifiers");
-                  keyCommand.removeAttribute("oncommand");
-                  keyCommand.removeAttribute("data-l10n-id");
-                }
-              }
-            }
-          }
-        }
-      };
-      if (!Services.appinfo.inSafeMode) { new ConfigJS(); }
-    '';
+    # autoConfig = ''
+    #   let { classes: Cc, interfaces: Ci, manager: Cm  } = Components;
+    #   let Services = globalThis.Services || ChromeUtils.import("resource://gre/modules/Services.jsm").Services;
+    #   function ConfigJS() { Services.obs.addObserver(this, 'chrome-document-global-created', false); }
+    #   ConfigJS.prototype = {
+    #     observe: function (aSubject) { aSubject.addEventListener('DOMContentLoaded', this, {once: true}); },
+    #     handleEvent: function (aEvent) {
+    #       let document = aEvent.originalTarget;
+    #       let window = document.defaultView;
+    #       let location = window.location;
+    #       if (/^(chrome:(?!\/\/(global\/content\/commonDialog|browser\/content\/webext-panels)\.x?html)|about:(?!blank))/i.test(location.href)) {
+    #         if (window._gBrowser) {
+    #           let keys = ["key_newNavigatorTab", "openFileKb", "key_viewInfo"];
+    #           for (var i=0; i < keys.length; i++) {
+    #             let keyCommand = window.document.getElementById(keys[i]);
+    #             if (keyCommand != undefined) {
+    #               keyCommand.removeAttribute("command");
+    #               keyCommand.removeAttribute("key");
+    #               keyCommand.removeAttribute("modifiers");
+    #               keyCommand.removeAttribute("oncommand");
+    #               keyCommand.removeAttribute("data-l10n-id");
+    #             }
+    #           }
+    #         }
+    #       }
+    #     }
+    #   };
+    #   if (!Services.appinfo.inSafeMode) { new ConfigJS(); }
+    # '';
   };
 
   # Shell
@@ -244,10 +244,21 @@
   programs.steam = {
     enable = true;
     remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+    gamescopeSession.enable = true; # Enable GameScope session
     dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
     package = pkgs.steam.override {
       extraPkgs = pkgs:
         with pkgs; [
+          xorg.libXcursor
+          xorg.libXi
+          xorg.libXinerama
+          xorg.libXScrnSaver
+          libpng
+          libpulseaudio
+          libvorbis
+          stdenv.cc.cc.lib
+          libkrb5
+          keyutils
           gamescope
         ];
     };

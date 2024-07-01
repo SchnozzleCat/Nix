@@ -22,7 +22,10 @@
 
     nix-citizen.url = "github:LovingMelody/nix-citizen";
 
-    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
+    neovim-nightly-overlay = {
+      url = "github:nix-community/neovim-nightly-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     nix-colors.url = "github:misterio77/nix-colors";
   };
@@ -71,7 +74,6 @@
         modules = [
           # > Our main nixos configuration file <
           ./nixos/configuration.nix
-          self.nixosModules.sunshine
         ];
       };
       schnozzlecat-laptop = nixpkgs.lib.nixosSystem {

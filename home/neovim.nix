@@ -19,10 +19,10 @@
     (struct_declaration
       name: (identifier) @type.c_sharp)
 
-    (record_struct_declaration
+    (record_declaration
       name: (identifier) @type.c_sharp)
 
-    (record_struct_declaration
+    (record_declaration
       (modifier) @keyword.c_sharp)
 
     (variable_declaration
@@ -34,7 +34,7 @@
 
   programs.nixvim = {
     enable = true;
-    package = pkgs.neovim-nightly;
+    package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.neovim;
     extraPython3Packages = python-pkgs: [
       python-pkgs.pytest
       python-pkgs.python-dotenv
@@ -1184,7 +1184,7 @@
       };
       rustaceanvim = {
         enable = true;
-        server.onAttach = ''__lspOnAttach'';
+        settings.server.on_attach = ''__lspOnAttach'';
       };
       obsidian = {
         enable = true;
@@ -1310,7 +1310,7 @@
             };
           };
           digestif.enable = true;
-          nil_ls.enable = true;
+          nil-ls.enable = true;
           # omnisharp.enable = true;
           clangd.enable = true;
           gdscript.enable = true;

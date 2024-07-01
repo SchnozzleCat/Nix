@@ -12,18 +12,22 @@
     policy = ["magic"];
   };
 
+  services.devmon.enable = true;
+  services.gvfs.enable = true;
+  services.udisks2.enable = true;
+
   services.displayManager.autoLogin = {
     enable = true;
     user = "linus";
   };
 
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+  };
+
   hardware.opengl.extraPackages = with pkgs; [
     rocmPackages.clr.icd
-    amdvlk
-  ];
-
-  hardware.opengl.extraPackages32 = with pkgs; [
-    driversi686Linux.amdvlk
   ];
 
   boot.blacklistedKernelModules = ["nouveau"];

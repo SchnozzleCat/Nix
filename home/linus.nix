@@ -66,6 +66,7 @@ in {
       pavucontrol
       pyprland
       wally-cli
+      blueman
 
       # Web
       brave
@@ -100,7 +101,7 @@ in {
         nugetName = "CSharpier";
         nugetSha256 = "sha256-QVfbEtkj41/b8urLx8X274KWjawyfgPTIb9HOLfduB8=";
       })
-      gdtoolkit
+      gdtoolkit_4
 
       # Utilities
       lm_sensors
@@ -108,6 +109,7 @@ in {
       wtype
       git-crypt
       bruno
+      xfce.thunar
 
       # Games
       steam-run
@@ -135,7 +137,7 @@ in {
       easyeffects
       spotify
       cinnamon.warpinator
-      vesktop-patched
+      vesktop
       jellyfin-media-player
       jellyfin-mpv-shim
       mpv
