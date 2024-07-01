@@ -7,6 +7,14 @@
   hostname,
   ...
 }: {
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+    extraPackages = with pkgs; [
+      rocmPackages.clr.icd
+    ];
+  };
+
   networking.interfaces."enp8s0".wakeOnLan = {
     enable = true;
     policy = ["magic"];
@@ -26,17 +34,8 @@
     powerOnBoot = true;
   };
 
-  hardware.opengl.extraPackages = with pkgs; [
-    rocmPackages.clr.icd
-  ];
-
   boot.blacklistedKernelModules = ["nouveau"];
   hardware.cpu.intel.updateMicrocode = true;
-
-  hardware.opengl = {
-    driSupport = true;
-    driSupport32Bit = true;
-  };
 
   services.udev.extraRules = ''
     SUBSYSTEM=="usb", ATTR{idVendor}=="04e8", ATTR{idProduct}=="6860", MODE="0666", GROUP="plugdev"

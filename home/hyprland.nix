@@ -110,8 +110,12 @@ in ''
       col.inactive_border = rgba(595959aa)
 
       layout = dwindle
+  }
 
-      cursor_inactive_timeout = 5
+  cursor {
+      inactive_timeout = 5
+      enable_hyprcursor = true
+
   }
 
   decoration {
@@ -161,7 +165,7 @@ in ''
 
   master {
       # See https://wiki.hyprland.org/Configuring/Master-Layout/ for more
-      new_is_master = true
+      new_status = master
   }
 
   gestures {

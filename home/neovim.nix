@@ -1232,7 +1232,7 @@
       diffview.enable = true;
       none-ls = {
         enable = true;
-        sourcesItems = [
+        settings.sources = [
           {__raw = ''require("null-ls").builtins.formatting.csharpier'';}
           {__raw = ''require("null-ls").builtins.formatting.gdformat'';}
           {__raw = ''require("null-ls").builtins.formatting.prismaFmt'';}
