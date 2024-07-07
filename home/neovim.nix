@@ -1230,6 +1230,7 @@
         ];
       };
       diffview.enable = true;
+      lsp-format.enable = true;
       none-ls = {
         enable = true;
         settings.sources = [
