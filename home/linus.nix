@@ -92,15 +92,6 @@ in {
       jetbrains.datagrip
       podman-tui
 
-      android-studio
-      jdk17
-
-      (buildDotnetGlobalTool {
-        pname = "dotnet-csharpier";
-        version = "0.26.7";
-        nugetName = "CSharpier";
-        nugetSha256 = "sha256-QVfbEtkj41/b8urLx8X274KWjawyfgPTIb9HOLfduB8=";
-      })
       gdtoolkit_4
 
       # Utilities

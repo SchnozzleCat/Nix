@@ -148,7 +148,6 @@
         hint_enable = false
       })
       require("tsc").setup()
-      require("trouble").toggle_refresh()
     '';
     opts = {
       number = true;
@@ -1233,11 +1232,6 @@
       lsp-format.enable = true;
       none-ls = {
         enable = true;
-        settings.sources = [
-          {__raw = ''require("null-ls").builtins.formatting.csharpier'';}
-          {__raw = ''require("null-ls").builtins.formatting.gdformat'';}
-          {__raw = ''require("null-ls").builtins.formatting.prismaFmt'';}
-        ];
         sources = {
           code_actions = {
             gitsigns.enable = true;
@@ -1248,8 +1242,11 @@
           formatting = {
             alejandra.enable = true;
             black.enable = true;
+            csharpier.enable = true;
+            gdformat.enable = true;
             isort.enable = true;
             markdownlint.enable = true;
+            prisma_format.enable = true;
             prettier = {
               enable = true;
               disableTsServerFormatter = true;
