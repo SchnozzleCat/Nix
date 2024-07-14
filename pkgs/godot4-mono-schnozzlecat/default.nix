@@ -39,9 +39,12 @@
   withVersion,
   withCommitHash,
   withHash,
-  dotnet-sdk,
+  dotnet-sdk_8,
   mono,
-  dotnet-runtime,
+  dotnet-runtime_8,
+  wayland,
+  wayland-scanner,
+  libdecor,
   callPackage,
 }:
 assert lib.asserts.assertOneOf "withPrecision" withPrecision ["single" "double"]; let
@@ -89,8 +92,11 @@ in
       installShellFiles
       python3
       mono
-      dotnet-sdk
-      dotnet-runtime
+      dotnet-sdk_8
+      dotnet-runtime_8
+      wayland-scanner
+      libdecor
+      speechd
     ];
 
     buildInputs = [
@@ -112,8 +118,12 @@ in
         libxkbcommon
         alsa-lib
         mono
-        dotnet-sdk
-        dotnet-runtime
+        dotnet-sdk_8
+        dotnet-runtime_8
+        wayland-scanner
+        wayland
+        libdecor
+        speechd
       ]
       ++ lib.optional withPulseaudio libpulseaudio
       ++ lib.optional withDbus dbus

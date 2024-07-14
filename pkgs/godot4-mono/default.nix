@@ -36,9 +36,12 @@
   withFontconfig ? true,
   withUdev ? true,
   withTouch ? true,
-  dotnet-sdk,
+  dotnet-sdk_8,
   mono,
-  dotnet-runtime,
+  dotnet-runtime_8,
+  wayland,
+  wayland-scanner,
+  libdecor,
   callPackage,
 }:
 assert lib.asserts.assertOneOf "withPrecision" withPrecision ["single" "double"]; let
@@ -49,13 +52,15 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision ["single" "double"]
 in
   stdenv.mkDerivation rec {
     pname = "godot4-mono";
-    version = "4.2";
-    commitHash = "b09f793f564a6c95dc76acc654b390e68441bd01";
+    version = "4.3-beta2";
+    commitHash = "16f98cd7079c2b22248ec358371f17bca355e42e";
 
     nugetDeps = mkNugetDeps {
       name = "deps";
       nugetDeps = import ./deps.nix;
     };
+
+    shouldConfigureNuget = true;
 
     nugetSource = mkNugetSource {
       name = "${pname}-nuget-source";
@@ -76,7 +81,7 @@ in
       owner = "godotengine";
       repo = "godot";
       rev = commitHash;
-      hash = "sha256-jGke7Lblv3XMlxfBu/E69P0XSb7H6Cr7K3HSTOI/TcY=";
+      hash = "sha256-Ylho1hKimjcIqo+kthARW3Z2LUczi/GdX54Z5ZsIl9A=";
     };
 
     nativeBuildInputs = [
@@ -85,8 +90,11 @@ in
       installShellFiles
       python3
       mono
-      dotnet-sdk
-      dotnet-runtime
+      dotnet-sdk_8
+      dotnet-runtime_8
+      wayland-scanner
+      libdecor
+      speechd
     ];
 
     buildInputs = [
@@ -108,8 +116,12 @@ in
         libxkbcommon
         alsa-lib
         mono
-        dotnet-sdk
-        dotnet-runtime
+        dotnet-sdk_8
+        dotnet-runtime_8
+        wayland-scanner
+        wayland
+        libdecor
+        speechd
       ]
       ++ lib.optional withPulseaudio libpulseaudio
       ++ lib.optional withDbus dbus
@@ -146,25 +158,27 @@ in
     outputs = ["out" "man"];
 
     postConfigure = ''
-      echo "Configuring NuGet."
-      mkdir -p ~/.nuget/NuGet
-      ln -s "$nugetConfig" ~/.nuget/NuGet/NuGet.Config
+      echo "Setting up buildhome."
+      mkdir buildhome
+      export HOME="$PWD"/buildhome
+      if [ -n "$shouldConfigureNuget" ]; then
+        echo "Configuring NuGet."
+        mkdir -p ~/.nuget/NuGet
+        ln -s "$nugetConfig" ~/.nuget/NuGet/NuGet.Config
+      fi
     '';
 
     buildPhase = ''
       echo "Starting Build"
-      scons p=${withPlatform} target=${withTarget} precision=${withPrecision} module_mono_enabled=yes module_text_server_fb_enabled=yes mono_glue=no
-
+      scons p=${withPlatform} target=${withTarget} precision=${withPrecision} module_mono_enabled=yes mono_glue=no
       echo "Generating Glue"
       if [[ ${withPrecision} == *double* ]]; then
           bin/godot.${withPlatform}.${withTarget}.${withPrecision}.x86_64.mono --headless --generate-mono-glue modules/mono/glue
       else
           bin/godot.${withPlatform}.${withTarget}.x86_64.mono --headless --generate-mono-glue modules/mono/glue
       fi
-
       echo "Building Assemblies"
-      scons p=${withPlatform} target=${withTarget} precision=${withPrecision} module_mono_enabled=yes module_text_server_fb_enabled=yes mono_glue=yes
-
+      scons p=${withPlatform} target=${withTarget} precision=${withPrecision} module_mono_enabled=yes mono_glue=yes
       echo "Building C#/.NET Assemblies"
       python modules/mono/build_scripts/build_assemblies.py --godot-output-dir bin --precision=${withPrecision}
     '';
@@ -173,9 +187,7 @@ in
       mkdir -p "$out/bin"
       cp bin/godot.* $out/bin/godot4-mono
       cp -r bin/GodotSharp/ $out/bin/
-
       installManPage misc/dist/linux/godot.6
-
       mkdir -p "$out"/share/{applications,icons/hicolor/scalable/apps}
       cp misc/dist/linux/org.godotengine.Godot.desktop "$out/share/applications/org.godotengine.Godot4-Mono.desktop"
       substituteInPlace "$out/share/applications/org.godotengine.Godot4-Mono.desktop" \
@@ -190,7 +202,10 @@ in
       description = "Free and Open Source 2D and 3D game engine";
       license = licenses.mit;
       platforms = ["i686-linux" "x86_64-linux" "aarch64-linux"];
-      maintainers = with maintainers; [ilikefrogs101];
       mainProgram = "godot4-mono";
+    };
+
+    passthru = {
+      make-deps = callPackage ./make-deps.nix {};
     };
   }
