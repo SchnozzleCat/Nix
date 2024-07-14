@@ -58,11 +58,67 @@
       vimPlugins.vim-dadbod
       vimPlugins.vim-dadbod-ui
       vimPlugins.vim-dadbod-completion
-      roslyn-nvim
-      copilotchat-nvim
-      tsc-nvim
-      tetris-nvim
-      cellular-nvim
+
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "roslyn.nvim";
+        version = "";
+        src = pkgs.fetchFromGitHub {
+          owner = "seblj";
+          repo = "roslyn.nvim";
+          rev = "76d4ddb8b5ec800c5d129c0bee5ab0d5ae8fff7f";
+          sha256 = "sha256-r0e+cO7S7lFgZah1PNm8CLG0v++9JPf3lAmUGryky/g=";
+        };
+      })
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "copilotchat-nvim";
+        version = "main";
+        src = pkgs.fetchFromGitHub {
+          owner = "jellydn";
+          repo = "CopilotChat.nvim";
+          rev = "4b2e631dfd7e08507dd083a18480fe71a7bf8717";
+          sha256 = "sha256-ft42fmJ4sJqo8P60JO41zTyTarNGL2anpNXrHpDFbbk=";
+        };
+      })
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "tsc-nvim";
+        version = "main";
+        src = pkgs.fetchFromGitHub {
+          owner = "dmmulroy";
+          repo = "tsc.nvim";
+          rev = "c37d7b3ed954e4db13814f0ed7aa2a83b2b7e9dd";
+          sha256 = "sha256-ifJXtYCA04lt0z+JDWSesCPBn6OLpqnzJarK+wuo9m8=";
+        };
+      })
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "tetris-nvim";
+        version = "main";
+        src = pkgs.fetchFromGitHub {
+          owner = "alec-gibson";
+          repo = "nvim-tetris";
+          rev = "d17c99fb527ada98ffb0212ffc87ccda6fd4f7d9";
+          sha256 = "sha256-+69Fq5aMMzg9nV05rZxlLTFwQmDyN5/5HmuL2SGu9xQ=";
+        };
+      })
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "vim-mtg";
+        version = "main";
+        src = pkgs.fetchFromGitHub {
+          owner = "yoshi1123";
+          repo = "vim-mtg";
+          rev = "89de946e8204f18a9c991af026223295f06633ed";
+          sha256 = "sha256-qTUPXmBEHqE99I51cLfLd/3n1k2zDDy6XOoIi6CwQuU=";
+        };
+      })
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "cellular-nvim";
+        version = "main";
+        src = pkgs.fetchFromGitHub {
+          owner = "Eandrju";
+          repo = "cellular-automaton.nvim";
+          rev = "b7d056dab963b5d3f2c560d92937cb51db61cb5b";
+          sha256 = "sha256-szbd6m7hH7NFI0UzjWF83xkpSJeUWCbn9c+O8F8S/Fg=";
+        };
+      })
     ];
     extraConfigVim = ''
       autocmd BufWritePre * lua vim.lsp.buf.format()
