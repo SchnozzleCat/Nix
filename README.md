@@ -5,4 +5,13 @@
 - git add .
 - git submodule update --init --recursive
 - sudo nixos-rebuild switch --flake ~/.nixos#<hostname>
+- if using yubikey PAM
+  - nix-shell -p yubico-pam -p yubikey-manager
+  - ykman otp chalresp --touch --generate 2
+  - ykpamcfg -2 -v
+- reboot
 - nix run home-manager/master -- switch --flake ~/.nixos#<hostname>
+- git stash
+- git-crypt unlock
+- git stash pop
+- home-manager switch --flake ~/.nixos#<hostname> && os-rebuild && reboot
