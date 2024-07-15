@@ -275,6 +275,20 @@ in {
     };
   };
 
+  home.file.".mozilla/firefox/schnozzlecat.default/chrome/userChrome.css".source = ./userChrome.css;
+  home.file.".mozilla/firefox/schnozzlecat.default/chrome/userContent.css".source = ./userContent.css;
+  home.file.".mozilla/firefox/profiles.ini".text = ''
+    [Profile0]
+    Name=default
+    IsRelative=1
+    Path=schnozzlecat.default
+    Default=1
+
+    [General]
+    StartWithLastProfile=1
+    Version=2
+  '';
+
   programs.mangohud = {
     enable = true;
     settings = {
