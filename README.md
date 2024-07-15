@@ -3,5 +3,6 @@
 - sudo nixos-generate-config
 - cp /etc/nixos/hardware-configuration.nix ~/.nixos/nixos/hardware-configuration-<hostname>.nix
 - git add .
+- git submodule update --init --recursive
 - sudo nixos-rebuild switch --flake ~/.nixos#<hostname>
 - nix run home-manager/master -- switch --flake ~/.nixos#<hostname>
