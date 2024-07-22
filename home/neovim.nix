@@ -65,8 +65,8 @@
         src = pkgs.fetchFromGitHub {
           owner = "seblj";
           repo = "roslyn.nvim";
-          rev = "76d4ddb8b5ec800c5d129c0bee5ab0d5ae8fff7f";
-          sha256 = "sha256-r0e+cO7S7lFgZah1PNm8CLG0v++9JPf3lAmUGryky/g=";
+          rev = "100aab1f43bf15e2b9066452ea665eca94ee8888";
+          sha256 = "sha256-Cq4gQbhar9GLjYt/YJBZ9OainqyxQrklYtgUVCHEQH4=";
         };
       })
       (pkgs.vimUtils.buildVimPlugin {
