@@ -47,8 +47,6 @@
       vimPlugins.lazygit-nvim
       vimPlugins.ltex_extra-nvim
       vimPlugins.vim-visual-multi
-      vimPlugins.neotest
-      vimPlugins.neotest-python
       vimPlugins.telescope-dap-nvim
       vimPlugins.tabout-nvim
       vimPlugins.friendly-snippets
@@ -119,6 +117,16 @@
           sha256 = "sha256-szbd6m7hH7NFI0UzjWF83xkpSJeUWCbn9c+O8F8S/Fg=";
         };
       })
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "nerdy.nvim";
+        version = "main";
+        src = pkgs.fetchFromGitHub {
+          owner = "2KAbhishek";
+          repo = "nerdy.nvim";
+          rev = "b467d6609b78d6a5f1e12cbc08fcc1ac87af20f5";
+          sha256 = "sha256-k5ZmhUHGHlFuGWiviEYeHGCbXLZHY61pUnvpZgSJhPs=";
+        };
+      })
     ];
     extraConfigVim = ''
       autocmd BufWritePre * lua vim.lsp.buf.format()
@@ -138,7 +146,6 @@
       highlight @struct_declaration guifg=#aaff9C guibg=none
       highlight @attribute guifg=#cb6fe2 guibg=none
       highlight @return_statement guifg=#eb6f92 guibg=none
-      set conceallevel=2
     '';
     extraConfigLua = ''
       vim.opt.pumheight = 10
@@ -166,14 +173,6 @@
           {open = '[', close = ']'},
           {open = '{', close = '}'},
           {open = '<', close = '>'}
-        }
-      })
-
-      require("neotest").setup({
-        adapters = {
-          require("neotest-python")({
-            dap = { justMyCode = false }
-          })
         }
       })
       require("CopilotChat").setup({
@@ -210,6 +209,7 @@
       undofile = true;
       shiftwidth = 2;
       tabstop = 2;
+      conceallevel = 1;
       expandtab = true;
       autoindent = true;
       smartindent = false;
@@ -222,6 +222,11 @@
     colorschemes.rose-pine = {
       enable = true;
       settings = {
+        enable = {
+          legacy_highlights = true;
+          migrations = true;
+          terminal = false;
+        };
         dark_variant = "moon";
         styles = {
           italic = false;
@@ -736,6 +741,12 @@
       {
         mode = ["n"];
         key = "<leader>fn";
+        action = "<cmd> ObsidianQuickSwitch <cr>";
+        options.desc = "Obsidian Quick Switch";
+      }
+      {
+        mode = ["n"];
+        key = "<leader>fzw";
         action = "<cmd> ObsidianSearch <cr>";
         options.desc = "Obsidian Search";
       }
@@ -778,6 +789,7 @@
       }
     ];
     plugins = {
+      dressing.enable = true;
       noice = {
         enable = true;
         presets = {
@@ -1064,6 +1076,15 @@
         };
       };
       fidget.enable = true;
+      neotest = {
+        enable = true;
+        adapters = {
+          python.enable = true;
+          dotnet.enable = true;
+          jest.enable = true;
+          playwright.enable = true;
+        };
+      };
       dap = {
         enable = true;
         adapters = {
@@ -1210,7 +1231,7 @@
               name = "Attach";
               processId.__raw = ''
                 function()
-                  return require('dap.utils').pick_process({filter="godot"})
+                  return require('dap.utils').pick_process()
                 end'';
             }
           ];
@@ -1224,17 +1245,18 @@
             text = "";
             texthl = "DiagnosticSignInfo";
           };
+          dapBreakpointRejected = {
+            text = "";
+            texthl = "DiagnosticSignError";
+          };
         };
         extensions = {
           dap-python = {
             enable = true;
+            adapterPythonPath = "/home/linus/Repositories/pina-simulation-api/backend/.venv/bin/python";
           };
-          dap-ui = {
-            enable = true;
-          };
-          dap-virtual-text = {
-            enable = true;
-          };
+          dap-ui.enable = true;
+          dap-virtual-text.enable = true;
         };
       };
       rustaceanvim = {
@@ -1397,8 +1419,8 @@
         };
       };
       treesitter = {
+        settings.indent.enable = true;
         enable = true;
-        indent = true;
       };
     };
   };

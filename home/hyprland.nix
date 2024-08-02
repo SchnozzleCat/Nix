@@ -10,7 +10,6 @@ in ''
 
   exec-once = hyprctl setcursor Bibata-Modern-Classic 1
   exec-once = hyprpaper
-  exec-once = ollama serve
 
   exec-once = ${pkgs.waybar}/bin/waybar
   exec-once = pypr
@@ -270,7 +269,6 @@ in ''
   bind = $mainMod, v, exec, hyprctl dispatch layoutmsg "preselect d"
 
   bind = $mainMod Ctrl Shift, q, exec, power-menu
-  bind = $mainMod, q, exec,  echo "" | fuzzel --dmenu --dmenu --prompt="Ask: " --lines=0 --width=125 | ollama run mistral | pipe-notify
 
   bind = $mainMod, w, exec, hyprctl activewindow | wl-copy
 

@@ -52,8 +52,8 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision ["single" "double"]
 in
   stdenv.mkDerivation rec {
     pname = "godot4-mono";
-    version = "4.3-beta2";
-    commitHash = "16f98cd7079c2b22248ec358371f17bca355e42e";
+    version = "4.3-rc1";
+    commitHash = "e343dbbcc1030f04dc5833f1c19d267a17332ca9";
 
     nugetDeps = mkNugetDeps {
       name = "deps";
@@ -81,7 +81,7 @@ in
       owner = "godotengine";
       repo = "godot";
       rev = commitHash;
-      hash = "sha256-Ylho1hKimjcIqo+kthARW3Z2LUczi/GdX54Z5ZsIl9A=";
+      hash = "sha256-ZFRee/4sBui97V6dtqSBOKhOUEOy3I3mzpKvFa3Zxjk=";
     };
 
     nativeBuildInputs = [

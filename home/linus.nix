@@ -127,7 +127,7 @@ in {
       helvum
       easyeffects
       spotify
-      cinnamon.warpinator
+      warpinator
       vesktop
       jellyfin-media-player
       jellyfin-mpv-shim
@@ -135,7 +135,6 @@ in {
       mpv-shim-default-shaders
       # texlive.combined.scheme-full
       jabref
-      ollama
       distrobox
       # wonderdraft
       krita
@@ -233,9 +232,9 @@ in {
 
   programs.godot4-mono-schnozzlecat = {
     enable = true;
-    version = "4.3.0-beta3";
-    commitHash = "9aa9f3d54402893d0c3c6fff89966e4f7f62d2b2";
-    hash = "sha256-8b64EltFkfQU3fkFY10ULgFPoUJiogvkcgWZ1x54jwE=";
+    version = "4.3.0-rc1";
+    commitHash = "e83503f80888403c7741d512ffa8887d263eb523";
+    hash = "sha256-2xeN20+7bpmEFx/8kMWbw5Ml4mO07hqfLNMibk2YLLQ=";
   };
 
   programs.ncspot = {
