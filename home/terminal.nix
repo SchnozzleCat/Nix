@@ -45,120 +45,17 @@ in {
     neovim-remote
   ];
 
-  programs.lf = {
+  programs.yazi = {
     enable = true;
-    settings = {
-      preview = true;
-      hidden = true;
-      drawbox = true;
-      icons = true;
-      ignorecase = true;
-    };
-    previewer.source = pkgs.writeShellScript "scope.sh" ''
-      pistol "$1"
-    '';
-    commands = with pkgs; {
-      dragon-out = ''%${xdragon}/bin/xdragon -a -x $fx'';
-      open = ''''${{${pkgs.ranger}/bin/rifle "$f"}}'';
-      copy-path = ''&{{echo -n "$f" | wl-copy}}'';
-      zip = ''
-        %{{
-          printf "Archive name >"
-          read ARCHIVE
-          if [ -n "$ARCHIVE" ]; then
-              zip "$ARCHIVE" $fx
-          fi
-        }}
-      '';
-      unzip = ''
-        %{{
-          printf "Unarchive directory >"
-          read ARCHIVE
-          if [ -n "$ARCHIVE" ]; then
-              mkdir -p "$ARCHIVE"
-              unzip "$f"
-          fi
-        }}
-      '';
-      mkdir = ''
-        %{{
-          printf "Directory Name > "
-          read DIR
-          mkdir $DIR
-        }}
-      '';
-      mkfile = ''
-        %{{
-          printf "File Name > "
-          read FILE
-          touch $FILE
-        }}
-      '';
-      rename = ''%[ -e $1 ] && printf "file exists" || mv "$f" "$1"'';
-      on-select = ''
-        &{{
-          lf -remote "send $id set statfmt \"$(eza -ld --color=always "$f")\""
-        }}'';
-      on-cd = ''
-        &{{
-          export STARSHIP_SHELL=
-          fmt="$(starship prompt)"
-          lf -remote "send $id set promptfmt \"$fmt\""
-        }}'';
-      fzf_find = ''
-        ''${{
-            res="$(rg --files | fzf --header='Jump to location')"
-            if [ -n "$res" ]; then
-                if [ -d "$res" ]; then
-                    cmd="cd"
-                else
-                    cmd="select"
-                fi
-                res="$(printf '%s' "$res" | sed 's/\\/\\\\/g;s/"/\\"/g')"
-                lf -remote "send $id $cmd \"$res\""
-            fi
-        }}
-      '';
-      fzf_exact = ''
-        ''${{
-            res="$(rg --files | fzf --exact --header='Jump to location')"
-            if [ -n "$res" ]; then
-                if [ -d "$res" ]; then
-                    cmd="cd"
-                else
-                    cmd="select"
-                fi
-                res="$(printf '%s' "$res" | sed 's/\\/\\\\/g;s/"/\\"/g')"
-                lf -remote "send $id $cmd \"$res\""
-            fi
-        }}
-      '';
-    };
-    keybindings = {
-      yd = "dragon-out";
-      yy = "copy";
-      yp = "copy-path";
-      y = "";
-      dd = "cut";
-      d = "";
-      dD = "delete";
-      pp = ": paste; clear";
-      S = "push :shell<enter>$SHELL<enter>";
-      p = "";
-      t = "";
-      tt = "mkfile";
-      td = "mkdir";
-      a = "push :rename<space>";
-      zz = "zip";
-      zu = "unzip";
-      "<c-f>" = "fzf_find";
-      "<c-e>" = "fzf_exact";
-      "<enter>" = "open";
-    };
+    package = pkgs.master.yazi;
+    enableFishIntegration = true;
+    initLua = ./yazi/init.lua;
   };
-
-  home.file.".config/lf/icons".source = ./lf-icons.nix;
-  home.file.".config/ranger/rifle".source = ./rifle.nix;
+  home.file.".config/yazi/flavors".source = ./yazi/flavors;
+  home.file.".config/yazi/plugins".source = ./yazi/plugins;
+  home.file.".config/yazi/theme.toml".source = ./yazi/theme.toml;
+  home.file.".config/yazi/keymap.toml".text = import ./yazi/keymap.nix {inherit pkgs;};
+  home.file.".config/yazi/yazi.toml".source = ./yazi/yazi.toml;
 
   programs.btop = {
     enable = true;
@@ -242,13 +139,18 @@ in {
   programs.fish = {
     enable = true;
     interactiveShellInit = ''
-      export OPENAI_API_KEY_DIR=${../secrets/keys/openapi.gpg}
       set -g fish_greeting
-      bind \ce nvim
-      if set -q ZELLIJ
-      else
-        zellij --layout compact
+      bind -s \ce nvim
+      bind -s \cz zellij -l compact
+      function yy
+        set tmp (mktemp -t "yazi-cwd.XXXXXX")
+        yazi $argv --cwd-file="$tmp"
+        if set cwd (cat -- "$tmp"); and [ -n "$cwd" ]; and [ "$cwd" != "$PWD" ]
+          cd -- "$cwd"
+        end
+        rm -f -- "$tmp"
       end
+      clear
     '';
     shellAliases = {
       gpt = "DEFAULT_MODEL=gpt-4-1106-preview OPENAI_API_KEY=$(gpg -q --decrypt $OPENAI_API_KEY_DIR) sgpt";
@@ -261,21 +163,12 @@ in {
       home-rebuild = "home-manager switch --flake ~/.nixos/";
       ls = "eza -la";
       cat = "bat";
-      # which-gpu = ''glxinfo| grep -E "OpenGL vendor|OpenGL renderer"'';
-      # docker-stop-containers = "docker stop $(docker ps -a -q)";
       pi = "ssh linus@192.168.200.48 -p 6969";
-      # alert = "paplay /usr/share/sounds/freedesktop/stereo/complete.oga";
-      # boot-win11 = ''sudo grub2-reboot "Windows Boot Manager (on /dev/nvme1n1p1)" && reboot'';
-      # nvim-unity = "nvim --listen /tmp/nvimunity";
-      # enable-displays = ''swaymsg output "DP-2" enable && swaymsg output "DP-3" enable && swaymsg output "HDMI-A-1" enable'';
-      # disable-displays = ''swaymsg output "DP-2" disable && swaymsg output "DP-3" disable && swaymsg output "HDMI-A-1" disable'';
       rm = "rm -I";
       mv = "mv -i";
       untar = "tar -xvf";
       zj = "zellij -l compact";
-      tmux = "zellij -l compact";
       cd = "z";
-      ranger = "lf";
     };
   };
 }

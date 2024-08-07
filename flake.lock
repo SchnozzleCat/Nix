@@ -540,22 +540,6 @@
         "type": "github"
       }
     },
-    "master": {
-      "locked": {
-        "lastModified": 1722608595,
-        "narHash": "sha256-rQRKndoMVPQgngvzwCbnkXBeaTY9GZkFJHvFVUKYpUk=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "778a8d30c80b16c9e262910a984ffa6fc6dc5af0",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "ref": "master",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "neovim-nightly-overlay": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -746,6 +730,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-master": {
+      "locked": {
+        "lastModified": 1722891908,
+        "narHash": "sha256-30R9ZfJtHto2FtTWXahV4TNismkYM47IfTWBFuYxa5o=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "f95279a950b03bb4e07186aa802c28c879be85a6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "master",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs_2": {
       "locked": {
         "lastModified": 1722141560,
@@ -832,11 +832,11 @@
       "inputs": {
         "home-manager": "home-manager",
         "hyprland": "hyprland",
-        "master": "master",
         "neovim-nightly-overlay": "neovim-nightly-overlay",
         "nix-citizen": "nix-citizen",
         "nix-colors": "nix-colors",
         "nixpkgs": "nixpkgs_3",
+        "nixpkgs-master": "nixpkgs-master",
         "nixvim": "nixvim"
       }
     },

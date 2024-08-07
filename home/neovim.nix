@@ -1,9 +1,5 @@
 {
   inputs,
-  outputs,
-  lib,
-  config,
-  nix-colors,
   pkgs,
   ...
 }: {
@@ -13,24 +9,6 @@
     gh
     postgresql_16
   ];
-
-  home.file.".config/nvim/after/queries/c_sharp/highlights.scm".text = ''
-    ;; extends
-    (struct_declaration
-      name: (identifier) @type.c_sharp)
-
-    (record_declaration
-      name: (identifier) @type.c_sharp)
-
-    (record_declaration
-      (modifier) @keyword.c_sharp)
-
-    (variable_declaration
-      type: (array_type
-        type: (identifier) @type.c_sharp))
-
-    "return" @return_statement
-  '';
 
   programs.nixvim = {
     enable = true;
@@ -127,6 +105,36 @@
           sha256 = "sha256-k5ZmhUHGHlFuGWiviEYeHGCbXLZHY61pUnvpZgSJhPs=";
         };
       })
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "pantran.nvim";
+        version = "main";
+        src = pkgs.fetchFromGitHub {
+          owner = "potamides";
+          repo = "pantran.nvim";
+          rev = "250b1d8e81f83e6aff061f4c75db008c684f5971";
+          sha256 = "sha256-Dtp/bIK+FA2x09xWTwIW24fY0oT+rV202YiVUwBKlpk=";
+        };
+      })
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "sunglasses.nvim";
+        version = "main";
+        src = pkgs.fetchFromGitHub {
+          owner = "miversen33";
+          repo = "sunglasses.nvim";
+          rev = "11896b982f39743b169bfeac9a034040bf19a2eb";
+          sha256 = "sha256-PK/9yiHBg1PN8m8hc73buwHtXlGr8b6ZqnNhlAGsusE=";
+        };
+      })
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "yazi.nvim";
+        version = "main";
+        src = pkgs.fetchFromGitHub {
+          owner = "mikavilpas";
+          repo = "yazi.nvim";
+          rev = "e239f048b8fa00e0c04d8694296855b66d2770b0";
+          sha256 = "sha256-3Jx5goTfYaicljTiNCwOlw4mbDZQQ92Pql7TieqQVzY=";
+        };
+      })
     ];
     extraConfigVim = ''
       autocmd BufWritePre * lua vim.lsp.buf.format()
@@ -203,8 +211,13 @@
         hint_enable = false
       })
       require("tsc").setup()
+      require("sunglasses").setup({
+          filter_percent = 0.25,
+      })
+      require("custom")
     '';
     opts = {
+      relativenumber = true;
       number = true;
       undofile = true;
       shiftwidth = 2;
@@ -386,16 +399,16 @@
       }
       {
         mode = "n";
-        key = "<leader>n";
+        key = "<leader>N";
         action = "<cmd> NvimTreeToggle <cr>";
         options.desc = "LF";
       }
-      # {
-      #   mode = "n";
-      #   key = "<leader>n";
-      #   action = "<cmd> FloatermNew --height=0.8 --width=0.8 --wintype=float --name=Files lf <cr>";
-      #   options.desc = "LF";
-      # }
+      {
+        mode = "n";
+        key = "<leader>n";
+        action = ''<cmd>lua require("yazi").yazi()<cr>'';
+        options.desc = "LF";
+      }
       # Oil
       {
         mode = "n";
@@ -934,17 +947,6 @@
       surround.enable = true;
       trouble = {
         enable = true;
-        package = pkgs.vimUtils.buildVimPlugin {
-          pname = "trouble.nvim";
-          version = "2024-06-01";
-          src = pkgs.fetchFromGitHub {
-            owner = "folke";
-            repo = "trouble.nvim";
-            rev = "38915023a777b7f2422e503dc603f6a64b465bf5";
-            sha256 = "sha256-kB5PGDGr5zo9nn2146GGi16rP7FXfzLIUIY9MOhmHmY=";
-          };
-          meta.homepage = "https://github.com/folke/trouble.nvim/";
-        };
         settings = {
           signs = {
             error = "";
@@ -1093,6 +1095,10 @@
               host = "127.0.0.1";
               port = 6006;
             };
+            "python" = {
+              host = "127.0.0.1";
+              port = 5678;
+            };
           };
           executables = {
             "php" = {
@@ -1105,6 +1111,10 @@
             "coreclr" = {
               command = "${pkgs.netcoredbg}/bin/netcoredbg";
               args = ["--interpreter=vscode"];
+            };
+            "node" = {
+              command = "node";
+              args = ["/home/linus/Repositories/pina-checkout-integration-exploration/vscode-node-debug2/out/src/nodeDebug.js"];
             };
           };
         };
@@ -1235,6 +1245,33 @@
                 end'';
             }
           ];
+          python = [
+            {
+              name = "Attach";
+              type = "python";
+              request = "attach";
+              port = 5678;
+              host = "localhost";
+              pathMappings = [
+                {
+                  localRoot = "\${workspaceFolder}";
+                  remoteRoot = ".";
+                }
+              ];
+            }
+            {
+              name = "Launch";
+              request = "launch";
+              type = "python";
+              program.__raw = ''
+                function()
+                  local path = '/home/linus/.nix-profile/bin/godot4-mono-schnozzlecat'
+                  vim.notify(path)
+                  return path
+                end
+              '';
+            }
+          ];
         };
         signs = {
           dapBreakpoint = {
@@ -1251,10 +1288,25 @@
           };
         };
         extensions = {
-          dap-python = {
-            enable = true;
-            adapterPythonPath = "/home/linus/Repositories/pina-simulation-api/backend/.venv/bin/python";
-          };
+          # dap-python = {
+          #   enable = true;
+          #   adapterPythonPath = "/home/linus/Repositories/pina-simulation-api/backend/.venv/bin/python";
+          #   customConfigurations = [
+          #     {
+          #       name = "Attach";
+          #       type = "python";
+          #       request = "attach";
+          #       port = 5678;
+          #       host = "localhost";
+          #       pathMappings = [
+          #         {
+          #           localRoot = "\${workspaceFolder}";
+          #           remoteRoot = ".";
+          #         }
+          #       ];
+          #     }
+          #   ];
+          # };
           dap-ui.enable = true;
           dap-virtual-text.enable = true;
         };
@@ -1419,7 +1471,15 @@
         };
       };
       treesitter = {
-        settings.indent.enable = true;
+        settings = {
+          indent.enable = true;
+          highlight = {
+            enable = true;
+          };
+        };
+        enable = true;
+      };
+      treesitter-context = {
         enable = true;
       };
     };

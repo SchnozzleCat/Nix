@@ -34,11 +34,13 @@ in ''
   env = XDG_SESSION_TYPE,wayland
   env = WLR_NO_HARDWARE_CURSORS,1
 
-  bind = $mainMod,g,exec,pypr toggle term
+  bind = $mainMod,w,exec,pypr toggle term
   windowrulev2=float,class:^(foot-float)$
   windowrulev2=size 75% 60%,class:^(foot-float)$
   windowrulev2=workspace special:scratch_term silent,class:^(foot-float)$
   windowrulev2=move 12% 200%,class:^(foot-float)$
+
+  windowrulev2=float,class:^(org.pulseaudio.pavucontrol)$
 
   bind = $mainMod,S,exec,pypr toggle volume
   windowrulev2=float,class:^(pavucontrol)$
@@ -182,6 +184,7 @@ in ''
 
   # Example binds, see https://wiki.hyprland.org/Configuring/Binds/ for more
   bind = $mainMod, a, exec, foot
+  bind = $mainMod, n, exec, [float;size 60% 60%;center] foot ${pkgs.master.yazi}/bin/yazi
   bind = $mainMod, d, exec, fuzzel
   bind = $mainModSHIFT, Q, killactive,
   bind = $mainMod, b, exec, pypr expose
@@ -270,8 +273,5 @@ in ''
 
   bind = $mainMod Ctrl Shift, q, exec, power-menu
 
-  bind = $mainMod, w, exec, hyprctl activewindow | wl-copy
-
-  bind = $mainMod, n, exec, [float;size 60% 60%;center] foot lf
   bind = $mainMod Shift,m, exec, ~/.config/sway/calc.sh
 ''
