@@ -42,7 +42,7 @@ in ''
 
   windowrulev2=float,class:^(org.pulseaudio.pavucontrol)$
 
-  bind = $mainMod,S,exec,pypr toggle volume
+  bind = $mainMod,s,exec,pypr toggle volume
   windowrulev2=float,class:^(pavucontrol)$
   windowrulev2=size 40% 90%,class:^(pavucontrol)$
   windowrulev2=workspace special:scratch_volume silent,class:^(pavucontrol)$
@@ -185,6 +185,7 @@ in ''
   # Example binds, see https://wiki.hyprland.org/Configuring/Binds/ for more
   bind = $mainMod, a, exec, foot
   bind = $mainMod, n, exec, [float;size 60% 60%;center] foot ${pkgs.master.yazi}/bin/yazi
+  bind = $mainMod, z, exec, [float;size 60% 60%;center] foot ${pkgs.master.yazi}/bin/yazi
   bind = $mainMod, d, exec, fuzzel
   bind = $mainModSHIFT, Q, killactive,
   bind = $mainMod, b, exec, pypr expose
