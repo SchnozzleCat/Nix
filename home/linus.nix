@@ -82,13 +82,16 @@ in {
               sdk_6_0
               sdk_7_0
               sdk_8_0
+              dotnet_9.sdk
             ])
         ];
       })
+      msbuild
       # godot4-mono
       sublime-merge
 
       jetbrains.rider
+      jetbrains.idea-ultimate
       jetbrains.datagrip
       podman-tui
 
@@ -225,9 +228,9 @@ in {
 
   programs.godot4-mono-schnozzlecat = {
     enable = true;
-    version = "4.3.0-rc1";
-    commitHash = "e83503f80888403c7741d512ffa8887d263eb523";
-    hash = "sha256-2xeN20+7bpmEFx/8kMWbw5Ml4mO07hqfLNMibk2YLLQ=";
+    version = "4.3.0-stable";
+    commitHash = "bed1ec839b630dbbe5d5958770eac0d1a2d2ebfb";
+    hash = "sha256-zloMkxqNXhKFmSAipLsorqe4xQRpcZss1uN0Ts8dNt0=";
   };
 
   programs.ncspot = {

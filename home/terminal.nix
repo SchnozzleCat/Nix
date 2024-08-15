@@ -141,7 +141,6 @@ in {
     interactiveShellInit = ''
       set -g fish_greeting
       bind -s \ce nvim
-      bind -s \cz zellij -l compact
       function yy
         set tmp (mktemp -t "yazi-cwd.XXXXXX")
         yazi $argv --cwd-file="$tmp"
@@ -167,7 +166,7 @@ in {
       rm = "rm -I";
       mv = "mv -i";
       untar = "tar -xvf";
-      zj = "zellij -l compact";
+      zz = "zellij -l compact";
       cd = "z";
     };
   };

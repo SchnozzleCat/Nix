@@ -41,8 +41,8 @@
         src = pkgs.fetchFromGitHub {
           owner = "seblj";
           repo = "roslyn.nvim";
-          rev = "100aab1f43bf15e2b9066452ea665eca94ee8888";
-          sha256 = "sha256-Cq4gQbhar9GLjYt/YJBZ9OainqyxQrklYtgUVCHEQH4=";
+          rev = "5e36cac9371d014c52c4c1068a438bdb7d1c7987";
+          sha256 = "sha256-gshStNKW2YjAXOg++qECaa9WPKmT7NOu8zA3uu30PTQ=";
         };
       })
       (pkgs.vimUtils.buildVimPlugin {
@@ -135,6 +135,46 @@
           sha256 = "sha256-3Jx5goTfYaicljTiNCwOlw4mbDZQQ92Pql7TieqQVzY=";
         };
       })
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "easy-dotnet.nvim";
+        version = "main";
+        src = pkgs.fetchFromGitHub {
+          owner = "GustavEikaas";
+          repo = "easy-dotnet.nvim";
+          rev = "db189911961d1c0644af5c5dfd5209d9869e75f7";
+          sha256 = "sha256-sm9++CBRJyzz8hWqrlMEMnIN4/vuTyOG7GBeOUCNT6A=";
+        };
+      })
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "workspace-diagnostics.nvim";
+        version = "main";
+        src = pkgs.fetchFromGitHub {
+          owner = "artemave";
+          repo = "workspace-diagnostics.nvim";
+          rev = "29ed948a84076e9bed63ce298b5cc5264b72b341";
+          sha256 = "sha256-i+gyx6iThmBgOoscZjhhL7HxciSwV2jsHDOo7mYDSKA=";
+        };
+      })
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "nvim-dap-repl-highlights";
+        version = "main";
+        src = pkgs.fetchFromGitHub {
+          owner = "LiadOz";
+          repo = "nvim-dap-repl-highlights";
+          rev = "a7512fc0a0de0c0be8d58983939856dda6f72451";
+          sha256 = "sha256-HfIP1ZfD85l5V+Sh75CJRTQQ+HwmeAvFcjkdu8lpd4o=";
+        };
+      })
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "telescope-dap.nvim";
+        version = "main";
+        src = pkgs.fetchFromGitHub {
+          owner = "nvim-telescope";
+          repo = "telescope-dap.nvim";
+          rev = "8c88d9716c91eaef1cdea13cb9390d8ef447dbfe";
+          sha256 = "sha256-P+ioBtupRvB3wcGKm77Tf/51k6tXKxJd176uupeW6v0=";
+        };
+      })
     ];
     extraConfigVim = ''
       autocmd BufWritePre * lua vim.lsp.buf.format()
@@ -159,16 +199,25 @@
       vim.opt.pumheight = 10
 
       require("roslyn").setup({
-          dotnet_cmd = "dotnet", -- this is the default
-          roslyn_version = "4.9.0-3.23604.10", -- this is the default
-          on_attach = __lspOnAttach,
-          capabilities = __lspCapabilities(),
+        config = {
+          filetypes = {"cs"};
           settings = {
-            inlay_hints = {
-              dotnet_enable_inlay_hints_for_parameters = true,
-              csharp_enable_inlay_hints_for_types = true,
-            }
+            ["csharp|inlay_hints"] = {
+                csharp_enable_inlay_hints_for_implicit_object_creation = true,
+                csharp_enable_inlay_hints_for_implicit_variable_types = true,
+                csharp_enable_inlay_hints_for_lambda_parameter_types = true,
+                csharp_enable_inlay_hints_for_types = true,
+                dotnet_enable_inlay_hints_for_indexer_parameters = true,
+                dotnet_enable_inlay_hints_for_literal_parameters = true,
+                dotnet_enable_inlay_hints_for_object_creation_parameters = true,
+                dotnet_enable_inlay_hints_for_other_parameters = true,
+                dotnet_enable_inlay_hints_for_parameters = true,
+                dotnet_suppress_inlay_hints_for_parameters_that_differ_only_by_suffix = true,
+                dotnet_suppress_inlay_hints_for_parameters_that_match_argument_name = true,
+                dotnet_suppress_inlay_hints_for_parameters_that_match_method_intent = true,
+            },
           },
+        }
       })
 
       require("tabout").setup({
@@ -211,9 +260,85 @@
         hint_enable = false
       })
       require("tsc").setup()
-      require("sunglasses").setup({
-          filter_percent = 0.25,
+      local logPath = vim.fn.stdpath "data" .. "/easy-dotnet/build.log"
+      local function populate_quickfix_from_file(filename)
+        -- Open the file for reading
+        local file = io.open(filename, "r")
+        if not file then
+          print("Could not open file " .. filename)
+          return
+        end
+
+        -- Table to hold quickfix list entries
+        local quickfix_list = {}
+
+        -- Iterate over each line in the file
+        for line in file:lines() do
+          -- Match the pattern in the line
+          local filepath, lnum, col, text = line:match("^(.+)%((%d+),(%d+)%)%: (.+)$")
+
+          if filepath and lnum and col and text then
+            -- Remove project file details from the text
+            text = text:match("^(.-)%s%[.+$")
+
+            -- Add the parsed data to the quickfix list
+            table.insert(quickfix_list, {
+              filename = filepath,
+              lnum = tonumber(lnum),
+              col = tonumber(col),
+              text = text,
+            })
+          end
+        end
+
+        -- Close the file
+        file:close()
+
+        -- Set the quickfix list
+        vim.fn.setqflist(quickfix_list)
+
+        -- Open the quickfix window
+        vim.cmd("Trouble qflist")
+      end
+      require("easy-dotnet").setup({
+        terminal = function(path, action)
+          local commands = {
+            run = function()
+              return "dotnet run --project " .. path
+            end,
+            test = function()
+              return "dotnet test " .. path
+            end,
+            restore = function()
+              return "dotnet restore " .. path
+            end,
+            build = function()
+              return "dotnet build " .. path .. " /flp:v=q /flp:logfile=" .. logPath
+            end
+          }
+          if action == "build" then
+            local command = commands[action]() .. "\r"
+            vim.notify("Build started")
+            vim.fn.jobstart(command, {
+              on_exit = function(_, b, _)
+                if b == 0 then
+                  vim.notify("Built successfully")
+                else
+                  vim.notify("Build failed")
+                  populate_quickfix_from_file(logPath)
+                end
+              end,
+            })
+          else
+            local command = commands[action]() .. "\r"
+            vim.cmd("vsplit")
+            vim.cmd("term " .. command)
+          end
+        end,
       })
+      require("workspace-diagnostics").setup()
+      require('nvim-dap-repl-highlights').setup()
+      require('telescope').load_extension('dap')
       require("custom")
     '';
     opts = {
@@ -227,7 +352,10 @@
       autoindent = true;
       smartindent = false;
       cursorline = true;
-      clipboard = "unnamedplus";
+    };
+    clipboard = {
+      register = "unnamedplus";
+      providers.wl-copy.enable = true;
     };
     globals = {
       mapleader = " ";
@@ -311,7 +439,7 @@
       {
         mode = "n";
         key = "<leader>p";
-        action = '':lua vim.fn.jobstart("dotnet build", {cwd = vim.loop.cwd(), on_exit = function(job_id, data, event) print(data == 0 and "Build Succeeded" or "Build Failed") end}) <CR>'';
+        action = ''<cmd>Dotnet build<CR>'';
         options.desc = "Dotnet Build";
       }
       # DAP
@@ -737,6 +865,21 @@
         action = "<cmd> TroubleToggle loclist<cr>";
         options.desc = "Toggle Trouble Loclist";
       }
+      {
+        mode = ["n"];
+        key = "<leader>D";
+        action.__raw = ''
+          function()
+            for _, client in ipairs(vim.lsp.get_clients()) do
+              if vim.tbl_get(client.config, "filetypes") then
+                print("loading for" .. client.name)
+                require("workspace-diagnostics").populate_workspace_diagnostics(client, 0)
+              end
+            end
+          end
+        '';
+        options.desc = "Populate Workspace Diagnostics";
+      }
       # Lazygit
       {
         mode = ["n"];
@@ -797,7 +940,7 @@
       {
         mode = ["n"];
         key = "<leader>hi";
-        action = "lua vim.lsp.inlay_hint.enable(0, vim.lsp.inlay_hint.is_enabled()) <cr>";
+        action = ":lua vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) <cr>";
         options.desc = "Toggle Inlay Hints";
       }
     ];
@@ -899,6 +1042,7 @@
         enable = true;
       };
       # cmp_luasnip.enable = true;
+      toggleterm.enable = true;
       cmp = {
         enable = true;
         settings = {
@@ -955,7 +1099,6 @@
             information = " ";
             other = " ";
           };
-          auto_refresh = false;
         };
       };
       undotree.enable = true;
@@ -1119,6 +1262,15 @@
           };
         };
         configurations = {
+          java = [
+            {
+              type = "java";
+              request = "attach";
+              name = "Debug (Attach) - Remote";
+              hostName = "0.0.0.0";
+              port = 63773;
+            }
+          ];
           php = [
             {
               type = "php";
@@ -1180,6 +1332,22 @@
             }
           ];
           cs = [
+            {
+              type = "coreclr";
+              request = "attach";
+              name = "Attach Godot";
+              processId.__raw = ''
+                function()
+                  return require('dap.utils').pick_process({
+                    filter = function(proc) 
+                      if string.match(proc.name, "godot") then
+                        vim.print(proc)
+                      end
+                      return string.match(proc.name, "godot4") and string.match(proc.name, "--game")
+                    end
+                  })
+                end'';
+            }
             {
               type = "coreclr";
               name = "launch - netcoredbg";
@@ -1288,25 +1456,6 @@
           };
         };
         extensions = {
-          # dap-python = {
-          #   enable = true;
-          #   adapterPythonPath = "/home/linus/Repositories/pina-simulation-api/backend/.venv/bin/python";
-          #   customConfigurations = [
-          #     {
-          #       name = "Attach";
-          #       type = "python";
-          #       request = "attach";
-          #       port = 5678;
-          #       host = "localhost";
-          #       pathMappings = [
-          #         {
-          #           localRoot = "\${workspaceFolder}";
-          #           remoteRoot = ".";
-          #         }
-          #       ];
-          #     }
-          #   ];
-          # };
           dap-ui.enable = true;
           dap-virtual-text.enable = true;
         };
@@ -1315,6 +1464,8 @@
         enable = true;
         settings.server.on_attach = ''__lspOnAttach'';
       };
+      cmp-dap.enable = true;
+
       obsidian = {
         enable = true;
         settings = {
@@ -1470,6 +1621,16 @@
           eslint.enable = true;
         };
       };
+      nvim-jdtls = {
+        enable = true;
+        data = "/home/linus/.cache/jdtls/workspace";
+        configuration = "/home/linus/.cache/jdtls/config";
+        initOptions = {
+          bundles = [
+            "${pkgs.vscode-extensions.vscjava.vscode-java-debug}/share/vscode/extensions/vscjava.vscode-java-debug/server/com.microsoft.java.debug.plugin-0.50.0.jar"
+          ];
+        };
+      };
       treesitter = {
         settings = {
           indent.enable = true;
@@ -1481,6 +1642,15 @@
       };
       treesitter-context = {
         enable = true;
+      };
+      zen-mode = {
+        enable = true;
+        settings = {
+          window = {
+            height = 1;
+            width = 0.50;
+          };
+        };
       };
     };
   };

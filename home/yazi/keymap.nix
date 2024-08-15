@@ -20,6 +20,10 @@
   run = "shell 'lazygit' --confirm --block"
 
   [[manager.prepend_keymap]]
+  on   = "T"
+  run = "tasks_show"
+
+  [[manager.prepend_keymap]]
   on   = "F"
   run = "plugin --sync max-preview"
 
