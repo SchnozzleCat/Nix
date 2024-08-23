@@ -228,7 +228,7 @@ in {
 
   programs.godot4-mono-schnozzlecat = {
     enable = true;
-    version = "4.3.0-stable";
+    version = "4.3";
     commitHash = "bed1ec839b630dbbe5d5958770eac0d1a2d2ebfb";
     hash = "sha256-zloMkxqNXhKFmSAipLsorqe4xQRpcZss1uN0Ts8dNt0=";
   };
