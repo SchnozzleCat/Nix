@@ -10,6 +10,7 @@ in ''
 
   exec-once = hyprctl setcursor Bibata-Modern-Classic 1
   exec-once = hyprpaper
+  exec-once = hyprshade auto
 
   exec-once = ${pkgs.waybar}/bin/waybar
   exec-once = pypr

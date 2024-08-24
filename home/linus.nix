@@ -67,6 +67,7 @@ in {
       pyprland
       wally-cli
       blueman
+      hyprshade
 
       # Web
       brave
@@ -326,15 +327,6 @@ in {
     };
   };
 
-  services = {
-    gammastep = {
-      enable = true;
-      tray = true;
-      latitude = 48.10373065283809;
-      longitude = 11.596935278032168;
-    };
-  };
-
   home.file.".config/hypr/pyprland.toml".text = ''
     [pyprland]
     plugins = ["scratchpads", "expose", "magnify"]
@@ -352,6 +344,13 @@ in {
     [scratchpads.volume]
     command = "pavucontrol"
     animation = "fromRight"
+  '';
+
+  home.file.".config/hypr/hyprshade.toml".text = ''
+    [[shades]]
+    name = "blue-light-filter-custom"
+    start_time = 19:00:00
+    end_time = 06:00:00
   '';
 
   programs.waybar = {
