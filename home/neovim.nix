@@ -1,6 +1,7 @@
 {
   inputs,
   pkgs,
+  lib,
   ...
 }: {
   home.packages = with pkgs; [
@@ -13,12 +14,58 @@
   programs.nixvim = {
     enable = true;
     package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.neovim;
+    extraPackages = with pkgs; [
+      imagemagick
+      nodePackages.ijavascript
+    ];
+    extraLuaPackages = ps: [
+      pkgs.luajitPackages.magick
+    ];
     extraPython3Packages = python-pkgs: [
       python-pkgs.pytest
       python-pkgs.python-dotenv
       python-pkgs.pynvim
       python-pkgs.prompt-toolkit
       python-pkgs.requests
+      python-pkgs.jupyter_client
+      python-pkgs.ipython
+      python-pkgs.cairosvg
+      python-pkgs.pnglatex
+      python-pkgs.plotly
+      python-pkgs.pyperclip
+      python-pkgs.nbformat
+      python-pkgs.pillow
+      python-pkgs.pandas
+      python-pkgs.numpy
+      python-pkgs.packaging
+      python-pkgs.jupyter
+      python-pkgs.ipykernel
+      (
+        python-pkgs.buildPythonPackage rec {
+          pname = "kaleido";
+          version = "0.2.1";
+          format = "wheel";
+          rpath = lib.makeLibraryPath [
+            pkgs.nss
+            pkgs.nspr
+            pkgs.expat
+          ];
+          src = pkgs.fetchPypi {
+            inherit pname version format;
+            platform = "manylinux1_x86_64";
+            hash = "sha256-qiHPG/HHj4+lCp99ReEAPDh709b+CnZ8+780S5W9w6g=";
+          };
+          doCheck = false;
+          postFixup = ''
+            for file in $(find $out -type f \( -perm /0111 -o -name \*.so\* \) ); do
+              patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" "$file" || true
+              patchelf --set-rpath ${rpath}:$out/lib/x86_64-linux-gnu $file || true
+            done
+            sed -i 's,#!/bin/bash,#!/usr/bin/env bash,' $out/lib/python3.12/site-packages/kaleido/executable/kaleido
+          '';
+        }
+      )
+
     ];
     extraPlugins = with pkgs; [
       vimPlugins.vim-move
@@ -30,7 +77,6 @@
       vimPlugins.friendly-snippets
       vimPlugins.octo-nvim
       vimPlugins.plenary-nvim
-      vimPlugins.lsp_signature-nvim
       vimPlugins.vim-dadbod
       vimPlugins.vim-dadbod-ui
       vimPlugins.vim-dadbod-completion
@@ -175,6 +221,26 @@
           sha256 = "sha256-P+ioBtupRvB3wcGKm77Tf/51k6tXKxJd176uupeW6v0=";
         };
       })
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "hover.nvim";
+        version = "main";
+        src = pkgs.fetchFromGitHub {
+          owner = "lewis6991";
+          repo = "hover.nvim";
+          rev = "4339cbbcb572b1934c53dcb66ad4bf6a0abb7918";
+          sha256 = "sha256-Q1k4ddyMlPSp2rX5CjxS70JJmRDbBHCowlu2CTuq0No=";
+        };
+      })
+      (pkgs.vimUtils.buildVimPlugin rec {
+        pname = "lsp-overloads.nvim";
+        version = "v1.5.0";
+        src = pkgs.fetchFromGitHub {
+          owner = "Issafalcon";
+          repo = "lsp-overloads.nvim";
+          rev = version;
+          sha256 = "sha256-6X1NC7ShT5eTpFQDUmDnsKLZV68Zwmx/NhypjjV3xZw=";
+        };
+      })
     ];
     extraConfigVim = ''
       autocmd BufWritePre * lua vim.lsp.buf.format()
@@ -194,12 +260,18 @@
       highlight @struct_declaration guifg=#aaff9C guibg=none
       highlight @attribute guifg=#cb6fe2 guibg=none
       highlight @return_statement guifg=#eb6f92 guibg=none
+
+      let g:VM_maps = {}
+      let g:VM_maps['Find Under']         = '<C-s>'
+      let g:VM_maps['Find Subword Under'] = '<C-s>'
     '';
     extraConfigLua = ''
       vim.opt.pumheight = 10
 
       require("roslyn").setup({
         config = {
+          on_attach = __lspOnAttach,
+          capabilities = __lspCapabilities(),
           filetypes = {"cs"};
           settings = {
             ["csharp|inlay_hints"] = {
@@ -219,6 +291,31 @@
           },
         }
       })
+
+      require("hover").setup {
+        init = function()
+            -- Require providers
+            require("hover.providers.lsp")
+            require('hover.providers.gh')
+            require('hover.providers.gh_user')
+            require('hover.providers.dap')
+            require('hover.providers.fold_preview')
+            require('hover.providers.diagnostic')
+            require('hover.providers.man')
+            require('hover.providers.dictionary')
+        end,
+        preview_opts = {
+            border = 'single'
+        },
+        -- Whether the contents of a currently open hover window should be moved
+        -- to a :h preview-window when pressing the hover keymap.
+        preview_window = false,
+        title = true,
+        mouse_providers = {
+            'LSP'
+        },
+        mouse_delay = 1000
+      }
 
       require("tabout").setup({
         ignore_beginning = false;
@@ -255,9 +352,6 @@
             toggle_viewed = { lhs = "<leader><space><space>", desc = "toggle viewer viewed state"}
           }
         }
-      })
-      require("lsp_signature").setup({
-        hint_enable = false
       })
       require("tsc").setup()
       local logPath = vim.fn.stdpath "data" .. "/easy-dotnet/build.log"
@@ -339,6 +433,12 @@
       require("workspace-diagnostics").setup()
       require('nvim-dap-repl-highlights').setup()
       require('telescope').load_extension('dap')
+      vim.g.molten_image_provider = "image.nvim"
+      vim.g.auto_open_output = false
+      vim.g.molten_output_virt_lines = true
+      vim.g.molten_virt_text_output = true
+      vim.keymap.set('n', '<MouseMove>', require('hover').hover_mouse, { desc = "hover.nvim (mouse)" })
+      vim.o.mousemoveevent = true
       require("custom")
     '';
     opts = {
@@ -377,6 +477,30 @@
     };
     keymaps = [
       # Misc
+      {
+        mode = ["n"];
+        key = "<c-space>";
+        action = ''<cmd>lua require("hover").hover() <cr>'';
+        options.desc = "Show Hover Doc";
+      }
+      {
+        mode = ["n"];
+        key = "K";
+        action = ''<cmd> lua require("hover").hover() <cr>'';
+        options.desc = "Show Hover Doc";
+      }
+      {
+        mode = ["n"];
+        key = "<c-p>";
+        action = ''<cmd> lua require("hover").hover_switch("next") <cr>'';
+        options.desc = "Show Next Hover Doc";
+      }
+      {
+        mode = ["n"];
+        key = "<c-n>";
+        action = ''<cmd> lua require("hover").hover_switch("previous") <cr>'';
+        options.desc = "Show Previous Hover Doc";
+      }
       {
         mode = "n";
         key = "<esc>";
@@ -422,6 +546,61 @@
         mode = "n";
         key = "<c-l>";
         action = "<c-w>l";
+      }
+      # Molten
+      {
+        mode = "n";
+        key = "<leader>mi";
+        action = "<cmd> MoltenInit <cr>";
+        options.desc = "Molten Init";
+      }
+      {
+        mode = "n";
+        key = "<leader>me";
+        action = "<cmd> MoltenEvaluateOperator <cr>";
+        options.desc = "Molten Evaluate Operator";
+      }
+      {
+        mode = "v";
+        key = "<leader>me";
+        action = ":<C-u>MoltenEvaluateVisual<CR>gv";
+        options.desc = "Molten Evaluate Visual";
+      }
+      {
+        mode = "n";
+        key = "<leader>mr";
+        action = "<cmd> MoltenReevaluateCell <cr>";
+        options.desc = "Molten Reevaluate Cell";
+      }
+      {
+        mode = "n";
+        key = "<leader>mR";
+        action = "<cmd> MoltenReevaluateAll <cr>";
+        options.desc = "Molten Reevaluate All";
+      }
+      {
+        mode = "n";
+        key = "<leader>[m";
+        action = "<cmd> MoltenNext <cr>";
+        options.desc = "Molten Next Cell";
+      }
+      {
+        mode = "n";
+        key = "<leader>[m";
+        action = "<cmd> MoltenPrevious <cr>";
+        options.desc = "Molten Previous Cell";
+      }
+      {
+        mode = "n";
+        key = "<leader>md";
+        action = "<cmd> MoltenDelete <cr>";
+        options.desc = "Molten Reevaluate All";
+      }
+      {
+        mode = "n";
+        key = "<leader>mo";
+        action = ":noautocmd MoltenEnterOutput<CR>";
+        options.desc = "Molten Enter Output";
       }
       # SnipRun
       {
@@ -776,12 +955,6 @@
       # LSP Saga
       {
         mode = ["n"];
-        key = "<c-space>";
-        action = "<cmd> Lspsaga hover_doc <cr>";
-        options.desc = "Show Hover Doc";
-      }
-      {
-        mode = ["n"];
         key = "<leader>ra";
         action = "<cmd> Lspsaga rename <cr>";
         options.desc = "Rename";
@@ -1041,22 +1214,56 @@
       nvim-autopairs = {
         enable = true;
       };
-      # cmp_luasnip.enable = true;
+      cmp_luasnip.enable = true;
       toggleterm.enable = true;
+      otter = {
+        enable = true;
+        package = pkgs.vimUtils.buildVimPlugin rec {
+          pname = "otter.nvim";
+          version = "v2.5.0";
+          src = pkgs.fetchFromGitHub {
+            owner = "jmbuhr";
+            repo = pname;
+            rev = version;
+            sha256 = "sha256-euHwoK2WHLF/hrjLY2P4yGrIbYyBN38FL3q4CKNZmLY=";
+          };
+        };
+        settings.buffers.set_filetype = true;
+      };
       cmp = {
         enable = true;
         settings = {
-          window.completion.border = ["╭" "─" "╮" "│" "╯" "─" "╰" "│"];
-          window.documentation.border = ["╭" "─" "╮" "│" "╯" "─" "╰" "│"];
+          window.completion.border = ["╭" "╌" "╮" "╎" "╯" "╌" "╰" "╎"];
+          window.documentation.border = ["╭" "╌" "╮" "╎" "╯" "╌" "╰" "╎"];
+          formatting = {
+            format = ''
+              function(entry, vim_item)
+                 local kind_icons = {
+                   Text = "",
+                   Method = "󰡱",
+                   Function = "󰊕",
+                   Constructor = "",
+                   Enum = "",
+                   Class = "",
+                   Struct = "",
+                   Variable = "",
+                   Keyword = "󰄛"
+                 }
+                 local lspkind_ok, lspkind = pcall(require, "lspkind")
+                 if not lspkind_ok then
+                   vim_item.kind = string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind) -- This concatenates the icons with the name of the item kind
+                   return vim_item
+                 else
+                   return lspkind.cmp_format()(entry, vim_item)
+                 end
+               end
+            '';
+          };
           sources = [
             {
               name = "nvim_lsp";
               groupIndex = 2;
             }
-            # {
-            #   name = "copilot";
-            #   groupIndex = 2;
-            # }
             {
               name = "path";
               groupIndex = 2;
@@ -1086,6 +1293,7 @@
           };
         };
       };
+      # cmp-nvim-lsp-signature-help.enable = true;
       bufferline.enable = true;
       markdown-preview.enable = true;
       surround.enable = true;
@@ -1105,6 +1313,10 @@
       commentary.enable = true;
       fugitive.enable = true;
       neogen.enable = true;
+      magma-nvim = {
+        enable = true;
+        package = pkgs.vimPlugins.molten-nvim;
+      };
       lspsaga = {
         enable = true;
         lightbulb.enable = false;
@@ -1229,6 +1441,10 @@
           jest.enable = true;
           playwright.enable = true;
         };
+      };
+      image = {
+        enable = true;
+        backend = "ueberzug";
       };
       dap = {
         enable = true;
@@ -1546,6 +1762,30 @@
         onAttach = ''
           client.server_capabilities.documentFormattingProvider = false
           client.server_capabilities.documentRangeFormattingProvider = false
+          if client.server_capabilities.signatureHelpProvider then
+           require('lsp-overloads').setup(client, {
+            ui = {
+                border = {
+                "╭",
+                "╌",
+                "╮",
+                "╎",
+                "╯",
+                "╌",
+                "╰",
+                "╎"
+                },
+                offset_x = 0,
+                offset_y = 0,
+                floating_window_above_cur_line = true
+            }
+           })
+           vim.api.nvim_create_autocmd({ 'TextChanged', 'InsertLeave' }, {
+                buffer = bufnr,
+                callback = vim.lsp.codelens.refresh,
+            })
+           vim.lsp.codelens.refresh()
+          end
         '';
         capabilities = ''
           capabilities.textDocument.completion.completionItem = {
