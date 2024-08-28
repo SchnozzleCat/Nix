@@ -30,7 +30,6 @@ in {
     cbonsai
     pipes
     pistol
-    imv
 
     ripgrep
     fzf

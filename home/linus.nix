@@ -90,6 +90,14 @@ in {
       msbuild
       # godot4-mono
       sublime-merge
+      (pkgs.buildDotnetGlobalTool {
+        pname = "Microsoft.dotnet-interactive";
+        version = "1.0.522904";
+        nugetHash = "sha256-ULnG2D7BUJV39cSC4sarWlrngtv492vpd/BjeB5dKYQ=";
+        executables = "dotnet-interactive";
+        dotnet-runtime = pkgs.dotnetCorePackages.sdk_8_0;
+        dotnet-sdk = pkgs.dotnetCorePackages.sdk_8_0;
+      })
 
       jetbrains.rider
       jetbrains.idea-ultimate
@@ -142,7 +150,7 @@ in {
       distrobox
       # wonderdraft
       krita
-      aseprite
+      # aseprite
       protonvpn-gui
       github-copilot-cli
       svp
@@ -264,6 +272,10 @@ in {
     enable = true;
   };
 
+  programs.imv = {
+    enable = true;
+  };
+
   programs.mpv = {
     enable = true;
     config = {
@@ -274,10 +286,20 @@ in {
   xdg.mimeApps = {
     enable = true;
     associations.added = {
+      "text/html" = ["firefox.desktop"];
       "application/pdf" = ["org.pwmt.zathura.desktop"];
+      "image/*" = ["imv.desktop"];
+      "image/png" = ["imv.desktop"];
+      "image/jpg" = ["imv.desktop"];
+      "image/svg+xml" = ["imv.desktop"];
     };
     defaultApplications = {
+      "text/html" = ["firefox.desktop"];
       "application/pdf" = ["org.pwmt.zathura.desktop"];
+      "image/*" = ["imv.desktop"];
+      "image/png" = ["imv.desktop"];
+      "image/jpg" = ["imv.desktop"];
+      "image/svg+xml" = ["imv.desktop"];
     };
   };
 
