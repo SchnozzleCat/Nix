@@ -70,7 +70,6 @@ in {
       hyprshade
 
       # Web
-      brave
       qbittorrent
 
       # Dev
