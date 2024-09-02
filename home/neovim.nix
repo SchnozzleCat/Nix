@@ -17,6 +17,7 @@
     extraPackages = with pkgs; [
       imagemagick
       nodePackages.ijavascript
+      quarto
     ];
     extraLuaPackages = ps: [
       pkgs.luajitPackages.magick
@@ -37,6 +38,7 @@
       python-pkgs.pillow
       python-pkgs.pandas
       python-pkgs.numpy
+      python-pkgs.matplotlib
       python-pkgs.packaging
       python-pkgs.jupyter
       python-pkgs.ipykernel
@@ -65,7 +67,6 @@
           '';
         }
       )
-
     ];
     extraPlugins = with pkgs; [
       vimPlugins.vim-move
@@ -80,25 +81,16 @@
       vimPlugins.vim-dadbod
       vimPlugins.vim-dadbod-ui
       vimPlugins.vim-dadbod-completion
+      vimPlugins.quarto-nvim
 
-      (pkgs.vimUtils.buildVimPlugin {
+      (pkgs.vimUtils.buildVimPlugin rec {
         pname = "roslyn.nvim";
-        version = "";
+        version = "60e6ba5479db57c22be6de52a02ecf6902a26a56";
         src = pkgs.fetchFromGitHub {
           owner = "seblj";
-          repo = "roslyn.nvim";
-          rev = "5e36cac9371d014c52c4c1068a438bdb7d1c7987";
-          sha256 = "sha256-gshStNKW2YjAXOg++qECaa9WPKmT7NOu8zA3uu30PTQ=";
-        };
-      })
-      (pkgs.vimUtils.buildVimPlugin {
-        pname = "copilotchat-nvim";
-        version = "main";
-        src = pkgs.fetchFromGitHub {
-          owner = "jellydn";
-          repo = "CopilotChat.nvim";
-          rev = "4b2e631dfd7e08507dd083a18480fe71a7bf8717";
-          sha256 = "sha256-ft42fmJ4sJqo8P60JO41zTyTarNGL2anpNXrHpDFbbk=";
+          repo = pname;
+          rev = version;
+          sha256 = "sha256-vh6mCefQ0KWAreK3oDDpfyC2D7dK+HlDeMUsp/+dXFM=";
         };
       })
       (pkgs.vimUtils.buildVimPlugin {
@@ -241,6 +233,26 @@
           sha256 = "sha256-6X1NC7ShT5eTpFQDUmDnsKLZV68Zwmx/NhypjjV3xZw=";
         };
       })
+      (pkgs.vimUtils.buildVimPlugin rec {
+        pname = "quarto-nvim";
+        version = "v1.0.1";
+        src = pkgs.fetchFromGitHub {
+          owner = "quarto-dev";
+          repo = pname;
+          rev = version;
+          sha256 = "sha256-o9pXTN6XSq+6VywxWxp8pE0TCjzi8Gnn7tM9gCNwtAA=";
+        };
+      })
+      (pkgs.vimUtils.buildVimPlugin rec {
+        pname = "quarto-vim";
+        version = "216247339470794e74a5fda5e5515008d6dc1057";
+        src = pkgs.fetchFromGitHub {
+          owner = "quarto-dev";
+          repo = pname;
+          rev = version;
+          sha256 = "sha256-HTqvZQY6TmVOWzI5N4LEaYfLg1AxWJZ6IjHhwuYQwI8=";
+        };
+      })
     ];
     extraConfigVim = ''
       autocmd BufWritePre * lua vim.lsp.buf.format()
@@ -272,7 +284,8 @@
         config = {
           on_attach = __lspOnAttach,
           capabilities = __lspCapabilities(),
-          filetypes = {"cs"};
+          filetypes = {"cs"},
+          filewatching = true,
           settings = {
             ["csharp|inlay_hints"] = {
                 csharp_enable_inlay_hints_for_implicit_object_creation = true,
@@ -288,9 +301,55 @@
                 dotnet_suppress_inlay_hints_for_parameters_that_match_argument_name = true,
                 dotnet_suppress_inlay_hints_for_parameters_that_match_method_intent = true,
             },
+            ["csharp|background_analysis"] = {
+              dotnet_compiler_diagnostics_scope = "fullSolution"
+            },
+            ["csharp|code_lens"] = {
+              dotnet_enable_references_code_lens = true,
+            },
           },
         }
       })
+
+      vim.keymap.set("n", "<leader>P", function()
+            local clients = vim.lsp.get_clients()
+            for _, value in ipairs(clients) do
+              if value.name == "roslyn" then
+                vim.notify("roslyn client found")
+                value.rpc.request("workspace/diagnostic", { previousResultIds = {} }, function(err, result)
+                  if err ~= nil then
+                    print(vim.inspect(err))
+                  end
+                  if result ~= nil then
+                    local diags = {}
+                    local seen = {}
+                    for _, diag in ipairs(result.items) do
+                      local filepath = diag.uri:gsub("file:///", "")
+                      if #diag.items > 0 then
+                        for _, diag_line in ipairs(diag.items) do
+                          if diag_line.severity == 1 then
+                            local hash = diag_line.message .. diag_line.range.start.line .. diag_line.range.start.character
+                            if seen[hash] == nil then
+                              local s = {
+                                text = diag_line.message,
+                                lnum = diag_line.range.start.line,
+                                col = diag_line.range.start.character,
+                                filename = filepath
+                              }
+                              table.insert(diags, s)
+                              seen[hash] = true
+                            end
+                          end
+                        end
+                      end
+                    end
+                    vim.fn.setqflist(diags)
+                    vim.cmd("copen")
+                  end
+                end)
+              end
+            end
+          end, { noremap = true, silent = true })
 
       require("hover").setup {
         init = function()
@@ -328,23 +387,6 @@
           {open = '{', close = '}'},
           {open = '<', close = '>'}
         }
-      })
-      require("CopilotChat").setup({
-        mode = "split",
-        show_help = "yes",
-        prompts = {
-          Explain = "Explain how it works.",
-          Review = "Review the following code and provide concise suggestions.",
-          Tests = "Briefly explain how the selected code works, then generate unit tests.",
-          Refactor = "Refactor the code to improve clarity and readability.",
-          Documentation = "Create a docstring for the code in the appropriate format.",
-          CommitStaged = {
-            prompt = 'Write commit message for the change with commitizen convention. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.',
-            selection = function(source)
-              return require("CopilotChat.select").gitdiff(source, true)
-            end,
-          },
-        },
       })
       require("octo").setup({
         mappings = {
@@ -439,6 +481,19 @@
       vim.g.molten_virt_text_output = true
       vim.keymap.set('n', '<MouseMove>', require('hover').hover_mouse, { desc = "hover.nvim (mouse)" })
       vim.o.mousemoveevent = true
+      vim.api.nvim_create_user_command('Otter',function()
+        require("otter").activate()
+      end,{})
+      require('quarto').setup{
+        lspFeatures = {
+          enabled = false,
+        },
+        codeRunner = {
+          enabled = true,
+          default_method = "molten",
+          never_run = { "yaml" },
+        },
+      }
       require("custom")
     '';
     opts = {
@@ -447,7 +502,7 @@
       undofile = true;
       shiftwidth = 2;
       tabstop = 2;
-      conceallevel = 1;
+      # conceallevel = 1;
       expandtab = true;
       autoindent = true;
       smartindent = false;
@@ -547,6 +602,37 @@
         key = "<c-l>";
         action = "<c-w>l";
       }
+      # Quarto
+      {
+        mode = "n";
+        key = "<leader>qa";
+        action = "<cmd> QuartoSendAbove <cr>";
+        options.desc = "Quarto Send Above";
+      }
+      {
+        mode = "n";
+        key = "<leader>qA";
+        action = "<cmd> QuartoSendAll <cr>";
+        options.desc = "Quarto Send All";
+      }
+      {
+        mode = "n";
+        key = "<leader>qb";
+        action = "<cmd> QuartoSendBelow <cr>";
+        options.desc = "Quarto Send Below";
+      }
+      {
+        mode = "n";
+        key = "<leader>qq";
+        action = "<cmd> QuartoSend <cr>";
+        options.desc = "Quarto Send";
+      }
+      {
+        mode = "n";
+        key = "<leader>qp";
+        action = "<cmd> QuartoPreview <cr>";
+        options.desc = "Quarto Preview";
+      }
       # Molten
       {
         mode = "n";
@@ -594,7 +680,7 @@
         mode = "n";
         key = "<leader>md";
         action = "<cmd> MoltenDelete <cr>";
-        options.desc = "Molten Reevaluate All";
+        options.desc = "Molten Delete";
       }
       {
         mode = "n";
@@ -1228,7 +1314,10 @@
             sha256 = "sha256-euHwoK2WHLF/hrjLY2P4yGrIbYyBN38FL3q4CKNZmLY=";
           };
         };
-        settings.buffers.set_filetype = true;
+        settings.buffers = {
+          set_filetype = true;
+          write_to_disk = true;
+        };
       };
       cmp = {
         enable = true;
@@ -1294,6 +1383,26 @@
         };
       };
       # cmp-nvim-lsp-signature-help.enable = true;
+      copilot-chat = {
+        enable = true;
+        settings = {
+          prompts = {
+            Explain = "Explain how it works.";
+            Review = "Review the following code and provide concise suggestions.";
+            Tests = "Briefly explain how the selected code works, then generate unit tests.";
+            Refactor = "Refactor the code to improve clarity and readability.";
+            Documentation = "Create a docstring for the code in the appropriate format.";
+            CommitStaged = {
+              prompt = ''Write commit message for the change with commitizen convention. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.'';
+              selection = ''
+                function(source)
+                  return require("CopilotChat.select").gitdiff(source, true)
+                end,
+              '';
+            };
+          };
+        };
+      };
       bufferline.enable = true;
       markdown-preview.enable = true;
       surround.enable = true;
