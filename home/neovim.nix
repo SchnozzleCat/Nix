@@ -370,10 +370,6 @@
         -- to a :h preview-window when pressing the hover keymap.
         preview_window = false,
         title = true,
-        mouse_providers = {
-            'LSP'
-        },
-        mouse_delay = 1000
       }
 
       require("tabout").setup({
@@ -479,8 +475,6 @@
       vim.g.auto_open_output = false
       vim.g.molten_output_virt_lines = true
       vim.g.molten_virt_text_output = true
-      vim.keymap.set('n', '<MouseMove>', require('hover').hover_mouse, { desc = "hover.nvim (mouse)" })
-      vim.o.mousemoveevent = true
       vim.api.nvim_create_user_command('Otter',function()
         require("otter").activate()
       end,{})
