@@ -285,6 +285,7 @@ in {
   xdg.mimeApps = {
     enable = true;
     associations.added = {
+      "inode/directory" = ["yazi.desktop"];
       "text/html" = ["firefox.desktop"];
       "application/pdf" = ["org.pwmt.zathura.desktop"];
       "image/*" = ["imv.desktop"];
@@ -293,6 +294,7 @@ in {
       "image/svg+xml" = ["imv.desktop"];
     };
     defaultApplications = {
+      "inode/directory" = ["yazi.desktop"];
       "text/html" = ["firefox.desktop"];
       "application/pdf" = ["org.pwmt.zathura.desktop"];
       "image/*" = ["imv.desktop"];
