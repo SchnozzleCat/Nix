@@ -128,6 +128,7 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
+    wireplumber.enable = true;
   };
 
   # Localization
@@ -184,6 +185,7 @@
 
   environment.systemPackages = with pkgs; [
     git
+    alsa-utils
     brightnessctl
     hyprpaper
     yubikey-manager
