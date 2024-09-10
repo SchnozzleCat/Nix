@@ -68,10 +68,8 @@ in ''
   windowrulev2=noinitialfocus,class:^(UnrealEditor)$,title:^\w*$
   windowrulev2=noanim,class:^(UnrealEditor)$,title:^\w*$
 
-  windowrulev2=windowdance,initialclass:^(Unity)$
   windowrulev2=noinitialfocus,initialclass:^(Unity)$
 
-  windowrulev2=windowdance,initialclass:^(jetbrains-rider)$
   windowrulev2=noinitialfocus,initialclass:^(jetbrains-rider)$
 
   bind = $mainMod, Z, pin
