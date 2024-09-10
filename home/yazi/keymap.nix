@@ -16,6 +16,12 @@
   ''''
 
   [[manager.prepend_keymap]]
+  on   = [ "c", "y" ]
+  run = ''''
+  	shell '${pkgs.xdragon}/bin/dragon -a -x -T "$@"' --confirm
+  ''''
+
+  [[manager.prepend_keymap]]
   on   = "<C-g>"
   run = "shell 'lazygit' --confirm --block"
 
