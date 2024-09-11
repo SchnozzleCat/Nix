@@ -13,8 +13,8 @@
   src = fetchFromGitHub {
     owner = "yetone";
     repo = "avante.nvim";
-    rev = "7532e590d28c6fffe88aa17ba6689c4ec8fec8ba";
-    hash = "sha256-qfpTNoojSnBLCVqdBEsSnGwDgh3Br/iRKKHlZw4UeyY=";
+    rev = "bcd73a8b9a3b81242ce6c5f65e3e245eb18a4572";
+    hash = "sha256-KYcAzDJ/ZExb6+sfdNbb7FDFORstjEXzfHLNQ5v6Fg4=";
   };
 
   meta = with lib; {

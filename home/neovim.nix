@@ -13,7 +13,7 @@
 
   programs.nixvim = {
     enable = true;
-    package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.neovim;
+    # package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.neovim;
     extraPackages = with pkgs; [
       imagemagick
       nodePackages.ijavascript
@@ -42,31 +42,7 @@
       python-pkgs.packaging
       python-pkgs.jupyter
       python-pkgs.ipykernel
-      (
-        python-pkgs.buildPythonPackage rec {
-          pname = "kaleido";
-          version = "0.2.1";
-          format = "wheel";
-          rpath = lib.makeLibraryPath [
-            pkgs.nss
-            pkgs.nspr
-            pkgs.expat
-          ];
-          src = pkgs.fetchPypi {
-            inherit pname version format;
-            platform = "manylinux1_x86_64";
-            hash = "sha256-qiHPG/HHj4+lCp99ReEAPDh709b+CnZ8+780S5W9w6g=";
-          };
-          doCheck = false;
-          postFixup = ''
-            for file in $(find $out -type f \( -perm /0111 -o -name \*.so\* \) ); do
-              patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" "$file" || true
-              patchelf --set-rpath ${rpath}:$out/lib/x86_64-linux-gnu $file || true
-            done
-            sed -i 's,#!/bin/bash,#!/usr/bin/env bash,' $out/lib/python3.12/site-packages/kaleido/executable/kaleido
-          '';
-        }
-      )
+      python-pkgs.kaleido
     ];
     extraPlugins = with pkgs; [
       vimPlugins.vim-move
@@ -82,15 +58,27 @@
       vimPlugins.vim-dadbod-ui
       vimPlugins.vim-dadbod-completion
       vimPlugins.quarto-nvim
+      vimPlugins.render-markdown
+      avante-nvim
 
       (pkgs.vimUtils.buildVimPlugin rec {
+        pname = "img-clip.nvim";
+        version = "28a32d811d69042f4fa5c3d5fa35571df2bc1623";
+        src = pkgs.fetchFromGitHub {
+          owner = "HakonHarnes";
+          repo = pname;
+          rev = version;
+          sha256 = "sha256-TTfRow1rrRZ3+5YPeYAQc+2fsb42wUxTMEr6kfUiKXo=";
+        };
+      })
+      (pkgs.vimUtils.buildVimPlugin rec {
         pname = "roslyn.nvim";
-        version = "60e6ba5479db57c22be6de52a02ecf6902a26a56";
+        version = "ec4d74f55377954fb12ea038253f64db8596a741";
         src = pkgs.fetchFromGitHub {
           owner = "seblj";
           repo = pname;
           rev = version;
-          sha256 = "sha256-vh6mCefQ0KWAreK3oDDpfyC2D7dK+HlDeMUsp/+dXFM=";
+          sha256 = "sha256-7Nlwwu15/Ax3FpgG4/oPG4CdZfmUDK7xVv0dx+PZT1o=";
         };
       })
       (pkgs.vimUtils.buildVimPlugin {
@@ -488,6 +476,51 @@
           never_run = { "yaml" },
         },
       }
+      require('img-clip').setup ({
+        default = {
+          embed_image_as_base64 = false,
+          prompt_for_file_name = false,
+          drag_and_drop = {
+            insert_mode = true,
+          },
+        }
+      })
+      require('render-markdown').setup ({
+        file_types = { "markdown", "Avante" },
+      })
+      require('avante_lib').load()
+      require('avante').setup ({
+        behaviour = {
+          auto_suggestions = false,
+        },
+        provider = "ollama",
+        vendors = {
+          ---@type AvanteProvider
+          ollama = {
+            ["local"] = true,
+            endpoint = "127.0.0.1:11434/v1",
+            model = "deepseek-coder-v2:latest",
+            parse_curl_args = function(opts, code_opts)
+              return {
+                url = opts.endpoint .. "/chat/completions",
+                headers = {
+                  ["Accept"] = "application/json",
+                  ["Content-Type"] = "application/json",
+                },
+                body = {
+                  model = opts.model,
+                  messages = require("avante.providers").copilot.parse_message(code_opts), -- you can make your own message, but this is very advanced
+                  max_tokens = 2048,
+                  stream = true,
+                },
+              }
+            end,
+            parse_response_data = function(data_stream, event_state, opts)
+              require("avante.providers").openai.parse_response(data_stream, event_state, opts)
+            end,
+          },
+        },
+      })
       require("custom")
     '';
     opts = {
@@ -1465,7 +1498,7 @@
       nvim-lightbulb.enable = true;
       lualine = {
         enable = true;
-        sections = {
+        settings.sections = {
           lualine_x = [
             {
               name.__raw = ''require("noice").api.statusline.mode.get'';

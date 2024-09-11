@@ -2,18 +2,12 @@
   pkgs,
   nuget-to-nix,
 }: let
-  godot4-mono = pkgs.callPackage ./default.nix {};
+  godot4-mono = pkgs.callPackage ./default.nix {deps = null;};
 in
   godot4-mono.overrideAttrs (self: base: {
     pname = "godot4-mono-make-deps";
 
     nativeBuildInputs = base.nativeBuildInputs ++ [nuget-to-nix];
-
-    nugetDeps = null;
-    nugetSource = null;
-    nugetConfig = null;
-
-    shouldConfigureNuget = false;
 
     outputs = ["out"];
     buildPhase = " ";
@@ -45,14 +39,18 @@ in
         cd source
         patchPhase
         configurePhase
+
         # Without RestorePackagesPath set, it restores packages to a temp directory. Specifying
         # a path ensures we have a place to run nuget-to-nix.
         nugetRestore() { dotnet restore --packages ~/.nuget/packages $1; }
+
         nugetRestore modules/mono/glue/GodotSharp/GodotSharp.sln
         nugetRestore modules/mono/editor/GodotTools/GodotTools.sln
         nugetRestore modules/mono/editor/Godot.NET.Sdk/Godot.NET.Sdk.sln
+
         nuget-to-nix ~/.nuget/packages > "$outdir"/deps.nix
       popd > /dev/null
+
     '';
 
     meta =

@@ -8,8 +8,6 @@
   scons,
   python3,
   mkNugetDeps,
-  mkNugetSource,
-  writeText,
   vulkan-loader,
   libGL,
   libX11,
@@ -27,6 +25,7 @@
   speechd,
   fontconfig,
   udev,
+  wayland-scanner,
   withPlatform ? "linuxbsd",
   withTarget ? "editor",
   withPrecision ? "single",
@@ -35,48 +34,22 @@
   withSpeechd ? true,
   withFontconfig ? true,
   withUdev ? true,
-  withTouch ? true,
   withVersion,
   withCommitHash,
   withHash,
-  dotnet-sdk_8,
+  deps ? ./deps.nix,
   mono,
-  dotnet-runtime_8,
-  wayland,
-  wayland-scanner,
-  libdecor,
   callPackage,
+  dotnet-sdk_8,
+  dotnet-runtime_8,
+  makeWrapper,
+  msbuild,
 }:
-assert lib.asserts.assertOneOf "withPrecision" withPrecision ["single" "double"]; let
-  mkSconsFlagsFromAttrSet = lib.mapAttrsToList (k: v:
-    if builtins.isString v
-    then "${k}=${v}"
-    else "${k}=${builtins.toJSON v}");
-in
+assert lib.asserts.assertOneOf "withPrecision" withPrecision ["single" "double"];
   stdenv.mkDerivation rec {
     pname = "godot4-mono-schnozzlecat";
     version = withVersion;
     commitHash = withCommitHash;
-
-    nugetDeps = mkNugetDeps {
-      name = "deps";
-      nugetDeps = import ./deps.nix;
-    };
-
-    nugetSource = mkNugetSource {
-      name = "${pname}-nuget-source";
-      description = "A Nuget source with dependencies for ${pname}";
-      deps = [nugetDeps];
-    };
-
-    nugetConfig = writeText "NuGet.Config" ''
-      <?xml version="1.0" encoding="utf-8"?>
-      <configuration>
-        <packageSources>
-          <add key="${pname}-deps" value="${nugetSource}/lib" />
-        </packageSources>
-      </configuration>
-    '';
 
     src = fetchFromGitHub {
       owner = "SchnozzleCat";
@@ -86,22 +59,30 @@ in
       fetchSubmodules = true;
     };
 
+    keepNugetConfig = deps == null;
+
     nativeBuildInputs = [
       pkg-config
       autoPatchelfHook
       installShellFiles
       python3
+      speechd
+      wayland-scanner
+      makeWrapper
       mono
       dotnet-sdk_8
       dotnet-runtime_8
-      wayland-scanner
-      libdecor
-      speechd
     ];
 
-    buildInputs = [
-      scons
-    ];
+    buildInputs =
+      [
+        scons
+      ]
+      ++ lib.optional (deps != null)
+      (mkNugetDeps {
+        name = "deps";
+        nugetDeps = import deps;
+      });
 
     runtimeDependencies =
       [
@@ -110,6 +91,7 @@ in
         libX11
         libXcursor
         libXinerama
+        speechd
         libXext
         libXrandr
         libXrender
@@ -118,12 +100,9 @@ in
         libxkbcommon
         alsa-lib
         mono
+        wayland-scanner
         dotnet-sdk_8
         dotnet-runtime_8
-        wayland-scanner
-        wayland
-        libdecor
-        speechd
       ]
       ++ lib.optional withPulseaudio libpulseaudio
       ++ lib.optional withDbus dbus
@@ -160,9 +139,9 @@ in
     outputs = ["out" "man"];
 
     postConfigure = ''
-      echo "Configuring NuGet."
-      mkdir -p ~/.nuget/NuGet
-      ln -s "$nugetConfig" ~/.nuget/NuGet/NuGet.Config
+      echo "Setting up buildhome."
+      mkdir buildhome
+      export HOME="$PWD"/buildhome
     '';
 
     buildPhase = ''
@@ -216,5 +195,9 @@ in
       platforms = ["i686-linux" "x86_64-linux" "aarch64-linux"];
       maintainers = with maintainers; [ilikefrogs101];
       mainProgram = "godot4-mono";
+    };
+
+    passthru = {
+      make-deps = callPackage ./make-deps.nix {};
     };
   }

@@ -8,7 +8,6 @@
   scons,
   python3,
   mkNugetDeps,
-  mkNugetSource,
   writeText,
   vulkan-loader,
   libGL,
@@ -36,12 +35,10 @@
   withFontconfig ? true,
   withUdev ? true,
   withTouch ? true,
-  dotnet-sdk_8,
+  deps ? ./deps.nix,
+  dotnet-sdk,
   mono,
-  dotnet-runtime_8,
-  wayland,
-  wayland-scanner,
-  libdecor,
+  dotnet-runtime,
   callPackage,
 }:
 assert lib.asserts.assertOneOf "withPrecision" withPrecision ["single" "double"]; let
@@ -52,37 +49,17 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision ["single" "double"]
 in
   stdenv.mkDerivation rec {
     pname = "godot4-mono";
-    version = "4.3-rc1";
-    commitHash = "e343dbbcc1030f04dc5833f1c19d267a17332ca9";
-
-    nugetDeps = mkNugetDeps {
-      name = "deps";
-      nugetDeps = import ./deps.nix;
-    };
-
-    shouldConfigureNuget = true;
-
-    nugetSource = mkNugetSource {
-      name = "${pname}-nuget-source";
-      description = "A Nuget source with dependencies for ${pname}";
-      deps = [nugetDeps];
-    };
-
-    nugetConfig = writeText "NuGet.Config" ''
-      <?xml version="1.0" encoding="utf-8"?>
-      <configuration>
-        <packageSources>
-          <add key="${pname}-deps" value="${nugetSource}/lib" />
-        </packageSources>
-      </configuration>
-    '';
+    version = "4.3";
+    commitHash = "77dcf97d82cbfe4e4615475fa52ca03da645dbd8";
 
     src = fetchFromGitHub {
       owner = "godotengine";
       repo = "godot";
       rev = commitHash;
-      hash = "sha256-ZFRee/4sBui97V6dtqSBOKhOUEOy3I3mzpKvFa3Zxjk=";
+      hash = "sha256-v2lBD3GEL8CoIwBl3UoLam0dJxkLGX0oneH6DiWkEsM=";
     };
+
+    keepNugetConfig = deps == null;
 
     nativeBuildInputs = [
       pkg-config
@@ -90,16 +67,19 @@ in
       installShellFiles
       python3
       mono
-      dotnet-sdk_8
-      dotnet-runtime_8
-      wayland-scanner
-      libdecor
-      speechd
+      dotnet-sdk
+      dotnet-runtime
     ];
 
-    buildInputs = [
-      scons
-    ];
+    buildInputs =
+      [
+        scons
+      ]
+      ++ lib.optional (deps != null)
+      (mkNugetDeps {
+        name = "deps";
+        nugetDeps = import deps;
+      });
 
     runtimeDependencies =
       [
@@ -116,12 +96,8 @@ in
         libxkbcommon
         alsa-lib
         mono
-        dotnet-sdk_8
-        dotnet-runtime_8
-        wayland-scanner
-        wayland
-        libdecor
-        speechd
+        dotnet-sdk
+        dotnet-runtime
       ]
       ++ lib.optional withPulseaudio libpulseaudio
       ++ lib.optional withDbus dbus
@@ -161,24 +137,22 @@ in
       echo "Setting up buildhome."
       mkdir buildhome
       export HOME="$PWD"/buildhome
-      if [ -n "$shouldConfigureNuget" ]; then
-        echo "Configuring NuGet."
-        mkdir -p ~/.nuget/NuGet
-        ln -s "$nugetConfig" ~/.nuget/NuGet/NuGet.Config
-      fi
     '';
 
     buildPhase = ''
       echo "Starting Build"
       scons p=${withPlatform} target=${withTarget} precision=${withPrecision} module_mono_enabled=yes mono_glue=no
+
       echo "Generating Glue"
       if [[ ${withPrecision} == *double* ]]; then
           bin/godot.${withPlatform}.${withTarget}.${withPrecision}.x86_64.mono --headless --generate-mono-glue modules/mono/glue
       else
           bin/godot.${withPlatform}.${withTarget}.x86_64.mono --headless --generate-mono-glue modules/mono/glue
       fi
+
       echo "Building Assemblies"
       scons p=${withPlatform} target=${withTarget} precision=${withPrecision} module_mono_enabled=yes mono_glue=yes
+
       echo "Building C#/.NET Assemblies"
       python modules/mono/build_scripts/build_assemblies.py --godot-output-dir bin --precision=${withPrecision}
     '';
@@ -187,7 +161,9 @@ in
       mkdir -p "$out/bin"
       cp bin/godot.* $out/bin/godot4-mono
       cp -r bin/GodotSharp/ $out/bin/
+
       installManPage misc/dist/linux/godot.6
+
       mkdir -p "$out"/share/{applications,icons/hicolor/scalable/apps}
       cp misc/dist/linux/org.godotengine.Godot.desktop "$out/share/applications/org.godotengine.Godot4-Mono.desktop"
       substituteInPlace "$out/share/applications/org.godotengine.Godot4-Mono.desktop" \
@@ -202,6 +178,7 @@ in
       description = "Free and Open Source 2D and 3D game engine";
       license = licenses.mit;
       platforms = ["i686-linux" "x86_64-linux" "aarch64-linux"];
+      maintainers = with maintainers; [ilikefrogs101];
       mainProgram = "godot4-mono";
     };
 
