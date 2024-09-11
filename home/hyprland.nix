@@ -261,6 +261,8 @@ in ''
   bind = $mainMod, c, exec, ${pkgs.clipman}/bin/clipman pick --tool=CUSTOM --tool-args="fuzzel -d"
   bind = $mainMod, XKB_KEY_semicolon, exec, BEMOJI_PICKER_CMD='fuzzel --dmenu' ${pkgs.bemoji}/bin/bemoji -t
 
+  bind = $mainMod, q, exec,  echo "" | fuzzel --dmenu --dmenu --prompt="Ask: " --lines=0 --width=125 | ollama run llama3.1 | pipe-notify
+
   bind = $mainMod,t, exec, translate-en-to-de
   bind = $mainMod Shift,t, exec, translate-de-to-en
   bind = $mainMod Ctrl Shift,t, exec, synonym
