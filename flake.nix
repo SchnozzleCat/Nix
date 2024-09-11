@@ -9,6 +9,11 @@
     nixpkgs-master.url = "github:nixos/nixpkgs/master";
     # Also see the 'unstable-packages' overlay at 'overlays/default.nix'.
 
+    lix-module = {
+      url = "https://git.lix.systems/lix-project/nixos-module/archive/2.91.0.tar.gz";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Home manager
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -38,6 +43,7 @@
     nixvim,
     nix-colors,
     nix-citizen,
+    lix-module,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -74,6 +80,7 @@
         modules = [
           # > Our main nixos configuration file <
           ./nixos/configuration.nix
+          lix-module.nixosModules.default
         ];
       };
       schnozzlecat-laptop = nixpkgs.lib.nixosSystem {
@@ -84,6 +91,7 @@
         modules = [
           # > Our main nixos configuration file <
           ./nixos/configuration.nix
+          lix-module.nixosModules.default
         ];
       };
       schnozzlecat-server = nixpkgs.lib.nixosSystem {
@@ -94,6 +102,7 @@
         modules = [
           # > Our main nixos configuration file <
           ./nixos/schnozzlecat-server.nix
+          lix-module.nixosModules.default
         ];
       };
     };
