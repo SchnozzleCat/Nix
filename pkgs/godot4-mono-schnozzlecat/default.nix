@@ -26,6 +26,8 @@
   fontconfig,
   udev,
   wayland-scanner,
+  wayland,
+  libdecor,
   withPlatform ? "linuxbsd",
   withTarget ? "editor",
   withPrecision ? "single",
@@ -101,6 +103,8 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision ["single" "double"]
         alsa-lib
         mono
         wayland-scanner
+        wayland
+        libdecor
         dotnet-sdk_8
         dotnet-runtime_8
       ]
