@@ -74,6 +74,7 @@ in {
 
       # Dev
       unityhub
+      devbox
       (pkgs.buildEnv {
         name = "combinedSdk";
         paths = [
@@ -243,6 +244,18 @@ in {
         name = "tc-reset";
         text = ''
           sudo tc qdisc del dev lo root
+        '';
+      })
+      (writeShellApplication {
+        name = "ghs";
+        text = ''
+          gh copilot suggest "$*"
+        '';
+      })
+      (writeShellApplication {
+        name = "ghe";
+        text = ''
+          gh copilot explain "$*"
         '';
       })
     ];
