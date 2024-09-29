@@ -11,6 +11,11 @@
   - ykpamcfg -2 -v
 - reboot
 - nix run home-manager/master -- switch --flake ~/.nixos#<hostname>
+- gpg import ~/.nixos/home/pub.asc
+- gpg --edit-key <KEY>
+  - trust
+  - 5
+- gpg --card-status
 - git stash
 - git-crypt unlock
 - git stash pop
