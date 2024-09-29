@@ -252,7 +252,6 @@
       sign define DiagnosticSignHint text= numhl=DiagnosticDefaultHint
       highlight NotifyBackground guibg=#000000
       highlight TroubleNormal guibg=clear
-      highlight TreesitterContext guibg=clear
       let &t_TI = "\<Esc>[>4;2m"
       let &t_TE = "\<Esc>[>4;m"
 
@@ -499,6 +498,7 @@
         local addr = "/tmp/godot.pipe"
         vim.fn.serverstart(addr)
       end
+      vim.api.nvim_set_hl(0, "TreesitterContext", { bg = "none" })
     '';
     opts = {
       relativenumber = true;
