@@ -44,19 +44,12 @@
     + ''
       monitor=eDP-1,1920x1080@144,0x0,1
       monitor=HDMI-A-1,1920x1080@60,1920x0,1
-
-      bind = $mainMod, 1, exec, hyprctl hyprpaper wallpaper "eDP-1,${../secrets/wallpapers/flowers1.png}"
-      bind = $mainMod, 2, exec, hyprctl hyprpaper wallpaper "eDP-1,${../secrets/wallpapers/flowers2.png}"
-      bind = $mainMod, 3, exec, hyprctl hyprpaper wallpaper "eDP-1,${../secrets/wallpapers/flowers3.png}"
-      bind = $mainMod, 4, exec, hyprctl hyprpaper wallpaper "eDP-1,${../secrets/wallpapers/flowers4.png}"
-      bind = $mainMod, 5, exec, hyprctl hyprpaper wallpaper "eDP-1,${../secrets/wallpapers/flowers5.png}"
-      bind = $mainMod, 6, exec, hyprctl hyprpaper wallpaper "eDP-1,${../secrets/wallpapers/flowers6.png}"
     '';
 
   home.file.".config/hypr/hyprpaper.conf".text =
     (import ./hyprpaper.nix)
     + ''
-      wallpaper = eDP-1,${../secrets/wallpapers/flowers1.png}
-      wallpaper = HDMI-A-1,${../secrets/wallpapers/flowers3.png}
+      wallpaper = eDP-1,${../secrets/wallpapers/abstract1.jpg}
+      wallpaper = HDMI-A-1,${../secrets/wallpapers/abstract1.jpg}
     '';
 }
