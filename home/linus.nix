@@ -89,14 +89,14 @@ in {
       msbuild
       # godot4-mono
       sublime-merge
-      (pkgs.buildDotnetGlobalTool {
-        pname = "Microsoft.dotnet-interactive";
-        version = "1.0.522904";
-        nugetHash = "sha256-ULnG2D7BUJV39cSC4sarWlrngtv492vpd/BjeB5dKYQ=";
-        executables = "dotnet-interactive";
-        dotnet-runtime = pkgs.dotnetCorePackages.sdk_8_0;
-        dotnet-sdk = pkgs.dotnetCorePackages.sdk_8_0;
-      })
+      # (pkgs.buildDotnetGlobalTool {
+      #   pname = "Microsoft.dotnet-interactive";
+      #   version = "1.0.522904";
+      #   nugetHash = "sha256-ULnG2D7BUJV39cSC4sarWlrngtv492vpd/BjeB5dKYQ=";
+      #   executables = "dotnet-interactive";
+      #   dotnet-runtime = pkgs.dotnetCorePackages.sdk_8_0;
+      #   dotnet-sdk = pkgs.dotnetCorePackages.sdk_8_0;
+      # })
 
       jetbrains.rider
       jetbrains.idea-ultimate

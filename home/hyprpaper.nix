@@ -1,9 +1,5 @@
 ''
-  preload = ${../secrets/wallpapers/flowers1.png}
-  preload = ${../secrets/wallpapers/flowers2.png}
-  preload = ${../secrets/wallpapers/flowers3.png}
-  preload = ${../secrets/wallpapers/flowers4.png}
-  preload = ${../secrets/wallpapers/flowers5.png}
-  preload = ${../secrets/wallpapers/flowers6.png}
+  preload = ${../secrets/wallpapers/abstract1.jpg}
+  preload = ${../secrets/wallpapers/abstract2.jpg}
   splash = false
 ''

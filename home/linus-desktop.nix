@@ -16,22 +16,22 @@
     slug = "schnozzlecat";
     name = "schnozzlecat";
     palette = {
-      base00 = "#1F1F28";
-      base01 = "#2a273f";
-      base02 = "#393552";
-      base03 = "#6e6a86";
-      base04 = "#908caa";
-      base05 = "#e0def4";
-      base06 = "#e0def4";
-      base07 = "#56526e";
-      base08 = "#eb6f92";
-      base09 = "#f6c177";
-      base0A = "#ea9a97";
-      base0B = "#3e8fb0";
-      base0C = "#9ccfd8";
-      base0D = "#c4a7e7";
-      base0E = "#f6c177";
-      base0F = "#56526e";
+      base00 = "#192330";
+      base01 = "#212e3f";
+      base02 = "#29394f";
+      base03 = "#575860";
+      base04 = "#71839b";
+      base05 = "#cdcecf";
+      base06 = "#aeafb0";
+      base07 = "#e4e4e5";
+      base08 = "#c94f6d";
+      base09 = "#f4a261";
+      base0A = "#dbc074";
+      base0B = "#81b29a";
+      base0C = "#63cdcf";
+      base0D = "#719cd6";
+      base0E = "#9d79d6";
+      base0F = "#d67ad2";
     };
   };
 
@@ -124,18 +124,18 @@
       workspace=4, monitor:DP-2, persistent:true
       workspace=5, monitor:DP-3, persistent:true
 
-      bind = $mainMod, 1, exec, hyprctl hyprpaper wallpaper "DP-1,${../secrets/wallpapers/flowers1.png}"
-      bind = $mainMod, 2, exec, hyprctl hyprpaper wallpaper "DP-1,${../secrets/wallpapers/flowers5.png}"
-      bind = $mainMod, 3, exec, hyprctl hyprpaper wallpaper "DP-1,${../secrets/wallpapers/flowers6.png}"
+      # bind = $mainMod, 1, exec, hyprctl hyprpaper wallpaper "DP-1,${../secrets/wallpapers/flowers1.png}"
+      # bind = $mainMod, 2, exec, hyprctl hyprpaper wallpaper "DP-1,${../secrets/wallpapers/flowers5.png}"
+      # bind = $mainMod, 3, exec, hyprctl hyprpaper wallpaper "DP-1,${../secrets/wallpapers/flowers6.png}"
       bind = $mainMod,o,exec, swap-audio
     '';
 
   home.file.".config/hypr/hyprpaper.conf".text =
     (import ./hyprpaper.nix)
     + ''
-      wallpaper = DP-1,${../secrets/wallpapers/flowers1.png}
-      wallpaper = DP-2,${../secrets/wallpapers/flowers2.png}
-      wallpaper = DP-3,${../secrets/wallpapers/flowers3.png}
-      wallpaper = HDMI-A-1,${../secrets/wallpapers/flowers4.png}
+      wallpaper = DP-1,${../secrets/wallpapers/abstract1.jpg}
+      wallpaper = DP-2,${../secrets/wallpapers/abstract1.jpg}
+      wallpaper = DP-3,${../secrets/wallpapers/abstract1.jpg}
+      wallpaper = HDMI-A-1,${../secrets/wallpapers/abstract1.jpg}
     '';
 }

@@ -58,7 +58,7 @@
       vimPlugins.vim-dadbod-ui
       vimPlugins.vim-dadbod-completion
       vimPlugins.quarto-nvim
-      vimPlugins.render-markdown
+      # vimPlugins.render-markdown
       avante-nvim
 
       (pkgs.vimUtils.buildVimPlugin rec {
@@ -252,6 +252,7 @@
       sign define DiagnosticSignHint text= numhl=DiagnosticDefaultHint
       highlight NotifyBackground guibg=#000000
       highlight TroubleNormal guibg=clear
+      highlight TreesitterContext guibg=clear
       let &t_TI = "\<Esc>[>4;2m"
       let &t_TE = "\<Esc>[>4;m"
 
@@ -267,10 +268,9 @@
     '';
     extraConfigLua = ''
       vim.opt.pumheight = 10
-
       require("roslyn").setup({
         config = {
-          on_attach = __lspOnAttach,
+          on_attach = _M.lspOnAttach,
           capabilities = __lspCapabilities(),
           filetypes = {"cs"},
           filewatching = true,
@@ -485,9 +485,9 @@
           },
         }
       })
-      require('render-markdown').setup ({
-        file_types = { "markdown", "Avante" },
-      })
+      --require('render-markdown').setup ({
+      --  file_types = { "markdown", "Avante" },
+      --})
       require('avante_lib').load()
       require('avante').setup ({
         behaviour = {
@@ -516,18 +516,12 @@
     globals = {
       mapleader = " ";
     };
-    colorschemes.rose-pine = {
+    colorschemes.nightfox = {
       enable = true;
+      flavor = "duskfox";
       settings = {
-        enable = {
-          legacy_highlights = true;
-          migrations = true;
-          terminal = false;
-        };
-        dark_variant = "moon";
-        styles = {
-          italic = false;
-          transparency = true;
+        options = {
+          transparent = true;
         };
       };
     };
@@ -1406,7 +1400,8 @@
       };
       bufferline.enable = true;
       markdown-preview.enable = true;
-      surround.enable = true;
+      web-devicons.enable = true;
+      vim-surround.enable = true;
       trouble = {
         enable = true;
         settings = {
@@ -1473,13 +1468,15 @@
       lualine = {
         enable = true;
         settings.sections = {
-          lualine_x = [
+          lualine_x.__raw = ''
             {
-              name.__raw = ''require("noice").api.statusline.mode.get'';
-              extraConfig = {cond.__raw = ''require("noice").api.statusline.mode.has'';};
-              color = {fg = "#ff9e64";};
+              {
+                require("noice").api.statusline.mode.get,
+                cond = require("noice").api.statusline.mode.has,
+                color = {fg = "#ff9e64"}
+              }
             }
-          ];
+          '';
         };
       };
       alpha = {
@@ -1951,7 +1948,7 @@
           html.enable = true;
           java-language-server.enable = true;
           phpactor.enable = true;
-          tsserver = {
+          ts-ls = {
             enable = true;
             extraOptions = {
               init_options = {
@@ -1992,6 +1989,9 @@
       };
       treesitter-context = {
         enable = true;
+        settings = {
+          separator = "-";
+        };
       };
       zen-mode = {
         enable = true;
