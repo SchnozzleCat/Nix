@@ -344,6 +344,7 @@ in {
     StartWithLastProfile=1
     Version=2
   '';
+  home.file.".ideavimrc".source = ./.ideavimrc;
 
   programs.mangohud = {
     enable = true;

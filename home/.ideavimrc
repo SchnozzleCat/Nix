@@ -1,0 +1,67 @@
+let mapleader = " "
+set visualbell
+set noerrorbells
+set clipboard+=unnamedplus
+
+Plug 'tpope/vim-surround'
+sethandler <c-n> a:vim
+sethandler <c-N> a:vim
+Plug 'preservim/nerdtree'
+map <c-n> :NERDTree<CR>
+Plug 'tpope/vim-commentary'
+set quickscope
+
+Plug 'easymotion/vim-easymotion'
+map s <Plug>(easymotion-s)
+
+nnoremap <c-z> :action ToggleDistractionFreeMode<CR>
+nnoremap <c-s> :w<CR>
+
+nnoremap \e :e ~/.ideavimrc<CR>
+nnoremap \r :action IdeaVim.ReloadVimRc.reload<CR>
+
+nnoremap [m :action MethodUp<CR>
+nnoremap ]m :action MethodDown<CR>
+nnoremap <leader>hh :action ShowHarpoon<CR>
+nnoremap <leader>hy :action AddToHarpoon<CR>
+nnoremap <leader><leader>a :action GotoHarpoon1<CR>
+nnoremap <leader><leader>s :action GotoHarpoon2<CR>
+nnoremap <leader><leader>d :action GotoHarpoon3<CR>
+nnoremap <leader><leader>f :action GotoHarpoon4<CR>
+nnoremap <leader><leader>j :action GotoHarpoon5<CR>
+nnoremap <leader>fs :action GotoSymbol<CR>
+nnoremap <leader>fo :action RecentFiles<CR>
+nnoremap <leader>ff :action GotoFile<CR>
+nnoremap <leader>fc :action GotoClass<CR>
+nnoremap <leader>fa :action SearchEverywhere<CR>
+nnoremap <leader>fw :action TextSearchAction<CR>
+nnoremap <leader>ra :action RenameElement<CR>
+nnoremap <leader>db :action ToggleLineBreakpoint<CR>
+nnoremap <leader>da :action AttachToUnityEditorAction<CR>
+nnoremap <leader>dp :action TriggerPlayInUnity<CR>
+nnoremap <leader>dc :action Resume<CR>
+nnoremap <leader>do :action StepOver<CR>
+nnoremap <leader>di :action StepInto<CR>
+nnoremap <leader>du :action StepOut<CR>
+nnoremap <leader>dx :action Debugger.RemoveAllBreakpoints<CR>
+nnoremap <leader>ca :action ShowIntentionActions<CR>
+nnoremap <leader>b :action ToggleLineBreakpoint<CR>
+nnoremap <leader>fm :action ReformatCode<CR>
+nnoremap gr :action FindUsages<CR>
+
+vnoremap <leader>rr :action Refactorings.QuickListPopupAction<CR>
+
+nnoremap <c-h> <c-w>h
+nnoremap <c-j> <c-w>j
+nnoremap <c-k> <c-w>k
+nnoremap <c-l> <c-w>l
+
+nnoremap <TAB> :action NextTab<CR>
+nnoremap <s-TAB> :action PreviousTab<CR>
+
+nnoremap <leader>e :action EditSourceInNewWindow<CR>
+
+nnoremap <leader>x :action CloseContent<CR>
+nnoremap <leader>X :action CloseAllEditors<CR>
+
+nnoremap <c-t> :action ActivateTerminalToolWindow<CR>
