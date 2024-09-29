@@ -495,7 +495,10 @@
         },
         provider = "copilot",
       })
-      require("custom")
+      if vim.fn.filereadable(vim.fn.getcwd() .. "/project.godot") == 1 then
+        local addr = "/tmp/godot.pipe"
+        vim.fn.serverstart(addr)
+      end
     '';
     opts = {
       relativenumber = true;
@@ -1311,7 +1314,6 @@
         };
         settings.buffers = {
           set_filetype = true;
-          write_to_disk = true;
         };
       };
       cmp = {
