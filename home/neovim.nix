@@ -241,6 +241,26 @@
           sha256 = "sha256-HTqvZQY6TmVOWzI5N4LEaYfLg1AxWJZ6IjHhwuYQwI8=";
         };
       })
+      (pkgs.vimUtils.buildVimPlugin rec {
+        pname = "portal.nvim";
+        version = "77d9d53fec945bfa407d5fd7120f1b4f117450ed";
+        src = pkgs.fetchFromGitHub {
+          owner = "cbochs";
+          repo = pname;
+          rev = version;
+          sha256 = "sha256-QCdyJ5in3Dm4IVlBUtbGWRZxl87gKHhRiGmZcIGEHm0=";
+        };
+      })
+      (pkgs.vimUtils.buildVimPlugin rec {
+        pname = "grapple.nvim";
+        version = "b41ddfc1c39f87f3d1799b99c2f0f1daa524c5f7";
+        src = pkgs.fetchFromGitHub {
+          owner = "cbochs";
+          repo = pname;
+          rev = version;
+          sha256 = "sha256-Dz60583Qic2TqO3BPSHME4Q7CiweB1gQCdFNtjNoN3U=";
+        };
+      })
     ];
     extraConfigVim = ''
       autocmd BufWritePre * lua vim.lsp.buf.format()
@@ -499,6 +519,8 @@
         vim.fn.serverstart(addr)
       end
       vim.api.nvim_set_hl(0, "TreesitterContext", { bg = "none" })
+      require("portal").setup()
+      require("grapple").setup()
     '';
     opts = {
       relativenumber = true;
@@ -578,6 +600,68 @@
         mode = "i";
         key = "<c-l>";
         action = "<right>";
+      }
+      # Grapple
+      {
+        mode = "n";
+        key = "<leader><leader>h";
+        action = "<cmd>Grapple toggle_tags<cr>";
+      }
+      {
+        mode = "n";
+        key = "<leader>ht";
+        action = "<cmd>Grapple toggle<cr>";
+      }
+      {
+        mode = "n";
+        key = "<leader><leader>a";
+        action = "<cmd>Grapple select index=1<cr>";
+      }
+      {
+        mode = "n";
+        key = "<leader><leader>s";
+        action = "<cmd>Grapple select index=2<cr>";
+      }
+      {
+        mode = "n";
+        key = "<leader><leader>d";
+        action = "<cmd>Grapple select index=3<cr>";
+      }
+      {
+        mode = "n";
+        key = "<leader><leader>f";
+        action = "<cmd>Grapple select index=4<cr>";
+      }
+      {
+        mode = "n";
+        key = "<leader><leader>j";
+        action = "<cmd>Grapple select index=5<cr>";
+      }
+      {
+        mode = "n";
+        key = "<leader><leader>k";
+        action = "<cmd>Grapple select index=6<cr>";
+      }
+      {
+        mode = "n";
+        key = "<leader><leader>l";
+        action = "<cmd>Grapple select index=7<cr>";
+      }
+      {
+        mode = "n";
+        key = "<leader><leader>;";
+        action = "<cmd>Grapple select index=8<cr>";
+      }
+      # Portal
+      {
+        mode = "n";
+        key = "<leader><leader>o";
+        action = "<cmd>Portal jumplist backward<cr>";
+      }
+      {
+        mode = "n";
+        key = "<leader><leader>i";
+        action = "<cmd>Portal jumplist forward<cr>";
       }
       # Windows
       {
@@ -1447,29 +1531,19 @@
       nvim-colorizer.enable = true;
       sniprun.enable = true;
       flash.enable = true;
-      harpoon = {
-        enable = true;
-        keymaps = {
-          addFile = "<leader>hy";
-          toggleQuickMenu = "<leader>hh";
-          navFile = {
-            "1" = "<leader><leader>a";
-            "2" = "<leader><leader>s";
-            "3" = "<leader><leader>d";
-            "4" = "<leader><leader>f";
-            "5" = "<leader><leader>j";
-            "6" = "<leader><leader>k";
-            "7" = "<leader><leader>l";
-            "8" = "<leader><leader>;";
-          };
-        };
-      };
       which-key.enable = true;
       gitsigns.enable = true;
       nvim-lightbulb.enable = true;
       lualine = {
         enable = true;
         settings.sections = {
+          lualine_b.__raw = ''
+            {
+              {
+                "grapple"
+              }
+            }
+          '';
           lualine_x.__raw = ''
             {
               {
