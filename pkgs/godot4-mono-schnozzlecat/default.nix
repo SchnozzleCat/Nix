@@ -42,8 +42,7 @@
   deps ? ./deps.nix,
   mono,
   callPackage,
-  dotnet-sdk_8,
-  dotnet-runtime_8,
+  dotnetCorePackages,
   makeWrapper,
   msbuild,
 }:
@@ -72,8 +71,8 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision ["single" "double"]
       wayland-scanner
       makeWrapper
       mono
-      dotnet-sdk_8
-      dotnet-runtime_8
+      dotnetCorePackages.sdk_9_0
+      dotnetCorePackages.runtime_9_0
     ];
 
     buildInputs =
@@ -105,8 +104,8 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision ["single" "double"]
         wayland-scanner
         wayland
         libdecor
-        dotnet-sdk_8
-        dotnet-runtime_8
+        dotnetCorePackages.sdk_9_0
+        dotnetCorePackages.runtime_9_0
       ]
       ++ lib.optional withPulseaudio libpulseaudio
       ++ lib.optional withDbus dbus
