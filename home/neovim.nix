@@ -18,6 +18,16 @@
       imagemagick
       nodePackages.ijavascript
       quarto
+      (pkgs.buildEnv {
+        name = "combinedSdk";
+        paths = [
+          (with pkgs.dotnetCorePackages;
+            combinePackages [
+              sdk_9_0
+              sdk_6_0
+            ])
+        ];
+      })
     ];
     extraLuaPackages = ps: [
       pkgs.luajitPackages.magick
