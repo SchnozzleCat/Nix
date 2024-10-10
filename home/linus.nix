@@ -392,6 +392,8 @@ in {
     end_time = 06:00:00
   '';
 
+  home.file.".config/hypr/hyprlock.conf".text = import ./hyprlock.nix;
+
   home.file.".config/hypr/shaders/blue-light-filter-custom.glsl".text = ''
     // from https://github.com/hyprwm/Hyprland/issues/1140#issuecomment-1335128437
 

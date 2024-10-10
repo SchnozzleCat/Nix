@@ -255,7 +255,7 @@ in ''
 
   bind = $mainMod Shift,c,exec, ${pkgs.hyprpicker}/bin/hyprpicker | head -c 7 | wl-copy
 
-  bind = $mainMod, i, exec, ${pkgs.swaylock-effects}/bin/swaylock --screenshots --clock --indicator --indicator-radius 100 --indicator-thickness 7 --effect-blur 9x7 --effect-vignette 0.5:0.5 --ring-color ${colors.base00}ff --key-hl-color ${colors.base0C}ff --line-color 00000000 --inside-color 00000088 --separator-color ${colors.base02}ff --text-color ${colors.base05}ff --grace 1 --fade-in 0.2
+  bind = $mainMod, i, exec, ${pkgs.hyprlock}/bin/hyprlock
 
   bind = $mainMod, u, exec, fnottctl dismiss
   bind = $mainMod, c, exec, ${pkgs.clipman}/bin/clipman pick --tool=CUSTOM --tool-args="fuzzel -d"
