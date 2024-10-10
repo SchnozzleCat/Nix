@@ -1658,6 +1658,10 @@
               command = "node";
               args = ["/home/linus/Repositories/pina-checkout-integration-exploration/vscode-node-debug2/out/src/nodeDebug.js"];
             };
+            "debugpy" = {
+              command = ".venv/bin/python";
+              args = ["-m" "debugpy.adapter"];
+            };
           };
         };
         configurations = {
@@ -1814,6 +1818,24 @@
           ];
           python = [
             {
+              name = "Launch";
+              request = "launch";
+              type = "debugpy";
+              program = ''''${file}'';
+              pythonPath.__raw = ''
+                function()
+                  local cwd = vim.fn.getcwd()
+                  if vim.fn.executable(cwd .. '/venv/bin/python') == 1 then
+                    return cwd .. '/venv/bin/python'
+                  elseif vim.fn.executable(cwd .. '/.venv/bin/python') == 1 then
+                    return cwd .. '/.venv/bin/python'
+                  else
+                    return '/usr/bin/python'
+                  end
+                end
+              '';
+            }
+            {
               name = "Attach";
               type = "python";
               request = "attach";
@@ -1825,18 +1847,6 @@
                   remoteRoot = ".";
                 }
               ];
-            }
-            {
-              name = "Launch";
-              request = "launch";
-              type = "python";
-              program.__raw = ''
-                function()
-                  local path = '/home/linus/.nix-profile/bin/godot4-mono-schnozzlecat'
-                  vim.notify(path)
-                  return path
-                end
-              '';
             }
           ];
         };
