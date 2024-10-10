@@ -75,18 +75,7 @@ in {
       # Dev
       unityhub
       devbox
-      (pkgs.buildEnv {
-        name = "combinedSdk";
-        paths = [
-          (with pkgs.dotnetCorePackages;
-            combinePackages [
-              sdk_6_0
-              sdk_7_0
-              sdk_8_0
-              sdk_9_0
-            ])
-        ];
-      })
+      dotnetCorePackages.sdk_9_0
       msbuild
       # godot4-mono
       sublime-merge
