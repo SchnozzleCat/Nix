@@ -18,6 +18,7 @@
       imagemagick
       nodePackages.ijavascript
       quarto
+      typescript
       (pkgs.buildEnv {
         name = "combinedSdk";
         paths = [
@@ -69,7 +70,6 @@
       vimPlugins.vim-dadbod-completion
       vimPlugins.quarto-nvim
       # vimPlugins.render-markdown
-      avante-nvim
 
       (pkgs.vimUtils.buildVimPlugin rec {
         pname = "img-clip.nvim";
@@ -517,13 +517,6 @@
       --require('render-markdown').setup ({
       --  file_types = { "markdown", "Avante" },
       --})
-      require('avante_lib').load()
-      require('avante').setup ({
-        behaviour = {
-          auto_suggestions = false,
-        },
-        provider = "copilot",
-      })
       if vim.fn.filereadable(vim.fn.getcwd() .. "/project.godot") == 1 then
         local addr = "/tmp/godot.pipe"
         vim.fn.serverstart(addr)
@@ -1511,6 +1504,15 @@
         };
       };
       undotree.enable = true;
+      avante = {
+        enable = true;
+        settings = {
+          provider = "copilot";
+          behaviour = {
+            auto_suggestions = false;
+          };
+        };
+      };
       commentary.enable = true;
       fugitive.enable = true;
       neogen.enable = true;
@@ -2032,19 +2034,19 @@
             };
           };
           digestif.enable = true;
-          nil-ls.enable = true;
+          nil_ls.enable = true;
           # omnisharp.enable = true;
           clangd.enable = true;
           gdscript.enable = true;
           svelte.enable = true;
           tailwindcss.enable = true;
-          lua-ls.enable = true;
+          lua_ls.enable = true;
           pyright.enable = true;
           cssls.enable = true;
           html.enable = true;
-          java-language-server.enable = true;
+          java_language_server.enable = true;
           phpactor.enable = true;
-          ts-ls = {
+          ts_ls = {
             enable = true;
             extraOptions = {
               init_options = {
