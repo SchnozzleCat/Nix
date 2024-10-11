@@ -182,8 +182,8 @@ in ''
   # See https://wiki.hyprland.org/Configuring/Keywords/ for more
 
   # Example binds, see https://wiki.hyprland.org/Configuring/Binds/ for more
-  bind = $mainMod, a, exec, foot
-  bind = $mainModShift, a, exec, foot -- zellij -l compact
+  bind = $mainMod, a, exec, foot -- zellij -l compact
+  bind = $mainModShift, a, exec, foot
   bind = $mainMod, n, exec, [float;size 60% 60%;center] foot ${pkgs.master.yazi}/bin/yazi
   bind = $mainMod, z, exec, [float;size 60% 60%;center] foot ${pkgs.master.yazi}/bin/yazi
   bind = $mainMod, d, exec, fuzzel
