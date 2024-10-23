@@ -19,6 +19,7 @@
       nodePackages.ijavascript
       quarto
       typescript
+      zf
       (pkgs.buildEnv {
         name = "combinedSdk";
         paths = [
@@ -271,7 +272,40 @@
           sha256 = "sha256-Dz60583Qic2TqO3BPSHME4Q7CiweB1gQCdFNtjNoN3U=";
         };
       })
+      (pkgs.vimUtils.buildVimPlugin rec {
+        pname = "telescope-zf-native.nvim";
+        version = "5721be27df11a19b9cd95e6a4887f16f26599802";
+        src = pkgs.fetchFromGitHub {
+          owner = "natecraddock";
+          repo = pname;
+          rev = version;
+          sha256 = "sha256-MCYnloqijGvmQRcdfMhYo5VkDNc4Yk35YCfNgbI1FcE=";
+        };
+      })
+      (pkgs.vimUtils.buildVimPlugin rec {
+        pname = "vessel.nvim";
+        version = "0110bd4527963b7c245a325bd871ed0fac4a951b";
+        src = pkgs.fetchFromGitHub {
+          owner = "gcmt";
+          repo = pname;
+          rev = version;
+          sha256 = "sha256-luiklWgajULhCns1qoDGWKanuTd+zeBQmakmhrfqQDc=";
+        };
+      })
     ];
+    highlight = {
+      NotifyBackground.bg = "#000000";
+      "@type.qualifier.c_sharp".fg = "#7AA8fF";
+      "@type.c_sharp".fg = "#98cb6C";
+      "@struct_declaration".fg = "#aaff9C";
+      "@attribute".fg = "#cb6fe2";
+      "@return_statement".fg = "#eb6f92";
+    };
+    highlightOverride = {
+      TreesitterContext.bg = "none";
+      TroubleNormal.bg = "none";
+      TroubleNormalNC.bg = "none";
+    };
     extraConfigVim = ''
       autocmd BufWritePre * lua vim.lsp.buf.format()
       autocmd FileType nix setlocal commentstring=#\ %s
@@ -280,23 +314,14 @@
       sign define DiagnosticSignWarn text= numhl=DiagnosticDefaultWarn
       sign define DiagnosticSignInfo text= numhl=DiagnosticDefaultInfo
       sign define DiagnosticSignHint text= numhl=DiagnosticDefaultHint
-      highlight NotifyBackground guibg=#000000
-      highlight TroubleNormal guibg=clear
       let &t_TI = "\<Esc>[>4;2m"
       let &t_TE = "\<Esc>[>4;m"
-
-      highlight @type.qualifier.c_sharp guifg=#7AA8fF guibg=none
-      highlight @type.c_sharp guifg=#98cb6C guibg=none
-      highlight @struct_declaration guifg=#aaff9C guibg=none
-      highlight @attribute guifg=#cb6fe2 guibg=none
-      highlight @return_statement guifg=#eb6f92 guibg=none
 
       let g:VM_maps = {}
       let g:VM_maps['Find Under']         = '<C-s>'
       let g:VM_maps['Find Subword Under'] = '<C-s>'
     '';
     extraConfigLua = ''
-      vim.opt.pumheight = 10
       require("roslyn").setup({
         config = {
           on_attach = _M.lspOnAttach,
@@ -514,14 +539,14 @@
           },
         }
       })
-      --require('render-markdown').setup ({
-      --  file_types = { "markdown", "Avante" },
-      --})
       if vim.fn.filereadable(vim.fn.getcwd() .. "/project.godot") == 1 then
         local addr = "/tmp/godot.pipe"
         vim.fn.serverstart(addr)
       end
-      vim.api.nvim_set_hl(0, "TreesitterContext", { bg = "none" })
+      require("vessel").setup({
+        create_commands = true
+      })
+      require("telescope").load_extension("zf-native")
       require("portal").setup()
       require("grapple").setup()
     '';
@@ -531,11 +556,13 @@
       undofile = true;
       shiftwidth = 2;
       tabstop = 2;
-      # conceallevel = 1;
+      conceallevel = 1;
       expandtab = true;
       autoindent = true;
       smartindent = false;
       cursorline = true;
+      pumheight = 10;
+      laststatus = 3;
     };
     clipboard = {
       register = "unnamedplus";
@@ -894,10 +921,17 @@
         action = "<cmd> Oil <cr>";
         options.desc = "Oil";
       }
+      # Vessel
+      {
+        mode = "n";
+        key = "<leader>j";
+        action = "<CR>lua require('vessel').view_buffers()<CR>";
+        options.desc = "Vessel Buffers";
+      }
       # Buffers
       {
         mode = "n";
-        key = "<leader>b";
+        key = "<leader>B";
         action = "<cmd> enew <cr>";
         options.desc = "New Buffer";
       }
@@ -1311,9 +1345,7 @@
           };
         };
         extensions = {
-          undo = {
-            enable = true;
-          };
+          undo.enable = true;
         };
         keymaps = {
           "<leader>ff" = {
@@ -1494,18 +1526,17 @@
       trouble = {
         enable = true;
         settings = {
-          signs = {
-            error = "";
-            warning = " ";
-            hint = "";
-            information = " ";
-            other = " ";
+          modes = {
+            lsp_references = {
+              auto_refresh = false;
+            };
           };
         };
       };
       undotree.enable = true;
       avante = {
         enable = true;
+        package = pkgs.avante-nvim;
         settings = {
           provider = "copilot";
           behaviour = {
@@ -1628,6 +1659,12 @@
         };
       };
       fidget.enable = true;
+      render-markdown = {
+        enable = true;
+        settings = {
+          file_types = ["markdown" "Avante" "quarto"];
+        };
+      };
       neotest = {
         enable = true;
         adapters = {
@@ -2037,7 +2074,10 @@
           nil_ls.enable = true;
           # omnisharp.enable = true;
           clangd.enable = true;
-          gdscript.enable = true;
+          gdscript = {
+            enable = true;
+            package = null;
+          };
           svelte.enable = true;
           tailwindcss.enable = true;
           lua_ls.enable = true;

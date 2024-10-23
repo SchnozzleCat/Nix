@@ -8,20 +8,23 @@
   vimUtils,
   darwin,
 }: let
-  version = "2024-09-08";
+  version = "2024-09-30";
 
   src = fetchFromGitHub {
     owner = "yetone";
     repo = "avante.nvim";
-    rev = "bcd73a8b9a3b81242ce6c5f65e3e245eb18a4572";
-    hash = "sha256-KYcAzDJ/ZExb6+sfdNbb7FDFORstjEXzfHLNQ5v6Fg4=";
+    rev = "7c83558b377ac2ddaf2ead79b9060e240ce7e2f9";
+    hash = "sha256-FqV13G4RAuZaa5YRwsrP33wsSVBP+l7xlBM3SGAIQ9A=";
   };
 
   meta = with lib; {
     description = "Neovim plugin designed to emulate the behaviour of the Cursor AI IDE";
     homepage = "https://github.com/yetone/avante.nvim";
     license = licenses.asl20;
-    maintainers = [];
+    maintainers = with lib.maintainers; [
+      ttrei
+      aarnphm
+    ];
   };
 
   avante-nvim-lib = rustPlatform.buildRustPackage {
@@ -36,31 +39,33 @@
 
     nativeBuildInputs = [
       pkg-config
-      openssl
     ];
 
-    buildInputs = lib.optionals stdenv.isDarwin [darwin.apple_sdk.frameworks.Security];
+    buildInputs =
+      [
+        openssl
+      ]
+      ++ lib.optionals stdenv.hostPlatform.isDarwin [
+        darwin.apple_sdk.frameworks.Security
+      ];
 
-    buildPhase = ''
-      export PKG_CONFIG_PATH=${openssl.dev}/lib/pkgconfig:$PKG_CONFIG_PATH
-      make BUILD_FROM_SOURCE=true
-    '';
-
-    installPhase = ''
-      mkdir -p $out
-      cp ./build/*.{dylib,so} $out/
-    '';
-
-    doCheck = false;
+    buildFeatures = ["luajit"];
   };
 in
   vimUtils.buildVimPlugin {
     pname = "avante.nvim";
     inherit version src meta;
 
-    # The plugin expects the dynamic libraries to be under build/
-    postInstall = ''
+    postInstall = let
+      ext = stdenv.hostPlatform.extensions.sharedLibrary;
+    in ''
       mkdir -p $out/build
-      ln -s ${avante-nvim-lib}/*.{dylib,so} $out/build
+      ln -s ${avante-nvim-lib}/lib/libavante_repo_map${ext} $out/build/avante_repo_map${ext}
+      ln -s ${avante-nvim-lib}/lib/libavante_templates${ext} $out/build/avante_templates${ext}
+      ln -s ${avante-nvim-lib}/lib/libavante_tokenizers${ext} $out/build/avante_tokenizers${ext}
     '';
+
+    doInstallCheck = true;
+    # TODO: enable after https://github.com/NixOS/nixpkgs/pull/342240 merged
+    # nvimRequireCheck = "avante";
   }
