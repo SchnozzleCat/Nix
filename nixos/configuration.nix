@@ -203,34 +203,6 @@
     }))
   ];
 
-  programs.firefox = {
-    enable = true;
-    autoConfig = ''
-      try {
-        let { classes: Cc, interfaces: Ci, manager: Cm  } = Components;
-        const Services = globalThis.Services;
-        const {SessionStore} = Components.utils.import('resource:///modules/sessionstore/SessionStore.jsm');
-        function ConfigJS() { Services.obs.addObserver(this, 'chrome-document-global-created', false); }
-        ConfigJS.prototype = {
-          observe: function (aSubject) { aSubject.addEventListener('DOMContentLoaded', this, {once: true}); },
-          handleEvent: function (aEvent) {
-            let document = aEvent.originalTarget; let window = document.defaultView; let location = window.location;
-            if (/^(chrome:(?!\/\/(global\/content\/commonDialog|browser\/content\/webext-panels)\.x?html)|about:(?!blank))/i.test(location.href)) {
-              if (window._gBrowser) {
-                let keys = ["key_newNavigatorTab", "openFileKb", "key_viewInfo"];
-                for (var i=0; i < keys.length; i++) {
-                  let keyCommand = window.document.getElementById(keys[i]);
-                  keyCommand?.remove();
-                }
-              }
-            }
-          }
-        };
-        if (!Services.appinfo.inSafeMode) { new ConfigJS(); }
-      } catch(ex) {};
-    '';
-  };
-
   # Shell
   users.defaultUserShell = pkgs.fish;
   programs.fish.enable = true;

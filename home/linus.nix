@@ -95,6 +95,8 @@ in {
 
       gdtoolkit_4
 
+      inputs.zen-browser.packages.x86_64-linux.specific
+
       # Utilities
       lm_sensors
       solaar
@@ -121,6 +123,8 @@ in {
         wineRelease = "staging";
         mingwSupport = true;
       })
+      winetricks
+      bottles
       # runelite
 
       # Misc
@@ -306,7 +310,6 @@ in {
     enable = true;
     associations.added = {
       "inode/directory" = ["yazi.desktop"];
-      "text/html" = ["firefox.desktop"];
       "application/pdf" = ["org.pwmt.zathura.desktop"];
       "image/*" = ["imv.desktop"];
       "image/png" = ["imv.desktop"];
@@ -315,7 +318,6 @@ in {
     };
     defaultApplications = {
       "inode/directory" = ["yazi.desktop"];
-      "text/html" = ["firefox.desktop"];
       "application/pdf" = ["org.pwmt.zathura.desktop"];
       "image/*" = ["imv.desktop"];
       "image/png" = ["imv.desktop"];
@@ -339,19 +341,6 @@ in {
     };
   };
 
-  home.file.".mozilla/firefox/schnozzlecat.default/chrome/userChrome.css".source = ./userChrome.css;
-  home.file.".mozilla/firefox/schnozzlecat.default/chrome/userContent.css".source = ./userContent.css;
-  home.file.".mozilla/firefox/profiles.ini".text = ''
-    [Profile0]
-    Name=default
-    IsRelative=1
-    Path=schnozzlecat.default
-    Default=1
-
-    [General]
-    StartWithLastProfile=1
-    Version=2
-  '';
   home.file.".ideavimrc".source = ./.ideavimrc;
 
   programs.mangohud = {

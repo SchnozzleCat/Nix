@@ -33,6 +33,13 @@
     };
 
     nix-colors.url = "github:misterio77/nix-colors";
+
+    zen-browser.url = "github:ch4og/zen-browser-flake";
+
+    Hyprspace = {
+      url = "github:KZDKM/Hyprspace";
+      inputs.hyprland.follows = "hyprland";
+    };
   };
 
   outputs = {
