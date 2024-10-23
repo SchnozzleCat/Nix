@@ -247,6 +247,25 @@ in {
           gh copilot explain "$*"
         '';
       })
+      (writeShellApplication {
+        name = "where";
+        text = ''
+          readlink -e "$(which "$1")"
+        '';
+      })
+      (writeShellScriptBin "autobuild-godot" ''
+        FOCUSED=$(hyprctl activewindow | grep Godot)
+
+        while true
+        do
+          NEW_FOCUS=$(hyprctl activewindow | grep Godot)
+          if [[ -n "$NEW_FOCUS" && -z "$FOCUSED" ]]; then
+            dotnet build
+          fi
+          FOCUSED=$NEW_FOCUS
+          sleep .5
+        done
+      '')
     ];
   };
 
