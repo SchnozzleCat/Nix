@@ -36,9 +36,6 @@
   withSpeechd ? true,
   withFontconfig ? true,
   withUdev ? true,
-  withVersion,
-  withCommitHash,
-  withHash,
   deps ? ./deps.nix,
   mono,
   callPackage,
@@ -50,14 +47,14 @@
 assert lib.asserts.assertOneOf "withPrecision" withPrecision ["single" "double"];
   stdenv.mkDerivation rec {
     pname = "godot4-mono-schnozzlecat";
-    version = withVersion;
-    commitHash = withCommitHash;
+    version = "4.3";
+    commitHash = "d3ce10303cd9d27b79483d3613cbd80819fe0ef2";
 
     src = fetchFromGitHub {
       owner = "SchnozzleCat";
       repo = "godot";
       rev = commitHash;
-      hash = withHash;
+      hash = "sha256-w5oqFcNKZsWwS19fV/aDnGDQzHlSFQXWtQjffDE2y3k=";
       fetchSubmodules = true;
     };
 
