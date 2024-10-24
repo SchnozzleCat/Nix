@@ -925,7 +925,7 @@
       {
         mode = "n";
         key = "<leader>j";
-        action = "<CR>lua require('vessel').view_buffers()<CR>";
+        action = "<cmd>lua require('vessel').view_buffers()<cr>";
         options.desc = "Vessel Buffers";
       }
       # Buffers
