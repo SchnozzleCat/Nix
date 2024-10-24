@@ -10,6 +10,7 @@
     # example = prev.example.overrideAttrs (oldAttrs: rec {
     # ...
     # });
+    utillinux = prev.util-linux;
   };
 
   # When applied, the unstable nixpkgs set (declared in the flake inputs) will
