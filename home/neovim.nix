@@ -292,6 +292,16 @@
           sha256 = "sha256-luiklWgajULhCns1qoDGWKanuTd+zeBQmakmhrfqQDc=";
         };
       })
+      (pkgs.vimUtils.buildVimPlugin rec {
+        pname = "beacon.nvim";
+        version = "098ff96c33874339d5e61656f3050dbd587d6bd5";
+        src = pkgs.fetchFromGitHub {
+          owner = "DanilaMihailov";
+          repo = pname;
+          rev = version;
+          sha256 = "sha256-x/79mRkwwT+sNrnf8QqocsaQtM+Rx6BUvVj5Nnv5JDY=";
+        };
+      })
     ];
     highlight = {
       NotifyBackground.bg = "#000000";
@@ -546,6 +556,7 @@
       require("vessel").setup({
         create_commands = true
       })
+      require('beacon').setup()
       require("telescope").load_extension("zf-native")
       require("portal").setup()
       require("grapple").setup()
