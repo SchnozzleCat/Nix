@@ -24,21 +24,6 @@
   };
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
 
-  systemd.services.create-modules-alias-symlink = {
-    description = "Create symlink for kernel modules.alias";
-    after = ["systemd-tmpfiles-setup.service"];
-    wantedBy = ["multi-user.target"];
-    script = let
-      source = "/run/booted-system/kernel-modules/lib/modules/6.7.3/modules.alias";
-      target = "/lib/modules/6.7.3/modules.alias";
-    in ''
-      mkdir -p $(dirname ${target})
-      ln -sfn ${source} ${target}
-    '';
-    serviceConfig.Type = "oneshot";
-    serviceConfig.RemainAfterExit = true;
-  };
-
   # Networking
   networking.hostName = hostname;
   networking.networkmanager.enable = true;
@@ -49,8 +34,6 @@
   # Yubikey
   services.udev.packages = [pkgs.yubikey-personalization];
   services.pcscd.enable = true;
-
-  hardware.keyboard.zsa.enable = true;
 
   programs.gamemode = {
     enable = true;
@@ -67,6 +50,9 @@
     members = ["linus"];
   };
 
+  hardware.keyboard.zsa.enable = true;
+
+  # Allow flashing of ZSA firmware.
   services.udev.extraRules = ''
     SUBSYSTEMS=="usb", ATTRS{idVendor}=="3297", MODE:="0666", SYMLINK+="ignition_dfu"
   '';
@@ -277,26 +263,23 @@
     };
   };
 
-  # This will add each flake input as a registry
-  # To make nix3 commands consistent with your flake
-  nix.registry = (lib.mapAttrs (_: flake: {inherit flake;})) ((lib.filterAttrs (_: lib.isType "flake")) inputs);
+  nix = let
+    flakeInputs = lib.filterAttrs (_: lib.isType "flake") inputs;
+  in {
+    settings = {
+      # Enable flakes and new 'nix' command
+      experimental-features = "nix-command flakes";
+      # Opinionated: disable global registry
+      flake-registry = "";
+      # Workaround for https://github.com/NixOS/nix/issues/9574
+      nix-path = config.nix.nixPath;
+    };
+    # Opinionated: disable channels
+    channel.enable = false;
 
-  # This will additionally add your inputs to the system's legacy channels
-  # Making legacy nix commands consistent as well, awesome!
-  nix.nixPath = ["/etc/nix/path"];
-  environment.etc =
-    lib.mapAttrs'
-    (name: value: {
-      name = "nix/path/${name}";
-      value.source = value.flake;
-    })
-    config.nix.registry;
-
-  nix.settings = {
-    # Enable flakes and new 'nix' command
-    experimental-features = "nix-command flakes";
-    # Deduplicate and optimize nix store
-    auto-optimise-store = true;
+    # Opinionated: make flake registry and nix path match flake inputs
+    registry = lib.mapAttrs (_: flake: {inherit flake;}) flakeInputs;
+    nixPath = lib.mapAttrsToList (n: _: "${n}=flake:${n}") flakeInputs;
   };
 
   # # This setups a SSH server. Very important if you're setting up a headless system.
