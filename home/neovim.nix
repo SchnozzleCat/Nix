@@ -1530,7 +1530,6 @@
           };
         };
       };
-      bufferline.enable = true;
       markdown-preview.enable = true;
       web-devicons.enable = true;
       vim-surround.enable = true;
@@ -1957,7 +1956,7 @@
             end
           '';
           ui = {
-            enable = true;
+            enable = false;
           };
         };
         settings = {
