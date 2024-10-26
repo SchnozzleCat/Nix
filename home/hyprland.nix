@@ -193,6 +193,9 @@ in ''
   bind = $mainMod, y, exec, ${pkgs.wl-mirror}/bin/wl-mirror --scaling cover --fullscreen DP-1
   bind = $mainModShift, y, exec, ${pkgs.wl-mirror}/bin/wl-mirror --fullscreen DP-1
 
+  bind = $mainMod, code:21, exec, ${pkgs.playerctl}/bin/playerctl -a next
+  bind = $mainMod, code:48, exec, ${pkgs.playerctl}/bin/playerctl -a previous
+
   bind = $mainMod, comma, exec, ~/.config/hypr/dec-brightness.sh
   bind = $mainMod, period, exec, ~/.config/hypr/inc-brightness.sh
 
