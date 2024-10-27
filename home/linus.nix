@@ -15,7 +15,12 @@ in {
     ./terminal.nix
   ];
 
-  wayland.windowManager.hyprland.enable = true;
+  wayland.windowManager.hyprland = {
+    enable = true;
+    plugins = [
+      inputs.hyprfocus.packages.${pkgs.system}.hyprfocus
+    ];
+  };
   nixpkgs.config.android_sdk.accept_license = true;
 
   gtk = {
