@@ -645,12 +645,12 @@
       # Grapple
       {
         mode = "n";
-        key = "<leader><leader>h";
+        key = "<leader>k";
         action = "<cmd>Grapple toggle_tags<cr>";
       }
       {
         mode = "n";
-        key = "<leader>ht";
+        key = "<leader>K";
         action = "<cmd>Grapple toggle<cr>";
       }
       {
