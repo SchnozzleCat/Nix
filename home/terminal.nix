@@ -139,7 +139,7 @@ in {
     enable = true;
     interactiveShellInit = ''
       set -g fish_greeting
-      bind -s \ce nvim
+      bind -s \ce neovim
       function yy
         set tmp (mktemp -t "yazi-cwd.XXXXXX")
         yazi $argv --cwd-file="$tmp"
@@ -155,6 +155,7 @@ in {
       pi-hdd = ''sshfs -o sftp_server="/run/wrappers/bin/sudo $(ssh linus@192.168.200.48 -p 6969 'nix eval nixpkgs#openssh --raw')/libexec/sftp-server" -p 6969 linus@192.168.200.48:/mnt/hdd ~/Mounts/hdd'';
       pi-ssd = ''sshfs -o sftp_server="/run/wrappers/bin/sudo $(ssh linus@192.168.200.48 -p 6969 'nix eval nixpkgs#openssh --raw')/libexec/sftp-server" -p 6969 linus@192.168.200.48:/mnt/ssd ~/Mounts/ssd'';
       pi-build = ''NIX_SSHOPTS="-p 6969" nixos-rebuild switch --target-host linus@192.168.200.48 --flake ~/.nixos#schnozzlecat-server --use-remote-sudo'';
+      neovim = ''ANTHROPIC_API_KEY=(cat /home/linus/.nixos/secrets/keys/anthropic.key) nvim'';
     };
     shellAbbrs = {
       os-rebuild = "sudo nixos-rebuild switch --flake ~/.nixos/";

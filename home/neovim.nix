@@ -1548,7 +1548,7 @@
         enable = true;
         package = pkgs.avante-nvim;
         settings = {
-          provider = "copilot";
+          provider = "claude";
           behaviour = {
             auto_suggestions = false;
           };
