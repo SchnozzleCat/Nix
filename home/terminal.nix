@@ -75,10 +75,7 @@ in {
   programs.zellij = {
     enable = true;
     settings = {
-      ui = {
-        pane_frames = {
-        };
-      };
+      pane_frames = false;
       on_force_close = "quit";
       "keybinds clear-defaults=true" = {
         "shared_except \"locked\"" = {
