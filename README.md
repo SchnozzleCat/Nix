@@ -19,4 +19,4 @@
 - git stash
 - git-crypt unlock
 - git stash pop
-- home-manager switch --flake ~/.nixos#<hostname> && os-rebuild && reboot
+- home-manager switch --flake ~/.nixos#<hostname> && os-build && reboot
