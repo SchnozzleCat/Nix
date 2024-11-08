@@ -530,10 +530,9 @@
       vim.api.nvim_create_user_command('Otter',function()
         require("otter").activate()
       end,{})
+      -- See: https://github.com/jmbuhr/otter.nvim/issues/179
+      vim.treesitter.language.register("markdown", { "quarto", "rmd" })
       require('quarto').setup{
-        lspFeatures = {
-          enabled = false,
-        },
         codeRunner = {
           enabled = true,
           default_method = "molten",
@@ -1443,7 +1442,6 @@
           };
         };
         settings.buffers = {
-          set_filetype = true;
         };
       };
       cmp = {
@@ -1578,6 +1576,13 @@
         };
       };
       # copilot-cmp.enable = true;
+      codesnap = {
+        enable = true;
+        settings = {
+          mac_window_bar = false;
+          watermark = "hello";
+        };
+      };
       notify.enable = true;
       nvim-tree.enable = true;
       oil.enable = true;
