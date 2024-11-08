@@ -34,6 +34,8 @@
     powerOnBoot = true;
   };
 
+  services.ollama.enable = true;
+
   boot.blacklistedKernelModules = ["nouveau"];
   hardware.cpu.intel.updateMicrocode = true;
 
