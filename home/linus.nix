@@ -9,6 +9,7 @@
   ...
 }: let
   colors = config.colorScheme.palette;
+  app-browser = "${pkgs.brave}/bin/brave";
 in {
   imports = [
     ./home.nix
@@ -58,6 +59,16 @@ in {
   nixpkgs.config.permittedInsecurePackages = [
     "electron-25.9.0"
   ];
+
+  xdg.desktopEntries.oryx = {
+    name = "Oryx";
+    exec = "${app-browser} --app=https://configure.zsa.io/voyager/layouts/default/latest/0/";
+  };
+
+  xdg.desktopEntries.m8webview = {
+    name = "M8 Web View";
+    exec = "${app-browser} --app=https://derkyjadex.github.io/M8WebDisplay/";
+  };
 
   home = {
     username = "linus";
