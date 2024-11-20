@@ -155,8 +155,8 @@ in {
       neovim = ''ANTHROPIC_API_KEY=(cat /home/linus/.nixos/secrets/keys/anthropic.key) nvim'';
     };
     shellAbbrs = {
-      os-rebuild = "sudo nixos-rebuild switch --flake ~/.nixos/ |& ${pkgs.nix-output-monitor}/bin/nom";
-      home-rebuild = "home-manager switch --flake ~/.nixos/ |& ${pkgs.nix-output-monitor}/bin/nom";
+      os-rebuild = "sudo nixos-rebuild switch --flake ~/.nixos/ &| ${pkgs.nix-output-monitor}/bin/nom";
+      home-rebuild = "home-manager switch --flake ~/.nixos/ &| ${pkgs.nix-output-monitor}/bin/nom";
       ls = "eza -la";
       cat = "bat";
       pi = "ssh linus@192.168.200.48 -p 6969";
