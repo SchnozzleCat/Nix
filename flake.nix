@@ -98,7 +98,6 @@
         modules = [
           # > Our main nixos configuration file <
           ./nixos/configuration.nix
-          lix-module.nixosModules.default
         ];
       };
       schnozzlecat-laptop = nixpkgs.lib.nixosSystem {
