@@ -203,16 +203,6 @@
         };
       })
       (pkgs.vimUtils.buildVimPlugin {
-        pname = "telescope-dap.nvim";
-        version = "main";
-        src = pkgs.fetchFromGitHub {
-          owner = "nvim-telescope";
-          repo = "telescope-dap.nvim";
-          rev = "8c88d9716c91eaef1cdea13cb9390d8ef447dbfe";
-          sha256 = "sha256-P+ioBtupRvB3wcGKm77Tf/51k6tXKxJd176uupeW6v0=";
-        };
-      })
-      (pkgs.vimUtils.buildVimPlugin {
         pname = "hover.nvim";
         version = "main";
         src = pkgs.fetchFromGitHub {
@@ -1336,11 +1326,13 @@
       dressing.enable = true;
       noice = {
         enable = true;
-        presets = {
-          bottom_search = true;
-          command_palette = true;
+        settings = {
+          presets = {
+            bottom_search = true;
+            command_palette = true;
+          };
+          lsp.signature.enabled = false;
         };
-        lsp.signature.enabled = false;
       };
       telescope = {
         enable = true;
@@ -1507,7 +1499,6 @@
           };
         };
       };
-      # cmp-nvim-lsp-signature-help.enable = true;
       copilot-chat = {
         enable = true;
         settings = {
@@ -1544,9 +1535,11 @@
       undotree.enable = true;
       avante = {
         enable = true;
-        package = pkgs.avante-nvim;
         settings = {
-          provider = "claude";
+          provider = "copilot";
+          copilot = {
+            model = "claude-3.5-sonnet";
+          };
           behaviour = {
             auto_suggestions = false;
           };
@@ -1777,7 +1770,7 @@
               request = "launch";
               program.__raw = ''
                 function()
-                  return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+                  return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
                 end
               '';
               cwd = ''''${workspaceFolder}'';
@@ -1807,10 +1800,7 @@
                 function()
                   return require('dap.utils').pick_process({
                     filter = function(proc) 
-                      if string.match(proc.name, "godot") then
-                        vim.print(proc)
-                      end
-                      return string.match(proc.name, "godot4") and string.match(proc.name, "--game")
+                      return string.match(proc.name, "godot4") and string.match(proc.name, "--editor-pid")
                     end
                   })
                 end'';
@@ -2000,7 +1990,6 @@
             gdformat.enable = true;
             isort.enable = true;
             markdownlint.enable = true;
-            prisma_format.enable = true;
             prettier = {
               enable = true;
               disableTsServerFormatter = true;
