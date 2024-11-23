@@ -151,7 +151,6 @@ in {
       warpinator
       vesktop
       jellyfin-media-player
-      jellyfin-mpv-shim
       mpv
       mpv-shim-default-shaders
       # texlive.combined.scheme-full
