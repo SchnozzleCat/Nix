@@ -20,6 +20,7 @@ in {
 
   home.packages = with pkgs; [
     lazygit
+    lazydocker
     ctop
 
     # Terminal
