@@ -26,7 +26,7 @@
           (with pkgs.dotnetCorePackages;
             combinePackages [
               sdk_9_0
-              sdk_6_0
+              sdk_8_0
             ])
         ];
       })
@@ -64,13 +64,12 @@
       vimPlugins.telescope-dap-nvim
       vimPlugins.tabout-nvim
       vimPlugins.friendly-snippets
-      vimPlugins.octo-nvim
       vimPlugins.plenary-nvim
       vimPlugins.vim-dadbod
       vimPlugins.vim-dadbod-ui
       vimPlugins.vim-dadbod-completion
       vimPlugins.quarto-nvim
-      # vimPlugins.render-markdown
+      vimPlugins.grug-far-nvim
 
       (pkgs.vimUtils.buildVimPlugin rec {
         pname = "img-clip.nvim";
@@ -283,13 +282,23 @@
         };
       })
       (pkgs.vimUtils.buildVimPlugin rec {
-        pname = "beacon.nvim";
-        version = "098ff96c33874339d5e61656f3050dbd587d6bd5";
+        pname = "dooing";
+        version = "d2b307668a78c194350c8f03dbf8ef57622a765b";
         src = pkgs.fetchFromGitHub {
-          owner = "DanilaMihailov";
+          owner = "atiladefreitas";
           repo = pname;
           rev = version;
-          sha256 = "sha256-x/79mRkwwT+sNrnf8QqocsaQtM+Rx6BUvVj5Nnv5JDY=";
+          sha256 = "sha256-ZtBBOhwb9HssbOcnyv3TQ6rZ0xEZkSUMa4ckgnoRfzk=";
+        };
+      })
+      (pkgs.vimUtils.buildVimPlugin rec {
+        pname = "smear-cursor.nvim";
+        version = "8646781fd7cd2dfb0fb4bb1479ed85a70b116ff8";
+        src = pkgs.fetchFromGitHub {
+          owner = "sphamba";
+          repo = pname;
+          rev = version;
+          sha256 = "sha256-7CCFRss74mUnp/3dTdugCiN2DzWtZHGgWN5wH0BZDgg=";
         };
       })
     ];
@@ -305,6 +314,8 @@
       TreesitterContext.bg = "none";
       TroubleNormal.bg = "none";
       TroubleNormalNC.bg = "none";
+      "Normal".bg = "none";
+      "NormalFloat".bg = "none";
     };
     extraConfigVim = ''
       autocmd BufWritePre * lua vim.lsp.buf.format()
@@ -426,13 +437,6 @@
           {open = '<', close = '>'}
         }
       })
-      require("octo").setup({
-        mappings = {
-          review_diff = {
-            toggle_viewed = { lhs = "<leader><space><space>", desc = "toggle viewer viewed state"}
-          }
-        }
-      })
       require("tsc").setup()
       local logPath = vim.fn.stdpath "data" .. "/easy-dotnet/build.log"
       local function populate_quickfix_from_file(filename)
@@ -545,10 +549,15 @@
       require("vessel").setup({
         create_commands = true
       })
-      require('beacon').setup()
       require("telescope").load_extension("zf-native")
       require("portal").setup()
       require("grapple").setup()
+      require('smear_cursor').enabled = true
+      require('smear_cursor').distance_stop_animating = 0.7
+      require('dooing').setup({
+        save_path = '/home/linus/.nixos/home/todo.json'
+      })
+      require("grug-far").setup()
     '';
     opts = {
       relativenumber = true;
@@ -570,6 +579,7 @@
     };
     globals = {
       mapleader = " ";
+      maplocalleader = "  ";
     };
     colorschemes.nightfox = {
       enable = true;
@@ -966,16 +976,34 @@
         options.desc = "Find All";
       }
       {
+        mode = "v";
+        key = "<leader>gc";
+        action = "<cmd>Telescope git_bcommits_range <cr>";
+        options.desc = "Git Buffer Commits in Range";
+      }
+      {
+        mode = "n";
+        key = "<leader>fm";
+        action = "<cmd> Telescope lsp_dynamic_workspace_symbols symbols={'Method','Function'} <cr>";
+        options.desc = "Find Methods";
+      }
+      {
         mode = "n";
         key = "<leader>fv";
-        action = "<cmd> Telescope dap variables <cr>";
-        options.desc = "Find DAP Variables";
+        action = "<cmd> Telescope lsp_dynamic_workspace_symbols symbols='Variable' <cr>";
+        options.desc = "Find Variables";
       }
       {
         mode = "n";
         key = "<leader>fu";
         action = "<cmd> Telescope undo <cr>";
         options.desc = "Find Undo";
+      }
+      {
+        mode = "n";
+        key = "<leader>fcc";
+        action = "<cmd> Telescope lsp_dynamic_workspace_symbols symbols='Class' <cr>";
+        options.desc = "Find Classes";
       }
       {
         mode = "n";
@@ -1080,13 +1108,13 @@
       }
       {
         mode = ["n"];
-        key = "<leader>gh";
+        key = "<leader>gH";
         action = "<cmd> DiffviewFileHistory <cr>";
         options.desc = "Git File History";
       }
       {
         mode = ["n"];
-        key = "<leader>gfh";
+        key = "<leader>gh";
         action = "<cmd> DiffviewFileHistory % <cr>";
         options.desc = "Git Current File History";
       }
@@ -1380,12 +1408,6 @@
               desc = "Find Buffers";
             };
           };
-          "<leader>fm" = {
-            action = "marks";
-            options = {
-              desc = "Find Marks";
-            };
-          };
           "<leader>fo" = {
             action = "oldfiles";
             options = {
@@ -1405,6 +1427,13 @@
             };
           };
           "<leader>gc" = {
+            action = "git_bcommits";
+            mode = "n";
+            options = {
+              desc = "Git Buffer Commits";
+            };
+          };
+          "<leader>gC" = {
             action = "git_commits";
             options = {
               desc = "Git Commits";
@@ -1498,6 +1527,9 @@
             "<Tab>" = "cmp.mapping(cmp.mapping.select_next_item(), {'i', 's'})";
           };
         };
+      };
+      octo = {
+        enable = true;
       };
       copilot-chat = {
         enable = true;
