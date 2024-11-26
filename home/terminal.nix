@@ -31,6 +31,7 @@ in {
     cbonsai
     pipes
     pistol
+    nix-output-monitor
 
     ripgrep
     fzf
@@ -138,6 +139,7 @@ in {
     interactiveShellInit = ''
       set -g fish_greeting
       bind -s \ce neovim
+      bind -s \cg lazygit
       function yy
         set tmp (mktemp -t "yazi-cwd.XXXXXX")
         yazi $argv --cwd-file="$tmp"
