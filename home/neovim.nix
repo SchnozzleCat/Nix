@@ -57,7 +57,6 @@
       python-pkgs.kaleido
     ];
     extraPlugins = with pkgs; [
-      vimPlugins.vim-move
       vimPlugins.lazygit-nvim
       vimPlugins.ltex_extra-nvim
       vimPlugins.vim-visual-multi
@@ -68,7 +67,6 @@
       vimPlugins.vim-dadbod
       vimPlugins.vim-dadbod-ui
       vimPlugins.vim-dadbod-completion
-      vimPlugins.quarto-nvim
       vimPlugins.grug-far-nvim
 
       (pkgs.vimUtils.buildVimPlugin rec {
@@ -109,16 +107,6 @@
           repo = "nvim-tetris";
           rev = "d17c99fb527ada98ffb0212ffc87ccda6fd4f7d9";
           sha256 = "sha256-+69Fq5aMMzg9nV05rZxlLTFwQmDyN5/5HmuL2SGu9xQ=";
-        };
-      })
-      (pkgs.vimUtils.buildVimPlugin {
-        pname = "vim-mtg";
-        version = "main";
-        src = pkgs.fetchFromGitHub {
-          owner = "yoshi1123";
-          repo = "vim-mtg";
-          rev = "89de946e8204f18a9c991af026223295f06633ed";
-          sha256 = "sha256-qTUPXmBEHqE99I51cLfLd/3n1k2zDDy6XOoIi6CwQuU=";
         };
       })
       (pkgs.vimUtils.buildVimPlugin {
@@ -222,26 +210,6 @@
         };
       })
       (pkgs.vimUtils.buildVimPlugin rec {
-        pname = "quarto-nvim";
-        version = "v1.0.1";
-        src = pkgs.fetchFromGitHub {
-          owner = "quarto-dev";
-          repo = pname;
-          rev = version;
-          sha256 = "sha256-o9pXTN6XSq+6VywxWxp8pE0TCjzi8Gnn7tM9gCNwtAA=";
-        };
-      })
-      (pkgs.vimUtils.buildVimPlugin rec {
-        pname = "quarto-vim";
-        version = "216247339470794e74a5fda5e5515008d6dc1057";
-        src = pkgs.fetchFromGitHub {
-          owner = "quarto-dev";
-          repo = pname;
-          rev = version;
-          sha256 = "sha256-HTqvZQY6TmVOWzI5N4LEaYfLg1AxWJZ6IjHhwuYQwI8=";
-        };
-      })
-      (pkgs.vimUtils.buildVimPlugin rec {
         pname = "portal.nvim";
         version = "77d9d53fec945bfa407d5fd7120f1b4f117450ed";
         src = pkgs.fetchFromGitHub {
@@ -293,12 +261,22 @@
       })
       (pkgs.vimUtils.buildVimPlugin rec {
         pname = "smear-cursor.nvim";
-        version = "8646781fd7cd2dfb0fb4bb1479ed85a70b116ff8";
+        version = "76e9331f3c4cf2cc0b634d08a2438d1b40d0e424";
         src = pkgs.fetchFromGitHub {
           owner = "sphamba";
           repo = pname;
           rev = version;
-          sha256 = "sha256-7CCFRss74mUnp/3dTdugCiN2DzWtZHGgWN5wH0BZDgg=";
+          sha256 = "sha256-D1DL8gL0MTSlHnXG6+OhQRjPSwx623CVyBfY3zrU4p0=";
+        };
+      })
+      (pkgs.vimUtils.buildVimPlugin rec {
+        pname = "focushere.nvim";
+        version = "28c40c7e3481d6cd9e4c7b8005c36a18b5db7ac6";
+        src = pkgs.fetchFromGitHub {
+          owner = "kelvinauta";
+          repo = pname;
+          rev = version;
+          sha256 = "sha256-2BK8oRj4Ki1aHCOlAz05y3+LMIZcJ2iVUrEdB4UrkNE=";
         };
       })
     ];
@@ -314,8 +292,13 @@
       TreesitterContext.bg = "none";
       TroubleNormal.bg = "none";
       TroubleNormalNC.bg = "none";
-      "Normal".bg = "none";
-      "NormalFloat".bg = "none";
+      MiniFilesNormal.bg = "none";
+      WhichKeyNormal.bg = "none";
+      GrappleNormal.bg = "none";
+      Pmenu.bg = "none";
+      Float.bg = "none";
+      NormalFloat.bg = "none";
+      NotifyBackground.bg = "#000000";
     };
     extraConfigVim = ''
       autocmd BufWritePre * lua vim.lsp.buf.format()
@@ -333,76 +316,6 @@
       let g:VM_maps['Find Subword Under'] = '<C-s>'
     '';
     extraConfigLua = ''
-      require("roslyn").setup({
-        config = {
-          on_attach = _M.lspOnAttach,
-          capabilities = __lspCapabilities(),
-          filetypes = {"cs"},
-          filewatching = true,
-          settings = {
-            ["csharp|inlay_hints"] = {
-                csharp_enable_inlay_hints_for_implicit_object_creation = true,
-                csharp_enable_inlay_hints_for_implicit_variable_types = true,
-                csharp_enable_inlay_hints_for_lambda_parameter_types = true,
-                csharp_enable_inlay_hints_for_types = true,
-                dotnet_enable_inlay_hints_for_indexer_parameters = true,
-                dotnet_enable_inlay_hints_for_literal_parameters = true,
-                dotnet_enable_inlay_hints_for_object_creation_parameters = true,
-                dotnet_enable_inlay_hints_for_other_parameters = true,
-                dotnet_enable_inlay_hints_for_parameters = true,
-                dotnet_suppress_inlay_hints_for_parameters_that_differ_only_by_suffix = true,
-                dotnet_suppress_inlay_hints_for_parameters_that_match_argument_name = true,
-                dotnet_suppress_inlay_hints_for_parameters_that_match_method_intent = true,
-            },
-            ["csharp|background_analysis"] = {
-              dotnet_compiler_diagnostics_scope = "fullSolution"
-            },
-            ["csharp|code_lens"] = {
-              dotnet_enable_references_code_lens = true,
-            },
-          },
-        }
-      })
-
-      vim.keymap.set("n", "<leader>P", function()
-            local clients = vim.lsp.get_clients()
-            for _, value in ipairs(clients) do
-              if value.name == "roslyn" then
-                vim.notify("roslyn client found")
-                value.rpc.request("workspace/diagnostic", { previousResultIds = {} }, function(err, result)
-                  if err ~= nil then
-                    print(vim.inspect(err))
-                  end
-                  if result ~= nil then
-                    local diags = {}
-                    local seen = {}
-                    for _, diag in ipairs(result.items) do
-                      local filepath = diag.uri:gsub("file:///", "")
-                      if #diag.items > 0 then
-                        for _, diag_line in ipairs(diag.items) do
-                          if diag_line.severity == 1 then
-                            local hash = diag_line.message .. diag_line.range.start.line .. diag_line.range.start.character
-                            if seen[hash] == nil then
-                              local s = {
-                                text = diag_line.message,
-                                lnum = diag_line.range.start.line,
-                                col = diag_line.range.start.character,
-                                filename = filepath
-                              }
-                              table.insert(diags, s)
-                              seen[hash] = true
-                            end
-                          end
-                        end
-                      end
-                    end
-                    vim.fn.setqflist(diags)
-                    vim.cmd("copen")
-                  end
-                end)
-              end
-            end
-          end, { noremap = true, silent = true })
 
       require("hover").setup {
         init = function()
@@ -424,6 +337,7 @@
         preview_window = false,
         title = true,
       }
+      require("tsc").setup()
 
       require("tabout").setup({
         ignore_beginning = false;
@@ -437,7 +351,6 @@
           {open = '<', close = '>'}
         }
       })
-      require("tsc").setup()
       local logPath = vim.fn.stdpath "data" .. "/easy-dotnet/build.log"
       local function populate_quickfix_from_file(filename)
         -- Open the file for reading
@@ -516,23 +429,11 @@
       })
       require("workspace-diagnostics").setup()
       require('nvim-dap-repl-highlights').setup()
-      require('telescope').load_extension('dap')
-      vim.g.molten_image_provider = "image.nvim"
-      vim.g.auto_open_output = false
-      vim.g.molten_output_virt_lines = true
-      vim.g.molten_virt_text_output = true
       vim.api.nvim_create_user_command('Otter',function()
         require("otter").activate()
       end,{})
       -- See: https://github.com/jmbuhr/otter.nvim/issues/179
-      vim.treesitter.language.register("markdown", { "quarto", "rmd" })
-      require('quarto').setup{
-        codeRunner = {
-          enabled = true,
-          default_method = "molten",
-          never_run = { "yaml" },
-        },
-      }
+      -- vim.treesitter.language.register("markdown", { "quarto", "rmd" })
       require('img-clip').setup ({
         default = {
           embed_image_as_base64 = false,
@@ -549,15 +450,17 @@
       require("vessel").setup({
         create_commands = true
       })
-      require("telescope").load_extension("zf-native")
       require("portal").setup()
       require("grapple").setup()
-      require('smear_cursor').enabled = true
-      require('smear_cursor').distance_stop_animating = 0.7
+      require("smear_cursor").setup({
+        distance_stop_animating = 0.7,
+        legacy_computing_symbols_support = true,
+      })
       require('dooing').setup({
         save_path = '/home/linus/.nixos/home/todo.json'
       })
       require("grug-far").setup()
+      require("focushere").setup()
     '';
     opts = {
       relativenumber = true;
@@ -640,6 +543,17 @@
         mode = "i";
         key = "<c-l>";
         action = "<right>";
+      }
+      # Focus Here
+      {
+        mode = "v";
+        key = "<leader>zf";
+        action = ":FocusHere<cr>";
+      }
+      {
+        mode = "n";
+        key = "<leader>zf";
+        action = ":FocusClear<cr>";
       }
       # Grapple
       {
@@ -924,12 +838,18 @@
         action = ''<cmd>lua require("yazi").yazi()<cr>'';
         options.desc = "LF";
       }
-      # Oil
+      # Mini Files
       {
         mode = "n";
         key = "<leader>o";
-        action = "<cmd> Oil <cr>";
-        options.desc = "Oil";
+        action = "<cmd>lua MiniFiles.open(vim.api.nvim_buf_get_name(0), false) <cr>";
+        options.desc = "Mini Files";
+      }
+      {
+        mode = "n";
+        key = "<leader>O";
+        action = "<cmd>lua MiniFiles.open(nil, false) <cr>";
+        options.desc = "Mini Files Working Directory";
       }
       # Vessel
       {
@@ -1034,19 +954,6 @@
         key = "<leader>fco";
         action = "<cmd> Telescope lsp_outgoing_calls <cr>";
         options.desc = "Find Outgoing Calls";
-      }
-      # Move
-      {
-        mode = ["n" "v"];
-        key = "<A-j>";
-        action = "<cmd> MoveLine(1) <cr>";
-        options.desc = "Move Down";
-      }
-      {
-        mode = ["n" "v"];
-        key = "<A-k>";
-        action = "<cmd> MoveLine(-1) <cr>";
-        options.desc = "Move Up";
       }
       # Flash
       {
@@ -1352,20 +1259,38 @@
     ];
     plugins = {
       dressing.enable = true;
+      notify.enable = true;
       noice = {
         enable = true;
         settings = {
+          notify.enabled = true;
+          background_colour = "#000000";
           presets = {
             bottom_search = true;
-            command_palette = true;
           };
           lsp.signature.enabled = false;
         };
       };
       telescope = {
         enable = true;
+        luaConfig.post = ''
+          require("telescope").load_extension("zf-native")
+          require('telescope').load_extension('dap')
+        '';
         settings = {
+          layout_strategy = "bottom_pane";
           defaults = {
+            sorting_strategy = "ascending";
+            layout_strategy = "bottom_pane";
+            layout_config = {
+              height = 25;
+            };
+            border = true;
+            borderchars = {
+              prompt = ["─" " " " " " " "─" "─" " " " "];
+              results = [" "];
+              preview = ["─" "│" "─" "│" "╭" "╮" "╯" "╰"];
+            };
             mappings.__raw = ''
               {
                 i = { ["<c-t>"] = require("trouble.sources.telescope").open },
@@ -1441,28 +1366,12 @@
           };
         };
       };
-      # vimtex = {
-      #   enable = true;
-      #   viewMethod = "zathura";
-      # };
-      nvim-autopairs = {
-        enable = true;
-      };
       cmp_luasnip.enable = true;
       toggleterm.enable = true;
       otter = {
         enable = true;
-        package = pkgs.vimUtils.buildVimPlugin rec {
-          pname = "otter.nvim";
-          version = "v2.5.0";
-          src = pkgs.fetchFromGitHub {
-            owner = "jmbuhr";
-            repo = pname;
-            rev = version;
-            sha256 = "sha256-euHwoK2WHLF/hrjLY2P4yGrIbYyBN38FL3q4CKNZmLY=";
-          };
-        };
         settings.buffers = {
+          set_filetype = true;
         };
       };
       cmp = {
@@ -1577,8 +1486,6 @@
           };
         };
       };
-      commentary.enable = true;
-      fugitive.enable = true;
       neogen.enable = true;
       magma-nvim = {
         enable = true;
@@ -1591,7 +1498,6 @@
       floaterm.enable = true;
       copilot-lua = {
         enable = true;
-        # panel.enabled = false;
         suggestion = {
           enabled = true;
           autoTrigger = true;
@@ -1600,7 +1506,6 @@
           };
         };
       };
-      # copilot-cmp.enable = true;
       codesnap = {
         enable = true;
         settings = {
@@ -1608,11 +1513,41 @@
           watermark = "hello";
         };
       };
-      notify.enable = true;
       nvim-tree.enable = true;
-      oil.enable = true;
+      snacks = {
+        enable = true;
+        settings = {
+          bigfile = {
+            enabled = true;
+          };
+        };
+      };
+      mini = {
+        enable = true;
+        modules = {
+          ai = {};
+          files = {};
+          extra = {};
+          comment = {};
+          move = {};
+          operators = {};
+          pairs = {
+            mappings = {
+              "<" = {
+                action = "open";
+                pair = "<>";
+                neigh_pattern = "[^\\].";
+              };
+              ">" = {
+                action = "close";
+                pair = "<>";
+                neigh_pattern = "[^\\].";
+              };
+            };
+          };
+        };
+      };
       nvim-colorizer.enable = true;
-      sniprun.enable = true;
       flash.enable = true;
       which-key.enable = true;
       gitsigns.enable = true;
@@ -1624,15 +1559,6 @@
             {
               {
                 "grapple"
-              }
-            }
-          '';
-          lualine_x.__raw = ''
-            {
-              {
-                require("noice").api.statusline.mode.get,
-                cond = require("noice").api.statusline.mode.has,
-                color = {fg = "#ff9e64"}
               }
             }
           '';
@@ -1698,11 +1624,21 @@
           };
         };
       };
-      fidget.enable = true;
+      # fidget.enable = true;
       render-markdown = {
         enable = true;
         settings = {
           file_types = ["markdown" "Avante" "quarto"];
+        };
+      };
+      quarto = {
+        enable = true;
+        settings = {
+          codeRunner = {
+            enabled = true;
+            default_method = "molten";
+            never_run = ["yaml"];
+          };
         };
       };
       neotest = {
@@ -1832,7 +1768,17 @@
                 function()
                   return require('dap.utils').pick_process({
                     filter = function(proc) 
-                      return string.match(proc.name, "godot4") and string.match(proc.name, "--editor-pid")
+                      local is_match = string.find(proc.name, "godot4", 1, true) and string.find(proc.name, "editor-pid", 1, true)
+                      if is_match then
+                        if string.find(proc.name, "server", 1, true) then
+                          proc.name = "Godot Server"
+                        end
+                        if string.find(proc.name, "client", 1, true) then
+                          proc.name = "Godot Client"
+                        end
+                      end
+
+                      return is_match
                     end
                   })
                 end'';
@@ -1960,7 +1906,6 @@
         settings.server.on_attach = ''__lspOnAttach'';
       };
       cmp-dap.enable = true;
-
       obsidian = {
         enable = true;
         settings = {
@@ -2036,6 +1981,36 @@
         postConfig = ''
           _G["__lspCapabilities"] = __lspCapabilities
           _G["__lspOnAttach"] = __lspOnAttach
+          require("roslyn").setup({
+            config = {
+              on_attach = _M.lspOnAttach,
+              capabilities = __lspCapabilities(),
+              filetypes = {"cs"},
+              filewatching = true,
+              settings = {
+                ["csharp|inlay_hints"] = {
+                    csharp_enable_inlay_hints_for_implicit_object_creation = true,
+                    csharp_enable_inlay_hints_for_implicit_variable_types = true,
+                    csharp_enable_inlay_hints_for_lambda_parameter_types = true,
+                    csharp_enable_inlay_hints_for_types = true,
+                    dotnet_enable_inlay_hints_for_indexer_parameters = true,
+                    dotnet_enable_inlay_hints_for_literal_parameters = true,
+                    dotnet_enable_inlay_hints_for_object_creation_parameters = true,
+                    dotnet_enable_inlay_hints_for_other_parameters = true,
+                    dotnet_enable_inlay_hints_for_parameters = true,
+                    dotnet_suppress_inlay_hints_for_parameters_that_differ_only_by_suffix = true,
+                    dotnet_suppress_inlay_hints_for_parameters_that_match_argument_name = true,
+                    dotnet_suppress_inlay_hints_for_parameters_that_match_method_intent = true,
+                },
+                ["csharp|background_analysis"] = {
+                  dotnet_compiler_diagnostics_scope = "fullSolution"
+                },
+                ["csharp|code_lens"] = {
+                  dotnet_enable_references_code_lens = true,
+                },
+              },
+            }
+          })
         '';
         onAttach = ''
           client.server_capabilities.documentFormattingProvider = false
@@ -2106,39 +2081,26 @@
               checkFrequency = "save";
             };
           };
+          dockerls.enable = true;
           digestif.enable = true;
           nil_ls.enable = true;
-          # omnisharp.enable = true;
           clangd.enable = true;
           gdscript = {
+            enable = true;
+            package = null;
+          };
+          gdshader_lsp = {
             enable = true;
             package = null;
           };
           svelte.enable = true;
           tailwindcss.enable = true;
           lua_ls.enable = true;
-          pyright.enable = true;
+          basedpyright.enable = true;
           cssls.enable = true;
           html.enable = true;
           java_language_server.enable = true;
           phpactor.enable = true;
-          ts_ls = {
-            enable = true;
-            extraOptions = {
-              init_options = {
-                preferences = {
-                  includeInlayParameterNameHints = "all";
-                  includeInlayParameterNameHintsWhenArgumentMatchesName = true;
-                  includeInlayFunctionParameterTypeHints = true;
-                  includeInlayVariableTypeHints = true;
-                  includeInlayPropertyDeclarationTypeHints = true;
-                  includeInlayFunctionLikeReturnTypeHints = true;
-                  includeInlayEnumMemberValueHints = true;
-                  importModuleSpecifierPreference = "non-relative";
-                };
-              };
-            };
-          };
           eslint.enable = true;
         };
       };
@@ -2151,6 +2113,12 @@
             "${pkgs.vscode-extensions.vscjava.vscode-java-debug}/share/vscode/extensions/vscjava.vscode-java-debug/server/com.microsoft.java.debug.plugin-0.50.0.jar"
           ];
         };
+      };
+      todo-comments = {
+        enable = true;
+      };
+      typescript-tools = {
+        enable = true;
       };
       treesitter = {
         settings = {
