@@ -81,26 +81,26 @@ in {
       on_force_close = "quit";
       "keybinds clear-defaults=true" = {
         "shared_except \"locked\"" = {
-          "bind \"Alt n\"" = {NewPane = {};};
-          "bind \"Alt t\"" = {NewTab = {};};
-          "bind \"Alt m\"" = {ToggleFloatingPanes = {};};
-          "bind \"Alt j\"" = {"MoveFocus \"Down\"" = {};};
-          "bind \"Alt k\"" = {"MoveFocus \"Up\"" = {};};
-          "bind \"Alt h\"" = {"MoveFocus \"Left\"" = {};};
-          "bind \"Alt l\"" = {"MoveFocus \"Right\"" = {};};
-          "bind \"Alt J\"" = {"Resize \"Increase Down\"" = {};};
-          "bind \"Alt K\"" = {"Resize \"Increase Up\"" = {};};
-          "bind \"Alt H\"" = {"Resize \"Increase Left\"" = {};};
-          "bind \"Alt L\"" = {"Resize \"Increase Right\"" = {};};
-          "bind \"Alt f\"" = {ToggleFocusFullscreen = {};};
-          "bind \"Alt u\"" = {GoToPreviousTab = {};};
-          "bind \"Alt i\"" = {GoToNextTab = {};};
-          "bind \"Alt d\"" = {Detach = {};};
-          "bind \"Alt r\"" = {
+          "bind \"Ctrl Alt n\"" = {NewPane = {};};
+          "bind \"Ctrl Alt t\"" = {NewTab = {};};
+          "bind \"Ctrl Alt m\"" = {ToggleFloatingPanes = {};};
+          "bind \"Ctrl Alt j\"" = {"MoveFocus \"Down\"" = {};};
+          "bind \"Ctrl Alt k\"" = {"MoveFocus \"Up\"" = {};};
+          "bind \"Ctrl Alt h\"" = {"MoveFocus \"Left\"" = {};};
+          "bind \"Ctrl Alt l\"" = {"MoveFocus \"Right\"" = {};};
+          "bind \"Ctrl Alt J\"" = {"Resize \"Increase Down\"" = {};};
+          "bind \"Ctrl Alt K\"" = {"Resize \"Increase Up\"" = {};};
+          "bind \"Ctrl Alt H\"" = {"Resize \"Increase Left\"" = {};};
+          "bind \"Ctrl Alt L\"" = {"Resize \"Increase Right\"" = {};};
+          "bind \"Ctrl Alt f\"" = {ToggleFocusFullscreen = {};};
+          "bind \"Ctrl Alt u\"" = {GoToPreviousTab = {};};
+          "bind \"Ctrl Alt i\"" = {GoToNextTab = {};};
+          "bind \"Ctrl Alt d\"" = {Detach = {};};
+          "bind \"Ctrl Alt r\"" = {
             "SwitchToMode \"RenameTab\"" = {};
             "TabNameInput 0" = {};
           };
-          "bind \"Alt y\"" = {
+          "bind \"Ctrl Alt y\"" = {
             "LaunchOrFocusPlugin \"zellij:session-manager\"" = {
               floating = true;
               move_to_focused_tab = true;
