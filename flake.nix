@@ -18,6 +18,16 @@
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
+    zjstatus = {
+      url = "github:dj95/zjstatus";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    spicetify-nix = {
+      url = "github:Gerg-L/spicetify-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     hyprland = {
       url = "github:hyprwm/Hyprland";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -65,6 +75,7 @@
     nix-colors,
     nix-citizen,
     lix-module,
+    zjstatus,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -111,7 +122,6 @@
         modules = [
           # > Our main nixos configuration file <
           ./nixos/configuration.nix
-          lix-module.nixosModules.default
         ];
       };
       schnozzlecat-server = nixpkgs.lib.nixosSystem {
@@ -122,7 +132,6 @@
         modules = [
           # > Our main nixos configuration file <
           ./nixos/schnozzlecat-server.nix
-          lix-module.nixosModules.default
         ];
       };
     };
@@ -143,6 +152,7 @@
           nixvim.homeManagerModules.nixvim
           self.homeManagerModules.sunshine
           self.homeManagerModules.godot4-mono-schnozzlecat
+          inputs.spicetify-nix.homeManagerModules.default
         ];
       };
       "linus@schnozzlecat-laptop" = home-manager.lib.homeManagerConfiguration {
@@ -156,6 +166,7 @@
           nix-colors.homeManagerModules.default
           nixvim.homeManagerModules.nixvim
           self.homeManagerModules.godot4-mono-schnozzlecat
+          inputs.spicetify-nix.homeManagerModules.default
         ];
       };
       "linus@schnozzlecat-server" = home-manager.lib.homeManagerConfiguration {

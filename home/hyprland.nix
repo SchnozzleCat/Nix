@@ -105,8 +105,8 @@ in ''
       gaps_in = 4
       gaps_out = 5
       border_size = 1
-      col.active_border = rgba(5d8fb7ee) rgba(cf8c63ee) 45deg
-      col.inactive_border = rgba(595959ee)
+      col.active_border = rgba(94E2D5ee)
+      col.inactive_border = rgba(1E1E2Eee)
 
       layout = dwindle
   }
@@ -122,7 +122,7 @@ in ''
 
       blur {
           enabled = true
-          size = 7
+          size = 8
           passes = 3
           special = true
           xray = true
@@ -178,7 +178,7 @@ in ''
   # See https://wiki.hyprland.org/Configuring/Keywords/ for more
 
   # Example binds, see https://wiki.hyprland.org/Configuring/Binds/ for more
-  bind = $mainMod, a, exec, foot -- zellij -l compact
+  bind = $mainMod, a, exec, foot -- zellij
   bind = $mainModShift, a, exec, foot
   bind = $mainMod, n, exec, [float;size 60% 60%;center] foot ${pkgs.master.yazi}/bin/yazi
   bind = $mainMod, z, exec, [float;size 60% 60%;center] foot ${pkgs.master.yazi}/bin/yazi

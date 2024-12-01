@@ -151,7 +151,6 @@ in {
       obsidian
       helvum
       easyeffects
-      spotify
       warpinator
       vesktop
       jellyfin-media-player
@@ -292,6 +291,16 @@ in {
     ];
   };
 
+  programs.spicetify = let
+    spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
+  in {
+    enable = true;
+    enabledExtensions = with spicePkgs.extensions; [
+      adblock
+    ];
+    theme = spicePkgs.themes.text;
+  };
+
   programs.godot4-mono-schnozzlecat = {
     enable = true;
     version = "4.3";
@@ -386,7 +395,7 @@ in {
     plugins = ["scratchpads", "expose", "magnify"]
 
     [scratchpads.term]
-    command = "foot -a foot-float -- zellij -l compact"
+    command = "foot -a foot-float -- zellij"
     animation = "fromBottom"
     margin = 50
 
