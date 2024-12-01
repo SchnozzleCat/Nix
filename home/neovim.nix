@@ -62,7 +62,6 @@
       vimPlugins.vim-visual-multi
       vimPlugins.telescope-dap-nvim
       vimPlugins.tabout-nvim
-      vimPlugins.friendly-snippets
       vimPlugins.plenary-nvim
       vimPlugins.vim-dadbod
       vimPlugins.vim-dadbod-ui
@@ -281,7 +280,6 @@
       })
     ];
     highlight = {
-      NotifyBackground.bg = "#000000";
       "@type.qualifier.c_sharp".fg = "#7AA8fF";
       "@type.c_sharp".fg = "#98cb6C";
       "@struct_declaration".fg = "#aaff9C";
@@ -295,7 +293,10 @@
       MiniFilesNormal.bg = "none";
       WhichKeyNormal.bg = "none";
       GrappleNormal.bg = "none";
-      Pmenu.bg = "none";
+      Pmenu = {
+        fg = "#61AAC3";
+        bg = "none";
+      };
       Float.bg = "none";
       NormalFloat.bg = "none";
       NotifyBackground.bg = "#000000";
@@ -484,13 +485,11 @@
       mapleader = " ";
       maplocalleader = "  ";
     };
-    colorschemes.nightfox = {
+    colorschemes.catppuccin = {
       enable = true;
-      flavor = "duskfox";
       settings = {
-        options = {
-          transparent = true;
-        };
+        transparent_background = true;
+        flavor = "mocha";
       };
     };
     keymaps = [
@@ -743,6 +742,12 @@
         action = ''<cmd>Dotnet build<CR>'';
         options.desc = "Dotnet Build";
       }
+      {
+        mode = "n";
+        key = "<leader>P";
+        action = ''<cmd>Dotnet run<CR>'';
+        options.desc = "Dotnet Run";
+      }
       # DAP
       {
         mode = "n";
@@ -874,19 +879,6 @@
         key = "<leader>X";
         action = "<cmd> bd! <cr>";
         options.desc = "Close Buffer";
-      }
-      # Bufferline
-      {
-        mode = "n";
-        key = "<c-Tab>";
-        action = "<cmd> BufferLineCycleNext <cr>";
-        options.desc = "Next Buffer";
-      }
-      {
-        mode = "n";
-        key = "<s-Tab>";
-        action = "<cmd> BufferLineCyclePrev <cr>";
-        options.desc = "Previous Buffer";
       }
       # Telescope
       {
@@ -1258,6 +1250,7 @@
       }
     ];
     plugins = {
+      transparent.enable = true;
       dressing.enable = true;
       notify.enable = true;
       noice = {
@@ -1307,6 +1300,24 @@
             action = "find_files";
             options = {
               desc = "Find Files";
+            };
+          };
+          "<leader>fdv" = {
+            action = "dap variables";
+            options = {
+              desc = "Find DAP Variables";
+            };
+          };
+          "<leader>fdb" = {
+            action = "dap list_breakpoints";
+            options = {
+              desc = "Find DAP Breakpoints";
+            };
+          };
+          "<leader>fdf" = {
+            action = "dap frames";
+            options = {
+              desc = "Find DAP Frames";
             };
           };
           "<leader>fw" = {
@@ -1366,7 +1377,6 @@
           };
         };
       };
-      cmp_luasnip.enable = true;
       toggleterm.enable = true;
       otter = {
         enable = true;
@@ -1374,11 +1384,13 @@
           set_filetype = true;
         };
       };
+      cmp_luasnip.enable = true;
+      cmp-dap.enable = true;
       cmp = {
         enable = true;
         settings = {
-          window.completion.border = ["╭" "╌" "╮" "╎" "╯" "╌" "╰" "╎"];
-          window.documentation.border = ["╭" "╌" "╮" "╎" "╯" "╌" "╰" "╎"];
+          window.completion.border = ["╭" "─" "╮" "│" "╯" "─" "╰" "│"];
+          window.documentation.border = ["╭" "─" "╮" "│" "╯" "─" "╰" "│"];
           formatting = {
             format = ''
               function(entry, vim_item)
@@ -1390,8 +1402,12 @@
                    Enum = "",
                    Class = "",
                    Struct = "",
-                   Variable = "",
-                   Keyword = "󰄛"
+                   Variable = "",
+                   Keyword = "󰄛",
+                   Field = "",
+                   Property = "",
+                   Snippet = "",
+                   Value = "",
                  }
                  local lspkind_ok, lspkind = pcall(require, "lspkind")
                  if not lspkind_ok then
@@ -1405,19 +1421,15 @@
           };
           sources = [
             {
+              name = "luasnip";
+              groupIndex = 2;
+            }
+            {
               name = "nvim_lsp";
               groupIndex = 2;
             }
             {
               name = "path";
-              groupIndex = 2;
-            }
-            {
-              name = "luasnip";
-              groupIndex = 2;
-            }
-            {
-              name = "vim-dadbod-completion";
               groupIndex = 2;
             }
           ];
@@ -1431,9 +1443,30 @@
             "<C-d>" = "cmp.mapping.scroll_docs(-4)";
             "<C-e>" = "cmp.mapping.close()";
             "<C-f>" = "cmp.mapping.scroll_docs(4)";
-            "<CR>" = "cmp.mapping.confirm({ select = true })";
-            "<S-Tab>" = "cmp.mapping(cmp.mapping.select_prev_item(), {'i', 's'})";
-            "<Tab>" = "cmp.mapping(cmp.mapping.select_next_item(), {'i', 's'})";
+            "<CR>" = "cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Replace })";
+            "<S-Tab>" = ''
+              function(fallback)
+                if cmp.visible() then
+                    cmp.select_prev_item()
+                elseif luasnip.jumpable(-1) then
+                    luasnip.jump(-1)
+                else
+                    fallback()
+                end
+              end
+            '';
+            "<Tab>" = ''
+              function(fallback)
+                  luasnip = require("luasnip")
+                  if cmp.visible() then
+                      cmp.select_next_item()
+                  elseif luasnip.expand_or_locally_jumpable() then
+                      luasnip.expand_or_jump()
+                  else
+                      fallback()
+                  end
+              end
+            '';
           };
         };
       };
@@ -1493,6 +1526,7 @@
       };
       lspsaga = {
         enable = true;
+        symbolInWinbar.enable = false;
         lightbulb.enable = false;
       };
       floaterm.enable = true;
@@ -1526,11 +1560,20 @@
         enable = true;
         modules = {
           ai = {};
-          files = {};
+          files = {
+            mapping = {
+              go_in_plus = "<CR>";
+            };
+          };
           extra = {};
+          icons = {};
           comment = {};
           move = {};
-          operators = {};
+          operators = {
+            replace = {
+              prefix = "gp";
+            };
+          };
           pairs = {
             mappings = {
               "<" = {
@@ -1554,14 +1597,73 @@
       nvim-lightbulb.enable = true;
       lualine = {
         enable = true;
-        settings.sections = {
-          lualine_b.__raw = ''
-            {
+        settings = {
+          tabline = {
+            lualine_a = [
               {
-                "grapple"
+                __raw = ''
+                  {
+                    function()
+                      local statusline = "󱐋"
+                      for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+                          if vim.api.nvim_buf_get_option(buf, 'modified') then
+                              local filename = vim.api.nvim_buf_get_name(buf):match("^.+/(.+)$")
+                              local icon = MiniIcons.get("file", filename)
+                              statusline = string.format("%s %s %s", statusline, icon, filename)
+                          end
+                      end
+                      return statusline
+                    end
+                  }
+                '';
               }
-            }
-          '';
+            ];
+            lualine_b = [""];
+            lualine_c = [""];
+            lualine_x = [""];
+            lualine_y = [""];
+            lualine_z = [
+              "filename"
+            ];
+          };
+          sections = {
+            lualine_a = [
+              "branch"
+            ];
+            lualine_b = [
+              {
+                __raw = ''
+                  {
+                    function()
+                      local on = {
+                       "󰎤", "󰎧", "󰎪","󰎭","󰎱","󰎳", "󰎶", "󰎹"
+                      }
+                      local off = {
+                       "󰎦", "󰎩", "󰎬", "󰎮", "󰎰","󰎵", "󰎸", "󰎻"
+                      }
+                      local grapple = require("grapple")
+                      local tags = grapple.tags()
+                      local current = grapple.find({ buffer = 0 })
+
+                      local statusline = ""
+                      for i, tag in ipairs(tags) do
+                        local filename = tag.path:match("^.+/(.+)$")
+                        local icon = MiniIcons.get("file", filename)
+                        if current and current.path == tag.path then
+                          statusline = string.format("%s %s 󰜴 %s %s", statusline, on[i], icon, filename)
+                        else
+                          statusline = string.format("%s %s 󰜴 %s %s", statusline, off[i], icon, filename)
+                        end
+                      end
+                      return statusline
+                    end
+                  }
+                '';
+              }
+            ];
+            lualine_c = [""];
+            lualine_x = [""];
+          };
         };
       };
       alpha = {
@@ -1785,58 +1887,12 @@
             }
             {
               type = "coreclr";
-              name = "launch - netcoredbg";
+              name = "Launch DLL";
               request = "launch";
               program.__raw = ''
                 function()
                   return vim.fn.input('Path to dll', vim.fn.getcwd() .. '/bin/Debug/', 'file')
                 end'';
-            }
-            {
-              type = "coreclr";
-              name = "launch - netcoredbg";
-              request = "launch";
-              program.__raw = ''
-                function()
-                    local cwd = vim.fn.getcwd()
-                    local debugPath = cwd .. '/bin/Debug/'
-                    local highestVersionFolder = ""
-                    local highestVersion = 0
-
-                    -- Scan the directory for .NET version folders using ipairs
-                    for _, folder in ipairs(vim.fn.readdir(debugPath)) do
-                        -- Adjusted pattern matching to handle missing minor or patch versions
-                        local major, minor, patch = string.match(folder, "net(%d+)%.*(%d*)%.*(%d*)")
-                        major, minor, patch = tonumber(major), tonumber(minor) or 0, tonumber(patch) or 0
-
-                        if major then
-                            local version = major * 10000 + minor * 100 + patch
-                            if version > highestVersion then
-                                highestVersion = version
-                                highestVersionFolder = folder
-                            end
-                        end
-                    end
-
-                    if highestVersionFolder == "" then
-                        error("No .NET version folder found in " .. debugPath)
-                    end
-
-                    return debugPath .. highestVersionFolder .. '/csharp.dll'
-                end
-              '';
-            }
-            {
-              name = "Godot";
-              request = "launch";
-              type = "coreclr";
-              program.__raw = ''
-                function()
-                  local path = '/home/linus/.nix-profile/bin/godot4-mono-schnozzlecat'
-                  vim.notify(path)
-                  return path
-                end
-              '';
             }
             {
               type = "coreclr";
@@ -1905,7 +1961,6 @@
         enable = true;
         settings.server.on_attach = ''__lspOnAttach'';
       };
-      cmp-dap.enable = true;
       obsidian = {
         enable = true;
         settings = {
@@ -1942,13 +1997,12 @@
       };
       luasnip = {
         enable = true;
-        fromVscode = [
-          {
-            # paths = ./friendly-snippets;
-            # include = ["python"];
-          }
-        ];
+        settings = {
+          region_check_events = "InsertEnter";
+          delete_check_events = "InsertLeave";
+        };
       };
+      friendly-snippets.enable = true;
       diffview.enable = true;
       lsp-format.enable = true;
       none-ls = {
