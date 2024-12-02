@@ -1561,7 +1561,7 @@
         modules = {
           ai = {};
           files = {
-            mapping = {
+            mappings = {
               go_in_plus = "<CR>";
             };
           };
