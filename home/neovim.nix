@@ -34,251 +34,190 @@
     extraLuaPackages = ps: [
       pkgs.luajitPackages.magick
     ];
-    extraPython3Packages = python-pkgs: [
-      python-pkgs.pytest
-      python-pkgs.python-dotenv
-      python-pkgs.pynvim
-      python-pkgs.prompt-toolkit
-      python-pkgs.requests
-      python-pkgs.jupyter_client
-      python-pkgs.ipython
-      python-pkgs.cairosvg
-      python-pkgs.pnglatex
-      python-pkgs.plotly
-      python-pkgs.pyperclip
-      python-pkgs.nbformat
-      python-pkgs.pillow
-      python-pkgs.pandas
-      python-pkgs.numpy
-      python-pkgs.matplotlib
-      python-pkgs.packaging
-      python-pkgs.jupyter
-      python-pkgs.ipykernel
-      python-pkgs.kaleido
-    ];
-    extraPlugins = with pkgs; [
-      vimPlugins.lazygit-nvim
-      vimPlugins.ltex_extra-nvim
-      vimPlugins.vim-visual-multi
-      vimPlugins.telescope-dap-nvim
-      vimPlugins.tabout-nvim
-      vimPlugins.plenary-nvim
-      vimPlugins.vim-dadbod
-      vimPlugins.vim-dadbod-ui
-      vimPlugins.vim-dadbod-completion
-      vimPlugins.grug-far-nvim
-
-      (pkgs.vimUtils.buildVimPlugin rec {
-        pname = "img-clip.nvim";
-        version = "28a32d811d69042f4fa5c3d5fa35571df2bc1623";
-        src = pkgs.fetchFromGitHub {
-          owner = "HakonHarnes";
-          repo = pname;
-          rev = version;
-          sha256 = "sha256-TTfRow1rrRZ3+5YPeYAQc+2fsb42wUxTMEr6kfUiKXo=";
-        };
-      })
-      (pkgs.vimUtils.buildVimPlugin rec {
-        pname = "roslyn.nvim";
-        version = "ec4d74f55377954fb12ea038253f64db8596a741";
-        src = pkgs.fetchFromGitHub {
-          owner = "seblj";
-          repo = pname;
-          rev = version;
-          sha256 = "sha256-7Nlwwu15/Ax3FpgG4/oPG4CdZfmUDK7xVv0dx+PZT1o=";
-        };
-      })
-      (pkgs.vimUtils.buildVimPlugin {
-        pname = "tsc-nvim";
-        version = "main";
-        src = pkgs.fetchFromGitHub {
-          owner = "dmmulroy";
-          repo = "tsc.nvim";
-          rev = "c37d7b3ed954e4db13814f0ed7aa2a83b2b7e9dd";
-          sha256 = "sha256-ifJXtYCA04lt0z+JDWSesCPBn6OLpqnzJarK+wuo9m8=";
-        };
-      })
-      (pkgs.vimUtils.buildVimPlugin {
-        pname = "tetris-nvim";
-        version = "main";
-        src = pkgs.fetchFromGitHub {
-          owner = "alec-gibson";
-          repo = "nvim-tetris";
-          rev = "d17c99fb527ada98ffb0212ffc87ccda6fd4f7d9";
-          sha256 = "sha256-+69Fq5aMMzg9nV05rZxlLTFwQmDyN5/5HmuL2SGu9xQ=";
-        };
-      })
-      (pkgs.vimUtils.buildVimPlugin {
-        pname = "cellular-nvim";
-        version = "main";
-        src = pkgs.fetchFromGitHub {
-          owner = "Eandrju";
-          repo = "cellular-automaton.nvim";
-          rev = "b7d056dab963b5d3f2c560d92937cb51db61cb5b";
-          sha256 = "sha256-szbd6m7hH7NFI0UzjWF83xkpSJeUWCbn9c+O8F8S/Fg=";
-        };
-      })
-      (pkgs.vimUtils.buildVimPlugin {
-        pname = "nerdy.nvim";
-        version = "main";
-        src = pkgs.fetchFromGitHub {
-          owner = "2KAbhishek";
-          repo = "nerdy.nvim";
-          rev = "b467d6609b78d6a5f1e12cbc08fcc1ac87af20f5";
-          sha256 = "sha256-k5ZmhUHGHlFuGWiviEYeHGCbXLZHY61pUnvpZgSJhPs=";
-        };
-      })
-      (pkgs.vimUtils.buildVimPlugin {
-        pname = "pantran.nvim";
-        version = "main";
-        src = pkgs.fetchFromGitHub {
-          owner = "potamides";
-          repo = "pantran.nvim";
-          rev = "250b1d8e81f83e6aff061f4c75db008c684f5971";
-          sha256 = "sha256-Dtp/bIK+FA2x09xWTwIW24fY0oT+rV202YiVUwBKlpk=";
-        };
-      })
-      (pkgs.vimUtils.buildVimPlugin {
-        pname = "sunglasses.nvim";
-        version = "main";
-        src = pkgs.fetchFromGitHub {
-          owner = "miversen33";
-          repo = "sunglasses.nvim";
-          rev = "11896b982f39743b169bfeac9a034040bf19a2eb";
-          sha256 = "sha256-PK/9yiHBg1PN8m8hc73buwHtXlGr8b6ZqnNhlAGsusE=";
-        };
-      })
-      (pkgs.vimUtils.buildVimPlugin {
-        pname = "yazi.nvim";
-        version = "main";
-        src = pkgs.fetchFromGitHub {
-          owner = "mikavilpas";
-          repo = "yazi.nvim";
-          rev = "e239f048b8fa00e0c04d8694296855b66d2770b0";
-          sha256 = "sha256-3Jx5goTfYaicljTiNCwOlw4mbDZQQ92Pql7TieqQVzY=";
-        };
-      })
-      (pkgs.vimUtils.buildVimPlugin {
-        pname = "easy-dotnet.nvim";
-        version = "main";
-        src = pkgs.fetchFromGitHub {
-          owner = "GustavEikaas";
-          repo = "easy-dotnet.nvim";
-          rev = "db189911961d1c0644af5c5dfd5209d9869e75f7";
-          sha256 = "sha256-sm9++CBRJyzz8hWqrlMEMnIN4/vuTyOG7GBeOUCNT6A=";
-        };
-      })
-      (pkgs.vimUtils.buildVimPlugin {
-        pname = "workspace-diagnostics.nvim";
-        version = "main";
-        src = pkgs.fetchFromGitHub {
-          owner = "artemave";
-          repo = "workspace-diagnostics.nvim";
-          rev = "29ed948a84076e9bed63ce298b5cc5264b72b341";
-          sha256 = "sha256-i+gyx6iThmBgOoscZjhhL7HxciSwV2jsHDOo7mYDSKA=";
-        };
-      })
-      (pkgs.vimUtils.buildVimPlugin {
-        pname = "nvim-dap-repl-highlights";
-        version = "main";
-        src = pkgs.fetchFromGitHub {
-          owner = "LiadOz";
-          repo = "nvim-dap-repl-highlights";
-          rev = "a7512fc0a0de0c0be8d58983939856dda6f72451";
-          sha256 = "sha256-HfIP1ZfD85l5V+Sh75CJRTQQ+HwmeAvFcjkdu8lpd4o=";
-        };
-      })
-      (pkgs.vimUtils.buildVimPlugin {
-        pname = "hover.nvim";
-        version = "main";
-        src = pkgs.fetchFromGitHub {
-          owner = "lewis6991";
-          repo = "hover.nvim";
-          rev = "4339cbbcb572b1934c53dcb66ad4bf6a0abb7918";
-          sha256 = "sha256-Q1k4ddyMlPSp2rX5CjxS70JJmRDbBHCowlu2CTuq0No=";
-        };
-      })
-      (pkgs.vimUtils.buildVimPlugin rec {
-        pname = "lsp-overloads.nvim";
-        version = "v1.5.0";
-        src = pkgs.fetchFromGitHub {
-          owner = "Issafalcon";
-          repo = "lsp-overloads.nvim";
-          rev = version;
-          sha256 = "sha256-6X1NC7ShT5eTpFQDUmDnsKLZV68Zwmx/NhypjjV3xZw=";
-        };
-      })
-      (pkgs.vimUtils.buildVimPlugin rec {
-        pname = "portal.nvim";
-        version = "77d9d53fec945bfa407d5fd7120f1b4f117450ed";
-        src = pkgs.fetchFromGitHub {
-          owner = "cbochs";
-          repo = pname;
-          rev = version;
-          sha256 = "sha256-QCdyJ5in3Dm4IVlBUtbGWRZxl87gKHhRiGmZcIGEHm0=";
-        };
-      })
-      (pkgs.vimUtils.buildVimPlugin rec {
-        pname = "grapple.nvim";
-        version = "b41ddfc1c39f87f3d1799b99c2f0f1daa524c5f7";
-        src = pkgs.fetchFromGitHub {
-          owner = "cbochs";
-          repo = pname;
-          rev = version;
-          sha256 = "sha256-Dz60583Qic2TqO3BPSHME4Q7CiweB1gQCdFNtjNoN3U=";
-        };
-      })
-      (pkgs.vimUtils.buildVimPlugin rec {
-        pname = "telescope-zf-native.nvim";
-        version = "5721be27df11a19b9cd95e6a4887f16f26599802";
-        src = pkgs.fetchFromGitHub {
-          owner = "natecraddock";
-          repo = pname;
-          rev = version;
-          sha256 = "sha256-MCYnloqijGvmQRcdfMhYo5VkDNc4Yk35YCfNgbI1FcE=";
-        };
-      })
-      (pkgs.vimUtils.buildVimPlugin rec {
-        pname = "vessel.nvim";
-        version = "0110bd4527963b7c245a325bd871ed0fac4a951b";
-        src = pkgs.fetchFromGitHub {
-          owner = "gcmt";
-          repo = pname;
-          rev = version;
-          sha256 = "sha256-luiklWgajULhCns1qoDGWKanuTd+zeBQmakmhrfqQDc=";
-        };
-      })
-      (pkgs.vimUtils.buildVimPlugin rec {
-        pname = "dooing";
-        version = "d2b307668a78c194350c8f03dbf8ef57622a765b";
-        src = pkgs.fetchFromGitHub {
-          owner = "atiladefreitas";
-          repo = pname;
-          rev = version;
-          sha256 = "sha256-ZtBBOhwb9HssbOcnyv3TQ6rZ0xEZkSUMa4ckgnoRfzk=";
-        };
-      })
-      (pkgs.vimUtils.buildVimPlugin rec {
-        pname = "smear-cursor.nvim";
-        version = "76e9331f3c4cf2cc0b634d08a2438d1b40d0e424";
-        src = pkgs.fetchFromGitHub {
-          owner = "sphamba";
-          repo = pname;
-          rev = version;
-          sha256 = "sha256-D1DL8gL0MTSlHnXG6+OhQRjPSwx623CVyBfY3zrU4p0=";
-        };
-      })
-      (pkgs.vimUtils.buildVimPlugin rec {
-        pname = "focushere.nvim";
-        version = "28c40c7e3481d6cd9e4c7b8005c36a18b5db7ac6";
-        src = pkgs.fetchFromGitHub {
-          owner = "kelvinauta";
-          repo = pname;
-          rev = version;
-          sha256 = "sha256-2BK8oRj4Ki1aHCOlAz05y3+LMIZcJ2iVUrEdB4UrkNE=";
-        };
-      })
-    ];
+    extraPython3Packages = python-pkgs:
+      with python-pkgs; [
+        pytest
+        python-dotenv
+        pynvim
+        prompt-toolkit
+        requests
+        jupyter_client
+        ipython
+        cairosvg
+        pnglatex
+        plotly
+        pyperclip
+        nbformat
+        pillow
+        pandas
+        numpy
+        matplotlib
+        packaging
+        jupyter
+        ipykernel
+        kaleido
+      ];
+    extraPlugins = with pkgs.vimPlugins;
+      [
+        lazygit-nvim
+        ltex_extra-nvim
+        vim-visual-multi
+        telescope-dap-nvim
+        tabout-nvim
+        plenary-nvim
+        vim-dadbod
+        vim-dadbod-ui
+        vim-dadbod-completion
+        grug-far-nvim
+        tiny-inline-diagnostic-nvim
+        img-clip-nvim
+        hover-nvim
+        lsp-overloads-nvim
+        grapple-nvim
+        telescope-zf-native-nvim
+      ]
+      ++ (with pkgs.vimUtils; [
+        (buildVimPlugin rec {
+          pname = "roslyn.nvim";
+          version = "ec4d74f55377954fb12ea038253f64db8596a741";
+          src = pkgs.fetchFromGitHub {
+            owner = "seblj";
+            repo = pname;
+            rev = version;
+            sha256 = "sha256-7Nlwwu15/Ax3FpgG4/oPG4CdZfmUDK7xVv0dx+PZT1o=";
+          };
+        })
+        (buildVimPlugin {
+          pname = "tsc-nvim";
+          version = "main";
+          src = pkgs.fetchFromGitHub {
+            owner = "dmmulroy";
+            repo = "tsc.nvim";
+            rev = "c37d7b3ed954e4db13814f0ed7aa2a83b2b7e9dd";
+            sha256 = "sha256-ifJXtYCA04lt0z+JDWSesCPBn6OLpqnzJarK+wuo9m8=";
+          };
+        })
+        (buildVimPlugin {
+          pname = "tetris-nvim";
+          version = "main";
+          src = pkgs.fetchFromGitHub {
+            owner = "alec-gibson";
+            repo = "nvim-tetris";
+            rev = "d17c99fb527ada98ffb0212ffc87ccda6fd4f7d9";
+            sha256 = "sha256-+69Fq5aMMzg9nV05rZxlLTFwQmDyN5/5HmuL2SGu9xQ=";
+          };
+        })
+        (buildVimPlugin {
+          pname = "cellular-nvim";
+          version = "main";
+          src = pkgs.fetchFromGitHub {
+            owner = "Eandrju";
+            repo = "cellular-automaton.nvim";
+            rev = "b7d056dab963b5d3f2c560d92937cb51db61cb5b";
+            sha256 = "sha256-szbd6m7hH7NFI0UzjWF83xkpSJeUWCbn9c+O8F8S/Fg=";
+          };
+        })
+        (buildVimPlugin {
+          pname = "nerdy.nvim";
+          version = "main";
+          src = pkgs.fetchFromGitHub {
+            owner = "2KAbhishek";
+            repo = "nerdy.nvim";
+            rev = "b467d6609b78d6a5f1e12cbc08fcc1ac87af20f5";
+            sha256 = "sha256-k5ZmhUHGHlFuGWiviEYeHGCbXLZHY61pUnvpZgSJhPs=";
+          };
+        })
+        (buildVimPlugin {
+          pname = "pantran.nvim";
+          version = "main";
+          src = pkgs.fetchFromGitHub {
+            owner = "potamides";
+            repo = "pantran.nvim";
+            rev = "250b1d8e81f83e6aff061f4c75db008c684f5971";
+            sha256 = "sha256-Dtp/bIK+FA2x09xWTwIW24fY0oT+rV202YiVUwBKlpk=";
+          };
+        })
+        (buildVimPlugin {
+          pname = "easy-dotnet.nvim";
+          version = "main";
+          src = pkgs.fetchFromGitHub {
+            owner = "GustavEikaas";
+            repo = "easy-dotnet.nvim";
+            rev = "db189911961d1c0644af5c5dfd5209d9869e75f7";
+            sha256 = "sha256-sm9++CBRJyzz8hWqrlMEMnIN4/vuTyOG7GBeOUCNT6A=";
+          };
+        })
+        (buildVimPlugin {
+          pname = "workspace-diagnostics.nvim";
+          version = "main";
+          src = pkgs.fetchFromGitHub {
+            owner = "artemave";
+            repo = "workspace-diagnostics.nvim";
+            rev = "29ed948a84076e9bed63ce298b5cc5264b72b341";
+            sha256 = "sha256-i+gyx6iThmBgOoscZjhhL7HxciSwV2jsHDOo7mYDSKA=";
+          };
+        })
+        (buildVimPlugin {
+          pname = "nvim-dap-repl-highlights";
+          version = "main";
+          src = pkgs.fetchFromGitHub {
+            owner = "LiadOz";
+            repo = "nvim-dap-repl-highlights";
+            rev = "a7512fc0a0de0c0be8d58983939856dda6f72451";
+            sha256 = "sha256-HfIP1ZfD85l5V+Sh75CJRTQQ+HwmeAvFcjkdu8lpd4o=";
+          };
+        })
+        (buildVimPlugin rec {
+          pname = "portal.nvim";
+          version = "77d9d53fec945bfa407d5fd7120f1b4f117450ed";
+          src = pkgs.fetchFromGitHub {
+            owner = "cbochs";
+            repo = pname;
+            rev = version;
+            sha256 = "sha256-QCdyJ5in3Dm4IVlBUtbGWRZxl87gKHhRiGmZcIGEHm0=";
+          };
+        })
+        (buildVimPlugin rec {
+          pname = "vessel.nvim";
+          version = "0110bd4527963b7c245a325bd871ed0fac4a951b";
+          src = pkgs.fetchFromGitHub {
+            owner = "gcmt";
+            repo = pname;
+            rev = version;
+            sha256 = "sha256-luiklWgajULhCns1qoDGWKanuTd+zeBQmakmhrfqQDc=";
+          };
+        })
+        (buildVimPlugin rec {
+          pname = "dooing";
+          version = "d2b307668a78c194350c8f03dbf8ef57622a765b";
+          src = pkgs.fetchFromGitHub {
+            owner = "atiladefreitas";
+            repo = pname;
+            rev = version;
+            sha256 = "sha256-ZtBBOhwb9HssbOcnyv3TQ6rZ0xEZkSUMa4ckgnoRfzk=";
+          };
+        })
+        (buildVimPlugin rec {
+          pname = "smear-cursor.nvim";
+          version = "76e9331f3c4cf2cc0b634d08a2438d1b40d0e424";
+          src = pkgs.fetchFromGitHub {
+            owner = "sphamba";
+            repo = pname;
+            rev = version;
+            sha256 = "sha256-D1DL8gL0MTSlHnXG6+OhQRjPSwx623CVyBfY3zrU4p0=";
+          };
+        })
+        (buildVimPlugin rec {
+          pname = "focushere.nvim";
+          version = "28c40c7e3481d6cd9e4c7b8005c36a18b5db7ac6";
+          src = pkgs.fetchFromGitHub {
+            owner = "kelvinauta";
+            repo = pname;
+            rev = version;
+            sha256 = "sha256-2BK8oRj4Ki1aHCOlAz05y3+LMIZcJ2iVUrEdB4UrkNE=";
+          };
+        })
+      ]);
     highlight = {
       "@type.qualifier.c_sharp".fg = "#7AA8fF";
       "@type.c_sharp".fg = "#98cb6C";
@@ -462,6 +401,7 @@
       })
       require("grug-far").setup()
       require("focushere").setup()
+      require("tiny-inline-diagnostic").setup()
     '';
     opts = {
       relativenumber = true;
@@ -553,6 +493,19 @@
         mode = "n";
         key = "<leader>zf";
         action = ":FocusClear<cr>";
+      }
+      # Rest
+      {
+        mode = "n";
+        key = "<leader>rr";
+        action = "<cmd>Rest run<cr>";
+        options.desc = "Rest Run";
+      }
+      {
+        mode = "n";
+        key = "<leader>rl";
+        action = "<cmd>Rest last<cr>";
+        options.desc = "Rest Last";
       }
       # Grapple
       {
@@ -1385,6 +1338,7 @@
         };
       };
       cmp_luasnip.enable = true;
+      cmp-calc.enable = true;
       cmp-dap.enable = true;
       cmp = {
         enable = true;
@@ -1430,6 +1384,10 @@
             }
             {
               name = "path";
+              groupIndex = 2;
+            }
+            {
+              name = "calc";
               groupIndex = 2;
             }
           ];
@@ -1665,6 +1623,9 @@
             lualine_x = [""];
           };
         };
+      };
+      yazi = {
+        enable = true;
       };
       alpha = {
         enable = true;
@@ -1961,6 +1922,7 @@
         enable = true;
         settings.server.on_attach = ''__lspOnAttach'';
       };
+      rest.enable = true;
       obsidian = {
         enable = true;
         settings = {
@@ -2147,6 +2109,23 @@
             enable = true;
             package = null;
           };
+          ts_ls = {
+            enable = true;
+            extraOptions = {
+              init_options = {
+                preferences = {
+                  includeInlayParameterNameHints = "all";
+                  includeInlayParameterNameHintsWhenArgumentMatchesName = true;
+                  includeInlayFunctionParameterTypeHints = true;
+                  includeInlayVariableTypeHints = true;
+                  includeInlayPropertyDeclarationTypeHints = true;
+                  includeInlayFunctionLikeReturnTypeHints = true;
+                  includeInlayEnumMemberValueHints = true;
+                  importModuleSpecifierPreference = "non-relative";
+                };
+              };
+            };
+          };
           svelte.enable = true;
           tailwindcss.enable = true;
           lua_ls.enable = true;
@@ -2171,9 +2150,9 @@
       todo-comments = {
         enable = true;
       };
-      typescript-tools = {
-        enable = true;
-      };
+      # typescript-tools = {
+      #   enable = true;
+      # };
       treesitter = {
         settings = {
           indent.enable = true;
