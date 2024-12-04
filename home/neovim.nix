@@ -75,6 +75,7 @@
         lsp-overloads-nvim
         grapple-nvim
         telescope-zf-native-nvim
+        csv-vim
       ]
       ++ (with pkgs.vimUtils; [
         (buildVimPlugin rec {
