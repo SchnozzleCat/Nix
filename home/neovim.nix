@@ -37,25 +37,8 @@
     extraPython3Packages = python-pkgs:
       with python-pkgs; [
         pytest
-        python-dotenv
-        pynvim
         prompt-toolkit
-        requests
-        jupyter_client
-        ipython
-        cairosvg
-        pnglatex
-        plotly
         pyperclip
-        nbformat
-        pillow
-        pandas
-        numpy
-        matplotlib
-        packaging
-        jupyter
-        ipykernel
-        kaleido
       ];
     extraPlugins = with pkgs.vimPlugins;
       [
@@ -402,7 +385,12 @@
       })
       require("grug-far").setup()
       require("focushere").setup()
-      require("tiny-inline-diagnostic").setup()
+      require("tiny-inline-diagnostic").setup({
+        options = {
+          multilines = true
+        }
+      })
+      vim.diagnostic.config({ virtual_text = false })
     '';
     opts = {
       relativenumber = true;
@@ -1103,14 +1091,8 @@
       {
         mode = ["n"];
         key = "<leader>tw";
-        action = "<cmd> TroubleToggle workspace_diagnostics<cr>";
+        action = "<cmd> Trouble diagnostics<cr>";
         options.desc = "Workspace Trouble";
-      }
-      {
-        mode = ["n"];
-        key = "<leader>td";
-        action = "<cmd> TroubleToggle document_diagnoostics<cr>";
-        options.desc = "Document Trouble";
       }
       {
         mode = ["n"];
@@ -1479,9 +1461,24 @@
         };
       };
       neogen.enable = true;
-      magma-nvim = {
+      molten = {
         enable = true;
-        package = pkgs.vimPlugins.molten-nvim;
+        settings = {
+          virt_text_output = true;
+        };
+        python3Dependencies = p:
+          with p; [
+            pynvim
+            jupyter-client
+            cairosvg
+            ipython
+            nbformat
+            pillow
+            plotly
+            ipykernel
+            requests
+            pnglatex
+          ];
       };
       lspsaga = {
         enable = true;
