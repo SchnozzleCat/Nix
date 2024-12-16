@@ -19,6 +19,7 @@
       nodePackages.ijavascript
       quarto
       typescript
+      jq
       zf
       (pkgs.buildEnv {
         name = "combinedSdk";
@@ -61,6 +62,16 @@
         csv-vim
       ]
       ++ (with pkgs.vimUtils; [
+        (buildVimPlugin rec {
+          pname = "let-it-snow.nvim";
+          version = "7ff767f7b6e787989ca73ebcdcd0dd5ea483811a";
+          src = pkgs.fetchFromGitHub {
+            owner = "marcussimonsen";
+            repo = pname;
+            rev = version;
+            sha256 = "sha256-w8bNUclsaQg/fwzFLfNM4WXZwb6efnLaUYasbIxjElY=";
+          };
+        })
         (buildVimPlugin rec {
           pname = "roslyn.nvim";
           version = "ec4d74f55377954fb12ea038253f64db8596a741";
@@ -391,6 +402,9 @@
         }
       })
       vim.diagnostic.config({ virtual_text = false })
+      require("let-it-snow").setup({
+        delay = 100
+      })
     '';
     opts = {
       relativenumber = true;
@@ -834,6 +848,12 @@
         key = "<leader>gc";
         action = "<cmd>Telescope git_bcommits_range <cr>";
         options.desc = "Git Buffer Commits in Range";
+      }
+      {
+        mode = "n";
+        key = "<leader>fi";
+        action = "<cmd> Telescope lsp_dynamic_workspace_symbols symbols={'Interface'} <cr>";
+        options.desc = "Find Interfaces";
       }
       {
         mode = "n";
