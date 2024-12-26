@@ -91,7 +91,7 @@ in {
       set -g fish_greeting
       bind -s \ce "zellij_tab_name_update neovim && neovim && zellij_tab_name_update shell"
       bind -s \cg "zellij_tab_name_update lazygit && lazygit && zellij_tab_name_update shell"
-      bind -s \cr "zellij_tab_name_update television && z (z ~/Repositories && tv gitrepos) && zellij_tab_name_update shell && commandline -f repaint"
+      bind -s \cb "zellij_tab_name_update television && z (z ~/Repositories && tv gitrepos) && zellij_tab_name_update shell && commandline -f repaint"
       function yy
         set tmp (mktemp -t "yazi-cwd.XXXXXX")
         yazi $argv --cwd-file="$tmp"
