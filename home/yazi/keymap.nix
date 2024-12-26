@@ -1,12 +1,12 @@
 {pkgs}: ''
   [[manager.prepend_keymap]]
   on   = "l"
-  run  = "plugin --sync smart-enter"
+  run  = "plugin smart-enter"
   desc = "Enter the child directory, or open the file"
 
   [[manager.prepend_keymap]]
   on   = "L"
-  run  = "plugin --sync smart-enter --args='detatch'"
+  run  = "plugin smart-enter --args='detatch'"
   desc = "Enter the child directory, or open the file"
 
   [[manager.prepend_keymap]]
