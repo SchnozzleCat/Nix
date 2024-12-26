@@ -88,8 +88,8 @@ in {
     enable = true;
     interactiveShellInit = ''
       set -g fish_greeting
-      bind -s \ce neovim
-      bind -s \cg lazygit
+      bind -s \ce "zellij_tab_name_update neovim && neovim && zellij_tab_name_update shell"
+      bind -s \cg "zellij_tab_name_update lazygit && lazygit && zellij_tab_name_update shell"
       function yy
         set tmp (mktemp -t "yazi-cwd.XXXXXX")
         yazi $argv --cwd-file="$tmp"
@@ -97,6 +97,18 @@ in {
           cd -- "$cwd"
         end
         rm -f -- "$tmp"
+      end
+      zellij action rename-tab shell
+      function zellij_tab_name_update --on-event fish_preexec
+          if set -q ZELLIJ
+              set title (string split ' ' $argv)[1]
+              command nohup zellij action rename-tab $title >/dev/null 2>&1
+          end
+      end
+      function zellij_tab_name_exit --on-event fish_postexec
+          if set -q ZELLIJ
+              command nohup zellij action rename-tab shell >/dev/null 2>&1
+          end
       end
       clear
     '';
