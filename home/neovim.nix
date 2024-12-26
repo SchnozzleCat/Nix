@@ -73,12 +73,12 @@
         })
         (buildVimPlugin rec {
           pname = "roslyn.nvim";
-          version = "ec4d74f55377954fb12ea038253f64db8596a741";
+          version = "47d97e0a3f81b778409e742877b8b03fdf6c762d";
           src = pkgs.fetchFromGitHub {
             owner = "seblj";
             repo = pname;
             rev = version;
-            sha256 = "sha256-7Nlwwu15/Ax3FpgG4/oPG4CdZfmUDK7xVv0dx+PZT1o=";
+            sha256 = "sha256-EwVG0mLQ+Uf2MLbjUpDGC5Z76xzEorKTkAWcnnwIG8c=";
           };
         })
         (buildVimPlugin {
@@ -173,12 +173,12 @@
         })
         (buildVimPlugin rec {
           pname = "vessel.nvim";
-          version = "0110bd4527963b7c245a325bd871ed0fac4a951b";
+          version = "bd97a5e164541372c15c82d7da2e25c7f7c737cf";
           src = pkgs.fetchFromGitHub {
             owner = "gcmt";
             repo = pname;
             rev = version;
-            sha256 = "sha256-luiklWgajULhCns1qoDGWKanuTd+zeBQmakmhrfqQDc=";
+            sha256 = "sha256-Z3efc23KR6TOftqWzbTVo8903E5mljRna2dIUkzteFI=";
           };
         })
         (buildVimPlugin rec {
@@ -193,12 +193,12 @@
         })
         (buildVimPlugin rec {
           pname = "smear-cursor.nvim";
-          version = "76e9331f3c4cf2cc0b634d08a2438d1b40d0e424";
+          version = "7240dcc47abcd2468d8ad1c479215301ec6c20cd";
           src = pkgs.fetchFromGitHub {
             owner = "sphamba";
             repo = pname;
             rev = version;
-            sha256 = "sha256-D1DL8gL0MTSlHnXG6+OhQRjPSwx623CVyBfY3zrU4p0=";
+            sha256 = "sha256-0wRfsv34DkHiLumOSfA0EG7YZOqXnoFmyn72qxvUf0U=";
           };
         })
         (buildVimPlugin rec {
