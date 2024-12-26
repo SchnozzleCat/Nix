@@ -18,9 +18,7 @@ in {
 
   wayland.windowManager.hyprland = {
     enable = true;
-    plugins = [
-      inputs.hyprfocus.packages.${pkgs.system}.hyprfocus
-    ];
+    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
   };
   nixpkgs.config.android_sdk.accept_license = true;
 
@@ -96,8 +94,6 @@ in {
           sdk_8_0
           sdk_9_0
         ])
-      msbuild
-      # godot4-mono
       sublime-merge
       (pkgs.buildDotnetGlobalTool {
         pname = "Microsoft.dotnet-interactive";
@@ -111,7 +107,7 @@ in {
       jetbrains.rider
       jetbrains.idea-ultimate
       jetbrains.datagrip
-      podman-tui
+      inputs.hyprland-qtutils.packages."${pkgs.system}".default
 
       gdtoolkit_4
 

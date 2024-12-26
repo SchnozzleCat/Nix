@@ -48,6 +48,9 @@
       url = "github:VirtCode/hypr-dynamic-cursors";
       inputs.hyprland.follows = "hyprland";
     };
+    hyprland-qtutils = {
+      url = "github:hyprwm/hyprland-qtutils";
+    };
 
     nixvim = {
       url = "github:nix-community/nixvim";

@@ -6,7 +6,6 @@
 }: {
   home.packages = with pkgs; [
     netcoredbg
-    roslyn-ls
     gh
     postgresql_16
   ];
@@ -1566,7 +1565,7 @@
           };
         };
       };
-      nvim-colorizer.enable = true;
+      colorizer.enable = true;
       flash.enable = true;
       which-key.enable = true;
       gitsigns.enable = true;

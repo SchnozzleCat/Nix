@@ -146,7 +146,8 @@
     enableDefaultPackages = true;
     fontDir.enable = true;
     packages = with pkgs; [
-      (nerdfonts.override {fonts = ["JetBrainsMono" "NerdFontsSymbolsOnly"];})
+      nerd-fonts.jetbrains-mono
+      nerd-fonts.symbols-only
       font-awesome
       noto-fonts
       noto-fonts-emoji

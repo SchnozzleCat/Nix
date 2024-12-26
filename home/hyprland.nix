@@ -15,7 +15,6 @@ in ''
   exec-once = ${pkgs.waybar}/bin/waybar
   exec-once = pypr
   exec-once = solaar --window=hide
-  exec-once = ${pkgs.xwaylandvideobridge}/bin/xwaylandvideobridge
   exec-once = hyprctrl dispatch layoutmsg "preselect r"
   exec-once = wl-paste -t text --watch ${pkgs.clipman}/bin/clipman store --max-items 1024
   exec-once = /home/linus/Downloads/MoonDeckBuddy-1.5.7-x86_64.AppImage
@@ -57,11 +56,6 @@ in ''
 
   windowrulev2 = stayfocused, title:^()$,class:^(steam)$
   windowrulev2 = minsize 1 1, title:^()$,class:^(steam)$
-
-  windowrulev2 = opacity 0.0 override 0.0 override,class:^(xwaylandvideobridge)$
-  windowrulev2 = noanim,class:^(xwaylandvideobridge)$
-  windowrulev2 = nofocus,class:^(xwaylandvideobridge)$
-  windowrulev2 = noinitialfocus,class:^(xwaylandvideobridge)$
 
   windowrulev2=float,class:^(UnrealEditor)$
   windowrulev2=unset,class:^(UnrealEditor)$,title:^\w*$
@@ -276,25 +270,4 @@ in ''
   bind = $mainMod Ctrl Shift, q, exec, power-menu
 
   bind = $mainMod Shift,m, exec, ~/.config/sway/calc.sh
-  plugin:hyprfocus {
-     enabled = yes
-     animate_floating = yes
-     animate_workspacechange = yes
-     focus_animation = flash
-     # Beziers for focus animations
-     bezier = bezIn, 0.5,0.0,1.0,0.5
-     bezier = bezOut, 0.0,0.5,0.5,1.0
-     bezier = overshot, 0.05, 0.9, 0.1, 1.05
-     bezier = smoothOut, 0.36, 0, 0.66, -0.56
-     bezier = smoothIn, 0.25, 1, 0.5, 1
-     bezier = realsmooth, 0.28,0.29,.69,1.08
-     # Flash settings
-     flash {
-         flash_opacity = 0.93
-         in_bezier = realsmooth
-         in_speed = 0.5
-         out_bezier = realsmooth
-         out_speed = 3
-     }
-  }
 ''
