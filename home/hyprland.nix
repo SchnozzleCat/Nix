@@ -162,6 +162,15 @@ in ''
       workspace_swipe = off
   }
 
+  plugin {
+    hyprexpo {
+      columns = 3
+      gap_size = 5
+      bg_color = rgb(211F2A)
+      workspace_method = center current
+    }
+  }
+
   # Example windowrule v1
   # windowrule = float, ^(kitty)$
   # Example windowrule v2
@@ -178,7 +187,7 @@ in ''
   bind = $mainMod, z, exec, [float;size 60% 60%;center] foot ${pkgs.master.yazi}/bin/yazi
   bind = $mainMod, d, exec, fuzzel
   bind = $mainModSHIFT, Q, killactive,
-  bind = $mainMod, b, exec, pypr expose
+  bind = $mainMod, b, hyprexpo:expo, toggle
   bind = $mainModSHIFT, b, exec, lock-monitor
   bind = $mainMod, y, exec, ${pkgs.wl-mirror}/bin/wl-mirror --scaling cover --fullscreen DP-1
   bind = $mainModShift, y, exec, ${pkgs.wl-mirror}/bin/wl-mirror --fullscreen DP-1

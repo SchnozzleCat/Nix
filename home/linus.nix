@@ -19,6 +19,9 @@ in {
   wayland.windowManager.hyprland = {
     enable = true;
     package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+    plugins = with inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}; [
+      hyprexpo
+    ];
   };
   nixpkgs.config.android_sdk.accept_license = true;
 
