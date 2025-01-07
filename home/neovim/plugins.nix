@@ -1,0 +1,998 @@
+{
+  inputs,
+  pkgs,
+  lib,
+  ...
+}: {
+  programs.nixvim.plugins = {
+    transparent.enable = true;
+    dressing.enable = true;
+    notify.enable = true;
+    noice = {
+      enable = true;
+      settings = {
+        notify.enabled = true;
+        background_colour = "#000000";
+        presets = {
+          bottom_search = true;
+        };
+        lsp.signature.enabled = false;
+      };
+    };
+    telescope = {
+      enable = true;
+      luaConfig.post = ''
+        require("telescope").load_extension("zf-native")
+        require('telescope').load_extension('dap')
+      '';
+      settings = {
+        layout_strategy = "bottom_pane";
+        defaults = {
+          sorting_strategy = "ascending";
+          layout_strategy = "bottom_pane";
+          layout_config = {
+            height = 25;
+          };
+          border = true;
+          borderchars = {
+            prompt = ["─" " " " " " " "─" "─" " " " "];
+            results = [" "];
+            preview = ["─" "│" "─" "│" "╭" "╮" "╯" "╰"];
+          };
+          mappings.__raw = ''
+            {
+              i = { ["<c-t>"] = require("trouble.sources.telescope").open },
+              n = { ["<c-t>"] = require("trouble.sources.telescope").open },
+            }
+          '';
+        };
+      };
+      extensions = {
+        undo.enable = true;
+      };
+      keymaps = {
+        "<leader>ff" = {
+          action = "find_files";
+          options = {
+            desc = "Find Files";
+          };
+        };
+        "<leader>fdv" = {
+          action = "dap variables";
+          options = {
+            desc = "Find DAP Variables";
+          };
+        };
+        "<leader>fdb" = {
+          action = "dap list_breakpoints";
+          options = {
+            desc = "Find DAP Breakpoints";
+          };
+        };
+        "<leader>fdf" = {
+          action = "dap frames";
+          options = {
+            desc = "Find DAP Frames";
+          };
+        };
+        "<leader>fw" = {
+          action = "live_grep";
+          options = {
+            desc = "Find Word";
+          };
+        };
+        "<leader>fk" = {
+          action = "keymaps";
+          options = {
+            desc = "Find Keymaps";
+          };
+        };
+        "<leader>fs" = {
+          action = "lsp_dynamic_workspace_symbols";
+          options = {
+            desc = "Find Symbols";
+          };
+        };
+        "<leader>fb" = {
+          action = "buffers";
+          options = {
+            desc = "Find Buffers";
+          };
+        };
+        "<leader>fo" = {
+          action = "oldfiles";
+          options = {
+            desc = "Find Recent";
+          };
+        };
+        "<leader>gs" = {
+          action = "git_status";
+          options = {
+            desc = "Git Status";
+          };
+        };
+        "<leader>gb" = {
+          action = "git_branches";
+          options = {
+            desc = "Git Branches";
+          };
+        };
+        "<leader>gc" = {
+          action = "git_bcommits";
+          mode = "n";
+          options = {
+            desc = "Git Buffer Commits";
+          };
+        };
+        "<leader>gC" = {
+          action = "git_commits";
+          options = {
+            desc = "Git Commits";
+          };
+        };
+      };
+    };
+    toggleterm.enable = true;
+    otter = {
+      enable = true;
+      settings.buffers = {
+        set_filetype = true;
+      };
+    };
+    cmp_luasnip.enable = true;
+    cmp-calc.enable = true;
+    cmp-dap.enable = true;
+    cmp = {
+      enable = true;
+      settings = {
+        window.completion.border = ["╭" "─" "╮" "│" "╯" "─" "╰" "│"];
+        window.documentation.border = ["╭" "─" "╮" "│" "╯" "─" "╰" "│"];
+        formatting = {
+          format = ''
+            function(entry, vim_item)
+               local kind_icons = {
+                 Text = "",
+                 Method = "󰡱",
+                 Function = "󰊕",
+                 Constructor = "",
+                 Enum = "",
+                 Class = "",
+                 Struct = "",
+                 Variable = "",
+                 Keyword = "󰄛",
+                 Field = "",
+                 Property = "",
+                 Snippet = "",
+                 Value = "",
+               }
+               local lspkind_ok, lspkind = pcall(require, "lspkind")
+               if not lspkind_ok then
+                 vim_item.kind = string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind) -- This concatenates the icons with the name of the item kind
+                 return vim_item
+               else
+                 return lspkind.cmp_format()(entry, vim_item)
+               end
+             end
+          '';
+        };
+        sources = [
+          {
+            name = "luasnip";
+            groupIndex = 2;
+          }
+          {
+            name = "nvim_lsp";
+            groupIndex = 2;
+          }
+          {
+            name = "path";
+            groupIndex = 2;
+          }
+          {
+            name = "calc";
+            groupIndex = 2;
+          }
+        ];
+        snippet.expand = ''
+          function(args)
+            require('luasnip').lsp_expand(args.body)
+          end
+        '';
+        mapping = {
+          "<C-Space>" = "cmp.mapping.complete()";
+          "<C-d>" = "cmp.mapping.scroll_docs(-4)";
+          "<C-e>" = "cmp.mapping.close()";
+          "<C-f>" = "cmp.mapping.scroll_docs(4)";
+          "<CR>" = "cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Replace })";
+          "<S-Tab>" = ''
+            function(fallback)
+              if cmp.visible() then
+                  cmp.select_prev_item()
+              elseif luasnip.jumpable(-1) then
+                  luasnip.jump(-1)
+              else
+                  fallback()
+              end
+            end
+          '';
+          "<Tab>" = ''
+            function(fallback)
+                luasnip = require("luasnip")
+                if cmp.visible() then
+                    cmp.select_next_item()
+                elseif luasnip.expand_or_locally_jumpable() then
+                    luasnip.expand_or_jump()
+                else
+                    fallback()
+                end
+            end
+          '';
+        };
+      };
+    };
+    octo = {
+      enable = true;
+    };
+    copilot-chat = {
+      enable = true;
+      settings = {
+        prompts = {
+          Explain = "Explain how it works.";
+          Review = "Review the following code and provide concise suggestions.";
+          Tests = "Briefly explain how the selected code works, then generate unit tests.";
+          Refactor = "Refactor the code to improve clarity and readability.";
+          Documentation = "Create a docstring for the code in the appropriate format.";
+          CommitStaged = {
+            prompt = ''Write commit message for the change with commitizen convention. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.'';
+            selection = ''
+              function(source)
+                return require("CopilotChat.select").gitdiff(source, true)
+              end,
+            '';
+          };
+        };
+      };
+    };
+    markdown-preview.enable = true;
+    web-devicons.enable = true;
+    vim-surround.enable = true;
+    trouble = {
+      enable = true;
+      settings = {
+        modes = {
+          lsp_references = {
+            auto_refresh = false;
+          };
+        };
+      };
+    };
+    undotree.enable = true;
+    avante = {
+      enable = true;
+      settings = {
+        provider = "copilot";
+        copilot = {
+          model = "claude-3.5-sonnet";
+        };
+        behaviour = {
+          auto_suggestions = false;
+        };
+      };
+    };
+    neogen.enable = true;
+    molten = {
+      enable = true;
+      settings = {
+        virt_text_output = true;
+      };
+      python3Dependencies = p:
+        with p; [
+          pynvim
+          jupyter-client
+          cairosvg
+          ipython
+          nbformat
+          pillow
+          plotly
+          ipykernel
+          requests
+          pnglatex
+        ];
+    };
+    lspsaga = {
+      enable = true;
+      symbolInWinbar.enable = false;
+      lightbulb.enable = false;
+    };
+    floaterm.enable = true;
+    copilot-lua = {
+      enable = true;
+      suggestion = {
+        enabled = true;
+        autoTrigger = true;
+        keymap = {
+          accept = "<C-f>";
+        };
+      };
+    };
+    codesnap = {
+      enable = true;
+      settings = {
+        mac_window_bar = false;
+        watermark = "hello";
+      };
+    };
+    nvim-tree.enable = true;
+    snacks = {
+      enable = true;
+      settings = {
+        bigfile = {
+          enabled = true;
+        };
+      };
+    };
+    mini = {
+      enable = true;
+      modules = {
+        ai = {};
+        files = {
+          mappings = {
+            go_in_plus = "<CR>";
+          };
+        };
+        extra = {};
+        icons = {};
+        comment = {};
+        move = {};
+        operators = {
+          replace = {
+            prefix = "gp";
+          };
+        };
+        pairs = {
+          mappings = {
+            "<" = {
+              action = "open";
+              pair = "<>";
+              neigh_pattern = "[^\\].";
+            };
+            ">" = {
+              action = "close";
+              pair = "<>";
+              neigh_pattern = "[^\\].";
+            };
+          };
+        };
+      };
+    };
+    colorizer.enable = true;
+    flash.enable = true;
+    which-key.enable = true;
+    gitsigns.enable = true;
+    nvim-lightbulb.enable = true;
+    lualine = {
+      enable = true;
+      settings = {
+        tabline = {
+          lualine_a = [
+            {
+              __raw = ''
+                {
+                  function()
+                    local statusline = "󱐋"
+                    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+                        if vim.api.nvim_buf_get_option(buf, 'modified') then
+                            local filename = vim.api.nvim_buf_get_name(buf):match("^.+/(.+)$")
+                            local icon = MiniIcons.get("file", filename)
+                            statusline = string.format("%s %s %s", statusline, icon, filename)
+                        end
+                    end
+                    return statusline
+                  end
+                }
+              '';
+            }
+          ];
+          lualine_b = [""];
+          lualine_c = [""];
+          lualine_x = [""];
+          lualine_y = [""];
+          lualine_z = [
+            "filename"
+          ];
+        };
+        sections = {
+          lualine_a = [
+            "branch"
+          ];
+          lualine_b = [
+            {
+              __raw = ''
+                {
+                  function()
+                    local on = {
+                     "󰎤", "󰎧", "󰎪","󰎭","󰎱","󰎳", "󰎶", "󰎹"
+                    }
+                    local off = {
+                     "󰎦", "󰎩", "󰎬", "󰎮", "󰎰","󰎵", "󰎸", "󰎻"
+                    }
+                    local grapple = require("grapple")
+                    local tags = grapple.tags()
+                    local current = grapple.find({ buffer = 0 })
+
+                    local statusline = ""
+                    for i, tag in ipairs(tags) do
+                      local filename = tag.path:match("^.+/(.+)$")
+                      local icon = MiniIcons.get("file", filename)
+                      if current and current.path == tag.path then
+                        statusline = string.format("%s %s 󰜴 %s %s", statusline, on[i], icon, filename)
+                      else
+                        statusline = string.format("%s %s 󰜴 %s %s", statusline, off[i], icon, filename)
+                      end
+                    end
+                    return statusline
+                  end
+                }
+              '';
+            }
+          ];
+          lualine_c = [""];
+          lualine_x = [""];
+        };
+      };
+    };
+    yazi = {
+      enable = true;
+    };
+    alpha = {
+      enable = true;
+      layout = [
+        {
+          type = "padding";
+          val = 5;
+        }
+        {
+          opts = {
+            hl = "Type";
+            position = "center";
+          };
+          type = "text";
+          val = [
+            ''؜   ___       ___       ___       ___       ___       ___       ___       ___       ___    ''
+            ''؜  /\  \     /\  \     /\__\     /\__\     /\  \     /\  \     /\  \     /\__\     /\  \   ''
+            ''؜ /::\  \   /::\  \   /:/__/_   /:| _|_   /::\  \   _\:\  \   _\:\  \   /:/  /    /::\  \  ''
+            ''؜/\:\:\__\ /:/\:\__\ /::\/\__\ /::|/\__\ /:/\:\__\ /::::\__\ /::::\__\ /:/__/    /::\:\__\ ''
+            ''؜\:\:\/__/ \:\ \/__/ \/\::/  / \/|::/  / \:\/:/  / \::;;/__/ \::;;/__/ \:\  \    \:\:\/  / ''
+            ''؜ \::/  /   \:\__\     /:/  /    |:/  /   \::/  /   \:\__\    \:\__\    \:\__\    \:\/  /  ''
+            ''؜  \/__/     \/__/     \/__/     \/__/     \/__/     \/__/     \/__/     \/__/     \/__/   ''
+            ''؜                                ___       ___       ___                                   ''
+            ''؜                               /\  \     /\  \     /\  \                                  ''
+            ''؜                              /::\  \   /::\  \    \:\  \                                 ''
+            ''؜                             /:/\:\__\ /::\:\__\   /::\__\                                ''
+            ''؜                             \:\ \/__/ \/\::/  /  /:/\/__/                                ''
+            ''؜                              \:\__\     /:/  /  / /  /                                   ''
+            ''؜                               \/__/     \/__/   \/__/                                    ''
+            ''؜                                                                                          ''
+            ''؜                                 _                                                        ''
+            ''؜                                 \`*-.                                                    ''
+            ''؜                                  )  _`-.                                                 ''
+            ''؜                                 .  : `. .                                                ''
+            ''؜                                 : _   '  \                                               ''
+            ''؜                                 ; *` _.   `*-._                                          ''
+            ''؜                                 `-.-'          `-.                                       ''
+            ''؜                                   ;       `       `.                                     ''
+            ''؜                                   :.       .        \                                    ''
+            ''؜                                   . \  .   :   .-'   .                                   ''
+            ''؜                                   '  `+.;  ;  '                                          ''
+            ''؜                                   :  '  |    ;       ;-.                                 ''
+            ''؜                                   ; '   : :`-:     _.`* ;                                ''
+            ''؜                          [bug] .*' /  .*' ; .*`- +'  `*'                                 ''
+            ''؜                                `*-*   `*-*  `*-*'                                        ''
+          ];
+        }
+        {
+          type = "padding";
+          val = 2;
+        }
+      ];
+    };
+    indent-blankline = {
+      enable = true;
+      settings = {
+        indent = {
+          char = "▏";
+        };
+      };
+    };
+    # fidget.enable = true;
+    render-markdown = {
+      enable = true;
+      settings = {
+        file_types = ["markdown" "Avante" "quarto"];
+      };
+    };
+    quarto = {
+      enable = true;
+      settings = {
+        codeRunner = {
+          enabled = true;
+          default_method = "molten";
+          never_run = ["yaml"];
+        };
+      };
+    };
+    neotest = {
+      enable = true;
+      adapters = {
+        python.enable = true;
+        dotnet.enable = true;
+        jest.enable = true;
+        playwright.enable = true;
+      };
+    };
+    image = {
+      enable = true;
+      backend = "ueberzug";
+    };
+    dap = {
+      enable = true;
+      adapters = {
+        servers = {
+          "godot" = {
+            host = "127.0.0.1";
+            port = 6006;
+          };
+          "python" = {
+            host = "127.0.0.1";
+            port = 5678;
+          };
+        };
+        executables = {
+          "php" = {
+            command = "node";
+            args = ["/home/linus/Repositories/pina-checkout-integration-exploration/vscode-php-debug/out/phpDebug.js"];
+          };
+          "cppdbg" = {
+            command = "${pkgs.vscode-extensions.ms-vscode.cpptools}/bin/OpenDebugAD7";
+          };
+          "coreclr" = {
+            command = "${pkgs.netcoredbg}/bin/netcoredbg";
+            args = ["--interpreter=vscode"];
+          };
+          "node" = {
+            command = "node";
+            args = ["/home/linus/Repositories/pina-checkout-integration-exploration/vscode-node-debug2/out/src/nodeDebug.js"];
+          };
+          "debugpy" = {
+            command = ".venv/bin/python";
+            args = ["-m" "debugpy.adapter"];
+          };
+        };
+      };
+      configurations = {
+        java = [
+          {
+            type = "java";
+            request = "attach";
+            name = "Debug (Attach) - Remote";
+            hostName = "0.0.0.0";
+            port = 63773;
+          }
+        ];
+        php = [
+          {
+            type = "php";
+            request = "launch";
+            name = "Listen for Xdebug";
+            port = 9003;
+            pathMappings = {
+              "/var/www/html" = ''''${workspaceFolder}'';
+            };
+          }
+        ];
+        gdscript = [
+          {
+            type = "godot";
+            request = "launch";
+            name = "Launch scene";
+            project = ''''${workspaceFolder}'';
+            launch_scene = true;
+          }
+        ];
+        cpp = [
+          {
+            name = "Launch default file";
+            type = "cppdbg";
+            request = "launch";
+            program.__raw = ''
+              function()
+                return vim.fn.getcwd() .. "/" .. vim.fn.system "cat debug_entry"
+              end
+            '';
+            cwd = ''''${workspaceFolder}'';
+            stopAtEntry = true;
+          }
+          {
+            name = "Launch file";
+            type = "cppdbg";
+            request = "launch";
+            program.__raw = ''
+              function()
+                return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+              end
+            '';
+            cwd = ''''${workspaceFolder}'';
+            stopAtEntry = true;
+          }
+          {
+            name = "Attach to gdbserver :1234";
+            type = "cppdbg";
+            request = "launch";
+            MIMode = "gdb";
+            miDebuggerServerAddress = "localhost:1234";
+            miDebuggerPath = "${pkgs.gdb}/bin/gdb";
+            cwd = ''''${workspaceFolder}'';
+            program.__raw = ''
+              function()
+                return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+              end
+            '';
+          }
+        ];
+        cs = [
+          {
+            type = "coreclr";
+            request = "attach";
+            name = "Attach Godot";
+            processId.__raw = ''
+              function()
+                return require('dap.utils').pick_process({
+                  filter = function(proc) 
+                    local is_match = string.find(proc.name, "godot4", 1, true) and string.find(proc.name, "editor-pid", 1, true)
+                    if is_match then
+                      if string.find(proc.name, "server", 1, true) then
+                        proc.name = "Godot Server"
+                      end
+                      if string.find(proc.name, "client", 1, true) then
+                        proc.name = "Godot Client"
+                      end
+                    end
+
+                    return is_match
+                  end
+                })
+              end'';
+          }
+          {
+            type = "coreclr";
+            name = "Launch DLL";
+            request = "launch";
+            program.__raw = ''
+              function()
+                return vim.fn.input('Path to dll', vim.fn.getcwd() .. '/bin/Debug/', 'file')
+              end'';
+          }
+          {
+            type = "coreclr";
+            request = "attach";
+            name = "Attach";
+            processId.__raw = ''
+              function()
+                return require('dap.utils').pick_process()
+              end'';
+          }
+        ];
+        python = [
+          {
+            name = "Launch";
+            request = "launch";
+            type = "debugpy";
+            program = ''''${file}'';
+            pythonPath.__raw = ''
+              function()
+                local cwd = vim.fn.getcwd()
+                if vim.fn.executable(cwd .. '/venv/bin/python') == 1 then
+                  return cwd .. '/venv/bin/python'
+                elseif vim.fn.executable(cwd .. '/.venv/bin/python') == 1 then
+                  return cwd .. '/.venv/bin/python'
+                else
+                  return '/usr/bin/python'
+                end
+              end
+            '';
+          }
+          {
+            name = "Attach";
+            type = "python";
+            request = "attach";
+            port = 5678;
+            host = "localhost";
+            pathMappings = [
+              {
+                localRoot = "\${workspaceFolder}";
+                remoteRoot = ".";
+              }
+            ];
+          }
+        ];
+      };
+      signs = {
+        dapBreakpoint = {
+          text = "";
+          texthl = "DiagnosticSignError";
+        };
+        dapStopped = {
+          text = "";
+          texthl = "DiagnosticSignInfo";
+        };
+        dapBreakpointRejected = {
+          text = "";
+          texthl = "DiagnosticSignError";
+        };
+      };
+      extensions = {
+        dap-ui.enable = true;
+        dap-virtual-text.enable = true;
+      };
+    };
+    rustaceanvim = {
+      enable = true;
+      settings.server.on_attach = ''__lspOnAttach'';
+    };
+    rest.enable = true;
+    obsidian = {
+      enable = true;
+      settings = {
+        note_id_func = ''
+          function(title)
+            -- Create note IDs in a Zettelkasten format with a timestamp and a suffix.
+            -- In this case a note with the title 'My new note' will be given an ID that looks
+            -- like '1657296016-my-new-note', and therefore the file name '1657296016-my-new-note.md'
+            local suffix = ""
+            if title ~= nil then
+              -- If title is given, transform it into valid file name.
+              suffix = title:gsub(" ", "-"):gsub("[^A-Za-z0-9-]", ""):lower()
+            else
+              -- If title is nil, just add 4 random uppercase letters to the suffix.
+              for _ = 1, 4 do
+                suffix = suffix .. string.char(math.random(65, 90))
+              end
+            end
+            return tostring(os.time()) .. "-" .. suffix
+          end
+        '';
+        ui = {
+          enable = false;
+        };
+      };
+      settings = {
+        workspaces = [
+          {
+            name = "Obsidian Vault";
+            path = "~/Repositories/ObsidianVault";
+          }
+        ];
+      };
+    };
+    luasnip = {
+      enable = true;
+      settings = {
+        region_check_events = "InsertEnter";
+        delete_check_events = "InsertLeave";
+      };
+    };
+    friendly-snippets.enable = true;
+    diffview.enable = true;
+    lsp-format.enable = true;
+    none-ls = {
+      enable = true;
+      sources = {
+        code_actions = {
+          gitsigns.enable = true;
+        };
+        diagnostics = {
+          cppcheck.enable = true;
+        };
+        formatting = {
+          alejandra.enable = true;
+          black.enable = true;
+          csharpier.enable = true;
+          gdformat.enable = true;
+          isort.enable = true;
+          markdownlint.enable = true;
+          prettier = {
+            enable = true;
+            disableTsServerFormatter = true;
+          };
+          phpcbf.enable = true;
+          stylua.enable = true;
+        };
+      };
+    };
+    lsp = {
+      enable = true;
+      postConfig = ''
+        _G["__lspCapabilities"] = __lspCapabilities
+        _G["__lspOnAttach"] = __lspOnAttach
+        require("roslyn").setup({
+          config = {
+            on_attach = _M.lspOnAttach,
+            capabilities = __lspCapabilities(),
+            filetypes = {"cs"},
+            filewatching = true,
+            settings = {
+              ["csharp|inlay_hints"] = {
+                  csharp_enable_inlay_hints_for_implicit_object_creation = true,
+                  csharp_enable_inlay_hints_for_implicit_variable_types = true,
+                  csharp_enable_inlay_hints_for_lambda_parameter_types = true,
+                  csharp_enable_inlay_hints_for_types = true,
+                  dotnet_enable_inlay_hints_for_indexer_parameters = true,
+                  dotnet_enable_inlay_hints_for_literal_parameters = true,
+                  dotnet_enable_inlay_hints_for_object_creation_parameters = true,
+                  dotnet_enable_inlay_hints_for_other_parameters = true,
+                  dotnet_enable_inlay_hints_for_parameters = true,
+                  dotnet_suppress_inlay_hints_for_parameters_that_differ_only_by_suffix = true,
+                  dotnet_suppress_inlay_hints_for_parameters_that_match_argument_name = true,
+                  dotnet_suppress_inlay_hints_for_parameters_that_match_method_intent = true,
+              },
+              ["csharp|background_analysis"] = {
+                dotnet_compiler_diagnostics_scope = "fullSolution"
+              },
+              ["csharp|code_lens"] = {
+                dotnet_enable_references_code_lens = true,
+              },
+            },
+          }
+        })
+      '';
+      onAttach = ''
+        client.server_capabilities.documentFormattingProvider = false
+        client.server_capabilities.documentRangeFormattingProvider = false
+        if client.server_capabilities.signatureHelpProvider then
+         require('lsp-overloads').setup(client, {
+          ui = {
+              border = {
+              "╭",
+              "─",
+              "╮",
+              "╎",
+              "╯",
+              "─",
+              "╰",
+              "│"
+              },
+              offset_x = 0,
+              offset_y = 0,
+              floating_window_above_cur_line = true
+          }
+         })
+         vim.api.nvim_create_autocmd({ 'TextChanged', 'InsertLeave' }, {
+              buffer = bufnr,
+              callback = vim.lsp.codelens.refresh,
+          })
+         vim.lsp.codelens.refresh()
+        end
+      '';
+      capabilities = ''
+        capabilities.textDocument.completion.completionItem = {
+          documentationFormat = { "markdown", "plaintext" },
+            snippetSupport = true,
+            preselectSupport = true,
+            insertReplaceSupport = true,
+            labelDetailsSupport = true,
+            deprecatedSupport = true,
+            commitCharactersSupport = true,
+            tagSupport = { valueSet = { 1 } },
+            resolveSupport = {
+              properties = {
+                "documentation",
+                "detail",
+                "additionalTextEdits",
+              },
+            }
+        }
+      '';
+      servers = {
+        ltex = {
+          enable = true;
+          filetypes = ["tex" "markdown"];
+          autostart = false;
+          onAttach = {
+            function = ''
+              require("ltex_extra").setup {
+                load_langs = { "en-US" },
+                path = "ltex",
+                init_check = true,
+              }
+            '';
+          };
+          settings = {
+            language = "en-US";
+            dictionary = {
+              "en-US" = ["Neovim" "ltex-ls"];
+            };
+            checkFrequency = "save";
+          };
+        };
+        dockerls.enable = true;
+        digestif.enable = true;
+        nil_ls.enable = true;
+        clangd.enable = true;
+        gdscript = {
+          enable = true;
+          package = null;
+        };
+        gdshader_lsp = {
+          enable = true;
+          package = null;
+        };
+        ts_ls = {
+          enable = true;
+          extraOptions = {
+            init_options = {
+              preferences = {
+                includeInlayParameterNameHints = "all";
+                includeInlayParameterNameHintsWhenArgumentMatchesName = true;
+                includeInlayFunctionParameterTypeHints = true;
+                includeInlayVariableTypeHints = true;
+                includeInlayPropertyDeclarationTypeHints = true;
+                includeInlayFunctionLikeReturnTypeHints = true;
+                includeInlayEnumMemberValueHints = true;
+                importModuleSpecifierPreference = "non-relative";
+              };
+            };
+          };
+        };
+        svelte.enable = true;
+        tailwindcss.enable = true;
+        lua_ls.enable = true;
+        basedpyright.enable = true;
+        cssls.enable = true;
+        html.enable = true;
+        java_language_server.enable = true;
+        phpactor.enable = true;
+        eslint.enable = true;
+      };
+    };
+    nvim-jdtls = {
+      enable = true;
+      data = "/home/linus/.cache/jdtls/workspace";
+      configuration = "/home/linus/.cache/jdtls/config";
+      initOptions = {
+        bundles = [
+          "${pkgs.vscode-extensions.vscjava.vscode-java-debug}/share/vscode/extensions/vscjava.vscode-java-debug/server/com.microsoft.java.debug.plugin-0.50.0.jar"
+        ];
+      };
+    };
+    todo-comments = {
+      enable = true;
+    };
+    # typescript-tools = {
+    #   enable = true;
+    # };
+    treesitter = {
+      settings = {
+        indent.enable = true;
+        highlight = {
+          enable = true;
+        };
+      };
+      enable = true;
+    };
+    treesitter-context = {
+      enable = true;
+      settings = {
+        separator = "-";
+      };
+    };
+    zen-mode = {
+      enable = true;
+      settings = {
+        window = {
+          height = 1;
+          width = 0.50;
+        };
+      };
+    };
+  };
+}

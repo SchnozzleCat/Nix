@@ -11,7 +11,7 @@
   colors = config.colorScheme.palette;
 in {
   imports = [
-    ./neovim.nix
+    ./neovim/neovim.nix
   ];
 
   nixpkgs.overlays = [
