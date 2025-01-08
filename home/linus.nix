@@ -114,7 +114,7 @@ in {
 
       gdtoolkit_4
 
-      inputs.zen-browser.packages.x86_64-linux.specific
+      inputs.zen-browser.packages."${pkgs.system}".default
 
       # Utilities
       lm_sensors
@@ -156,7 +156,6 @@ in {
       mpv
       mpv-shim-default-shaders
       # texlive.combined.scheme-full
-      jabref
       distrobox
       # wonderdraft
       krita
@@ -318,9 +317,9 @@ in {
     };
   };
 
-  services.pulseeffects = {
-    enable = true;
-  };
+  # services.pulseeffects = {
+  #   enable = true;
+  # };
 
   programs.imv = {
     enable = true;
