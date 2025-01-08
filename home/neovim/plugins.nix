@@ -343,7 +343,7 @@
     floaterm.enable = true;
     copilot-lua = {
       enable = true;
-      suggestion = {
+      settings.suggestion = {
         enabled = true;
         autoTrigger = true;
         keymap = {
