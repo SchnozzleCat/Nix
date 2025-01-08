@@ -975,23 +975,23 @@
           enable = true;
           package = null;
         };
-        ts_ls = {
-          enable = true;
-          extraOptions = {
-            init_options = {
-              preferences = {
-                includeInlayParameterNameHints = "all";
-                includeInlayParameterNameHintsWhenArgumentMatchesName = true;
-                includeInlayFunctionParameterTypeHints = true;
-                includeInlayVariableTypeHints = true;
-                includeInlayPropertyDeclarationTypeHints = true;
-                includeInlayFunctionLikeReturnTypeHints = true;
-                includeInlayEnumMemberValueHints = true;
-                importModuleSpecifierPreference = "non-relative";
-              };
-            };
-          };
-        };
+        # ts_ls = {
+        #   enable = true;
+        #   extraOptions = {
+        #     init_options = {
+        #       preferences = {
+        #         includeInlayParameterNameHints = "all";
+        #         includeInlayParameterNameHintsWhenArgumentMatchesName = true;
+        #         includeInlayFunctionParameterTypeHints = true;
+        #         includeInlayVariableTypeHints = true;
+        #         includeInlayPropertyDeclarationTypeHints = true;
+        #         includeInlayFunctionLikeReturnTypeHints = true;
+        #         includeInlayEnumMemberValueHints = true;
+        #         importModuleSpecifierPreference = "non-relative";
+        #       };
+        #     };
+        #   };
+        # };
         svelte.enable = true;
         tailwindcss.enable = true;
         lua_ls.enable = true;
@@ -1016,9 +1016,9 @@
     todo-comments = {
       enable = true;
     };
-    # typescript-tools = {
-    #   enable = true;
-    # };
+    typescript-tools = {
+      enable = true;
+    };
     treesitter = {
       settings = {
         indent.enable = true;
