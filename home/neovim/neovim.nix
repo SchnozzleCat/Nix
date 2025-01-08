@@ -61,7 +61,6 @@
         img-clip-nvim
         hover-nvim
         lsp-overloads-nvim
-        grapple-nvim
         telescope-zf-native-nvim
         csv-vim
       ]
@@ -174,16 +173,6 @@
             repo = pname;
             rev = version;
             sha256 = "sha256-QCdyJ5in3Dm4IVlBUtbGWRZxl87gKHhRiGmZcIGEHm0=";
-          };
-        })
-        (buildVimPlugin rec {
-          pname = "vessel.nvim";
-          version = "bd97a5e164541372c15c82d7da2e25c7f7c737cf";
-          src = pkgs.fetchFromGitHub {
-            owner = "gcmt";
-            repo = pname;
-            rev = version;
-            sha256 = "sha256-Z3efc23KR6TOftqWzbTVo8903E5mljRna2dIUkzteFI=";
           };
         })
         (buildVimPlugin rec {
@@ -386,11 +375,7 @@
         local addr = "/tmp/godot.pipe"
         vim.fn.serverstart(addr)
       end
-      require("vessel").setup({
-        create_commands = true
-      })
       require("portal").setup()
-      require("grapple").setup()
       require("smear_cursor").setup({
         distance_stop_animating = 0.7,
         legacy_computing_symbols_support = true,

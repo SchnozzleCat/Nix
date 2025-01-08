@@ -79,68 +79,6 @@
       action = "<cmd>Rest last<cr>";
       options.desc = "Rest Last";
     }
-    # Grapple
-    {
-      mode = "n";
-      key = "<leader>k";
-      action = "<cmd>Grapple toggle_tags<cr>";
-    }
-    {
-      mode = "n";
-      key = "<leader>K";
-      action = "<cmd>Grapple toggle<cr>";
-    }
-    {
-      mode = "n";
-      key = "<leader><leader>a";
-      action = "<cmd>Grapple select index=1<cr>";
-    }
-    {
-      mode = "n";
-      key = "<leader><leader>s";
-      action = "<cmd>Grapple select index=2<cr>";
-    }
-    {
-      mode = "n";
-      key = "<leader><leader>d";
-      action = "<cmd>Grapple select index=3<cr>";
-    }
-    {
-      mode = "n";
-      key = "<leader><leader>f";
-      action = "<cmd>Grapple select index=4<cr>";
-    }
-    {
-      mode = "n";
-      key = "<leader><leader>j";
-      action = "<cmd>Grapple select index=5<cr>";
-    }
-    {
-      mode = "n";
-      key = "<leader><leader>k";
-      action = "<cmd>Grapple select index=6<cr>";
-    }
-    {
-      mode = "n";
-      key = "<leader><leader>l";
-      action = "<cmd>Grapple select index=7<cr>";
-    }
-    {
-      mode = "n";
-      key = "<leader><leader>;";
-      action = "<cmd>Grapple select index=8<cr>";
-    }
-    # Portal
-    {
-      mode = "n";
-      key = "<leader><leader>o";
-      action = "<cmd>Portal jumplist backward<cr>";
-    }
-    {
-      mode = "n";
-      key = "<leader><leader>i";
-      action = "<cmd>Portal jumplist forward<cr>";
-    }
     # Windows
     {
       mode = "n";
@@ -381,14 +319,13 @@
       action = "<cmd>lua MiniFiles.open(nil, false) <cr>";
       options.desc = "Mini Files Working Directory";
     }
-    # Vessel
+    # Buffers
     {
       mode = "n";
       key = "<leader>j";
-      action = "<cmd>lua require('vessel').view_buffers()<cr>";
-      options.desc = "Vessel Buffers";
+      action = "<cmd>Telescope buffers sort_mru=true sort_lastused=true initial_mode=normal theme=ivy<cr>";
+      options.desc = "Telescope Buffers";
     }
-    # Buffers
     {
       mode = "n";
       key = "<leader>B";

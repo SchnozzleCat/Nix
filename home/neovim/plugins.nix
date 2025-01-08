@@ -5,6 +5,28 @@
   ...
 }: {
   programs.nixvim.plugins = {
+    arrow = {
+      enable = true;
+      settings = {
+        hide_handbook = true;
+        show_icons = true;
+        leader_key = ";";
+        buffer_leader_key = "m";
+        mappings = {
+          edit = "e";
+          delete_mode = "D";
+          clear_all_items = "C";
+          toggle = "'";
+          open_vertical = "v";
+          open_horizontal = "h";
+          quit = "q";
+          remove = "x";
+          next_item = "]";
+          prev_item = "[";
+        };
+        index_keys = "asdfjkl;1234567890";
+      };
+    };
     transparent.enable = true;
     dressing.enable = true;
     notify.enable = true;
@@ -42,7 +64,11 @@
           mappings.__raw = ''
             {
               i = { ["<c-t>"] = require("trouble.sources.telescope").open },
-              n = { ["<c-t>"] = require("trouble.sources.telescope").open },
+              n = {
+                ["<c-t>"] = require("trouble.sources.telescope").open,
+                ["q"] = require("telescope.actions").close,
+                ["x"] = require("telescope.actions").delete_buffer,
+              },
             }
           '';
         };
@@ -405,37 +431,7 @@
           lualine_a = [
             "branch"
           ];
-          lualine_b = [
-            {
-              __raw = ''
-                {
-                  function()
-                    local on = {
-                     "󰎤", "󰎧", "󰎪","󰎭","󰎱","󰎳", "󰎶", "󰎹"
-                    }
-                    local off = {
-                     "󰎦", "󰎩", "󰎬", "󰎮", "󰎰","󰎵", "󰎸", "󰎻"
-                    }
-                    local grapple = require("grapple")
-                    local tags = grapple.tags()
-                    local current = grapple.find({ buffer = 0 })
-
-                    local statusline = ""
-                    for i, tag in ipairs(tags) do
-                      local filename = tag.path:match("^.+/(.+)$")
-                      local icon = MiniIcons.get("file", filename)
-                      if current and current.path == tag.path then
-                        statusline = string.format("%s %s 󰜴 %s %s", statusline, on[i], icon, filename)
-                      else
-                        statusline = string.format("%s %s 󰜴 %s %s", statusline, off[i], icon, filename)
-                      end
-                    end
-                    return statusline
-                  end
-                }
-              '';
-            }
-          ];
+          lualine_b = [""];
           lualine_c = [""];
           lualine_x = [""];
         };
