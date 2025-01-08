@@ -374,6 +374,7 @@
       })
     '';
     opts = {
+      showtabline = 0;
       relativenumber = true;
       number = true;
       undofile = true;

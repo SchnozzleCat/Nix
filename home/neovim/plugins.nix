@@ -409,8 +409,64 @@
     lualine = {
       enable = true;
       settings = {
-        tabline = {
+        winbar = {
+          lualine_a = ["filename"];
+          lualine_b = [""];
+          lualine_c = [""];
+          lualine_x = [
+            {
+              __unkeyed-1 = "diff";
+              symbols = {
+                added = " ";
+                modified = "󰝤 ";
+                removed = " ";
+              };
+              diff_color = {
+                added = {fg = "#98be65";};
+                modified = {fg = "#FF8800";};
+                removed = {fg = "#ec5f67";};
+              };
+            }
+          ];
+          lualine_y = [""];
+          lualine_z = [""];
+        };
+        inactive_winbar = {
+          lualine_a = ["filename"];
+          lualine_b = [""];
+          lualine_c = [""];
+          lualine_x = [
+            {
+              __unkeyed-1 = "diff";
+              symbols = {
+                added = " ";
+                modified = "󰝤 ";
+                removed = " ";
+              };
+              diff_color = {
+                added = {fg = "#98be65";};
+                modified = {fg = "#FF8800";};
+                removed = {fg = "#ec5f67";};
+              };
+            }
+          ];
+          lualine_y = [""];
+          lualine_z = [""];
+        };
+        sections = {
           lualine_a = [
+            "branch"
+            {
+              __raw = ''
+                {
+                  function()
+                    return " " .. #vim.fn.getbufinfo { buflisted = 1 }
+                  end
+                }
+              '';
+            }
+          ];
+          lualine_b = [
             {
               __raw = ''
                 {
@@ -429,21 +485,8 @@
               '';
             }
           ];
-          lualine_b = [""];
           lualine_c = [""];
-          lualine_x = [""];
-          lualine_y = [""];
-          lualine_z = [
-            "filename"
-          ];
-        };
-        sections = {
-          lualine_a = [
-            "branch"
-          ];
-          lualine_b = [""];
-          lualine_c = [""];
-          lualine_x = [""];
+          lualine_x = ["diagnostics"];
         };
       };
     };
