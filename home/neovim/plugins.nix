@@ -5,8 +5,12 @@
   ...
 }: {
   programs.nixvim.plugins = {
+    lz-n = {
+      enable = true;
+    };
     arrow = {
       enable = true;
+      lazyLoad.settings.event = "DeferredUIEnter";
       settings = {
         hide_handbook = true;
         show_icons = true;
@@ -29,15 +33,25 @@
     };
     smear-cursor = {
       enable = true;
+      lazyLoad.settings.event = "DeferredUIEnter";
     };
     vim-dadbod.enable = true;
     vim-dadbod-ui.enable = true;
     vim-dadbod-completion.enable = true;
-    dotnet.enable = true;
+    dotnet = {
+      enable = true;
+      lazyLoad.settings.cmd = "DotnetUI";
+    };
     csvview.enable = true;
     lazygit.enable = true;
-    grug-far.enable = true;
-    transparent.enable = true;
+    grug-far = {
+      enable = true;
+      lazyLoad.settings.cmd = "GrugFar";
+    };
+    transparent = {
+      enable = true;
+      lazyLoad.settings.event = "DeferredUIEnter";
+    };
     dressing.enable = true;
     notify.enable = true;
     noice = {
@@ -53,6 +67,7 @@
     };
     telescope = {
       enable = true;
+      lazyLoad.settings.cmd = "Telescope";
       luaConfig.post = ''
         require("telescope").load_extension("zf-native")
         require('telescope').load_extension('dap')
@@ -168,7 +183,6 @@
         };
       };
     };
-    toggleterm.enable = true;
     otter = {
       enable = true;
       settings.buffers = {
@@ -268,32 +282,14 @@
     };
     octo = {
       enable = true;
-    };
-    copilot-chat = {
-      enable = true;
-      settings = {
-        prompts = {
-          Explain = "Explain how it works.";
-          Review = "Review the following code and provide concise suggestions.";
-          Tests = "Briefly explain how the selected code works, then generate unit tests.";
-          Refactor = "Refactor the code to improve clarity and readability.";
-          Documentation = "Create a docstring for the code in the appropriate format.";
-          CommitStaged = {
-            prompt = ''Write commit message for the change with commitizen convention. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.'';
-            selection = ''
-              function(source)
-                return require("CopilotChat.select").gitdiff(source, true)
-              end,
-            '';
-          };
-        };
-      };
+      lazyLoad.settings.cmd = "Octo";
     };
     markdown-preview.enable = true;
     web-devicons.enable = true;
     vim-surround.enable = true;
     trouble = {
       enable = true;
+      lazyLoad.settings.event = "DeferredUIEnter";
       settings = {
         modes = {
           lsp_references = {
@@ -305,6 +301,7 @@
     undotree.enable = true;
     avante = {
       enable = true;
+      lazyLoad.settings.event = "DeferredUIEnter";
       settings = {
         provider = "copilot";
         copilot = {
@@ -340,9 +337,9 @@
       symbolInWinbar.enable = false;
       lightbulb.enable = false;
     };
-    floaterm.enable = true;
     copilot-lua = {
       enable = true;
+      lazyLoad.settings.cmd = "DeferredUIEnter";
       settings.suggestion = {
         enabled = true;
         autoTrigger = true;
@@ -353,12 +350,12 @@
     };
     codesnap = {
       enable = true;
+      lazyLoad.settings.cmd = "CodeSnap";
       settings = {
         mac_window_bar = false;
         watermark = "hello";
       };
     };
-    nvim-tree.enable = true;
     snacks = {
       enable = true;
       settings = {
@@ -369,6 +366,7 @@
     };
     mini = {
       enable = true;
+      lazyLoad.settings.event = "DeferredUIEnter";
       modules = {
         ai = {};
         files = {
@@ -402,18 +400,29 @@
       };
     };
     colorizer.enable = true;
-    flash.enable = true;
-    which-key.enable = true;
-    gitsigns.enable = true;
+    flash = {
+      enable = true;
+      lazyLoad.settings.event = "DeferredUIEnter";
+    };
+    which-key = {
+      enable = true;
+      lazyLoad.settings.event = "DeferredUIEnter";
+    };
+    gitsigns = {
+      enable = true;
+      lazyLoad.settings.cmd = "Gitsigns";
+    };
     nvim-lightbulb.enable = true;
     lualine = {
       enable = true;
+      lazyLoad.settings.event = "BufEnter";
       settings = {
         winbar = {
           lualine_a = ["filename"];
           lualine_b = [""];
           lualine_c = [""];
-          lualine_x = [
+          lualine_x = [""];
+          lualine_y = [
             {
               __unkeyed-1 = "diff";
               symbols = {
@@ -428,14 +437,14 @@
               };
             }
           ];
-          lualine_y = [""];
           lualine_z = [""];
         };
         inactive_winbar = {
           lualine_a = ["filename"];
           lualine_b = [""];
           lualine_c = [""];
-          lualine_x = [
+          lualine_x = [""];
+          lualine_y = [
             {
               __unkeyed-1 = "diff";
               symbols = {
@@ -450,7 +459,6 @@
               };
             }
           ];
-          lualine_y = [""];
           lualine_z = [""];
         };
         sections = {
@@ -492,6 +500,7 @@
     };
     yazi = {
       enable = true;
+      lazyLoad.settings.cmd = "Yazi";
     };
     alpha = {
       enable = true;
@@ -556,12 +565,14 @@
     # fidget.enable = true;
     render-markdown = {
       enable = true;
+      lazyLoad.settings.ft = ["markdown" "Avante" "quarto"];
       settings = {
         file_types = ["markdown" "Avante" "quarto"];
       };
     };
     quarto = {
       enable = true;
+      lazyLoad.settings.ft = ["quarto" "markdown"];
       settings = {
         codeRunner = {
           enabled = true;
@@ -572,6 +583,7 @@
     };
     neotest = {
       enable = true;
+      lazyLoad.settings.cmd = "Neotest";
       adapters = {
         python.enable = true;
         dotnet.enable = true;
@@ -786,11 +798,16 @@
     };
     rustaceanvim = {
       enable = true;
+      lazyLoad.settings.ft = "rust";
       settings.server.on_attach = ''__lspOnAttach'';
     };
-    rest.enable = true;
+    rest = {
+      enable = true;
+      lazyLoad.settings.cmd = "Rest";
+    };
     obsidian = {
       enable = true;
+      lazyLoad.settings.event = "DeferredUIEnter";
       settings = {
         note_id_func = ''
           function(title)
@@ -825,6 +842,7 @@
     };
     luasnip = {
       enable = true;
+      lazyLoad.settings.event = "DeferredUIEnter";
       settings = {
         region_check_events = "InsertEnter";
         delete_check_events = "InsertLeave";
@@ -835,6 +853,7 @@
     lsp-format.enable = true;
     none-ls = {
       enable = true;
+      lazyLoad.settings.event = "DeferredUIEnter";
       sources = {
         code_actions = {
           gitsigns.enable = true;
@@ -860,6 +879,7 @@
     };
     lsp = {
       enable = true;
+      lazyLoad.settings.event = "DeferredUIEnter";
       postConfig = ''
         _G["__lspCapabilities"] = __lspCapabilities
         _G["__lspOnAttach"] = __lspOnAttach
@@ -1015,27 +1035,31 @@
     };
     todo-comments = {
       enable = true;
+      lazyLoad.settings.event = "DeferredUIEnter";
     };
     typescript-tools = {
       enable = true;
     };
     treesitter = {
+      enable = true;
+      lazyLoad.settings.event = "DeferredUIEnter";
       settings = {
         indent.enable = true;
         highlight = {
           enable = true;
         };
       };
-      enable = true;
     };
     treesitter-context = {
       enable = true;
+      lazyLoad.settings.event = "DeferredUIEnter";
       settings = {
         separator = "-";
       };
     };
     zen-mode = {
       enable = true;
+      lazyLoad.settings.cmd = "ZenMode";
       settings = {
         window = {
           height = 1;
