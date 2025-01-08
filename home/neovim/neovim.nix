@@ -47,22 +47,16 @@
       ];
     extraPlugins = with pkgs.vimPlugins;
       [
-        lazygit-nvim
         ltex_extra-nvim
         vim-visual-multi
         telescope-dap-nvim
         tabout-nvim
         plenary-nvim
-        vim-dadbod
-        vim-dadbod-ui
-        vim-dadbod-completion
-        grug-far-nvim
         tiny-inline-diagnostic-nvim
         img-clip-nvim
         hover-nvim
         lsp-overloads-nvim
         telescope-zf-native-nvim
-        csv-vim
       ]
       ++ (with pkgs.vimUtils; [
         (buildVimPlugin rec {
@@ -186,16 +180,6 @@
           };
         })
         (buildVimPlugin rec {
-          pname = "smear-cursor.nvim";
-          version = "7240dcc47abcd2468d8ad1c479215301ec6c20cd";
-          src = pkgs.fetchFromGitHub {
-            owner = "sphamba";
-            repo = pname;
-            rev = version;
-            sha256 = "sha256-0wRfsv34DkHiLumOSfA0EG7YZOqXnoFmyn72qxvUf0U=";
-          };
-        })
-        (buildVimPlugin rec {
           pname = "focushere.nvim";
           version = "28c40c7e3481d6cd9e4c7b8005c36a18b5db7ac6";
           src = pkgs.fetchFromGitHub {
@@ -244,7 +228,6 @@
       let g:VM_maps['Find Subword Under'] = '<C-s>'
     '';
     extraConfigLua = ''
-
       require("hover").setup {
         init = function()
             -- Require providers
@@ -376,14 +359,9 @@
         vim.fn.serverstart(addr)
       end
       require("portal").setup()
-      require("smear_cursor").setup({
-        distance_stop_animating = 0.7,
-        legacy_computing_symbols_support = true,
-      })
       require('dooing').setup({
         save_path = '/home/linus/.nixos/home/todo.json'
       })
-      require("grug-far").setup()
       require("focushere").setup()
       require("tiny-inline-diagnostic").setup({
         options = {

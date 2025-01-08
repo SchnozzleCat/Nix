@@ -27,6 +27,16 @@
         index_keys = "asdfjkl;1234567890";
       };
     };
+    smear-cursor = {
+      enable = true;
+    };
+    vim-dadbod.enable = true;
+    vim-dadbod-ui.enable = true;
+    vim-dadbod-completion.enable = true;
+    dotnet.enable = true;
+    csvview.enable = true;
+    lazygit.enable = true;
+    grug-far.enable = true;
     transparent.enable = true;
     dressing.enable = true;
     notify.enable = true;
