@@ -280,6 +280,26 @@
         };
       };
     };
+    copilot-chat = {
+      enable = true;
+      settings = {
+        prompts = {
+          Explain = "Explain how it works.";
+          Review = "Review the following code and provide concise suggestions.";
+          Tests = "Briefly explain how the selected code works, then generate unit tests.";
+          Refactor = "Refactor the code to improve clarity and readability.";
+          Documentation = "Create a docstring for the code in the appropriate format.";
+          CommitStaged = {
+            prompt = ''Write commit message for the change with commitizen convention. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.'';
+            selection = ''
+              function(source)
+                return require("CopilotChat.select").gitdiff(source, true)
+              end,
+            '';
+          };
+        };
+      };
+    };
     octo = {
       enable = true;
       lazyLoad.settings.cmd = "Octo";
