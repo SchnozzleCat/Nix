@@ -24,11 +24,6 @@
   services.gvfs.enable = true;
   services.udisks2.enable = true;
 
-  services.displayManager.autoLogin = {
-    enable = true;
-    user = "linus";
-  };
-
   hardware.bluetooth = {
     enable = true;
     powerOnBoot = true;

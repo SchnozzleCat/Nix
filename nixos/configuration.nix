@@ -24,6 +24,11 @@
   };
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
 
+  services.displayManager.autoLogin = {
+    enable = true;
+    user = "linus";
+  };
+
   # Networking
   networking.hostName = hostname;
   networking.networkmanager.enable = true;
