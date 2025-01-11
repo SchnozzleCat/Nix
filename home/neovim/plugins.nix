@@ -498,10 +498,7 @@
         };
       };
     };
-    yazi = {
-      enable = true;
-      lazyLoad.settings.cmd = "Yazi";
-    };
+    yazi.enable = true;
     alpha = {
       enable = true;
       layout = [
