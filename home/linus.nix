@@ -25,6 +25,8 @@ in {
   };
   nixpkgs.config.android_sdk.accept_license = true;
 
+  programs.command-not-found.enable = true;
+
   gtk = {
     enable = true;
     gtk2.extraConfig = ''

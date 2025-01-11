@@ -1281,6 +1281,18 @@
         "type": "github"
       }
     },
+    "programs-db": {
+      "locked": {
+        "lastModified": 1736411543,
+        "narHash": "sha256-Lb4qsTITrR9YhYKFiUvCU52CdYTKKH4lGyYz7PITug8=",
+        "type": "tarball",
+        "url": "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz"
+      }
+    },
     "root": {
       "inputs": {
         "Hyprspace": "Hyprspace",
@@ -1297,6 +1309,7 @@
         "nixpkgs": "nixpkgs_4",
         "nixpkgs-master": "nixpkgs-master",
         "nixvim": "nixvim",
+        "programs-db": "programs-db",
         "spicetify-nix": "spicetify-nix",
         "zen-browser": "zen-browser",
         "zjstatus": "zjstatus"

@@ -9,6 +9,8 @@
     nixpkgs-master.url = "github:nixos/nixpkgs/master";
     # Also see the 'unstable-packages' overlay at 'overlays/default.nix'.
 
+    programs-db.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
+
     lix-module = {
       url = "https://git.lix.systems/lix-project/nixos-module/archive/2.91.0.tar.gz";
       inputs.nixpkgs.follows = "nixpkgs";

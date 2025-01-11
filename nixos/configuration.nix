@@ -45,6 +45,11 @@
     settings.general.inhibit_screensaver = 0;
   };
 
+  programs.command-not-found = {
+    enable = true;
+    dbPath = "${inputs.programs-db}/programs.sqlite";
+  };
+
   virtualisation.docker.rootless = {
     enable = true;
     setSocketVariable = true;
