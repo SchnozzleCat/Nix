@@ -47,7 +47,7 @@
     };
     "backlight" = {
       device = "intel_backlight";
-      format = "{icon}";
+      format = "{icon} ";
       format-icons = ["󱩎" "󱩒" "󱩖"];
       on-scroll-up = "exec brightnessctl set 5%+";
       on-scroll-down = "brightnessctl set 5%-";
@@ -60,7 +60,7 @@
     };
 
     "pulseaudio" = {
-      format = "{icon}";
+      format = "{icon} ";
       format-alt-click = "click-right";
       format-bluetooth = "";
       format-muted = "";
