@@ -73,7 +73,11 @@
     openFirewall = true;
   };
 
-  services.sunshine.enable = true;
+  services.sunshine = {
+    enable = true;
+    openFirewall = true;
+    capSysAdmin = true;
+  };
 
   services.flatpak.enable = true;
   services.avahi.publish.userServices = true;
