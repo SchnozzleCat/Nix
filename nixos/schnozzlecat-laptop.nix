@@ -28,7 +28,7 @@
         {
           publicKey = "sfZOYpc0A6IagxOV1f6WlzwCrGN/VSXSNT6Jsb7DlQE=";
           allowedIPs = ["192.168.200.0/24"];
-          endpoint = "roamer.servebeer.com:51111";
+          endpoint = "trace.schnozzlecat.xyz:51111";
           persistentKeepalive = 25;
         }
       ];
