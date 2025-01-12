@@ -12,6 +12,23 @@
     ./linus.nix
   ];
 
+  services.hypridle = {
+    enable = true;
+    settings = {
+      listener = [
+        {
+          timeout = 60;
+          on-timeout = "${pkgs.hyprlock}/bin/hyprlock";
+        }
+        {
+          timeout = 90;
+          on-timeout = "hyprctl dispatch dpms off";
+          on-resume = "hyprctl dispatch dpms on";
+        }
+      ];
+    };
+  };
+
   colorScheme = {
     name = "schnozzlecat";
     palette = {
