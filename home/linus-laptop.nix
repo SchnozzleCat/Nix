@@ -66,6 +66,11 @@
     + ''
       monitor=eDP-1,2880x1800@120,0x0,auto
       monitor=HDMI-A-1,1920x1080@60,1920x0,1
+
+      bind = $mainMod Shift Ctrl, o, submap, empty
+      submap = empty
+      bind = $mainMod Shift Ctrl, o, submap, reset
+      submap = reset
     '';
 
   home.file.".config/hypr/hyprpaper.conf".text =
