@@ -59,6 +59,10 @@
       name = "wake-desktop";
       text = ''${pkgs.wakeonlan}/bin/wakeonlan d8:5e:d3:8a:17:75'';
     })
+    (writeShellApplication {
+      name = "remote-desktop";
+      text = ''hyprctl dispatch submap empty && hyprctl keyword monitor "eDP-1, 1920x1080@120, 0x0, 1" && ${pkgs.moonlight-embedded}/bin/moonlight stream 192.168.200.20 -app Desktop -1080 && hyprctl dispatch submap reset && hyprctl keyword monitor "eDP-1, 2880x1800@120, 0x0, 1.6"'';
+    })
   ];
 
   wayland.windowManager.hyprland.extraConfig =
