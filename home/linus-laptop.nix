@@ -68,7 +68,7 @@
   wayland.windowManager.hyprland.extraConfig =
     (import ./hyprland.nix {inherit config pkgs;})
     + ''
-      monitor=eDP-1,2880x1800@120,0x0,auto
+      monitor=eDP-1,2880x1800@120,0x0,1.6
       monitor=HDMI-A-1,1920x1080@60,1920x0,1
 
       bind = $mainMod Shift Ctrl, o, submap, empty
