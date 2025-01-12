@@ -22,6 +22,20 @@ in {
     };
   };
 
+  services.ddclient = {
+    enable = true;
+    interval = "10min";
+    usev4 = "webv4,webv4='https://cloudflare.com/cdn-cgi/trace', web-skip='ip='";
+    ssl = true;
+    extraConfig = ''
+      protocol=cloudflare
+      zone=schnozzlecat.xyz
+      username=token
+      password=${import ../secrets/keys/cloudflare.key}
+      trace.schnozzlecat.xyz
+    '';
+  };
+
   virtualisation.oci-containers = {
     backend = "docker";
 
