@@ -20,7 +20,6 @@ in {
     enable = true;
     package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
     plugins = with inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}; [
-      hyprexpo
     ];
   };
   nixpkgs.config.android_sdk.accept_license = true;
@@ -212,15 +211,6 @@ in {
             fi
             ${pkgs.libnotify}/bin/notify-send -r "$NID" "Shell" "$MESSAGE"
           done
-        '';
-      })
-      (writeShellApplication {
-        name = "godot-nvim";
-        text = ''
-          FILE=/tmp/nvimgodot
-          if test -e "$FILE"; then
-            nvr --servername "$FILE" --remote-silent "+''$1" "''$2"
-          fi
         '';
       })
       (writeShellApplication {

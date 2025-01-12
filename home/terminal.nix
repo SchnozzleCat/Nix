@@ -43,8 +43,6 @@ in {
     wget
 
     cabextract
-
-    neovim-remote
   ];
 
   programs.yazi = {
