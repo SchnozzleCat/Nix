@@ -37,6 +37,11 @@
   home.packages = with pkgs; [
     wireguard-tools
     parsec-bin
+
+    (writeShellApplication {
+      name = "wake-desktop";
+      text = ''${pkgs.wakeonlan}/bin/wakeonlan d8:5e:d3:8a:17:75'';
+    })
   ];
 
   wayland.windowManager.hyprland.extraConfig =
