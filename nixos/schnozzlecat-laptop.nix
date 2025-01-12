@@ -12,6 +12,8 @@
     enable32Bit = true;
   };
 
+  services.logind.lidSwitch = "ignore";
+
   hardware.bluetooth = {
     enable = true;
     powerOnBoot = true;
