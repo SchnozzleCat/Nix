@@ -321,7 +321,6 @@
     undotree.enable = true;
     avante = {
       enable = true;
-      lazyLoad.settings.event = "DeferredUIEnter";
       settings = {
         provider = "copilot";
         copilot = {
@@ -359,7 +358,6 @@
     };
     copilot-lua = {
       enable = true;
-      lazyLoad.settings.cmd = "DeferredUIEnter";
       settings.suggestion = {
         enabled = true;
         autoTrigger = true;
