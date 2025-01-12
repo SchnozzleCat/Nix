@@ -48,7 +48,7 @@
     "backlight" = {
       device = "intel_backlight";
       format = "{icon}";
-      format-icons = ["" "" ""];
+      format-icons = ["󱩎" "󱩒" "󱩖"];
       on-scroll-up = "exec brightnessctl set 5%+";
       on-scroll-down = "brightnessctl set 5%-";
       states = {
@@ -62,10 +62,10 @@
     "pulseaudio" = {
       format = "{icon}";
       format-alt-click = "click-right";
-      format-bluetooth = "";
-      format-muted = "婢";
+      format-bluetooth = "";
+      format-muted = "";
       format-icons = {
-        headphone = "";
+        headphone = "";
         default = ["" "" ""];
       };
       tooltip-format = "{volume}";
