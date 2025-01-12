@@ -32,6 +32,9 @@
           persistentKeepalive = 25;
         }
       ];
+    };
+  };
+
   boot.initrd = {
     luks.devices.root = {
       crypttabExtraOpts = ["fido2-device=auto"];
