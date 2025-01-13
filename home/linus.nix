@@ -393,10 +393,6 @@ in {
     command = "sleep 3 && foot -a foot-ncspot ncspot"
     animation = "fromBottom"
     margin = 50
-
-    [scratchpads.volume]
-    command = "pavucontrol"
-    animation = "fromRight"
   '';
 
   home.file.".config/hypr/hyprshade.toml".text = ''
