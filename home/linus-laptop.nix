@@ -17,11 +17,11 @@
     settings = {
       listener = [
         {
-          timeout = 60;
+          timeout = 300;
           on-timeout = "${pkgs.hyprlock}/bin/hyprlock";
         }
         {
-          timeout = 90;
+          timeout = 360;
           on-timeout = "hyprctl dispatch dpms off";
           on-resume = "hyprctl dispatch dpms on";
         }
@@ -69,7 +69,7 @@
     (import ./hyprland.nix {inherit config pkgs;})
     + ''
       monitor=eDP-1,2880x1800@120,0x0,1.6
-      monitor=HDMI-A-1,1920x1080@60,1920x0,1
+      monitor=HDMI-A-1,1920x1080@60,2880x0,1
 
       bind = $mainMod Shift Ctrl, o, submap, empty
       submap = empty
