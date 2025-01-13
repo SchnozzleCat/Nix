@@ -189,6 +189,16 @@
             sha256 = "sha256-2BK8oRj4Ki1aHCOlAz05y3+LMIZcJ2iVUrEdB4UrkNE=";
           };
         })
+        (buildVimPlugin rec {
+          pname = "quicker.nvim";
+          version = "e4fb0b1862284757561d1d51091cdee907585948";
+          src = pkgs.fetchFromGitHub {
+            owner = "/stevearc";
+            repo = pname;
+            rev = version;
+            sha256 = "sha256-IRE/K8gWRbLe1WWmNYklwrfBKmE+0rQs+PbAhcIIrnw=";
+          };
+        })
       ]);
     highlight = {
       "@type.qualifier.c_sharp".fg = "#7AA8fF";
@@ -371,6 +381,24 @@
       vim.diagnostic.config({ virtual_text = false })
       require("let-it-snow").setup({
         delay = 100
+      })
+      require("quicker").setup({
+        keys = {
+          {
+            ">",
+            function()
+              require("quicker").expand({ before = 2, after = 2, add_to_existing = true })
+            end,
+            desc = "Expand quickfix context",
+          },
+          {
+            "<",
+            function()
+              require("quicker").collapse()
+            end,
+            desc = "Collapse quickfix context",
+          },
+        },
       })
     '';
     opts = {
