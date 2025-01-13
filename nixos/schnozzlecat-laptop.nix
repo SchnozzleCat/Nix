@@ -12,11 +12,36 @@
     enable32Bit = true;
   };
 
+  environment.systemPackages = with pkgs; [
+    powertop
+  ];
+
   services.logind.lidSwitch = "ignore";
 
   hardware.bluetooth = {
     enable = true;
     powerOnBoot = true;
+  };
+
+  powerManagement = {
+    enable = true;
+    powertop.enable = true;
+    cpuFreqGovernor = "powersave";
+  };
+
+  services.thermald.enable = true;
+  services.auto-cpufreq = {
+    enable = true;
+    settings = {
+      battery = {
+        governor = "powersave";
+        turbo = "never";
+      };
+      charger = {
+        governor = "performance";
+        turbo = "auto";
+      };
+    };
   };
 
   # Enable WireGuard
@@ -61,19 +86,5 @@
       }
     ];
   };
-
-  services.thermald.enable = true;
-  services.auto-cpufreq.settings = {
-    enable = true;
-    battery = {
-      governor = "powersave";
-      turbo = "never";
-    };
-    charger = {
-      governor = "performance";
-      turbo = "auto";
-    };
-  };
-
   hardware.cpu.intel.updateMicrocode = true;
 }
