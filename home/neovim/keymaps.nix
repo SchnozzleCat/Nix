@@ -55,6 +55,62 @@
       key = "<c-l>";
       action = "<right>";
     }
+    # Words
+    {
+      mode = "n";
+      key = "[[";
+      action = "<cmd>lua Snacks.words.jump(-1) <cr>";
+      options.desc = "Previous Word";
+    }
+    {
+      mode = "n";
+      key = "]]";
+      action = "<cmd>lua Snacks.words.jump(1) <cr>";
+      options.desc = "Next Word";
+    }
+    # Picker
+    {
+      mode = "n";
+      key = "<leader>ff";
+      action = "<cmd>lua Snacks.picker.files() <cr>";
+      options.desc = "Pick Files";
+    }
+    {
+      mode = "n";
+      key = "<leader>fa";
+      action = "<cmd>lua Snacks.picker.files({ hidden = true, ignored = true }) <cr>";
+      options.desc = "Pick All Files";
+    }
+    {
+      mode = "n";
+      key = "<leader>fw";
+      action = "<cmd>lua Snacks.picker.grep() <cr>";
+      options.desc = "Pick Grep";
+    }
+    {
+      mode = "n";
+      key = "<leader>j";
+      action = "<cmd>lua Snacks.picker.buffers()<cr>";
+      options.desc = "Pick Buffers";
+    }
+    {
+      mode = "v";
+      key = "<leader>gc";
+      action = "<cmd>lua Snacks.picker.git_log_line()<cr>";
+      options.desc = "Pick Git Line Log";
+    }
+    {
+      mode = "n";
+      key = "<leader>gc";
+      action = "<cmd>lua Snacks.picker.git_log_file()<cr>";
+      options.desc = "Pick Git File Log";
+    }
+    {
+      mode = "n";
+      key = "<leader>fo";
+      action = "<cmd>lua Snacks.picker.recent()<cr>";
+      options.desc = "Pick Fecent";
+    }
     # Focus Here
     {
       mode = "v";
@@ -322,98 +378,20 @@
     # Buffers
     {
       mode = "n";
-      key = "<leader>j";
-      action = "<cmd>Telescope buffers sort_mru=true sort_lastused=true initial_mode=normal theme=ivy<cr>";
-      options.desc = "Telescope Buffers";
+      key = "<leader>b";
+      action = "<cmd>lua Snacks.scratch() <cr>";
+      options.desc = "Toggle Scratch Buffer";
     }
     {
       mode = "n";
       key = "<leader>B";
-      action = "<cmd> enew <cr>";
-      options.desc = "New Buffer";
+      action = "<cmd>lua Snacks.scratch.select() <cr>";
+      options.desc = "Select Scratch Buffer";
     }
     {
       key = "<leader>x";
-      action = "<cmd> bd <cr>";
-      options.desc = "Close Buffer";
-    }
-    {
-      key = "<leader>X";
-      action = "<cmd> bd! <cr>";
-      options.desc = "Close Buffer";
-    }
-    # Telescope
-    {
-      mode = "n";
-      key = "<leader>fa";
-      action = "<cmd> Telescope find_files follow=true no_ignore=true hidden=true <cr>";
-      options.desc = "Find All";
-    }
-    {
-      mode = "v";
-      key = "<leader>gc";
-      action = "<cmd>Telescope git_bcommits_range <cr>";
-      options.desc = "Git Buffer Commits in Range";
-    }
-    {
-      mode = "n";
-      key = "<leader>fi";
-      action = "<cmd> Telescope lsp_dynamic_workspace_symbols symbols={'Interface'} <cr>";
-      options.desc = "Find Interfaces";
-    }
-    {
-      mode = "n";
-      key = "<leader>fm";
-      action = "<cmd> Telescope lsp_dynamic_workspace_symbols symbols={'Method','Function'} <cr>";
-      options.desc = "Find Methods";
-    }
-    {
-      mode = "n";
-      key = "<leader>fv";
-      action = "<cmd> Telescope lsp_dynamic_workspace_symbols symbols='Variable' <cr>";
-      options.desc = "Find Variables";
-    }
-    {
-      mode = "n";
-      key = "<leader>fu";
-      action = "<cmd> Telescope undo <cr>";
-      options.desc = "Find Undo";
-    }
-    {
-      mode = "n";
-      key = "<leader>fcc";
-      action = "<cmd> Telescope lsp_dynamic_workspace_symbols symbols='Class' <cr>";
-      options.desc = "Find Classes";
-    }
-    {
-      mode = "n";
-      key = "<leader>fr";
-      action = "<cmd> Telescope lsp_references <cr>";
-      options.desc = "Find References";
-    }
-    {
-      mode = "n";
-      key = "<leader>fi";
-      action = "<cmd> Telescope lsp_implementations <cr>";
-      options.desc = "Find Implementations";
-    }
-    {
-      mode = "n";
-      key = "<leader>fd";
-      action = "<cmd> Telescope lsp_definitions <cr>";
-      options.desc = "Find Definitions";
-    }
-    {
-      mode = "n";
-      key = "<leader>fci";
-      action = "<cmd> Telescope lsp_incoming_calls <cr>";
-      options.desc = "Find Incoming Calls";
-    }
-    {
-      mode = "n";
-      key = "<leader>fco";
-      action = "<cmd> Telescope lsp_outgoing_calls <cr>";
-      options.desc = "Find Outgoing Calls";
+      action = "<cmd>lua Snacks.bufdelete() <cr>";
+      options.desc = "Delete Buffer";
     }
     # Flash
     {
@@ -567,20 +545,26 @@
     }
     {
       mode = ["n"];
-      key = "]]";
+      key = "]d";
       action = "<cmd> Lspsaga diagnostic_jump_next <cr>";
       options.desc = "Next Diagnostic";
     }
     {
       mode = ["n"];
-      key = "[[";
+      key = "[d";
       action = "<cmd> Lspsaga diagnostic_jump_prev <cr>";
       options.desc = "Previous Diagnostic";
     }
     {
       mode = ["n"];
+      key = "gs";
+      action = "<cmd>lua Snacks.picker.lsp_symbols()<cr>";
+      options.desc = "LSP Symbols";
+    }
+    {
+      mode = ["n"];
       key = "gd";
-      action = "<cmd> Trouble lsp_definitions <cr>";
+      action = "<cmd>lua Snacks.picker.lsp_definitions()<cr>";
       options.desc = "LSP Definition";
     }
     # Trouble
@@ -593,13 +577,13 @@
     {
       mode = ["n"];
       key = "gi";
-      action = "<cmd> Trouble lsp_implementations <cr>";
+      action = "<cmd>lua Snacks.picker.lsp_implementations() <cr>";
       options.desc = "LSP Implementations";
     }
     {
       mode = ["n"];
       key = "gr";
-      action = "<cmd> Trouble lsp_references <cr>";
+      action = "<cmd>lua Snacks.picker.lsp_references() <cr>";
       options.desc = "LSP References";
     }
     {
@@ -651,8 +635,15 @@
     {
       mode = ["n"];
       key = "<leader>gg";
-      action = "<cmd> LazyGit <cr>";
+      action = "<cmd>lua Snacks.lazygit() <cr>";
       options.desc = "LazyGit";
+    }
+    # Zen Mode
+    {
+      mode = ["n"];
+      key = "<leader>Z";
+      action = "<cmd>lua Snacks.zen() <cr>";
+      options.desc = "Zen";
     }
     # Obsidian
     {

@@ -43,7 +43,6 @@
       lazyLoad.settings.cmd = "DotnetUI";
     };
     csvview.enable = true;
-    lazygit.enable = true;
     grug-far = {
       enable = true;
       lazyLoad.settings.cmd = "GrugFar";
@@ -63,124 +62,6 @@
           bottom_search = true;
         };
         lsp.signature.enabled = false;
-      };
-    };
-    telescope = {
-      enable = true;
-      lazyLoad.settings.cmd = "Telescope";
-      luaConfig.post = ''
-        require("telescope").load_extension("zf-native")
-        require('telescope').load_extension('dap')
-      '';
-      settings = {
-        layout_strategy = "bottom_pane";
-        defaults = {
-          sorting_strategy = "ascending";
-          layout_strategy = "bottom_pane";
-          layout_config = {
-            height = 25;
-          };
-          border = true;
-          borderchars = {
-            prompt = ["─" " " " " " " "─" "─" " " " "];
-            results = [" "];
-            preview = ["─" "│" "─" "│" "╭" "╮" "╯" "╰"];
-          };
-          mappings.__raw = ''
-            {
-              i = { ["<c-t>"] = require("trouble.sources.telescope").open },
-              n = {
-                ["<c-t>"] = require("trouble.sources.telescope").open,
-                ["q"] = require("telescope.actions").close,
-                ["x"] = require("telescope.actions").delete_buffer,
-              },
-            }
-          '';
-        };
-      };
-      extensions = {
-        undo.enable = true;
-      };
-      keymaps = {
-        "<leader>ff" = {
-          action = "find_files";
-          options = {
-            desc = "Find Files";
-          };
-        };
-        "<leader>fdv" = {
-          action = "dap variables";
-          options = {
-            desc = "Find DAP Variables";
-          };
-        };
-        "<leader>fdb" = {
-          action = "dap list_breakpoints";
-          options = {
-            desc = "Find DAP Breakpoints";
-          };
-        };
-        "<leader>fdf" = {
-          action = "dap frames";
-          options = {
-            desc = "Find DAP Frames";
-          };
-        };
-        "<leader>fw" = {
-          action = "live_grep";
-          options = {
-            desc = "Find Word";
-          };
-        };
-        "<leader>fk" = {
-          action = "keymaps";
-          options = {
-            desc = "Find Keymaps";
-          };
-        };
-        "<leader>fs" = {
-          action = "lsp_dynamic_workspace_symbols";
-          options = {
-            desc = "Find Symbols";
-          };
-        };
-        "<leader>fb" = {
-          action = "buffers";
-          options = {
-            desc = "Find Buffers";
-          };
-        };
-        "<leader>fo" = {
-          action = "oldfiles";
-          options = {
-            desc = "Find Recent";
-          };
-        };
-        "<leader>gs" = {
-          action = "git_status";
-          options = {
-            desc = "Git Status";
-          };
-        };
-        "<leader>gb" = {
-          action = "git_branches";
-          options = {
-            desc = "Git Branches";
-          };
-        };
-        "<leader>gc" = {
-          action = "git_bcommits";
-          mode = "n";
-          options = {
-            desc = "Git Buffer Commits";
-          };
-        };
-        "<leader>gC" = {
-          action = "git_commits";
-          options = {
-            desc = "Git Commits";
-          };
-        };
       };
     };
     otter = {
@@ -376,10 +257,28 @@
     };
     snacks = {
       enable = true;
-      settings = {
-        bigfile = {
-          enabled = true;
+      package = pkgs.vimPlugins.snacks-nvim.overrideAttrs (oldAttrs: {
+        doCheck = false;
+        src = pkgs.fetchFromGitHub {
+          owner = "folke";
+          repo = "snacks.nvim";
+          rev = "60f79f98c2d03fcdc69cb85b3494b2aac2ae3ca5";
+          sha256 = "sha256-zrPZwK8LJeX2iX7Cik1OMFE9tn/vF/5jPMbJb7t61Ws=";
         };
+      });
+      settings = {
+        picker = {
+          enabled = true;
+          layout.preset = "ivy";
+        };
+        words.enabled = true;
+        zen.enabled = true;
+        lazygit.enabled = true;
+        indent.enabled = true;
+        input.enabled = true;
+        scratch.enabled = true;
+        bigfile.enabled = true;
+        bufdelete.enabled = true;
       };
     };
     mini = {
@@ -568,14 +467,6 @@
           val = 2;
         }
       ];
-    };
-    indent-blankline = {
-      enable = true;
-      settings = {
-        indent = {
-          char = "▏";
-        };
-      };
     };
     # fidget.enable = true;
     render-markdown = {
@@ -1070,16 +961,6 @@
       lazyLoad.settings.event = "DeferredUIEnter";
       settings = {
         separator = "-";
-      };
-    };
-    zen-mode = {
-      enable = true;
-      lazyLoad.settings.cmd = "ZenMode";
-      settings = {
-        window = {
-          height = 1;
-          width = 0.50;
-        };
       };
     };
   };
