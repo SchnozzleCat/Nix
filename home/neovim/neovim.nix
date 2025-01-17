@@ -79,36 +79,39 @@
             sha256 = "sha256-EwVG0mLQ+Uf2MLbjUpDGC5Z76xzEorKTkAWcnnwIG8c=";
           };
         })
-        # (buildVimPlugin {
-        #   pname = "tsc-nvim";
-        #   version = "main";
-        #   src = pkgs.fetchFromGitHub {
-        #     owner = "dmmulroy";
-        #     repo = "tsc.nvim";
-        #     rev = "c37d7b3ed954e4db13814f0ed7aa2a83b2b7e9dd";
-        #     sha256 = "sha256-ifJXtYCA04lt0z+JDWSesCPBn6OLpqnzJarK+wuo9m8=";
-        #   };
-        # })
-        # (buildVimPlugin {
-        #   pname = "tetris-nvim";
-        #   version = "main";
-        #   src = pkgs.fetchFromGitHub {
-        #     owner = "alec-gibson";
-        #     repo = "nvim-tetris";
-        #     rev = "d17c99fb527ada98ffb0212ffc87ccda6fd4f7d9";
-        #     sha256 = "sha256-+69Fq5aMMzg9nV05rZxlLTFwQmDyN5/5HmuL2SGu9xQ=";
-        #   };
-        # })
-        # (buildVimPlugin {
-        #   pname = "cellular-nvim";
-        #   version = "main";
-        #   src = pkgs.fetchFromGitHub {
-        #     owner = "Eandrju";
-        #     repo = "cellular-automaton.nvim";
-        #     rev = "b7d056dab963b5d3f2c560d92937cb51db61cb5b";
-        #     sha256 = "sha256-szbd6m7hH7NFI0UzjWF83xkpSJeUWCbn9c+O8F8S/Fg=";
-        #   };
-        # })
+        (buildVimPlugin {
+          pname = "tsc-nvim";
+          version = "main";
+          doCheck = false;
+          src = pkgs.fetchFromGitHub {
+            owner = "dmmulroy";
+            repo = "tsc.nvim";
+            rev = "c37d7b3ed954e4db13814f0ed7aa2a83b2b7e9dd";
+            sha256 = "sha256-ifJXtYCA04lt0z+JDWSesCPBn6OLpqnzJarK+wuo9m8=";
+          };
+        })
+        (buildVimPlugin {
+          pname = "tetris-nvim";
+          version = "main";
+          doCheck = false;
+          src = pkgs.fetchFromGitHub {
+            owner = "alec-gibson";
+            repo = "nvim-tetris";
+            rev = "d17c99fb527ada98ffb0212ffc87ccda6fd4f7d9";
+            sha256 = "sha256-+69Fq5aMMzg9nV05rZxlLTFwQmDyN5/5HmuL2SGu9xQ=";
+          };
+        })
+        (buildVimPlugin {
+          pname = "cellular-nvim";
+          version = "main";
+          doCheck = false;
+          src = pkgs.fetchFromGitHub {
+            owner = "Eandrju";
+            repo = "cellular-automaton.nvim";
+            rev = "b7d056dab963b5d3f2c560d92937cb51db61cb5b";
+            sha256 = "sha256-szbd6m7hH7NFI0UzjWF83xkpSJeUWCbn9c+O8F8S/Fg=";
+          };
+        })
         (buildVimPlugin {
           pname = "nerdy.nvim";
           version = "main";
@@ -193,10 +196,32 @@
           pname = "quicker.nvim";
           version = "e4fb0b1862284757561d1d51091cdee907585948";
           src = pkgs.fetchFromGitHub {
-            owner = "/stevearc";
+            owner = "stevearc";
             repo = pname;
             rev = version;
             sha256 = "sha256-IRE/K8gWRbLe1WWmNYklwrfBKmE+0rQs+PbAhcIIrnw=";
+          };
+        })
+        (buildVimPlugin rec {
+          pname = "typr";
+          version = "a60c7f237be94d4b39228a3bd2ced80fe9fe2781";
+          doCheck = false;
+          src = pkgs.fetchFromGitHub {
+            owner = "nvzone";
+            repo = pname;
+            rev = version;
+            sha256 = "sha256-iVLxQeQqpqohCPZAE3SxReEo3KmWAo+xGAiJJnRBbUE=";
+          };
+        })
+        (buildVimPlugin rec {
+          pname = "volt";
+          version = "f02b065caf0327bf4d443ff6d91cb0edd6948ddb";
+          doCheck = false;
+          src = pkgs.fetchFromGitHub {
+            owner = "nvzone";
+            repo = pname;
+            rev = version;
+            sha256 = "sha256-2SO847Un74kNFGxARaebB+WCCgexnaJdjUkQLZ6ROQ8=";
           };
         })
       ]);
@@ -258,7 +283,7 @@
         preview_window = false,
         title = true,
       }
-      -- require("tsc").setup()
+      require("tsc").setup()
 
       require("tabout").setup({
         ignore_beginning = false;
@@ -400,6 +425,23 @@
           },
         },
       })
+      require("typr").setup()
+
+      -- vim.tbl_deep_extend("force", opts or {}, {
+      --   picker = {
+      --     actions = require("trouble.sources.snacks").actions,
+      --     win = {
+      --       input = {
+      --         keys = {
+      --           ["<c-t>"] = {
+      --             "trouble_open",
+      --             mode = { "n", "i" },
+      --           },
+      --         },
+      --       },
+      --     },
+      --   },
+      -- })
     '';
     opts = {
       showtabline = 0;
