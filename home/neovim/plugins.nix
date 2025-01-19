@@ -262,8 +262,8 @@
         src = pkgs.fetchFromGitHub {
           owner = "folke";
           repo = "snacks.nvim";
-          rev = "60f79f98c2d03fcdc69cb85b3494b2aac2ae3ca5";
-          sha256 = "sha256-zrPZwK8LJeX2iX7Cik1OMFE9tn/vF/5jPMbJb7t61Ws=";
+          rev = "715104d180da92c489adaa2e4f8f42941b9e4aac";
+          sha256 = "sha256-HzF35jB/T0N2bQ8E3pDNl4vzrlv4q4zEiwhM+1rW8Xw=";
         };
       });
       settings = {
