@@ -42,7 +42,7 @@ in ''
 
   windowrulev2=float,class:^(org.pulseaudio.pavucontrol)$
 
-  bind = $mainMod,s,exec,pypr toggle volume
+  bind = $mainMod,s,exec,pavucontrol
   windowrulev2=float,class:^(pavucontrol)$
   windowrulev2=size 40% 90%,class:^(pavucontrol)$
   windowrulev2=workspace special:scratch_volume silent,class:^(pavucontrol)$
