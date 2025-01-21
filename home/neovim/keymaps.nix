@@ -109,7 +109,37 @@
       mode = "n";
       key = "<leader>fo";
       action = "<cmd>lua Snacks.picker.recent()<cr>";
-      options.desc = "Pick Fecent";
+      options.desc = "Pick Recent";
+    }
+    {
+      mode = "n";
+      key = "<leader>fs";
+      action = "<cmd>lua Snacks.picker.lsp_workspace_symbols()<cr>";
+      options.desc = "Pick Symbols";
+    }
+    {
+      mode = "n";
+      key = "<leader>fc";
+      action = "<cmd>lua Snacks.picker.lsp_workspace_symbols({filter={default={'Class', 'Struct', 'Enum'}}})<cr>";
+      options.desc = "Pick Class";
+    }
+    {
+      mode = "n";
+      key = "<leader>fi";
+      action = "<cmd>lua Snacks.picker.lsp_workspace_symbols({filter={default={'Interface'}}})<cr>";
+      options.desc = "Pick Interface";
+    }
+    {
+      mode = "n";
+      key = "<leader>fm";
+      action = "<cmd>lua Snacks.picker.lsp_workspace_symbols({filter={default={'Method', 'Function'}}})<cr>";
+      options.desc = "Pick Method";
+    }
+    {
+      mode = "n";
+      key = "<leader>fv";
+      action = "<cmd>lua Snacks.picker.lsp_workspace_symbols({filter={default={'Field', 'Property'}}})<cr>";
+      options.desc = "Pick Variable";
     }
     # Focus Here
     {
