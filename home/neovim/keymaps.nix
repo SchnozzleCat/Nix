@@ -90,7 +90,7 @@
     {
       mode = "n";
       key = "<leader>j";
-      action = "<cmd>lua Snacks.picker.buffers()<cr>";
+      action = "<cmd>lua pick_buffers()<cr>";
       options.desc = "Pick Buffers";
     }
     {

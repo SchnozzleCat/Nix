@@ -248,7 +248,6 @@
       NotifyBackground.bg = "#000000";
     };
     extraConfigVim = ''
-      autocmd BufWritePre * lua vim.lsp.buf.format()
       autocmd FileType nix setlocal commentstring=#\ %s
       autocmd FileType gdscript setlocal commentstring=#\ %s
       sign define DiagnosticSignError text= numhl=DiagnosticDefaultErro
@@ -442,6 +441,12 @@
       --     },
       --   },
       -- })
+
+      function pick_buffers()
+        Snacks.picker.buffers({current=false})
+        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<esc>', true, false, true), 'n', true)
+      end
+
     '';
     opts = {
       showtabline = 0;
