@@ -82,7 +82,8 @@
   #custom-vm,
   #temperature,
   #tray,
-  #custom-gpu-temperature {
+  #custom-gpu-temperature,
+  #custom-wattage {
     transition: none;
     color: @text;
     margin: 6px 16px 4px 16px;

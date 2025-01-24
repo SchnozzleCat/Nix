@@ -29,6 +29,25 @@
     cpuFreqGovernor = "powersave";
   };
 
+  security.sudo = {
+    enable = true;
+    extraRules = [
+      {
+        commands = [
+          {
+            command = "${pkgs.linuxKernel.packages.linux_latest_libre.cpupower}/bin/cpupower frequency-set --governor performance";
+            options = ["NOPASSWD"];
+          }
+          {
+            command = "${pkgs.linuxKernel.packages.linux_latest_libre.cpupower}/bin/cpupower frequency-set --governor powersave";
+            options = ["NOPASSWD"];
+          }
+        ];
+        groups = ["wheel"];
+      }
+    ];
+  };
+
   services.thermald.enable = true;
   services.auto-cpufreq = {
     enable = true;

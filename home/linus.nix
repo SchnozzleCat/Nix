@@ -454,7 +454,7 @@ in {
 
   programs.waybar = {
     enable = true;
-    settings = import ./waybar-config.nix;
+    settings = import ./waybar-config.nix {inherit pkgs;};
     style = import ./waybar-style.nix;
   };
 
