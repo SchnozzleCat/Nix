@@ -921,7 +921,7 @@
         svelte.enable = true;
         tailwindcss.enable = true;
         lua_ls.enable = true;
-        basedpyright.enable = true;
+        pyright.enable = true;
         cssls.enable = true;
         html.enable = true;
         java_language_server.enable = true;
