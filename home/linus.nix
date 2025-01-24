@@ -164,6 +164,8 @@ in {
       protonvpn-gui
       github-copilot-cli
       rocmPackages.rocm-smi
+      nvtop
+      vdhcoapp
 
       # Shell Scripts
       (writeShellApplication {
