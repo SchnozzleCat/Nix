@@ -88,11 +88,6 @@ in ''
       sensitivity = 0 # -1.0 - 1.0, 0 means no modification.
   }
 
-  misc {
-          key_press_enables_dpms = true
-          disable_hyprland_logo = true
-  }
-
   general {
       # See https://wiki.hyprland.org/Configuring/Variables/ for more
 

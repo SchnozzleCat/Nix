@@ -78,6 +78,10 @@
 
       bind = $mainMod, e, exec, foot -- ssh 192.168.200.20 -p 6969
       bind = $mainMod Shift, e, exec, remote-desktop
+      misc {
+              key_press_enables_dpms = true
+              disable_hyprland_logo = true
+      }
     '';
 
   home.file.".config/hypr/hyprpaper.conf".text =

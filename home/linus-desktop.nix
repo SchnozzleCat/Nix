@@ -122,10 +122,14 @@
       workspace=4, monitor:DP-2, persistent:true
       workspace=5, monitor:DP-3, persistent:true
 
-      # bind = $mainMod, 1, exec, hyprctl hyprpaper wallpaper "DP-1,${../secrets/wallpapers/flowers1.png}"
-      # bind = $mainMod, 2, exec, hyprctl hyprpaper wallpaper "DP-1,${../secrets/wallpapers/flowers5.png}"
-      # bind = $mainMod, 3, exec, hyprctl hyprpaper wallpaper "DP-1,${../secrets/wallpapers/flowers6.png}"
       bind = $mainMod,o,exec, swap-audio
+      bind = $mainMod Shift,o,exec, hyprctl dispatch dpms off
+      bind = $mainMod Ctrl Shift,o,exec, hyprctl dispatch dpms on
+
+      misc {
+              key_press_enables_dpms = false
+              disable_hyprland_logo = true
+      }
     '';
 
   home.file.".config/hypr/hyprpaper.conf".text =
