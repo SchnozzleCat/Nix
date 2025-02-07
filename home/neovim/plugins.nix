@@ -42,7 +42,6 @@
       enable = true;
       lazyLoad.settings.cmd = "DotnetUI";
     };
-    csvview.enable = true;
     grug-far = {
       enable = true;
       lazyLoad.settings.cmd = "GrugFar";
