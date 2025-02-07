@@ -36,7 +36,6 @@
     enable = true;
   };
 
-  networking.wg-quick.interfaces.proton-de350.configFile = "/home/linus/.nixos/secrets/wireguard/proton-de350.conf";
 
   # Yubikey
   services.udev.packages = [pkgs.yubikey-personalization];
