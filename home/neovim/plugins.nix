@@ -69,94 +69,130 @@
         set_filetype = true;
       };
     };
-    cmp_luasnip.enable = true;
-    cmp-calc.enable = true;
-    cmp-dap.enable = true;
-    cmp = {
+    blink-emoji.enable = true;
+    blink-ripgrep.enable = true;
+    blink-cmp = {
       enable = true;
       settings = {
-        window.completion.border = ["╭" "─" "╮" "│" "╯" "─" "╰" "│"];
-        window.documentation.border = ["╭" "─" "╮" "│" "╯" "─" "╰" "│"];
-        formatting = {
-          format = ''
-            function(entry, vim_item)
-               local kind_icons = {
-                 Text = "",
-                 Method = "󰡱",
-                 Function = "󰊕",
-                 Constructor = "",
-                 Enum = "",
-                 Class = "",
-                 Struct = "",
-                 Variable = "",
-                 Keyword = "󰄛",
-                 Field = "",
-                 Property = "",
-                 Snippet = "",
-                 Value = "",
-               }
-               local lspkind_ok, lspkind = pcall(require, "lspkind")
-               if not lspkind_ok then
-                 vim_item.kind = string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind) -- This concatenates the icons with the name of the item kind
-                 return vim_item
-               else
-                 return lspkind.cmp_format()(entry, vim_item)
-               end
-             end
-          '';
+        sources = {
+          default = [
+            "lsp"
+            "path"
+            "snippets"
+            "buffer"
+            "ripgrep"
+            "emoji"
+          ];
+          providers = {
+            ripgrep = {
+              async = true;
+              module = "blink-ripgrep";
+              name = "Ripgrep";
+              score_offset = 100;
+              opts = {
+                prefix_min_len = 3;
+                context_size = 5;
+                max_filesize = "1M";
+                project_root_marker = ".git";
+                project_root_fallback = true;
+                search_casing = "--ignore-case";
+                additional_rg_options = {};
+                fallback_to_regex_highlighting = true;
+                ignore_paths = {};
+                additional_paths = {};
+                debug = false;
+              };
+            };
+            emoji = {
+              module = "blink-emoji";
+              name = "Emoji";
+              score_offset = 15;
+              opts = {
+                insert = true;
+              };
+            };
+          };
         };
-        sources = [
-          {
-            name = "luasnip";
-            groupIndex = 2;
-          }
-          {
-            name = "nvim_lsp";
-            groupIndex = 2;
-          }
-          {
-            name = "path";
-            groupIndex = 2;
-          }
-          {
-            name = "calc";
-            groupIndex = 2;
-          }
-        ];
-        snippet.expand = ''
-          function(args)
-            require('luasnip').lsp_expand(args.body)
-          end
-        '';
-        mapping = {
-          "<C-Space>" = "cmp.mapping.complete()";
-          "<C-d>" = "cmp.mapping.scroll_docs(-4)";
-          "<C-e>" = "cmp.mapping.close()";
-          "<C-f>" = "cmp.mapping.scroll_docs(4)";
-          "<CR>" = "cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Replace })";
-          "<S-Tab>" = ''
-            function(fallback)
-              if cmp.visible() then
-                  cmp.select_prev_item()
-              elseif luasnip.jumpable(-1) then
-                  luasnip.jump(-1)
-              else
-                  fallback()
+        signature = {
+          enabled = true;
+          window.border = "rounded";
+        };
+        completion = {
+          menu = {
+            border = "rounded";
+            auto_show.__raw = ''
+              function(ctx)
+                return ctx.mode ~= 'cmdline'
               end
-            end
-          '';
-          "<Tab>" = ''
-            function(fallback)
-                luasnip = require("luasnip")
-                if cmp.visible() then
-                    cmp.select_next_item()
-                elseif luasnip.expand_or_locally_jumpable() then
-                    luasnip.expand_or_jump()
-                else
-                    fallback()
-                end
-            end
-          '';
+            '';
+          };
+          documentation = {
+            auto_show_delay_ms = 500;
+            window.border = "rounded";
+          };
+          list = {
+            selection = {
+              preselect = false;
+              auto_insert = true;
+            };
+          };
+        };
+        appearance = {
+          kind_icons = {
+            Text = "";
+            Method = "󰡱";
+            Function = "󰊕";
+            Constructor = "";
+            Enum = "";
+            Class = "";
+            Struct = "";
+            Variable = "";
+            Keyword = "󰄛";
+            Field = "";
+            Property = "";
+            Snippet = "";
+            Value = "";
+          };
+        };
+        keymap = {
+          "<C-e>" = [
+            "hide"
+          ];
+          "<C-n>" = [
+            "scroll_documentation_down"
+            "fallback"
+          ];
+          "<C-p>" = [
+            "scroll_documentation_up"
+            "fallback"
+          ];
+          "<C-space>" = [
+            "show"
+            "show_documentation"
+            "hide_documentation"
+          ];
+          "<CR>" = [
+            "accept"
+            "fallback"
+          ];
+          "<Down>" = [
+            "select_next"
+            "fallback"
+          ];
+          "<S-Tab>" = [
+            "snippet_backward"
+            "select_prev"
+            "fallback"
+          ];
+          "<Tab>" = [
+            "snippet_forward"
+            "select_next"
+            "fallback"
+          ];
+          "<Up>" = [
+            "select_prev"
+            "fallback"
+          ];
         };
       };
     };
@@ -822,30 +858,11 @@
       onAttach = ''
         client.server_capabilities.documentFormattingProvider = false
         client.server_capabilities.documentRangeFormattingProvider = false
-        if client.server_capabilities.signatureHelpProvider then
-         require('lsp-overloads').setup(client, {
-          ui = {
-              border = {
-              "╭",
-              "─",
-              "╮",
-              "╎",
-              "╯",
-              "─",
-              "╰",
-              "│"
-              },
-              offset_x = 0,
-              offset_y = 0,
-              floating_window_above_cur_line = true
-          }
-         })
-         vim.api.nvim_create_autocmd({ 'TextChanged', 'InsertLeave' }, {
-              buffer = bufnr,
-              callback = vim.lsp.codelens.refresh,
-          })
-         vim.lsp.codelens.refresh()
-        end
+        vim.api.nvim_create_autocmd({ 'TextChanged', 'InsertLeave' }, {
+             buffer = bufnr,
+             callback = vim.lsp.codelens.refresh,
+        })
+        vim.lsp.codelens.refresh()
       '';
       capabilities = ''
         capabilities.textDocument.completion.completionItem = {

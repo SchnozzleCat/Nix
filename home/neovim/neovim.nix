@@ -49,14 +49,11 @@
       [
         ltex_extra-nvim
         vim-visual-multi
-        telescope-dap-nvim
         tabout-nvim
         plenary-nvim
         tiny-inline-diagnostic-nvim
         img-clip-nvim
         hover-nvim
-        lsp-overloads-nvim
-        telescope-zf-native-nvim
         csv-vim
       ]
       ++ (with pkgs.vimUtils; [
@@ -72,12 +69,12 @@
         })
         (buildVimPlugin rec {
           pname = "roslyn.nvim";
-          version = "47d97e0a3f81b778409e742877b8b03fdf6c762d";
+          version = "fcf98a8ee39f34287cec3cafdef7f95583e412db";
           src = pkgs.fetchFromGitHub {
-            owner = "seblj";
+            owner = "seblyng";
             repo = pname;
             rev = version;
-            sha256 = "sha256-EwVG0mLQ+Uf2MLbjUpDGC5Z76xzEorKTkAWcnnwIG8c=";
+            sha256 = "sha256-vmHSa5AGQ8q6kCTgCqcD5yGlifK0ODcQjaxubUjLIx4=";
           };
         })
         (buildVimPlugin {
