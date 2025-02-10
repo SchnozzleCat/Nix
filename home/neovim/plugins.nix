@@ -88,7 +88,7 @@
               async = true;
               module = "blink-ripgrep";
               name = "Ripgrep";
-              score_offset = 100;
+              score_offset = -1000;
               opts = {
                 prefix_min_len = 3;
                 context_size = 5;
