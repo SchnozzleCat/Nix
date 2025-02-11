@@ -166,6 +166,7 @@ in {
       rocmPackages.rocm-smi
       nvtop
       vdhcoapp
+      smassh
 
       # Shell Scripts
       (writeShellApplication {
