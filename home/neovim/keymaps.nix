@@ -114,7 +114,13 @@
     {
       mode = "n";
       key = "<leader>fs";
-      action = "<cmd>lua Snacks.picker.lsp_workspace_symbols()<cr>";
+      action = "<cmd>lua Snacks.picker.lsp_symbols({layout = {preset = 'vscode', preview = 'main'}})<cr>";
+      options.desc = "Pick Symbols";
+    }
+    {
+      mode = "n";
+      key = "<leader>fS";
+      action = "<cmd>lua Snacks.picker.lsp_workspace_symbols({filter={default=true}})<cr>";
       options.desc = "Pick Symbols";
     }
     {
