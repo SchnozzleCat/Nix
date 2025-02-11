@@ -24,6 +24,7 @@
       quarto
       typescript
       jq
+      ripgrep
       zf
       (pkgs.buildEnv {
         name = "combinedSdk";
