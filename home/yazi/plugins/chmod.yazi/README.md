@@ -7,7 +7,7 @@ https://github.com/yazi-rs/plugins/assets/17523360/7aa3abc2-d057-498c-8473-a6282
 ## Installation
 
 ```sh
-ya pack -a yazi-rs/plugins#chmod
+ya pack -a yazi-rs/plugins:chmod
 ```
 
 ## Usage
@@ -22,3 +22,7 @@ desc = "Chmod on selected files"
 ```
 
 Make sure the <kbd>c</kbd> => <kbd>m</kbd> key is not used elsewhere.
+
+## License
+
+This plugin is MIT-licensed. For more information check the [LICENSE](LICENSE) file.

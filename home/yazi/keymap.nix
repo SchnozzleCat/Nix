@@ -6,7 +6,7 @@
 
   [[manager.prepend_keymap]]
   on   = "L"
-  run  = "plugin smart-enter --args='detatch'"
+  run  = "plugin smart-enter detatch"
   desc = "Enter the child directory, or open the file"
 
   [[manager.prepend_keymap]]
