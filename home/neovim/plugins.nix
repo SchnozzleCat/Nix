@@ -155,6 +155,47 @@
           };
         };
         keymap = {
+          cmdline = {
+            "<C-e>" = [
+              "hide"
+            ];
+            "<C-n>" = [
+              "scroll_documentation_down"
+              "fallback"
+            ];
+            "<C-p>" = [
+              "scroll_documentation_up"
+              "fallback"
+            ];
+            "<C-space>" = [
+              "show"
+              "show_documentation"
+              "hide_documentation"
+            ];
+            "<CR>" = [
+              "accept"
+              "fallback"
+            ];
+            "<Down>" = [
+              "select_next"
+              "fallback"
+            ];
+            "<S-Tab>" = [
+              "snippet_backward"
+              "select_prev"
+              "fallback"
+            ];
+            "<Tab>" = [
+              "show"
+              "snippet_forward"
+              "select_next"
+              "fallback"
+            ];
+            "<Up>" = [
+              "select_prev"
+              "fallback"
+            ];
+          };
           "<C-e>" = [
             "hide"
           ];
@@ -297,14 +338,18 @@
         src = pkgs.fetchFromGitHub {
           owner = "folke";
           repo = "snacks.nvim";
-          rev = "18cdf766efcfa557d333afae1b02706948e31db6";
-          sha256 = "sha256-+cTJUQKBDPIioYyStm5qaHM1EJ4myLY/02ut3SMp/9c=";
+          rev = "6f398f5528a18ada905d43dfca570596513ad4fa";
+          sha256 = "sha256-3CojmFBNOXsMn7hGvaGosOQdzt0V+5GvNwU86//3lFU=";
         };
       });
       settings = {
         picker = {
           enabled = true;
           layout.preset = "ivy";
+        };
+        explorer = {
+          enabled = true;
+          replace_netrw = true;
         };
         words.enabled = true;
         zen.enabled = true;
@@ -370,7 +415,13 @@
       lazyLoad.settings.event = "BufEnter";
       settings = {
         winbar = {
-          lualine_a = ["filename"];
+          lualine_a = [
+            {
+              __unkeyed-1 = "filename";
+              file_status = true;
+              path = 1;
+            }
+          ];
           lualine_b = [""];
           lualine_c = [""];
           lualine_x = [""];
@@ -520,16 +571,6 @@
           default_method = "molten";
           never_run = ["yaml"];
         };
-      };
-    };
-    neotest = {
-      enable = true;
-      lazyLoad.settings.cmd = "Neotest";
-      adapters = {
-        python.enable = true;
-        dotnet.enable = true;
-        jest.enable = true;
-        playwright.enable = true;
       };
     };
     image = {
@@ -736,11 +777,6 @@
         dap-ui.enable = true;
         dap-virtual-text.enable = true;
       };
-    };
-    rustaceanvim = {
-      enable = true;
-      lazyLoad.settings.ft = "rust";
-      settings.server.on_attach = ''__lspOnAttach'';
     };
     rest = {
       enable = true;
