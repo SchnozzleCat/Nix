@@ -24,6 +24,7 @@
       quarto
       typescript
       jq
+      fd
       ripgrep
       zf
       (pkgs.buildEnv {
@@ -446,6 +447,9 @@
         vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<esc>', true, false, true), 'n', true)
       end
 
+      function explorer()
+        Snacks.explorer({win={list={keys={["<Esc>"] = ""}}}})
+      end
     '';
     opts = {
       showtabline = 0;
