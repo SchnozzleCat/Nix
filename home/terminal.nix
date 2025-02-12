@@ -47,7 +47,6 @@ in {
 
   programs.yazi = {
     enable = true;
-    package = pkgs.master.yazi;
     enableFishIntegration = true;
     initLua = ./yazi/init.lua;
   };

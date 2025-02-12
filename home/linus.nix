@@ -52,10 +52,10 @@ in {
       name = "Bibata-Modern-Classic";
       size = 1;
     };
-    iconTheme = {
-      package = pkgs.tela-circle-icon-theme;
-      name = "Tela-circle-dark";
-    };
+    # iconTheme = {
+    #   package = pkgs.tela-circle-icon-theme;
+    #   name = "Tela-circle-dark";
+    # };
   };
 
   nixpkgs.config.permittedInsecurePackages = [
@@ -109,7 +109,7 @@ in {
       })
 
       jetbrains.rider
-      jetbrains.idea-ultimate
+      # jetbrains.idea-ultimate
       jetbrains.datagrip
       inputs.hyprland-qtutils.packages."${pkgs.system}".default
 
@@ -145,7 +145,7 @@ in {
       })
       winetricks
       bottles
-      # runelite
+      runelite
 
       # Misc
       obsidian
