@@ -466,6 +466,15 @@
         };
         sections = {
           lualine_a = [
+            {
+              __raw = ''
+                {
+                  function()
+                    return vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
+                  end
+                }
+              '';
+            }
             "branch"
             {
               __raw = ''
