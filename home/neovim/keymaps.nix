@@ -55,17 +55,17 @@
       key = "<c-l>";
       action = "<right>";
     }
-    # Words
+    # Quickfix
     {
       mode = "n";
       key = "[[";
-      action = "<cmd>lua Snacks.words.jump(-1) <cr>";
+      action = "<cmd>cprev<cr>";
       options.desc = "Previous Word";
     }
     {
       mode = "n";
       key = "]]";
-      action = "<cmd>lua Snacks.words.jump(1) <cr>";
+      action = "<cmd>cnext<cr>";
       options.desc = "Next Word";
     }
     # Picker
