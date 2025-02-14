@@ -152,7 +152,9 @@ in {
       helvum
       easyeffects
       warpinator
-      vesktop
+      (vesktop.override {
+        electron = pkgs.electron_33;
+      })
       jellyfin-media-player
       mpv
       mpv-shim-default-shaders
