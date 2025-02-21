@@ -8,6 +8,12 @@
     # Misc
     {
       mode = ["n"];
+      key = "<leader>dd";
+      action = ''<cmd>NoiceDismiss<cr>'';
+      options.desc = "Noice Dismiss";
+    }
+    {
+      mode = ["n"];
       key = "<c-space>";
       action = ''<cmd>lua require("hover").hover() <cr>'';
       options.desc = "Show Hover Doc";
@@ -78,6 +84,12 @@
     {
       mode = "n";
       key = "<leader>ff";
+      action = "<cmd>lua Snacks.picker.smart() <cr>";
+      options.desc = "Pick Smart";
+    }
+    {
+      mode = "n";
+      key = "<leader>fF";
       action = "<cmd>lua Snacks.picker.files() <cr>";
       options.desc = "Pick Files";
     }
@@ -461,24 +473,24 @@
       options.desc = "Flash Treesitter Search";
     }
     # NeoTest
-    # {
-    #   mode = ["n"];
-    #   key = "<leader>td";
-    #   action = ''<cmd> lua require("neotest").run.run({strategy = "dap"}) <cr>'';
-    #   options.desc = "debug nearest test";
-    # }
-    # {
-    #   mode = ["n"];
-    #   key = "<leader>tr";
-    #   action = ''<cmd> lua require("neotest").run.run() <cr>'';
-    #   options.desc = "debug nearest test";
-    # }
-    # {
-    #   mode = ["n"];
-    #   key = "<leader>tf";
-    #   action = ''<cmd> lua require("neotest").run.run(vim.fn.expand("%")) <cr>'';
-    #   options.desc = "debug nearest test";
-    # }
+    {
+      mode = ["n"];
+      key = "<leader>td";
+      action = ''<cmd> lua require("neotest").run.run({strategy = "dap"}) <cr>'';
+      options.desc = "debug nearest test";
+    }
+    {
+      mode = ["n"];
+      key = "<leader>tr";
+      action = ''<cmd> lua require("neotest").run.run() <cr>'';
+      options.desc = "debug nearest test";
+    }
+    {
+      mode = ["n"];
+      key = "<leader>tf";
+      action = ''<cmd> lua require("neotest").run.run(vim.fn.expand("%")) <cr>'';
+      options.desc = "debug nearest test";
+    }
     # Undotree
     {
       mode = ["n"];
