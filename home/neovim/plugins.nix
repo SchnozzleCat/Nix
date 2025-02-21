@@ -154,8 +154,8 @@
             Value = "";
           };
         };
-        keymap = {
-          cmdline = {
+        cmdline = {
+          keymap = {
             "<C-e>" = [
               "hide"
             ];
@@ -196,6 +196,8 @@
               "fallback"
             ];
           };
+        };
+        keymap = {
           "<C-e>" = [
             "hide"
           ];
@@ -255,6 +257,14 @@
             '';
           };
         };
+      };
+    };
+    neotest = {
+      enable = true;
+      adapters = {
+        java.enable = true;
+        python.enable = true;
+        dotnet.enable = true;
       };
     };
     octo = {
@@ -405,10 +415,7 @@
       enable = true;
       lazyLoad.settings.event = "DeferredUIEnter";
     };
-    gitsigns = {
-      enable = true;
-      lazyLoad.settings.cmd = "Gitsigns";
-    };
+    gitsigns.enable = true;
     nvim-lightbulb.enable = true;
     lualine = {
       enable = true;
@@ -581,10 +588,6 @@
           never_run = ["yaml"];
         };
       };
-    };
-    image = {
-      enable = true;
-      backend = "ueberzug";
     };
     dap = {
       enable = true;
@@ -850,10 +853,15 @@
         formatting = {
           alejandra.enable = true;
           black.enable = true;
+          astyle = {
+            enable = true;
+            settings.disabled_filetypes = ["csharp"];
+          };
           csharpier.enable = true;
           gdformat.enable = true;
           isort.enable = true;
           markdownlint.enable = true;
+          htmlbeautifier.enable = true;
           prettier = {
             enable = true;
             disableTsServerFormatter = true;
@@ -869,8 +877,38 @@
       postConfig = ''
         _G["__lspCapabilities"] = __lspCapabilities
         _G["__lspOnAttach"] = __lspOnAttach
+        vim.filetype.add {
+          extension = {
+            razor = 'razor',
+            cshtml = 'razor',
+          },
+        }
+        require('rzls').setup {}
         require("roslyn").setup({
+        args = {
+            '--stdio',
+            '--logLevel=Information',
+            '--extensionLogDirectory=' .. vim.fs.dirname(vim.lsp.get_log_path()),
+            '--razorSourceGenerator=' .. vim.fs.joinpath(
+              vim.fn.stdpath 'data' --[[@as string]],
+              'mason',
+              'packages',
+              'roslyn',
+              'libexec',
+              'Microsoft.CodeAnalysis.Razor.Compiler.dll'
+            ),
+            '--razorDesignTimePath=' .. vim.fs.joinpath(
+              vim.fn.stdpath 'data' --[[@as string]],
+              'mason',
+              'packages',
+              'rzls',
+              'libexec',
+              'Targets',
+              'Microsoft.NET.Sdk.Razor.DesignTime.targets'
+            ),
+          },
           config = {
+            handlers = require 'rzls.roslyn_handlers',
             on_attach = _M.lspOnAttach,
             capabilities = __lspCapabilities(),
             filetypes = {"cs"},
@@ -979,21 +1017,37 @@
         #     };
         #   };
         # };
+        jdtls.enable = true;
         svelte.enable = true;
         tailwindcss.enable = true;
         lua_ls.enable = true;
         pyright.enable = true;
         cssls.enable = true;
         html.enable = true;
-        java_language_server.enable = true;
         phpactor.enable = true;
         eslint.enable = true;
       };
     };
+    # java = {
+    #   enable = true;
+    #   settings = {
+    #     jdk = {
+    #       auto_install = false;
+    #     };
+    #     mason = {
+    #       registries = {
+    #       };
+    #     };
+    #   };
+    # };
     nvim-jdtls = {
       enable = true;
       data = "/home/linus/.cache/jdtls/workspace";
       configuration = "/home/linus/.cache/jdtls/config";
+      cmd = [
+        "${pkgs.jdt-language-server}/bin/jdtls"
+      ];
+      rootDir.__raw = ''vim.fs.dirname(vim.fs.find({'pom.xml'}, { upward = true })[1])'';
       initOptions = {
         bundles = [
           "${pkgs.vscode-extensions.vscjava.vscode-java-debug}/share/vscode/extensions/vscjava.vscode-java-debug/server/com.microsoft.java.debug.plugin-0.50.0.jar"
