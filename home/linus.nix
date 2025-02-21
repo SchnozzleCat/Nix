@@ -67,6 +67,11 @@ in {
     exec = "${app-browser} --app=https://configure.zsa.io/voyager/layouts/default/latest/0/";
   };
 
+  xdg.desktopEntries.turnierplaner = {
+    name = "Turnierplaner";
+    exec = "${app-browser} --app=http://localhost:5167";
+  };
+
   xdg.desktopEntries.m8webview = {
     name = "M8 Web View";
     exec = "${app-browser} --app=https://derkyjadex.github.io/M8WebDisplay/";
@@ -109,7 +114,7 @@ in {
       })
 
       jetbrains.rider
-      # jetbrains.idea-ultimate
+      jetbrains.idea-ultimate
       jetbrains.datagrip
       inputs.hyprland-qtutils.packages."${pkgs.system}".default
 
@@ -233,7 +238,7 @@ in {
       (writeShellApplication {
         name = "dvt";
         text = ''
-          nix flake init -t "github:the-nix-way/dev-templates#$1"
+          nix flake init -t "github:SchnozzleCat/dev-templates#$1"
           direnv allow
         '';
       })
