@@ -49,6 +49,7 @@
       ];
     extraPlugins = with pkgs.vimPlugins;
       [
+        mason-nvim
         ltex_extra-nvim
         vim-visual-multi
         tabout-nvim
@@ -77,6 +78,16 @@
             repo = pname;
             rev = version;
             sha256 = "sha256-vmHSa5AGQ8q6kCTgCqcD5yGlifK0ODcQjaxubUjLIx4=";
+          };
+        })
+        (buildVimPlugin rec {
+          pname = "rzls.nvim";
+          version = "f521bb17bc3be1065bc1c82b4d98ef3c473374fe";
+          src = pkgs.fetchFromGitHub {
+            owner = "tris203";
+            repo = pname;
+            rev = version;
+            sha256 = "sha256-vYu1CQuAi9PX1NQIyxF2GmmFjzNpmuCArHPBMOciy50=";
           };
         })
         (buildVimPlugin {
@@ -173,16 +184,6 @@
           };
         })
         (buildVimPlugin rec {
-          pname = "dooing";
-          version = "d2b307668a78c194350c8f03dbf8ef57622a765b";
-          src = pkgs.fetchFromGitHub {
-            owner = "atiladefreitas";
-            repo = pname;
-            rev = version;
-            sha256 = "sha256-ZtBBOhwb9HssbOcnyv3TQ6rZ0xEZkSUMa4ckgnoRfzk=";
-          };
-        })
-        (buildVimPlugin rec {
           pname = "focushere.nvim";
           version = "28c40c7e3481d6cd9e4c7b8005c36a18b5db7ac6";
           src = pkgs.fetchFromGitHub {
@@ -200,28 +201,6 @@
             repo = pname;
             rev = version;
             sha256 = "sha256-IRE/K8gWRbLe1WWmNYklwrfBKmE+0rQs+PbAhcIIrnw=";
-          };
-        })
-        (buildVimPlugin rec {
-          pname = "typr";
-          version = "a60c7f237be94d4b39228a3bd2ced80fe9fe2781";
-          doCheck = false;
-          src = pkgs.fetchFromGitHub {
-            owner = "nvzone";
-            repo = pname;
-            rev = version;
-            sha256 = "sha256-iVLxQeQqpqohCPZAE3SxReEo3KmWAo+xGAiJJnRBbUE=";
-          };
-        })
-        (buildVimPlugin rec {
-          pname = "volt";
-          version = "f02b065caf0327bf4d443ff6d91cb0edd6948ddb";
-          doCheck = false;
-          src = pkgs.fetchFromGitHub {
-            owner = "nvzone";
-            repo = pname;
-            rev = version;
-            sha256 = "sha256-2SO847Un74kNFGxARaebB+WCCgexnaJdjUkQLZ6ROQ8=";
           };
         })
       ]);
@@ -393,9 +372,6 @@
         vim.fn.serverstart(addr)
       end
       require("portal").setup()
-      require('dooing').setup({
-        save_path = '/home/linus/.nixos/home/todo.json'
-      })
       require("focushere").setup()
       require("tiny-inline-diagnostic").setup({
         options = {
@@ -404,7 +380,7 @@
       })
       vim.diagnostic.config({ virtual_text = false })
       require("let-it-snow").setup({
-        delay = 100
+        delay = 75
       })
       require("quicker").setup({
         keys = {
@@ -424,23 +400,13 @@
           },
         },
       })
-      require("typr").setup()
-
-      -- vim.tbl_deep_extend("force", opts or {}, {
-      --   picker = {
-      --     actions = require("trouble.sources.snacks").actions,
-      --     win = {
-      --       input = {
-      --         keys = {
-      --           ["<c-t>"] = {
-      --             "trouble_open",
-      --             mode = { "n", "i" },
-      --           },
-      --         },
-      --       },
-      --     },
-      --   },
-      -- })
+      require('mason').setup {
+        registries = {
+          'github:mason-org/mason-registry',
+          'github:crashdummyy/mason-registry',
+          'github:nvim-java/mason-registry'
+        },
+      }
 
       function pick_buffers()
         Snacks.picker.buffers({current=false})
