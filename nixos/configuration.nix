@@ -36,6 +36,8 @@
     enable = true;
   };
 
+  # networking.wg-quick.interfaces.proton-de350.configFile = "/home/linus/.nixos/secrets/wireguard/proton-de350.conf";
+
   # Yubikey
   services.udev.packages = [pkgs.yubikey-personalization];
   services.pcscd.enable = true;
@@ -180,7 +182,7 @@
         # TODO: Add your SSH public key(s) here, if you plan on using SSH to connect
       ];
       # TODO: Be sure to add any other groups you need (such as networkmanager, audio, docker, etc)
-      extraGroups = ["wheel" "networkmanager" "audio" "docker" "corectrl" "libvirtd" "tss" "storage"];
+      extraGroups = ["code-server" "wheel" "networkmanager" "audio" "docker" "corectrl" "libvirtd" "tss" "storage"];
     };
   };
 

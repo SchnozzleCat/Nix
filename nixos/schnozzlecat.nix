@@ -36,6 +36,13 @@ in {
   services.gvfs.enable = true;
   services.udisks2.enable = true;
 
+  services.code-server = {
+    enable = true;
+    host = "0.0.0.0";
+    port = 9876;
+    auth = "none";
+  };
+
   hardware.bluetooth = {
     enable = true;
     powerOnBoot = true;
