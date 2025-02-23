@@ -61,6 +61,16 @@
       ]
       ++ (with pkgs.vimUtils; [
         (buildVimPlugin rec {
+          pname = "clasp.nvim";
+          version = "c3bebd9e1c4588b68dff8fff11e60874030b5170";
+          src = pkgs.fetchFromGitHub {
+            owner = "xzbdmw";
+            repo = pname;
+            rev = version;
+            sha256 = "sha256-YfWhl+wrbik+hkz7lRydeoWpTTEhloOs0AgaiuT705I=";
+          };
+        })
+        (buildVimPlugin rec {
           pname = "let-it-snow.nvim";
           version = "7ff767f7b6e787989ca73ebcdcd0dd5ea483811a";
           src = pkgs.fetchFromGitHub {
@@ -407,6 +417,20 @@
           'github:nvim-java/mason-registry'
         },
       }
+
+      require("clasp").setup({
+          pairs = { ["{"] = "}", ['"'] = '"', ["'"] = "'", ["("] = ")", ["["] = "]" },
+      })
+
+      -- jumping from smallest region to largest region
+      vim.keymap.set({ "n", "i" }, "<c-l>",function()
+          require("clasp").wrap('next')
+      end)
+
+      -- jumping from largest region to smallest region
+      vim.keymap.set({ "n", "i" }, "<c-l>",function()
+          require("clasp").wrap('prev')
+      end)
 
       function pick_buffers()
         Snacks.picker.buffers({current=false})
