@@ -94,6 +94,7 @@ in {
 
       # Web
       qbittorrent
+      yt-dlp
 
       # Dev
       unityhub
@@ -233,6 +234,12 @@ in {
              echo "{\"class\": \"running\", \"text\": \"\", \"tooltip\": \"\"}"
              exit
           fi
+        '';
+      })
+      (writeShellApplication {
+        name = "soundscaper";
+        text = ''
+          echo "$1" | ${pkgs.socat}/bin/socat - UNIX-CONNECT:/tmp/CoreFxPipe_SoundScaper
         '';
       })
       (writeShellApplication {
