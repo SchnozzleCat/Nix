@@ -423,12 +423,12 @@
       })
 
       -- jumping from smallest region to largest region
-      vim.keymap.set({ "n", "i" }, "<c-l>",function()
+      vim.keymap.set({ "n", "i" }, "<c-;>",function()
           require("clasp").wrap('next')
       end)
 
       -- jumping from largest region to smallest region
-      vim.keymap.set({ "n", "i" }, "<c-l>",function()
+      vim.keymap.set({ "n", "i" }, "<c-;>",function()
           require("clasp").wrap('prev')
       end)
 
