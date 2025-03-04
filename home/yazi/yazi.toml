@@ -4,5 +4,5 @@ sort_translit = true
 
 [opener]
 extract = [
-	{ run = 'ya pub extract --list "$@"', desc = "Extract here", for = "unix" },
+	{ run = 'ya pub extract --list "$@"', orphan = true, desc = "Extract here", for = "unix" },
 ]
