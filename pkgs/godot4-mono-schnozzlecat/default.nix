@@ -43,18 +43,22 @@
   dotnet-runtime_8,
   makeWrapper,
   msbuild,
+  withCommitHash ? "5319cbcf54e801af34d24bf682af75c8ee9a17a4",
+  withHash ? "sha256-JvEKsaG664gcjHjlR+GRJGctj3lJZIvVQ0OBNWiZLfA=",
+  withVersion ? "4.3",
+  withPName ? "godot4-mono-schnozzlecat",
 }:
 assert lib.asserts.assertOneOf "withPrecision" withPrecision ["single" "double"];
   stdenv.mkDerivation rec {
-    pname = "godot4-mono-schnozzlecat";
-    version = "4.3";
-    commitHash = "0e5f5ffa7a8c31a56677804fac8808d2d7dee54b";
+    pname = withPName;
+    version = withVersion;
+    commitHash = withCommitHash;
 
     src = fetchFromGitHub {
       owner = "SchnozzleCat";
       repo = "godot";
       rev = commitHash;
-      hash = "sha256-KS/+APv1KzXM1CHiG+5VihJCUW74CfmUpFNUJjrHWcQ=";
+      hash = withHash;
       fetchSubmodules = true;
     };
 

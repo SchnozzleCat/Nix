@@ -115,6 +115,7 @@ in {
       })
 
       jetbrains.rider
+      jetbrains.webstorm
       jetbrains.idea-ultimate
       jetbrains.datagrip
       inputs.hyprland-qtutils.packages."${pkgs.system}".default
@@ -311,8 +312,8 @@ in {
   programs.godot4-mono-schnozzlecat = {
     enable = true;
     version = "4.3";
-    commitHash = "0e5f5ffa7a8c31a56677804fac8808d2d7dee54b";
-    hash = "sha256-KS/+APv1KzXM1CHiG+5VihJCUW74CfmUpFNUJjrHWcQ=";
+    commitHash = "5319cbcf54e801af34d24bf682af75c8ee9a17a4";
+    hash = "sha256-JvEKsaG664gcjHjlR+GRJGctj3lJZIvVQ0OBNWiZLfA=";
   };
 
   programs.ncspot = {
