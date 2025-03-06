@@ -18,9 +18,9 @@ in {
 
   wayland.windowManager.hyprland = {
     enable = true;
-    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-    plugins = with inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}; [
-    ];
+    # package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+    # plugins = with inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}; [
+    # ];
   };
   nixpkgs.config.android_sdk.accept_license = true;
 
@@ -159,9 +159,7 @@ in {
       helvum
       easyeffects
       warpinator
-      (vesktop.override {
-        electron = pkgs.electron_33;
-      })
+      vesktop
       jellyfin-media-player
       mpv
       mpv-shim-default-shaders
@@ -173,7 +171,7 @@ in {
       protonvpn-gui
       github-copilot-cli
       rocmPackages.rocm-smi
-      nvtop
+      nvtopPackages.full
       vdhcoapp
       smassh
 
