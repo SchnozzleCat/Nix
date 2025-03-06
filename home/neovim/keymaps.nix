@@ -551,13 +551,19 @@
     {
       mode = ["v"];
       key = "<leader>cc";
-      action = ":CopilotChatInPlace <cr>";
+      action = ":CopilotChat<cr>";
+      options.desc = "Copilot Chat";
+    }
+    {
+      mode = ["n"];
+      key = "<leader>cc";
+      action = "<cmd>CopilotChat<cr>";
       options.desc = "Copilot Chat";
     }
     {
       mode = ["v"];
       key = "<leader>cd";
-      action = ":CopilotChatVsplitVisual write documentation in correct format and nothing else<cr><c-l>";
+      action = ":CopilotChatDocs<cr>";
       options.desc = "Write Documentation";
     }
     {

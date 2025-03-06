@@ -245,7 +245,11 @@
     copilot-chat = {
       enable = true;
       settings = {
-        keymap = {
+        window = {
+          border = "rounded";
+          width = 0.3;
+        };
+        mappings = {
           accept_diff = {
             insert = "<C-y>";
             normal = "<C-y>";
