@@ -743,6 +743,12 @@
       options.desc = "Obsidian Links";
     }
     {
+      mode = ["v"];
+      key = "<leader>zl";
+      action = "<cmd> ObsidianLink <cr>";
+      options.desc = "Obsidian Link";
+    }
+    {
       mode = ["n"];
       key = "<leader>zt";
       action = "<cmd> ObsidianTemplate <cr>";
