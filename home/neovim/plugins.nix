@@ -409,6 +409,7 @@
         picker = {
           enabled = true;
           layout.preset = "ivy";
+          formatters.file.truncate = 1000;
         };
         explorer = {
           enabled = true;
