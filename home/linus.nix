@@ -95,6 +95,7 @@ in {
       # Web
       qbittorrent
       yt-dlp
+      k6
 
       # Dev
       unityhub
@@ -153,6 +154,8 @@ in {
       winetricks
       bottles
       runelite
+      libreoffice
+      scribus
 
       # Misc
       obsidian
