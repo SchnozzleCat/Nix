@@ -43,9 +43,9 @@
   dotnet-runtime_8,
   makeWrapper,
   msbuild,
-  withCommitHash ? "5319cbcf54e801af34d24bf682af75c8ee9a17a4",
-  withHash ? "sha256-JvEKsaG664gcjHjlR+GRJGctj3lJZIvVQ0OBNWiZLfA=",
-  withVersion ? "4.3",
+  withCommitHash ? "d4717b98d47c8c575d4b1d62218102b11fb2db6d",
+  withHash ? "sha256-jDd0XNUq4d4XjA+ieLIA6o1PE0RUtOhRsG88Bgq/eBw=",
+  withVersion ? "4.4",
   withPName ? "godot4-mono-schnozzlecat",
 }:
 assert lib.asserts.assertOneOf "withPrecision" withPrecision ["single" "double"];
