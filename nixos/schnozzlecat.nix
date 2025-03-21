@@ -67,6 +67,8 @@ in {
     SUBSYSTEM=="usb", ATTR{idVendor}=="04e8", ATTR{idProduct}=="6860", MODE="0666", GROUP="plugdev"
   '';
 
+  hardware.i2c.enable = true;
+
   boot.initrd.kernelModules = ["amdgpu"];
   boot.kernelModules = ["hid-nintendo" "v4l2loopback" "uinput"];
   boot.extraModulePackages = with config.boot.kernelPackages; [v4l2loopback];
