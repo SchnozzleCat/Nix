@@ -38,6 +38,7 @@
     vim-dadbod.enable = true;
     vim-dadbod-ui.enable = true;
     vim-dadbod-completion.enable = true;
+    fugitive.enable = true;
     dotnet = {
       enable = true;
       lazyLoad.settings.cmd = "DotnetUI";
@@ -80,7 +81,6 @@
             "path"
             "snippets"
             "buffer"
-            "ripgrep"
             "emoji"
           ];
           providers = {
