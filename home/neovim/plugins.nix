@@ -33,6 +33,9 @@
     };
     smear-cursor = {
       enable = true;
+      settings = {
+        legacy_computing_symbols_support = true;
+      };
       lazyLoad.settings.event = "DeferredUIEnter";
     };
     vim-dadbod.enable = true;
