@@ -52,7 +52,12 @@
       lazyLoad.settings.event = "DeferredUIEnter";
     };
     dressing.enable = true;
-    notify.enable = true;
+    notify = {
+      enable = true;
+      timeout = 1500;
+      stages = "static";
+    };
+
     noice = {
       enable = true;
       settings = {
