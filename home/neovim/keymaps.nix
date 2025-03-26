@@ -84,8 +84,8 @@
     {
       mode = "n";
       key = "<leader>ff";
-      action = "<cmd>lua Snacks.picker.smart() <cr>";
-      options.desc = "Pick Smart";
+      action = "<cmd>lua Snacks.picker.files() <cr>";
+      options.desc = "Pick Files";
     }
     {
       mode = "n";
