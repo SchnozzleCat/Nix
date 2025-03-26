@@ -57,8 +57,10 @@
     dressing.enable = true;
     notify = {
       enable = true;
-      timeout = 1500;
-      stages = "static";
+      settings = {
+        timeout = 1500;
+        stages = "static";
+      };
     };
 
     noice = {
