@@ -66,9 +66,6 @@
       settings = {
         notify.enabled = true;
         background_colour = "#000000";
-        presets = {
-          bottom_search = true;
-        };
         lsp.signature.enabled = false;
       };
     };
