@@ -714,6 +714,12 @@
     }
     {
       mode = ["n"];
+      key = "<leader>zb";
+      action = "<cmd> ObsidianBacklinks <cr>";
+      options.desc = "Obsidian Backlinks";
+    }
+    {
+      mode = ["n"];
       key = "<leader>fn";
       action = "<cmd> ObsidianQuickSwitch <cr>";
       options.desc = "Obsidian Quick Switch";
