@@ -5,6 +5,7 @@
 # kdl
 ''
   pane_frames false
+  show_startup_tips false
   on_force_close "quit"
   keybinds clear-defaults=true {
     shared_except "locked" {
