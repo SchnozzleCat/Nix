@@ -17,14 +17,6 @@ in ''
   exec-once = solaar --window=hide
   exec-once = hyprctrl dispatch layoutmsg "preselect r"
   exec-once = wl-paste -t text --watch ${pkgs.clipman}/bin/clipman store --max-items 1024
-  exec-once = /home/linus/Downloads/MoonDeckBuddy-1.5.7-x86_64.AppImage
-
-  exec-once = systemctl --user start sunshine
-  exec-once = systemctl --user start app-nm\\x2dapplet@autostart.service
-  exec-once = systemctl --user start app-jetbrains\x2dtoolbox@autostart.service
-  exec-once = systemctl --user start app-sealertauto@autostart.service
-  exec-once = systemctl --user start app-solaar@autostart.service
-
   exec-once = corectrl
 
   env = XCURSOR_SIZE,24
