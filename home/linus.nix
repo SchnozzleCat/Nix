@@ -122,6 +122,7 @@ in {
       inputs.hyprland-qtutils.packages."${pkgs.system}".default
 
       gdtoolkit_4
+      inky
 
       inputs.zen-browser.packages."${pkgs.system}".default
 
