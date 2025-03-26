@@ -124,6 +124,8 @@ in {
       gdtoolkit_4
       inky
 
+      bitwarden
+
       inputs.zen-browser.packages."${pkgs.system}".default
 
       # Utilities
