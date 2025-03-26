@@ -377,15 +377,6 @@
     };
     snacks = {
       enable = true;
-      package = pkgs.vimPlugins.snacks-nvim.overrideAttrs (oldAttrs: {
-        doCheck = false;
-        src = pkgs.fetchFromGitHub {
-          owner = "folke";
-          repo = "snacks.nvim";
-          rev = "6f398f5528a18ada905d43dfca570596513ad4fa";
-          sha256 = "sha256-3CojmFBNOXsMn7hGvaGosOQdzt0V+5GvNwU86//3lFU=";
-        };
-      });
       settings = {
         picker = {
           enabled = true;
