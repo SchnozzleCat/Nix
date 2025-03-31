@@ -1,7 +1,7 @@
 {
   lib,
   stdenv,
-  fetchFromGitHub,
+  requireFile,
   pkg-config,
   autoPatchelfHook,
   installShellFiles,
@@ -38,13 +38,14 @@
   withUdev ? true,
   deps ? ./deps.nix,
   mono,
+  unzip,
   callPackage,
   dotnet-sdk_8,
   dotnet-runtime_8,
   makeWrapper,
   msbuild,
-  withCommitHash ? "d4717b98d47c8c575d4b1d62218102b11fb2db6d",
-  withHash ? "sha256-jDd0XNUq4d4XjA+ieLIA6o1PE0RUtOhRsG88Bgq/eBw=",
+  withCommitHash ? "c54ed1970920e1cb4352bdbaf00e602b92912f99",
+  withHash ? "sha256-/YCIjEaRQHwx8FkvhOWMvEbXzwv10YYLRnZGnuGcIQM=",
   withVersion ? "4.4",
   withPName ? "godot4-mono-schnozzlecat",
 }:
@@ -54,9 +55,14 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision ["single" "double"]
     version = withVersion;
     commitHash = withCommitHash;
 
-    src = fetchFromGitHub {
-      owner = "SchnozzleCat";
-      repo = "godot";
+    sdk = requireFile {
+      name = "steamworks_sdk_161.zip";
+      message = "Please download the SDK and then add it with nix-store --add-fixed sha256 steamworks_sdk_161.zip";
+      sha256 = "0l3l0mvy461hqylz7lavk2f3yavs6jdwj71grmxvljzv4dcbh3lp";
+    };
+
+    src = fetchGit {
+      url = "file:///home/linus/Repositories/godot";
       rev = commitHash;
       hash = withHash;
       fetchSubmodules = true;
@@ -73,6 +79,7 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision ["single" "double"]
       wayland-scanner
       makeWrapper
       mono
+      unzip
       dotnet-sdk_8
       dotnet-runtime_8
     ];
@@ -153,8 +160,14 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision ["single" "double"]
       export GODOT_VERSION_STATUS=SchnozzleCat-${builtins.substring 0 10 commitHash}
       echo "Exporting NuGet with version $GODOT_VERSION_STATUS"
 
+      echo "Extracting Steamworks SDK..."
+      mkdir -p modules/godotsteam/sdk
+      unzip -o ${sdk} -d modules/godotsteam
+
       echo "Starting Build"
       scons p=${withPlatform} target=${withTarget} precision=${withPrecision} module_mono_enabled=yes module_text_server_fb_enabled=yes mono_glue=no
+
+      cp modules/godotsteam/sdk/redistributable_bin/linux64/libsteam_api.so bin/libsteam_api.so
 
       echo "Generating Glue"
       if [[ ${withPrecision} == *double* ]]; then
@@ -182,7 +195,9 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision ["single" "double"]
       mkdir -p $out/godot-export-templates
       cp bin/godot.${withPlatform}.template_debug.x86_64.mono $out/godot-export-templates/linux_release.x86_64
       cp bin/godot.${withPlatform}.template_release.x86_64.mono $out/godot-export-templates/linux_debug.x86_64
+      cp bin/libsteam_api.so $out/bin/libsteam_api.so
       installManPage misc/dist/linux/godot.6
+
 
       mkdir -p "$out"/share/{applications,icons/hicolor/scalable/apps}
       cp misc/dist/linux/org.godotengine.Godot.desktop "$out/share/applications/org.godotengine.Godot4-Mono-SchnozzleCat.desktop"

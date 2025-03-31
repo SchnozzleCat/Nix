@@ -169,11 +169,12 @@ in {
       jellyfin-media-player
       mpv
       mpv-shim-default-shaders
-      # texlive.combined.scheme-full
+      texlive.combined.scheme-full
+      latexrun
       distrobox
       # wonderdraft
       krita
-      # aseprite
+      aseprite
       protonvpn-gui
       github-copilot-cli
       rocmPackages.rocm-smi
@@ -196,6 +197,13 @@ in {
           text=$(echo "" | fuzzel --dmenu --dmenu --prompt="EN -> DE: " --lines=0)
           if [ -z "$text" ]; then exit; fi
           ${pkgs.translate-shell}/bin/trans -no-ansi en:de "$text" | fuzzel --dmenu --width=50 --lines=20
+        '';
+      })
+      (writeShellApplication {
+        name = "convert-cards";
+        text = ''
+          ${pkgs.poppler-utils}/bin/pdftoppm -png "$1" "$1"-images
+          ${pkgs.imagemagick}/bin/convert "$1"-images-* -shave 10x10 "$1"-cropped.png
         '';
       })
       (writeShellApplication {
@@ -316,8 +324,8 @@ in {
   programs.godot4-mono-schnozzlecat = {
     enable = true;
     version = "4.4";
-    commitHash = "d4717b98d47c8c575d4b1d62218102b11fb2db6d";
-    hash = "sha256-jDd0XNUq4d4XjA+ieLIA6o1PE0RUtOhRsG88Bgq/eBw=";
+    commitHash = "c54ed1970920e1cb4352bdbaf00e602b92912f99";
+    hash = "sha256-/YCIjEaRQHwx8FkvhOWMvEbXzwv10YYLRnZGnuGcIQM=";
   };
 
   programs.ncspot = {
