@@ -173,6 +173,7 @@ in {
       latexrun
       distrobox
       # wonderdraft
+      firejail
       krita
       aseprite
       protonvpn-gui

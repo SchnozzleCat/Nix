@@ -42,6 +42,11 @@
     vim-dadbod-ui.enable = true;
     vim-dadbod-completion.enable = true;
     fugitive.enable = true;
+    vimtex = {
+      enable = true;
+      texlivePackage =
+        pkgs.texlive.combined.scheme-full;
+    };
     dotnet = {
       enable = true;
       lazyLoad.settings.cmd = "DotnetUI";
@@ -326,12 +331,12 @@
         behaviour = {
           auto_suggestions = false;
         };
-        rag_service = {
-          enabled = true;
-          host_mount.__raw = ''os.getenv("HOME")'';
-          provider = "ollama";
-          endpoint = "http://192.168.200.20:11434";
-        };
+        # rag_service = {
+        #   enabled = true;
+        #   host_mount.__raw = ''os.getenv("HOME")'';
+        #   provider = "ollama";
+        #   endpoint = "http://192.168.200.20:11434";
+        # };
       };
     };
     neogen.enable = true;
