@@ -434,7 +434,7 @@
 
       function pick_buffers()
         Snacks.picker.buffers({current=false})
-        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<esc>', true, false, true), 'n', true)
+        -- vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<esc>', true, false, true), 'i', true)
       end
 
       function explorer()
