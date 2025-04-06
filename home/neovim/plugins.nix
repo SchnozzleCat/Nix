@@ -326,12 +326,12 @@
         behaviour = {
           auto_suggestions = false;
         };
-        rag_service = {
-          enabled = true;
-          host_mount.__raw = ''os.getenv("HOME")'';
-          provider = "ollama";
-          endpoint = "http://192.168.200.20:11434";
-        };
+        # rag_service = {
+        #   enabled = true;
+        #   host_mount.__raw = ''os.getenv("HOME")'';
+        #   provider = "ollama";
+        #   endpoint = "http://192.168.200.20:11434";
+        # };
       };
     };
     neogen.enable = true;
