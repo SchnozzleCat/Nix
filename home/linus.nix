@@ -501,6 +501,7 @@ in {
     settings = {
       main = {
         font = "JetBrainsMono Nerd Font:size=10";
+        gamma-correct-blending = "no";
       };
       cursor = {
         color = "1A1826 D9E0EE";
