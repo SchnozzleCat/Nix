@@ -324,8 +324,8 @@ in {
   programs.godot4-mono-schnozzlecat = {
     enable = true;
     version = "4.4";
-    commitHash = "c54ed1970920e1cb4352bdbaf00e602b92912f99";
-    hash = "sha256-/YCIjEaRQHwx8FkvhOWMvEbXzwv10YYLRnZGnuGcIQM=";
+    commitHash = "4c575e3f3801bfc615ebf9c923b587f1548f5dd6";
+    hash = "sha256-t0HuAwuylNIHFv+zZzWWKK9axno9wDpRbIhtgFaVJ9Q=";
   };
 
   programs.ncspot = {

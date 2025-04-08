@@ -44,8 +44,8 @@
   dotnet-runtime_8,
   makeWrapper,
   msbuild,
-  withCommitHash ? "c54ed1970920e1cb4352bdbaf00e602b92912f99",
-  withHash ? "sha256-/YCIjEaRQHwx8FkvhOWMvEbXzwv10YYLRnZGnuGcIQM=",
+  withCommitHash ? "4c575e3f3801bfc615ebf9c923b587f1548f5dd6",
+  withHash ? "sha256-t0HuAwuylNIHFv+zZzWWKK9axno9wDpRbIhtgFaVJ9Q=",
   withVersion ? "4.4",
   withPName ? "godot4-mono-schnozzlecat",
 }:
