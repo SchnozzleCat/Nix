@@ -126,7 +126,7 @@ in {
   services.avahi.publish.userServices = true;
 
   environment.systemPackages = with pkgs; [
-    inputs.nix-citizen.packages.x86_64-linux.star-citizen
+    # inputs.nix-citizen.packages.x86_64-linux.star-citizen
   ];
 
   programs.corectrl = {

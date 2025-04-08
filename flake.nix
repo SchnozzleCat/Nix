@@ -59,7 +59,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nix-citizen.url = "github:LovingMelody/nix-citizen";
+    # nix-citizen.url = "github:LovingMelody/nix-citizen";
 
     neovim-nightly-overlay = {
       url = "github:nix-community/neovim-nightly-overlay";
@@ -81,7 +81,7 @@
     hyprland,
     nixvim,
     nix-colors,
-    nix-citizen,
+    # nix-citizen,
     lix-module,
     zjstatus,
     ...
