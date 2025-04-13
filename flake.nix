@@ -191,6 +191,7 @@
           ./home/linus-laptop.nix
           nix-colors.homeManagerModules.default
           nixvim.homeManagerModules.nixvim
+          self.homeManagerModules.sunshine
           self.homeManagerModules.godot4-mono-schnozzlecat
           inputs.spicetify-nix.homeManagerModules.default
         ];

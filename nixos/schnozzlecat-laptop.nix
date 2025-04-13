@@ -23,6 +23,12 @@
     powerOnBoot = true;
   };
 
+  services.sunshine = {
+    enable = true;
+    openFirewall = true;
+    capSysAdmin = true;
+  };
+
   powerManagement = {
     enable = true;
     powertop.enable = true;
