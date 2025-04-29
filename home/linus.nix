@@ -268,8 +268,8 @@ in {
         text = ''
           sudo tc qdisc add dev lo root handle 1: prio
           sudo tc qdisc add dev lo parent 1:1 handle 10: netem delay "$1"
-          sudo tc filter add dev lo protocol ip parent 1:0 prio 1 u32 match ip dst 127.0.0.1/32 flowid 1:1
-          sudo tc filter add dev lo protocol ip parent 1:0 prio 1 u32 match ip src 127.0.0.1/32 flowid 1:1
+          sudo tc filter add dev lo protocol ip parent 1:0 prio 1 u32 match ip dst 192.168.200.20/32 flowid 1:1
+          sudo tc filter add dev lo protocol ip parent 1:0 prio 1 u32 match ip src 192.168.200.20/32 flowid 1:1
         '';
       })
       (writeShellApplication {
