@@ -92,11 +92,14 @@ in {
       wally-cli
       blueman
       hyprshade
+      moonlight-embedded
+      csharprepl
 
       # Web
       qbittorrent
       yt-dlp
       k6
+      jetbrains-toolbox
 
       # Dev
       unityhub
