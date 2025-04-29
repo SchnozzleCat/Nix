@@ -865,7 +865,18 @@
     };
     friendly-snippets.enable = true;
     diffview.enable = true;
-    lsp-format.enable = true;
+    lsp-format = {
+      enable = true;
+      settings = {
+        "csharp" = {
+          exclude = [
+            "roslyn"
+          ];
+          force = true;
+          sync = true;
+        };
+      };
+    };
     none-ls = {
       enable = true;
       lazyLoad.settings.event = "DeferredUIEnter";
@@ -881,7 +892,7 @@
           black.enable = true;
           astyle = {
             enable = true;
-            settings.disabled_filetypes = ["csharp"];
+            settings.disabled_filetypes = ["cs"];
           };
           csharpier.enable = true;
           gdformat.enable = true;
@@ -965,11 +976,9 @@
         })
       '';
       onAttach = ''
-        client.server_capabilities.documentFormattingProvider = false
-        client.server_capabilities.documentRangeFormattingProvider = false
         vim.api.nvim_create_autocmd({ 'TextChanged', 'InsertLeave' }, {
-             buffer = bufnr,
-             callback = vim.lsp.codelens.refresh,
+            buffer = bufnr,
+            callback = vim.lsp.codelens.refresh,
         })
         vim.lsp.codelens.refresh()
       '';
