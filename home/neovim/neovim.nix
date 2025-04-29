@@ -440,6 +440,30 @@
       function explorer()
         Snacks.explorer({win={list={keys={["<Esc>"] = ""}}}})
       end
+
+      function lsp_format(bufnr)
+          vim.lsp.buf.format({
+              filter = function(client)
+                  -- apply whatever logic you want (in this example, we'll only use null-ls)
+                  return client.name == "null-ls"
+              end,
+              bufnr = bufnr,
+          })
+      end
+
+      vim.opt.fillchars = {
+        diff = '╱',
+      }
+
+      vim.opt.diffopt = {
+        'internal',
+        'filler',
+        'closeoff',
+        'context:12',
+        'algorithm:histogram',
+        'linematch:200',
+        'indent-heuristic',
+      }
     '';
     opts = {
       showtabline = 0;
