@@ -250,10 +250,13 @@ in ''
   bind = $mainMod Shift, v, exec, ${pkgs.looking-glass-client}/bin/looking-glass-client -F
   bind = $mainMod Ctrl Shift,v, exec, toggle-vm
 
-  bind = $mainMod, b, exec, hyprctl dispatch layoutmsg "preselect r"
-  bind = $mainMod, v, exec, hyprctl dispatch layoutmsg "preselect d"
+  # bind = $mainMod, b, exec, hyprctl dispatch layoutmsg "preselect r"
+  # bind = $mainMod, v, exec, hyprctl dispatch layoutmsg "preselect d"
 
   bind = $mainMod Ctrl Shift, q, exec, power-menu
 
   bind = $mainMod Shift,m, exec, ~/.config/sway/calc.sh
+
+  bind = $mainMod, b, overview:toggle, all
+
 ''

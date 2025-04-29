@@ -84,6 +84,7 @@
     # nix-citizen,
     lix-module,
     zjstatus,
+    Hyprspace,
     ...
   } @ inputs: let
     inherit (self) outputs;
