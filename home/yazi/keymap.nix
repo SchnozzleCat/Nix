@@ -12,13 +12,13 @@
   [[manager.prepend_keymap]]
   on   = "<C-y>"
   run = ''''
-  	shell '${pkgs.xdragon}/bin/dragon -a -x -T "$@"' --confirm
+  	shell '${pkgs.dragon-drop}/bin/xdragon -a -x -T "$@"'
   ''''
 
   [[manager.prepend_keymap]]
   on   = [ "c", "y" ]
   run = ''''
-  	shell '${pkgs.xdragon}/bin/dragon -a -x -T "$@"' --confirm
+  	shell '${pkgs.dragon-drop}/bin/xdragon -a -x -T "$@"'
   ''''
 
   [[manager.prepend_keymap]]
