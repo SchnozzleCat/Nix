@@ -600,20 +600,8 @@
     {
       mode = ["n"];
       key = "<leader>ca";
-      action = "<cmd> Lspsaga code_action <cr>";
+      action = "<cmd>lua require('fastaction').code_action()<CR>";
       options.desc = "Show Code Actions";
-    }
-    {
-      mode = ["n"];
-      key = "]d";
-      action = "<cmd> Lspsaga diagnostic_jump_next <cr>";
-      options.desc = "Next Diagnostic";
-    }
-    {
-      mode = ["n"];
-      key = "[d";
-      action = "<cmd> Lspsaga diagnostic_jump_prev <cr>";
-      options.desc = "Previous Diagnostic";
     }
     {
       mode = ["n"];
