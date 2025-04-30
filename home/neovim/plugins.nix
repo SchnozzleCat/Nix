@@ -1075,18 +1075,20 @@
     #     };
     #   };
     # };
-    nvim-jdtls = {
+    jdtls = {
       enable = true;
-      data = "/home/linus/.cache/jdtls/workspace";
-      configuration = "/home/linus/.cache/jdtls/config";
-      cmd = [
-        "${pkgs.jdt-language-server}/bin/jdtls"
-      ];
-      rootDir.__raw = ''vim.fs.dirname(vim.fs.find({'pom.xml'}, { upward = true })[1])'';
-      initOptions = {
-        bundles = [
-          "${pkgs.vscode-extensions.vscjava.vscode-java-debug}/share/vscode/extensions/vscjava.vscode-java-debug/server/com.microsoft.java.debug.plugin-0.50.0.jar"
+      settings = {
+        cmd = [
+          "${pkgs.jdt-language-server}/bin/jdtls"
+          "-data /home/linus/.cache/jdtls/workspace"
+          "-configuration /home/linus/.cache/jdtls/config"
         ];
+        rootDir.__raw = ''vim.fs.dirname(vim.fs.find({'pom.xml'}, { upward = true })[1])'';
+        initOptions = {
+          bundles = [
+            "${pkgs.vscode-extensions.vscjava.vscode-java-debug}/share/vscode/extensions/vscjava.vscode-java-debug/server/com.microsoft.java.debug.plugin-0.50.0.jar"
+          ];
+        };
       };
     };
     todo-comments = {

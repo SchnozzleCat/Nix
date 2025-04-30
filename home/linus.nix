@@ -19,9 +19,9 @@ in {
   wayland.windowManager.hyprland = {
     enable = true;
     package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-    plugins = with inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}; [
-      inputs.Hyprspace.packages.${pkgs.system}.Hyprspace
-    ];
+    # plugins = with inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}; [
+    #   inputs.Hyprspace.packages.${pkgs.system}.Hyprspace
+    # ];
   };
   nixpkgs.config.android_sdk.accept_license = true;
 
@@ -315,15 +315,15 @@ in {
     ];
   };
 
-  programs.spicetify = let
-    spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
-  in {
-    enable = true;
-    enabledExtensions = with spicePkgs.extensions; [
-      adblock
-    ];
-    theme = spicePkgs.themes.text;
-  };
+  # programs.spicetify = let
+  #   spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
+  # in {
+  #   enable = true;
+  #   enabledExtensions = with spicePkgs.extensions; [
+  #     adblock
+  #   ];
+  #   theme = spicePkgs.themes.text;
+  # };
 
   programs.godot4-mono-schnozzlecat = {
     enable = true;

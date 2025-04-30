@@ -257,6 +257,6 @@ in ''
 
   bind = $mainMod Shift,m, exec, ~/.config/sway/calc.sh
 
-  bind = $mainMod, b, overview:toggle, all
+  # bind = $mainMod, b, overview:toggle, all
 
 ''

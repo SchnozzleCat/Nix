@@ -35,10 +35,6 @@
     };
   };
 
-  programs.looking-glass-client = {
-    enable = true;
-  };
-
   dconf.settings = {
     "org/virt-manager/virt-manager/connections" = {
       autoconnect = ["qemu:///system"];
@@ -49,7 +45,6 @@
   home.packages = with pkgs; [
     obs-studio
     obs-studio-plugins.wlrobs
-    obs-studio-plugins.looking-glass-obs
     (writeShellApplication {
       name = "swap-audio";
       text = ''
