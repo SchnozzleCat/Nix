@@ -321,15 +321,15 @@ in {
     ];
   };
 
-  # programs.spicetify = let
-  #   spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
-  # in {
-  #   enable = true;
-  #   enabledExtensions = with spicePkgs.extensions; [
-  #     adblock
-  #   ];
-  #   theme = spicePkgs.themes.text;
-  # };
+  programs.spicetify = let
+    spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
+  in {
+    enable = true;
+    enabledExtensions = with spicePkgs.extensions; [
+      adblock
+    ];
+    theme = spicePkgs.themes.text;
+  };
 
   programs.godot4-mono-schnozzlecat = {
     enable = true;
