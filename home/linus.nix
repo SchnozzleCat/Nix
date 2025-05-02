@@ -267,6 +267,12 @@ in {
         '';
       })
       (writeShellApplication {
+        name = "csharpier";
+        text = ''
+          ${pkgs.csharpier}/bin/dotnet-csharpier "$*"
+        '';
+      })
+      (writeShellApplication {
         name = "tc-latency";
         text = ''
           sudo tc qdisc add dev lo root handle 1: prio
