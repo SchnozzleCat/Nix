@@ -354,6 +354,11 @@
           pnglatex
         ];
     };
+    lspsaga = {
+      enable = true;
+      symbolInWinbar.enable = false;
+      lightbulb.enable = false;
+    };
     fastaction.enable = true;
     copilot-lua = {
       enable = true;
