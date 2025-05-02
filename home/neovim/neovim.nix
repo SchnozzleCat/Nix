@@ -27,6 +27,13 @@
       fd
       ripgrep
       zf
+      csharpier
+      (writeShellApplication {
+        name = "csharpier";
+        text = ''
+          ${pkgs.csharpier}/bin/dotnet-csharpier "$*"
+        '';
+      })
       (pkgs.buildEnv {
         name = "combinedSdk";
         paths = [
