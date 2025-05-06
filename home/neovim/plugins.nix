@@ -406,6 +406,13 @@
       modules = {
         ai = {};
         files = {
+          content = {
+            filter.__raw = ''
+              function(file)
+                return not string.match(file.name, "%.uid$")
+              end
+            '';
+          };
           mappings = {
             go_in_plus = "<CR>";
           };
