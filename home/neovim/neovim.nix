@@ -27,6 +27,9 @@
       fd
       ripgrep
       zf
+      jdk
+      plantuml
+      imv
       csharpier
       (writeShellApplication {
         name = "csharpier";
@@ -75,6 +78,16 @@
             repo = pname;
             rev = version;
             sha256 = "sha256-YfWhl+wrbik+hkz7lRydeoWpTTEhloOs0AgaiuT705I=";
+          };
+        })
+        (buildVimPlugin rec {
+          pname = "nvim-soil";
+          version = "e0719b680f48838a749e720d23f32cc1ad906b92";
+          src = pkgs.fetchFromGitHub {
+            owner = "javiorfo";
+            repo = pname;
+            rev = version;
+            sha256 = "sha256-hmp8FPRYuykfDXizyASF1x9qD+lNdcXP5ERbrCYTE98=";
           };
         })
         (buildVimPlugin rec {
@@ -429,6 +442,21 @@
           pairs = { ["{"] = "}", ['"'] = '"', ["'"] = "'", ["("] = ")", ["["] = "]" },
       })
 
+      require("soil").setup({
+         image = {
+            darkmode = false, -- Enable or disable darkmode
+            format = "png", -- Choose between png or svg
+
+            -- This is a default implementation of using nsxiv to open the resultant image
+            -- Edit the string to use your preferred app to open the image (as if it were a command line)
+            -- Some examples:
+            -- return "feh " .. img
+            -- return "xdg-open " .. img
+            execute_to_open = function(img)
+                return "imv " .. img
+            end
+        }
+      })
       -- jumping from smallest region to largest region
       vim.keymap.set({ "n", "i" }, "<c-;>",function()
           require("clasp").wrap('next')
