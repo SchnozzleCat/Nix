@@ -21,6 +21,7 @@
     extraPackages = with pkgs; [
       imagemagick
       # nodePackages.ijavascript
+      goose-cli
       quarto
       typescript
       jq
@@ -71,6 +72,17 @@
         csv-vim
       ]
       ++ (with pkgs.vimUtils; [
+        (buildVimPlugin rec {
+          pname = "goose.nvim";
+          version = "5a72d3b3f7a2a01d174100c8c294da8cd3a2aeeb";
+          doCheck = false;
+          src = pkgs.fetchFromGitHub {
+            owner = "azorng";
+            repo = pname;
+            rev = version;
+            sha256 = "sha256-jVWggPmdINFNVHJSCpbTZq8wKwGjldu6PNSkb7naiQE=";
+          };
+        })
         (buildVimPlugin rec {
           pname = "clasp.nvim";
           version = "c3bebd9e1c4588b68dff8fff11e60874030b5170";
@@ -458,6 +470,9 @@
             end
         }
       })
+
+      require("goose").setup({})
+
       -- jumping from smallest region to largest region
       vim.keymap.set({ "n", "i" }, "<c-;>",function()
           require("clasp").wrap('next')
