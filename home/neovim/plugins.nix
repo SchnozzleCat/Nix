@@ -661,6 +661,10 @@
             command = "${pkgs.netcoredbg}/bin/netcoredbg";
             args = ["--interpreter=vscode"];
           };
+          "netcoredbg" = {
+            command = "${pkgs.netcoredbg}/bin/netcoredbg";
+            args = ["--interpreter=vscode"];
+          };
           "node" = {
             command = "node";
             args = ["/home/linus/Repositories/pina-checkout-integration-exploration/vscode-node-debug2/out/src/nodeDebug.js"];
