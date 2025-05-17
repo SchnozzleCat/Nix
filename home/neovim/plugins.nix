@@ -8,6 +8,13 @@
     lz-n = {
       enable = true;
     };
+    image = {
+      enable = true;
+      lazyLoad.settings.event = "DeferredUIEnter";
+      settings = {
+        backend = "ueberzug";
+      };
+    };
     arrow = {
       enable = true;
       lazyLoad.settings.event = "DeferredUIEnter";
