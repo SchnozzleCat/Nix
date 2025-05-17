@@ -391,6 +391,7 @@ in {
 
   programs.git = {
     enable = true;
+    lfs.enable = true;
     userName = "SchnozzleCat";
     userEmail = "linus@schnozzlecat.xyz";
     signing = {
