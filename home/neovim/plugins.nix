@@ -651,7 +651,11 @@
             args = ["/home/linus/Repositories/pina-checkout-integration-exploration/vscode-php-debug/out/phpDebug.js"];
           };
           "cppdbg" = {
-            command = "${pkgs.vscode-extensions.ms-vscode.cpptools}/bin/OpenDebugAD7";
+            id = "cppdbg";
+            command = "${pkgs.vscode-extensions.ms-vscode.cpptools}/share/vscode/extensions/ms-vscode.cpptools/debugAdapters/bin/OpenDebugAD7";
+            options = {
+              detached = false;
+            };
           };
           "coreclr" = {
             command = "${pkgs.netcoredbg}/bin/netcoredbg";
@@ -708,7 +712,12 @@
               end
             '';
             cwd = ''''${workspaceFolder}'';
-            stopAtEntry = true;
+            stopAtEntry = false;
+            args = [
+              "--editor"
+              "--path"
+              "~/Repositories/dev"
+            ];
           }
           {
             name = "Launch file";
