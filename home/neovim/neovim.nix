@@ -115,12 +115,12 @@
         })
         (buildVimPlugin rec {
           pname = "roslyn.nvim";
-          version = "7f8c18c6aac3667e0c0ec1aa30ecc77d3d36807f";
+          version = "8dc729a651ae980088246caf651e5ff24e21077a";
           src = pkgs.fetchFromGitHub {
             owner = "seblyng";
             repo = pname;
             rev = version;
-            sha256 = "sha256-uNY7bbE5Q7ZsG5WV3M7Nirad1I7ROfAbIL+s6+4fYuw=";
+            sha256 = "sha256-jrWzIoaorwQk8phqxAM5zoio4reM1e+qjXd/4Syhp24=";
           };
         })
         (buildVimPlugin rec {
