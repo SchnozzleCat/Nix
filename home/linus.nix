@@ -94,6 +94,7 @@ in {
       hyprshade
       moonlight-embedded
       csharprepl
+      goose-cli
 
       # Web
       qbittorrent
