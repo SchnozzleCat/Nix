@@ -682,7 +682,7 @@
     # Lazygit
     {
       mode = ["n"];
-      key = "<leader>gg";
+      key = "<leader>G";
       action = "<cmd>lua Snacks.lazygit() <cr>";
       options.desc = "LazyGit";
     }
