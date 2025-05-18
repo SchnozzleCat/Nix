@@ -21,6 +21,7 @@
     extraPackages = with pkgs; [
       imagemagick
       # nodePackages.ijavascript
+      nodejs
       goose-cli
       quarto
       typescript
