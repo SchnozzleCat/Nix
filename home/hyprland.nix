@@ -32,13 +32,13 @@ in ''
   windowrulev2=workspace special:scratch_term silent,class:^(foot-float)$
   windowrulev2=move 12% 200%,class:^(foot-float)$
 
-  windowrulev2=float,class:^(org.pulseaudio.pavucontrol)$
+  windowrulev2=float,class:^(com.saivert.pwvucontrol)$
 
-  bind = $mainMod,s,exec,pavucontrol
-  windowrulev2=float,class:^(pavucontrol)$
-  windowrulev2=size 40% 90%,class:^(pavucontrol)$
-  windowrulev2=workspace special:scratch_volume silent,class:^(pavucontrol)$
-  windowrulev2=move 200% 5%,class:^(pavucontrol)$
+  bind = $mainMod,s,exec,pwvucontrol
+  windowrulev2=float,class:^(pwvucontrol)$
+  windowrulev2=size 40% 90%,class:^(pwvucontrol)$
+  windowrulev2=workspace special:scratch_volume silent,class:^(pwvucontrol)$
+  windowrulev2=move 200% 5%,class:^(pwvucontrol)$
 
   bind = $mainMod,m,exec,pypr toggle ncspot
   windowrulev2=float,class:^(foot-ncspot)$

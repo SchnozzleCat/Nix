@@ -87,7 +87,6 @@ in {
     packages = with pkgs; [
       # OS
       wl-clipboard
-      pavucontrol
       pyprland
       wally-cli
       blueman

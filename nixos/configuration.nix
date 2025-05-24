@@ -188,6 +188,7 @@
 
   environment.systemPackages = with pkgs; [
     git
+    pwvucontrol
     alsa-utils
     brightnessctl
     hyprpaper
