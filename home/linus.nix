@@ -511,7 +511,7 @@ in {
     enable = true;
     settings = {
       main = {
-        font = "JetBrainsMono Nerd Font:size=10";
+        font = "JetBrainsMono Nerd Font:size=9";
         gamma-correct-blending = "no";
       };
       cursor = {
