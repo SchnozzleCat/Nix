@@ -85,6 +85,16 @@
           };
         })
         (buildVimPlugin rec {
+          pname = "treewalker.nvim";
+          version = "dbe096c40fa899487c51c56049cfaaa0e60b00f7";
+          src = pkgs.fetchFromGitHub {
+            owner = "aaronik";
+            repo = pname;
+            rev = version;
+            sha256 = "sha256-wtX9ysrkfI4JWgRYZT0YQD973hGjANhm0eBn9k0b364=";
+          };
+        })
+        (buildVimPlugin rec {
           pname = "clasp.nvim";
           version = "c3bebd9e1c4588b68dff8fff11e60874030b5170";
           src = pkgs.fetchFromGitHub {
@@ -473,6 +483,13 @@
       })
 
       require("goose").setup({})
+
+      require('treewalker').setup({
+        highlight = true,
+        highlight_duration = 250,
+        highlight_group = 'CursorLine',
+        jumplist = true,
+      })
 
       -- jumping from smallest region to largest region
       vim.keymap.set({ "n", "i" }, "<c-;>",function()
