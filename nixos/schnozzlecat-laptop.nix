@@ -6,7 +6,27 @@
   pkgs,
   hostname,
   ...
-}: {
+}: let
+  my-alsa-ucm = pkgs.alsa-ucm-conf.overrideAttrs (oldAttrs: {
+    # Override the source to use the Git snapshot
+    src = fetchTarball {
+      url = "https://github.com/alsa-project/alsa-ucm-conf/archive/fc17ed4.tar.gz";
+      sha256 = "sha256:0krh3r9frzjcv0gj85dljb9776mfjmw18m0ph9lf3n0n4b129xzz";
+    };
+    # Override the installPhase to avoid problematic substitutions
+    installPhase = ''
+      mkdir -p $out/share/alsa
+      cp -r ucm2 $out/share/alsa/
+    '';
+    # Disable postInstall to avoid substitutions
+    postInstall = "";
+  });
+
+  env = {
+    ALSA_CONFIG_UCM = "${my-alsa-ucm}/share/alsa/ucm";
+    ALSA_CONFIG_UCM2 = "${my-alsa-ucm}/share/alsa/ucm2";
+  };
+in {
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
@@ -14,7 +34,25 @@
 
   environment.systemPackages = with pkgs; [
     powertop
+    my-alsa-ucm
+    alsa-firmware
+    alsa-topology-conf
   ];
+
+  systemd.user.services.pipewire.environment.ALSA_CONFIG_UCM = config.environment.variables.ALSA_CONFIG_UCM;
+  systemd.user.services.pipewire.environment.ALSA_CONFIG_UCM2 = config.environment.variables.ALSA_CONFIG_UCM2;
+  systemd.user.services.wireplumber.environment.ALSA_CONFIG_UCM = config.environment.variables.ALSA_CONFIG_UCM;
+  systemd.user.services.wireplumber.environment.ALSA_CONFIG_UCM2 = config.environment.variables.ALSA_CONFIG_UCM2;
+
+  # sound
+  hardware.firmware = [
+    pkgs.sof-firmware # Intel sound DSP firmware
+    pkgs.linux-firmware # includes cs35l56-* & friends
+    pkgs.alsa-firmware
+  ];
+
+  environment.variables = env;
+  environment.sessionVariables = env;
 
   services.logind.lidSwitch = "ignore";
 
@@ -29,6 +67,7 @@
     capSysAdmin = true;
   };
 
+  boot.kernelParams = ["usbcore.autosuspend=-1"];
   powerManagement = {
     enable = true;
     powertop.enable = true;
