@@ -644,6 +644,14 @@
             host = "127.0.0.1";
             port = 5678;
           };
+          "pwa-node" = {
+            host = "localhost";
+            port = "\${port}";
+            executable = {
+              command = "node";
+              args = ["${pkgs.vscode-js-debug}/lib/node_modules/js-debug/dist/src/dapDebugServer.js" "\${port}"];
+            };
+          };
         };
         executables = {
           "php" = {
@@ -683,6 +691,22 @@
             name = "Debug (Attach) - Remote";
             hostName = "0.0.0.0";
             port = 63773;
+          }
+        ];
+        typescript = [
+          {
+            type = "pwa-node";
+            request = "launch";
+            name = "Launch file";
+            program = "\${file}";
+            cwd = "\${workspaceFolder}";
+          }
+          {
+            type = "pwa-node";
+            request = "attach";
+            name = "Attach";
+            address = "localhost";
+            port = 9229;
           }
         ];
         php = [
