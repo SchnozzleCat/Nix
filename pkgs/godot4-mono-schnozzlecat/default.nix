@@ -46,7 +46,7 @@
   msbuild,
   withCommitHash ? "3df0460e7c1ba1579b38e94acb88c00c3bbc28a3",
   withHash ? "sha256-IyFxpbx+Jxy0MPSsF8k3ea+RReFbJG1L2q21dtGELPM=",
-  withVersion ? "4.4",
+  withVersion ? "4.4.1",
   withPName ? "godot4-mono-schnozzlecat",
 }:
 assert lib.asserts.assertOneOf "withPrecision" withPrecision ["single" "double"];
