@@ -518,7 +518,7 @@
       end
 
       function explorer()
-        Snacks.explorer({win={list={keys={["<Esc>"] = ""}}}})
+        Snacks.explorer({win={list={keys={["<ESC>"] = ""}}}, exclude={'*.uid'}})
       end
 
       function lsp_format(bufnr)
