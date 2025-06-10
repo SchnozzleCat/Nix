@@ -984,7 +984,13 @@
       onAttach = ''
         vim.api.nvim_create_autocmd({ 'TextChanged', 'InsertLeave' }, {
             buffer = bufnr,
-            callback = vim.lsp.codelens.refresh,
+            callback = function()
+              vim.defer_fn(function(timer)
+                if vim.api.nvim_buf_is_valid(bufnr) then
+                  vim.lsp.codelens.refresh()
+                end
+              end, 250)
+            end
         })
         vim.lsp.codelens.refresh()
       '';
