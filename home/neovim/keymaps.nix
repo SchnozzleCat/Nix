@@ -84,7 +84,7 @@
     {
       mode = "n";
       key = "<leader>ff";
-      action = "<cmd>lua Snacks.picker.files() <cr>";
+      action = "<cmd>lua Snacks.picker.files({exclude = {'*.uid'}}) <cr>";
       options.desc = "Pick Files";
     }
     {
