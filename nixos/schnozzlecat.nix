@@ -60,7 +60,7 @@ in {
     rocmOverrideGfx = "10.3.1";
   };
 
-  boot.blacklistedKernelModules = ["nouveau"];
+  # boot.blacklistedKernelModules = ["nouveau"];
   hardware.cpu.intel.updateMicrocode = true;
 
   services.udev.extraRules = ''
