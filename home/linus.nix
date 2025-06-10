@@ -173,7 +173,6 @@ in {
       jellyfin-media-player
       mpv
       mpv-shim-default-shaders
-      texlive.combined.scheme-full
       latexrun
       distrobox
       # wonderdraft
