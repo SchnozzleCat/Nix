@@ -139,6 +139,8 @@ in ''
       #permanent_direction_override = true
   }
 
+  debug:full_cm_proto=true
+
   master {
       # See https://wiki.hyprland.org/Configuring/Master-Layout/ for more
       new_status = master
