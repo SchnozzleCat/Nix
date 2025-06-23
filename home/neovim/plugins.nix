@@ -15,6 +15,10 @@
         backend = "ueberzug";
       };
     };
+    hunk = {
+      enable = true;
+      autoLoad = true;
+    };
     arrow = {
       enable = true;
       lazyLoad.settings.event = "DeferredUIEnter";
