@@ -7,10 +7,12 @@
   nix-colors,
   master,
   ...
-}: let
+}:
+let
   colors = config.colorScheme.palette;
   app-browser = "${pkgs.brave}/bin/brave";
-in {
+in
+{
   imports = [
     ./home.nix
     ./terminal.nix
@@ -102,13 +104,15 @@ in {
       jetbrains-toolbox
 
       # Dev
-      unityhub
+      # unityhub
       devbox
-      (with dotnetCorePackages;
+      (
+        with dotnetCorePackages;
         combinePackages [
           sdk_8_0
           sdk_9_0
-        ])
+        ]
+      )
       sublime-merge
       (pkgs.buildDotnetGlobalTool {
         pname = "Microsoft.dotnet-interactive";
@@ -182,29 +186,27 @@ in {
       krita
       aseprite
       protonvpn-gui
-      github-copilot-cli
+      gh-copilot
       rocmPackages.rocm-smi
       nvtopPackages.full
       vdhcoapp
       smassh
-      (
-        buildDotnetGlobalTool {
-          pname = "csharpier";
-          version = "1.0.0";
-          executables = "csharpier";
+      (buildDotnetGlobalTool {
+        pname = "csharpier";
+        version = "1.0.0";
+        executables = "csharpier";
 
-          nugetHash = "sha256-wj+Sjvtr4/zqBdxXMM/rYHykzcn+jQ3AVakYpAa3sNU=";
+        nugetHash = "sha256-wj+Sjvtr4/zqBdxXMM/rYHykzcn+jQ3AVakYpAa3sNU=";
 
-          meta = with lib; {
-            description = "Opinionated code formatter for C#";
-            homepage = "https://csharpier.com/";
-            changelog = "https://github.com/belav/csharpier/blob/main/CHANGELOG.md";
-            license = licenses.mit;
-            maintainers = with maintainers; [zoriya];
-            mainProgram = "csharpier";
-          };
-        }
-      )
+        meta = with lib; {
+          description = "Opinionated code formatter for C#";
+          homepage = "https://csharpier.com/";
+          changelog = "https://github.com/belav/csharpier/blob/main/CHANGELOG.md";
+          license = licenses.mit;
+          maintainers = with maintainers; [ zoriya ];
+          mainProgram = "csharpier";
+        };
+      })
 
       # Shell Scripts
       (writeShellApplication {
@@ -213,7 +215,7 @@ in {
       })
       (writeShellApplication {
         name = "record-screen";
-        text = import ./scripts/record-screen.nix {inherit pkgs;};
+        text = import ./scripts/record-screen.nix { inherit pkgs; };
       })
       (writeShellApplication {
         name = "translate-en-to-de";
@@ -335,15 +337,17 @@ in {
     ];
   };
 
-  programs.spicetify = let
-    spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
-  in {
-    enable = true;
-    enabledExtensions = with spicePkgs.extensions; [
-      adblock
-    ];
-    theme = spicePkgs.themes.text;
-  };
+  programs.spicetify =
+    let
+      spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
+    in
+    {
+      enable = true;
+      enabledExtensions = with spicePkgs.extensions; [
+        adblock
+      ];
+      theme = spicePkgs.themes.text;
+    };
 
   programs.godot4-mono-schnozzlecat = {
     enable = true;
@@ -381,20 +385,20 @@ in {
   xdg.mimeApps = {
     enable = true;
     associations.added = {
-      "inode/directory" = ["yazi.desktop"];
-      "application/pdf" = ["org.pwmt.zathura.desktop"];
-      "image/*" = ["imv.desktop"];
-      "image/png" = ["imv.desktop"];
-      "image/jpg" = ["imv.desktop"];
-      "image/svg+xml" = ["imv.desktop"];
+      "inode/directory" = [ "yazi.desktop" ];
+      "application/pdf" = [ "org.pwmt.zathura.desktop" ];
+      "image/*" = [ "imv.desktop" ];
+      "image/png" = [ "imv.desktop" ];
+      "image/jpg" = [ "imv.desktop" ];
+      "image/svg+xml" = [ "imv.desktop" ];
     };
     defaultApplications = {
-      "inode/directory" = ["yazi.desktop"];
-      "application/pdf" = ["org.pwmt.zathura.desktop"];
-      "image/*" = ["imv.desktop"];
-      "image/png" = ["imv.desktop"];
-      "image/jpg" = ["imv.desktop"];
-      "image/svg+xml" = ["imv.desktop"];
+      "inode/directory" = [ "yazi.desktop" ];
+      "application/pdf" = [ "org.pwmt.zathura.desktop" ];
+      "image/*" = [ "imv.desktop" ];
+      "image/png" = [ "imv.desktop" ];
+      "image/jpg" = [ "imv.desktop" ];
+      "image/svg+xml" = [ "imv.desktop" ];
     };
   };
 
@@ -460,6 +464,7 @@ in {
   home.file.".config/hypr/hyprlock.conf".text = import ./hyprlock.nix;
 
   home.file.".config/hypr/shaders/blue-light-filter-custom.glsl".text = ''
+    #version 300 es
     // from https://github.com/hyprwm/Hyprland/issues/1140#issuecomment-1335128437
 
     precision highp float;
@@ -507,7 +512,7 @@ in {
 
   programs.waybar = {
     enable = true;
-    settings = import ./waybar-config.nix {inherit pkgs;};
+    settings = import ./waybar-config.nix { inherit pkgs; };
     style = import ./waybar-style.nix;
   };
 
