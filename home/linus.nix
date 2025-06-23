@@ -139,6 +139,9 @@ in {
       git-crypt
       bruno
       xfce.thunar
+      minikube
+      kubectl
+      kubernetes
 
       # Games
       steam-run
