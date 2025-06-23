@@ -3,35 +3,36 @@
   pkgs,
   lib,
   ...
-}: {
+}:
+{
   programs.nixvim.keymaps = [
     # Misc
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>dd";
       action = ''<cmd>NoiceDismiss<cr>'';
       options.desc = "Noice Dismiss";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<c-space>";
       action = ''<cmd>lua require("hover").hover() <cr>'';
       options.desc = "Show Hover Doc";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "K";
       action = ''<cmd> lua require("hover").hover() <cr>'';
       options.desc = "Show Hover Doc";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<c-p>";
       action = ''<cmd> lua require("hover").hover_switch("next") <cr>'';
       options.desc = "Show Next Hover Doc";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<c-n>";
       action = ''<cmd> lua require("hover").hover_switch("previous") <cr>'';
       options.desc = "Show Previous Hover Doc";
@@ -312,7 +313,7 @@
     {
       mode = "n";
       key = "<leader>p";
-      action = ''<cmd>Dotnet build<CR>'';
+      action = ''<cmd>Dotnet build default quickfix<CR>'';
       options.desc = "Dotnet Build";
     }
     {
@@ -449,223 +450,234 @@
     }
     # Flash
     {
-      mode = ["n" "x" "o"];
+      mode = [
+        "n"
+        "x"
+        "o"
+      ];
       key = "s";
       action = ''<cmd> lua require("flash").jump() <cr>'';
       options.desc = "Flash Jump";
     }
     {
-      mode = ["n" "x" "o"];
+      mode = [
+        "n"
+        "x"
+        "o"
+      ];
       key = "S";
       action = ''<cmd> lua require("flash").treesitter() <cr>'';
       options.desc = "Flash Treesitter";
     }
     {
-      mode = ["o"];
+      mode = [ "o" ];
       key = "r";
       action = ''<cmd> lua require("flash").remote() <cr>'';
       options.desc = "Flash Remote";
     }
     {
-      mode = ["x" "o"];
+      mode = [
+        "x"
+        "o"
+      ];
       key = "R";
       action = ''<cmd> lua require("flash").treesitter_search({ remote_op={restore=true,motion=true}}) <cr>'';
       options.desc = "Flash Treesitter Search";
     }
     # NeoTest
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>td";
       action = ''<cmd> lua require("neotest").run.run({strategy = "dap"}) <cr>'';
       options.desc = "debug nearest test";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>tr";
       action = ''<cmd> lua require("neotest").run.run() <cr>'';
       options.desc = "debug nearest test";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>tf";
       action = ''<cmd> lua require("neotest").run.run(vim.fn.expand("%")) <cr>'';
       options.desc = "debug nearest test";
     }
     # Undotree
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>u";
       action = "<cmd> UndotreeToggle <cr>";
       options.desc = "Undo Tree";
     }
     # Gitsigns
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>gd";
       action = "<cmd> DiffviewOpen <cr>";
       options.desc = "Git Diff";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>gH";
       action = "<cmd> DiffviewFileHistory <cr>";
       options.desc = "Git File History";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>gh";
       action = "<cmd> DiffviewFileHistory % <cr>";
       options.desc = "Git Current File History";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "]h";
       action = "<cmd> Gitsigns next_hunk <cr> <cmd> Gitsigns preview_hunk_inline <cr>";
       options.desc = "Next Hunk";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "[h";
       action = "<cmd> Gitsigns prev_hunk <cr> <cmd> Gitsigns preview_hunk_inline <cr>";
       options.desc = "Previous Hunk";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>hs";
       action = "<cmd> Gitsigns stage_hunk <cr>";
       options.desc = "Stage Hunk";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>hr";
       action = "<cmd> Gitsigns reset_hunk <cr>";
       options.desc = "Reset Hunk";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>hu";
       action = "<cmd> Gitsigns undo_stage_hunk <cr>";
       options.desc = "Undo Stage Hunk";
     }
     # Copilot
     {
-      mode = ["v"];
+      mode = [ "v" ];
       key = "<leader>cc";
       action = ":CopilotChat<cr>";
       options.desc = "Copilot Chat";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>cc";
       action = "<cmd>CopilotChat<cr>";
       options.desc = "Copilot Chat";
     }
     {
-      mode = ["v"];
+      mode = [ "v" ];
       key = "<leader>cd";
       action = ":CopilotChatDocs<cr>";
       options.desc = "Write Documentation";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>ce";
       action = "<cmd> CopilotChatExplain <cr>";
       options.desc = "Copilot Explain";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>cr";
       action = "<cmd> CopilotChatRefactor <cr>";
       options.desc = "Copilot Refactor";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>cq";
       action = ":CopilotChat ";
       options.desc = "Copilot Question";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>ct";
       action = "<cmd> CopilotChatTests <cr>";
       options.desc = "Copilot Tests";
     }
     # LSP Saga
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>ra";
       action = "<cmd> Lspsaga rename <cr>";
       options.desc = "Rename";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>ca";
       action = "<cmd>lua require('fastaction').code_action()<CR>";
       options.desc = "Show Code Actions";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "gs";
       action = "<cmd>lua Snacks.picker.lsp_symbols()<cr>";
       options.desc = "LSP Symbols";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "gd";
       action = "<cmd>lua Snacks.picker.lsp_definitions()<cr>";
       options.desc = "LSP Definition";
     }
     # Trouble
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>tt";
       action = "<cmd> TroubleToggle <cr>";
       options.desc = "Toggle Trouble";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "gi";
       action = "<cmd>lua Snacks.picker.lsp_implementations() <cr>";
       options.desc = "LSP Implementations";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "gr";
       action = "<cmd>lua Snacks.picker.lsp_references() <cr>";
       options.desc = "LSP References";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "]t";
       action = ''<cmd> lua require("trouble").next({skip_groups=true,jump=true}) <cr>'';
       options.desc = "Next Trouble";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "[t";
       action = ''<cmd> lua require("trouble").prev({skip_groups=true,jump=true}) <cr>'';
       options.desc = "Previous Trouble";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>tw";
       action = "<cmd> Trouble diagnostics<cr>";
       options.desc = "Workspace Trouble";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>tq";
       action = "<cmd> TroubleToggle quickfix<cr>";
       options.desc = "Toggle Trouble Quickfix";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>tl";
       action = "<cmd> TroubleToggle loclist<cr>";
       options.desc = "Toggle Trouble Loclist";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>D";
       action.__raw = ''
         function()
@@ -681,82 +693,82 @@
     }
     # Lazygit
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>G";
       action = "<cmd>lua Snacks.lazygit() <cr>";
       options.desc = "LazyGit";
     }
     # Zen Mode
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>Z";
       action = "<cmd>lua Snacks.zen() <cr>";
       options.desc = "Zen";
     }
     # Obsidian
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>ft";
-      action = "<cmd> ObsidianTags <cr>";
+      action = "<cmd> Obsidian tags <cr>";
       options.desc = "Obsidian Tags";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>zb";
-      action = "<cmd> ObsidianBacklinks <cr>";
+      action = "<cmd> Obsidian backlinks <cr>";
       options.desc = "Obsidian Backlinks";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>fn";
-      action = "<cmd> ObsidianQuickSwitch <cr>";
+      action = "<cmd> Obsidian quick_switch <cr>";
       options.desc = "Obsidian Quick Switch";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>fzw";
-      action = "<cmd> ObsidianSearch <cr>";
+      action = "<cmd> Obsidian search <cr>";
       options.desc = "Obsidian Search";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>zn";
-      action = "<cmd> ObsidianNew <cr>";
+      action = "<cmd> Obsidian new <cr>";
       options.desc = "Obsidian New";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>zo";
-      action = "<cmd> ObsidianOpen <cr>";
+      action = "<cmd> Obsidian open <cr>";
       options.desc = "Obsidian Open";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>zl";
-      action = "<cmd> ObsidianLinks <cr>";
+      action = "<cmd> Obsidian links <cr>";
       options.desc = "Obsidian Links";
     }
     {
-      mode = ["v"];
+      mode = [ "v" ];
       key = "<leader>zl";
-      action = "<cmd> ObsidianLink <cr>";
+      action = "<cmd> Obsidian link <cr>";
       options.desc = "Obsidian Link";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>zt";
-      action = "<cmd> ObsidianTemplate <cr>";
+      action = "<cmd> Obsidian template <cr>";
       options.desc = "Obsidian Template";
     }
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>zd";
-      action = "<cmd> ObsidianToday <cr>";
+      action = "<cmd> Obsidian today <cr>";
       options.desc = "Obsidian Today";
     }
     # Misc
     {
-      mode = ["n"];
+      mode = [ "n" ];
       key = "<leader>hi";
       action = ":lua vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) <cr>";
       options.desc = "Toggle Inlay Hints";

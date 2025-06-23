@@ -80,7 +80,36 @@
     pinentryPackage = pkgs.pinentry-all;
   };
 
-  programs.nix-ld.enable = true;
+  programs.nix-ld = {
+    enable = true;
+    libraries = with pkgs; [
+      stdenv.cc.cc
+      zlib
+      fuse3
+      icu
+      nss
+      openssl
+      curl
+      expat
+      vulkan-loader
+      libGL
+      speechd
+      xorg.libX11
+      xorg.libXcursor
+      xorg.libXinerama
+      xorg.libXext
+      xorg.libXrandr
+      xorg.libXrender
+      xorg.libXi
+      xorg.libXfixes
+      libxkbcommon
+      alsa-lib
+      mono
+      wayland-scanner
+      wayland
+      libdecor
+    ];
+  };
 
   # TPM
   security.tpm2 = {
@@ -186,7 +215,19 @@
         # TODO: Add your SSH public key(s) here, if you plan on using SSH to connect
       ];
       # TODO: Be sure to add any other groups you need (such as networkmanager, audio, docker, etc)
-      extraGroups = ["code-server" "wheel" "networkmanager" "audio" "docker" "corectrl" "libvirtd" "tss" "storage" "i2c" "gamemode"];
+      extraGroups = [
+        "code-server"
+        "wheel"
+        "networkmanager"
+        "audio"
+        "docker"
+        "corectrl"
+        "libvirtd"
+        "tss"
+        "storage"
+        "i2c"
+        "gamemode"
+      ];
     };
   };
 
@@ -200,7 +241,6 @@
     pinentry-gnome3
     docker-compose
     sshfs
-    firewalld-gui
     gamescope
     (sddm-chili-theme.overrideAttrs (old: {
       src = builtins.fetchGit {
@@ -300,6 +340,11 @@
     };
     # Opinionated: disable channels
     channel.enable = false;
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 14d";
+    };
 
     # Opinionated: make flake registry and nix path match flake inputs
     registry = lib.mapAttrs (_: flake: {inherit flake;}) flakeInputs;
