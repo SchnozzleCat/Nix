@@ -3,16 +3,42 @@
   pkgs,
   lib,
   ...
-}: {
+}:
+let
+  toLzSpec =
+    p:
+    let
+      split = builtins.filter (e: !builtins.isList e) (builtins.split "/" p.name);
+      plugin = builtins.elemAt split 1;
+      spec = p.spec;
+    in
+    if spec ? __raw then
+      { __raw = spec.__raw; }
+    else
+      builtins.removeAttrs ({ __unkeyed-1 = plugin; } // spec) [ ];
+in
+{
   programs.nixvim.plugins = {
     lz-n = {
       enable = true;
+      plugins = map toLzSpec (
+        builtins.filter (p: p ? spec) (import ./extraPlugins.nix { inherit pkgs; })
+      );
     };
     image = {
       enable = true;
       lazyLoad.settings.event = "DeferredUIEnter";
       settings = {
         backend = "ueberzug";
+      };
+    };
+    visual-multi.enable = true;
+    tiny-inline-diagnostic = {
+      enable = true;
+      settings = {
+        virt_text = {
+          priority = 8096;
+        };
       };
     };
     hunk = {
@@ -84,9 +110,6 @@
     };
     otter = {
       enable = true;
-      settings.buffers = {
-        set_filetype = true;
-      };
     };
     blink-emoji.enable = true;
     blink-ripgrep.enable = true;
@@ -331,9 +354,16 @@
       enable = true;
       settings = {
         provider = "copilot";
-        copilot = {
-          model = "claude-3.7-sonnet";
+        providers = {
+          copilot = {
+            model = "gpt-4.1";
+          };
         };
+        system_prompt.__raw = ''
+          [[
+          ${import ./systemPrompt.nix}
+          ]]
+        '';
         behaviour = {
           auto_suggestions = false;
         };
@@ -351,8 +381,8 @@
       settings = {
         virt_text_output = true;
       };
-      python3Dependencies = p:
-        with p; [
+      python3Dependencies =
+        p: with p; [
           pynvim
           jupyter-client
           cairosvg
@@ -415,7 +445,7 @@
       enable = true;
       lazyLoad.settings.event = "DeferredUIEnter";
       modules = {
-        ai = {};
+        ai = { };
         files = {
           content = {
             filter.__raw = ''
@@ -428,10 +458,10 @@
             go_in_plus = "<CR>";
           };
         };
-        extra = {};
-        icons = {};
-        comment = {};
-        move = {};
+        extra = { };
+        icons = { };
+        comment = { };
+        move = { };
         operators = {
           replace = {
             prefix = "gp";
@@ -476,9 +506,9 @@
               path = 1;
             }
           ];
-          lualine_b = [""];
-          lualine_c = [""];
-          lualine_x = [""];
+          lualine_b = [ "" ];
+          lualine_c = [ "" ];
+          lualine_x = [ "" ];
           lualine_y = [
             {
               __unkeyed-1 = "diff";
@@ -488,19 +518,25 @@
                 removed = " ";
               };
               diff_color = {
-                added = {fg = "#98be65";};
-                modified = {fg = "#FF8800";};
-                removed = {fg = "#ec5f67";};
+                added = {
+                  fg = "#98be65";
+                };
+                modified = {
+                  fg = "#FF8800";
+                };
+                removed = {
+                  fg = "#ec5f67";
+                };
               };
             }
           ];
-          lualine_z = [""];
+          lualine_z = [ "" ];
         };
         inactive_winbar = {
-          lualine_a = ["filename"];
-          lualine_b = [""];
-          lualine_c = [""];
-          lualine_x = [""];
+          lualine_a = [ "filename" ];
+          lualine_b = [ "" ];
+          lualine_c = [ "" ];
+          lualine_x = [ "" ];
           lualine_y = [
             {
               __unkeyed-1 = "diff";
@@ -510,13 +546,19 @@
                 removed = " ";
               };
               diff_color = {
-                added = {fg = "#98be65";};
-                modified = {fg = "#FF8800";};
-                removed = {fg = "#ec5f67";};
+                added = {
+                  fg = "#98be65";
+                };
+                modified = {
+                  fg = "#FF8800";
+                };
+                removed = {
+                  fg = "#ec5f67";
+                };
               };
             }
           ];
-          lualine_z = [""];
+          lualine_z = [ "" ];
         };
         sections = {
           lualine_a = [
@@ -549,8 +591,10 @@
                     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
                         if vim.api.nvim_buf_get_option(buf, 'modified') then
                             local filename = vim.api.nvim_buf_get_name(buf):match("^.+/(.+)$")
-                            local icon = MiniIcons.get("file", filename)
-                            statusline = string.format("%s %s %s", statusline, icon, filename)
+                            if not string.find(filename, '.otter') then
+                              local icon = MiniIcons.get("file", filename)
+                              statusline = string.format("%s %s %s", statusline, icon, filename)
+                            end
                         end
                     end
                     return statusline
@@ -559,8 +603,8 @@
               '';
             }
           ];
-          lualine_c = [""];
-          lualine_x = ["diagnostics"];
+          lualine_c = [ "" ];
+          lualine_x = [ "diagnostics" ];
         };
       };
     };
@@ -620,19 +664,30 @@
     # fidget.enable = true;
     render-markdown = {
       enable = true;
-      lazyLoad.settings.ft = ["markdown" "Avante" "quarto"];
+      lazyLoad.settings.ft = [
+        "markdown"
+        "Avante"
+        "quarto"
+      ];
       settings = {
-        file_types = ["markdown" "Avante" "quarto"];
+        file_types = [
+          "markdown"
+          "Avante"
+          "quarto"
+        ];
       };
     };
     quarto = {
       enable = true;
-      lazyLoad.settings.ft = ["quarto" "markdown"];
+      lazyLoad.settings.ft = [
+        "quarto"
+        "markdown"
+      ];
       settings = {
         codeRunner = {
           enabled = true;
           default_method = "molten";
-          never_run = ["yaml"];
+          never_run = [ "yaml" ];
         };
       };
     };
@@ -653,14 +708,19 @@
             port = "\${port}";
             executable = {
               command = "node";
-              args = ["${pkgs.vscode-js-debug}/lib/node_modules/js-debug/dist/src/dapDebugServer.js" "\${port}"];
+              args = [
+                "${pkgs.vscode-js-debug}/lib/node_modules/js-debug/dist/src/dapDebugServer.js"
+                "\${port}"
+              ];
             };
           };
         };
         executables = {
           "php" = {
             command = "node";
-            args = ["/home/linus/Repositories/pina-checkout-integration-exploration/vscode-php-debug/out/phpDebug.js"];
+            args = [
+              "/home/linus/Repositories/pina-checkout-integration-exploration/vscode-php-debug/out/phpDebug.js"
+            ];
           };
           "cppdbg" = {
             id = "cppdbg";
@@ -671,19 +731,24 @@
           };
           "coreclr" = {
             command = "${pkgs.netcoredbg}/bin/netcoredbg";
-            args = ["--interpreter=vscode"];
+            args = [ "--interpreter=vscode" ];
           };
           "netcoredbg" = {
             command = "${pkgs.netcoredbg}/bin/netcoredbg";
-            args = ["--interpreter=vscode"];
+            args = [ "--interpreter=vscode" ];
           };
           "node" = {
             command = "node";
-            args = ["/home/linus/Repositories/pina-checkout-integration-exploration/vscode-node-debug2/out/src/nodeDebug.js"];
+            args = [
+              "/home/linus/Repositories/pina-checkout-integration-exploration/vscode-node-debug2/out/src/nodeDebug.js"
+            ];
           };
           "debugpy" = {
             command = ".venv/bin/python";
-            args = ["-m" "debugpy.adapter"];
+            args = [
+              "-m"
+              "debugpy.adapter"
+            ];
           };
         };
       };
@@ -871,7 +936,7 @@
       };
     };
     dap-virtual-text.enable = true;
-    dap-ui.enable = true;
+    dap-view.enable = true;
     rest = {
       enable = true;
       lazyLoad.settings.cmd = "Rest";
@@ -928,8 +993,6 @@
           exclude = [
             "roslyn"
           ];
-          force = true;
-          sync = true;
         };
       };
     };
@@ -948,7 +1011,7 @@
           black.enable = true;
           astyle = {
             enable = true;
-            settings.disabled_filetypes = ["cs"];
+            settings.disabled_filetypes = [ "cs" ];
           };
           csharpier.enable = true;
           gdformat.enable = true;
@@ -1020,7 +1083,10 @@
       servers = {
         ltex = {
           enable = true;
-          filetypes = ["tex" "markdown"];
+          filetypes = [
+            "tex"
+            "markdown"
+          ];
           autostart = false;
           onAttach = {
             function = ''
@@ -1034,7 +1100,10 @@
           settings = {
             language = "en-US";
             dictionary = {
-              "en-US" = ["Neovim" "ltex-ls"];
+              "en-US" = [
+                "Neovim"
+                "ltex-ls"
+              ];
             };
             checkFrequency = "save";
           };
@@ -1070,7 +1139,7 @@
         # };
         jdtls.enable = true;
         svelte.enable = true;
-        tailwindcss.enable = true;
+        # tailwindcss.enable = true;
         lua_ls.enable = true;
         pyright.enable = true;
         cssls.enable = true;
