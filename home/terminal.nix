@@ -18,8 +18,22 @@ in {
     inputs.neovim-nightly-overlay.overlays.default
   ];
 
+  home.file.".config/jj/config.toml".source = ./jj.toml;
+
   home.packages = with pkgs; [
     lazygit
+    jujutsu
+    (jjui.overrideAttrs
+      (old: {
+        version = "0.8.11";
+        src = fetchFromGitHub {
+          owner = "idursun";
+          repo = "jjui";
+          tag = "v0.8.11";
+          hash = "sha256-MBW0hjwyR0jguCWNnXiqZL0xa+vV9f2Ojfb2/61o9KY=";
+        };
+        vendorHash = "sha256-2nUU5rrVWBk+9ljC+OiAVLcRnWghPPfpvq5yoNSRdVk=";
+      }))
     lazydocker
     ctop
 
@@ -70,6 +84,31 @@ in {
   programs.starship = {
     enable = true;
     enableFishIntegration = true;
+    settings = {
+      custom.jj = {
+        command = ''
+          jj log -r@ -n1 --ignore-working-copy --no-graph --color always  -T '
+            separate(" ",
+              bookmarks.map(|x| truncate_end(10, x.name(), "…")).join(" "),
+              tags.map(|x| truncate_end(10, x.name(), "…")).join(" "),
+              surround("\"", "\"", truncate_end(24, description.first_line(), "…")),
+              if(conflict, "conflict"),
+              if(divergent, "divergent"),
+              if(hidden, "hidden"),
+            )
+          '
+        '';
+
+        when = "jj root";
+        symbol = "jj";
+      };
+      custom.jjstate = {
+        when = "jj root";
+        command = ''
+          jj log -r@ -n1 --no-graph -T "" --stat | tail -n1 | sd "(\d+) files? changed, (\d+) insertions?\(\+\), (\d+) deletions?\(-\)" ' ''\${1}m ''\${2}+ ''\${3}-' | sd " 0." ""
+        '';
+      };
+    };
   };
 
   programs.zellij = {
@@ -87,6 +126,7 @@ in {
     interactiveShellInit = ''
       set -g fish_greeting
       bind -s \ce "zellij_tab_name_update neovim && neovim && zellij_tab_name_update shell"
+      bind -s \cj "zellij_tab_name_update lazygit && jjui && zellij_tab_name_update shell"
       bind -s \cg "zellij_tab_name_update lazygit && lazygit && zellij_tab_name_update shell"
       bind -s \cb "zellij_tab_name_update television && z (z ~/Repositories && tv git-repos) && zellij_tab_name_update shell && commandline -f repaint"
       function yy
