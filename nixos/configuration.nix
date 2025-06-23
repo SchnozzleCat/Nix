@@ -57,6 +57,10 @@
     setSocketVariable = true;
   };
 
+  virtualisation.containerd = {
+    enable = true;
+  };
+
   users.groups.plugdev = {
     name = "plugdev";
     members = ["linus"];
