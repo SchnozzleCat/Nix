@@ -22,9 +22,9 @@
 
   programs.godot4-mono-schnozzlecat = {
     enable = true;
-    version = "4.4";
-    commitHash = "4c575e3f3801bfc615ebf9c923b587f1548f5dd6";
-    hash = "sha256-t0HuAwuylNIHFv+zZzWWKK9axno9wDpRbIhtgFaVJ9Q=";
+    version = "4.4.1";
+    commitHash = "4093498c254cf24aad3afddf1b4b29423744e6ff";
+    hash = "sha256-DyWVGLmK5JbhKYUdHIBHyDMZEjZ/N7Ooyfpir2+kAEk=";
   };
 
   wayland.windowManager.hyprland = {
