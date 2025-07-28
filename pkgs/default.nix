@@ -3,4 +3,5 @@
 { pkgs, ... }:
 {
   inky = pkgs.callPackage ./inky { };
+  tattoy = pkgs.callPackage ./tattoy { };
 }

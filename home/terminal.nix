@@ -40,6 +40,7 @@ in
     pipes
     pistol
     nix-output-monitor
+    tattoy
 
     ripgrep
     fzf
