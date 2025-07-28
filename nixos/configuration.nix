@@ -85,9 +85,16 @@
     libraries = with pkgs; [
       stdenv.cc.cc
       zlib
+      lzlib
+      libxcrypt
+      glib
       fuse3
       icu
+      fontconfig
+      freetype
       nss
+      dbus.lib
+      krb5.lib
       openssl
       curl
       expat
@@ -102,6 +109,7 @@
       xorg.libXrender
       xorg.libXi
       xorg.libXfixes
+      xorg.libxcb.out
       libxkbcommon
       alsa-lib
       mono
