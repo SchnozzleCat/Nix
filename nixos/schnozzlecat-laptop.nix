@@ -39,10 +39,14 @@ in {
     alsa-topology-conf
   ];
 
-  systemd.user.services.pipewire.environment.ALSA_CONFIG_UCM = config.environment.variables.ALSA_CONFIG_UCM;
-  systemd.user.services.pipewire.environment.ALSA_CONFIG_UCM2 = config.environment.variables.ALSA_CONFIG_UCM2;
-  systemd.user.services.wireplumber.environment.ALSA_CONFIG_UCM = config.environment.variables.ALSA_CONFIG_UCM;
-  systemd.user.services.wireplumber.environment.ALSA_CONFIG_UCM2 = config.environment.variables.ALSA_CONFIG_UCM2;
+  systemd.user.services.pipewire.environment.ALSA_CONFIG_UCM =
+    config.environment.variables.ALSA_CONFIG_UCM;
+  systemd.user.services.pipewire.environment.ALSA_CONFIG_UCM2 =
+    config.environment.variables.ALSA_CONFIG_UCM2;
+  systemd.user.services.wireplumber.environment.ALSA_CONFIG_UCM =
+    config.environment.variables.ALSA_CONFIG_UCM;
+  systemd.user.services.wireplumber.environment.ALSA_CONFIG_UCM2 =
+    config.environment.variables.ALSA_CONFIG_UCM2;
 
   # sound
   hardware.firmware = [

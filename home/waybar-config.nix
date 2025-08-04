@@ -1,4 +1,5 @@
-{pkgs}: {
+{ pkgs }:
+{
   mainBar = {
     id = "top";
     height = 0;
@@ -6,9 +7,26 @@
     name = "top";
     layer = "top";
     position = "top";
-    modules-right = ["clock" "pulseaudio" "backlight" "battery" "custom/wattage" "tray"];
-    modules-center = ["hyprland/workspaces"];
-    modules-left = ["disk" "memory" "cpu" "temperature" "custom/gpu-temperature" "custom/containers" "custom/vm" "custom/vpn" "sway/scratchpad"];
+    modules-right = [
+      "clock"
+      "pulseaudio"
+      "backlight"
+      "battery"
+      "custom/wattage"
+      "tray"
+    ];
+    modules-center = [ "hyprland/workspaces" ];
+    modules-left = [
+      "disk"
+      "memory"
+      "cpu"
+      "temperature"
+      "custom/gpu-temperature"
+      "custom/containers"
+      "custom/vm"
+      "custom/vpn"
+      "sway/scratchpad"
+    ];
     "hyprland/workspaces" = {
     };
 
@@ -31,9 +49,9 @@
       format = ''{}'';
       interval = 10;
       exec = ''POW=$(echo "scale=2; $(cat /sys/class/power_supply/BAT0/power_now) / 1000000" | ${pkgs.bc}/bin/bc -l); GOV=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor | awk '{ if ($1 == "performance") print "󰓅"; else print "󱈏" }'); echo "$GOV $POW"'';
-      on-click = ''
-        cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor | awk '{ if ($1 == "powersave") system("sudo ${pkgs.linuxKernel.packages.linux_latest_libre.cpupower}/bin/cpupower frequency-set --governor performance"); else system("sudo ${pkgs.linuxKernel.packages.linux_latest_libre.cpupower}/bin/cpupower frequency-set --governor powersave") }'
-      '';
+      # on-click = ''
+      #   cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor | awk '{ if ($1 == "powersave") system("sudo ${pkgs.linuxKernel.packages.linux_latest_libre.cpupower}/bin/cpupower frequency-set --governor performance"); else system("sudo ${pkgs.linuxKernel.packages.linux_latest_libre.cpupower}/bin/cpupower frequency-set --governor powersave") }'
+      # '';
     };
 
     "custom/gpu-temperature" = {
@@ -46,7 +64,12 @@
       format-alt = "{time}  {icon} {capacity}%";
       tooltip-format = "{time}";
       format-alt-click = "click-right";
-      format-icons = ["" "" "" ""];
+      format-icons = [
+        ""
+        ""
+        ""
+        ""
+      ];
       format-charging = "";
       interval = 30;
       states = {
@@ -57,7 +80,11 @@
     "backlight" = {
       device = "intel_backlight";
       format = "{icon} ";
-      format-icons = ["󱩎" "󱩒" "󱩖"];
+      format-icons = [
+        "󱩎"
+        "󱩒"
+        "󱩖"
+      ];
       on-scroll-up = "exec brightnessctl set 5%+";
       on-scroll-down = "brightnessctl set 5%-";
       states = {
@@ -75,7 +102,11 @@
       format-muted = "";
       format-icons = {
         headphone = "";
-        default = ["" "" ""];
+        default = [
+          ""
+          ""
+          ""
+        ];
       };
       tooltip-format = "{volume}";
       scroll-step = 10;

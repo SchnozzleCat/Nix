@@ -16,8 +16,9 @@
     (import (builtins.fetchTarball {
       inherit sha256;
       url = "https://github.com/NixOS/nixpkgs/archive/${commit}.tar.gz";
-    }) {system = pkgs.system;})
-    .${name};
+    }) {system = pkgs.system;}).${
+      name
+    };
 in {
   hardware.graphics = {
     enable = true;
@@ -70,7 +71,11 @@ in {
   hardware.i2c.enable = true;
 
   boot.initrd.kernelModules = ["amdgpu"];
-  boot.kernelModules = ["hid-nintendo" "v4l2loopback" "uinput"];
+  boot.kernelModules = [
+    "hid-nintendo"
+    "v4l2loopback"
+    "uinput"
+  ];
   boot.extraModulePackages = with config.boot.kernelPackages; [v4l2loopback];
   boot.extraModprobeConfig = ''
     options v4l2loopback devices=1 video_nr=1 card_label="OBS Cam" exclusive_caps=1
@@ -129,11 +134,12 @@ in {
     # inputs.nix-citizen.packages.x86_64-linux.star-citizen
   ];
 
+  hardware.amdgpu.overdrive = {
+    enable = true;
+    ppfeaturemask = "0xffffffff";
+  };
+
   programs.corectrl = {
     enable = true;
-    gpuOverclock = {
-      enable = true;
-      ppfeaturemask = "0xffffffff";
-    };
   };
 }

@@ -3,12 +3,15 @@
   pkgs,
   lib,
   ...
-}: let
-  buildPlugin = p: let
-    split = builtins.filter (e: !builtins.isList e) (builtins.split "/" p.name);
-    owner = builtins.elemAt split 0;
-    plugin = builtins.elemAt split 1;
-  in
+}:
+let
+  buildPlugin =
+    p:
+    let
+      split = builtins.filter (e: !builtins.isList e) (builtins.split "/" p.name);
+      owner = builtins.elemAt split 0;
+      plugin = builtins.elemAt split 1;
+    in
     pkgs.vimUtils.buildVimPlugin {
       pname = plugin;
       version = p.version;
@@ -21,13 +24,11 @@
       };
     };
 
-  parsedPlugins = map (p:
-    if p ? pkg
-    then p.pkg
-    else buildPlugin p) (
-    import ./extraPlugins.nix {inherit pkgs;}
+  parsedPlugins = map (p: if p ? pkg then p.pkg else buildPlugin p) (
+    import ./extraPlugins.nix { inherit pkgs; }
   );
-in {
+in
+{
   imports = [
     ./plugins.nix
     ./keymaps.nix
@@ -67,7 +68,7 @@ in {
           homepage = "https://csharpier.com/";
           changelog = "https://github.com/belav/csharpier/blob/main/CHANGELOG.md";
           license = licenses.mit;
-          maintainers = with maintainers; [zoriya];
+          maintainers = with maintainers; [ zoriya ];
           mainProgram = "csharpier";
         };
       })
@@ -76,10 +77,10 @@ in {
         paths = [
           (
             with pkgs.dotnetCorePackages;
-              combinePackages [
-                sdk_9_0
-                sdk_8_0
-              ]
+            combinePackages [
+              sdk_9_0
+              sdk_8_0
+            ]
           )
         ];
       })
@@ -87,8 +88,8 @@ in {
     extraLuaPackages = ps: [
       pkgs.luajitPackages.magick
     ];
-    extraPython3Packages = python-pkgs:
-      with python-pkgs; [
+    extraPython3Packages =
+      python-pkgs: with python-pkgs; [
         pytest
         prompt-toolkit
         pyperclip
@@ -169,6 +170,11 @@ in {
         'linematch:200',
         'indent-heuristic',
       }
+
+      -- Required: Enable the language server
+      -- vim.lsp.enable('ty')
+      vim.lsp.enable('pyrefly')
+
     '';
     opts = {
       showtabline = 0;

@@ -3,21 +3,26 @@
   pkgs,
   lib,
   ...
-}: let
-  toLzSpec = p: let
-    split = builtins.filter (e: !builtins.isList e) (builtins.split "/" p.name);
-    plugin = builtins.elemAt split 1;
-    spec = p.spec;
-  in
-    if spec ? __raw
-    then {__raw = spec.__raw;}
-    else builtins.removeAttrs ({__unkeyed-1 = plugin;} // spec) [];
-in {
+}:
+let
+  toLzSpec =
+    p:
+    let
+      split = builtins.filter (e: !builtins.isList e) (builtins.split "/" p.name);
+      plugin = builtins.elemAt split 1;
+      spec = p.spec;
+    in
+    if spec ? __raw then
+      { __raw = spec.__raw; }
+    else
+      builtins.removeAttrs ({ __unkeyed-1 = plugin; } // spec) [ ];
+in
+{
   programs.nixvim.plugins = {
     lz-n = {
       enable = true;
       plugins = map toLzSpec (
-        builtins.filter (p: p ? spec) (import ./extraPlugins.nix {inherit pkgs;})
+        builtins.filter (p: p ? spec) (import ./extraPlugins.nix { inherit pkgs; })
       );
     };
     easy-dotnet.enable = true;
@@ -370,8 +375,8 @@ in {
       settings = {
         virt_text_output = true;
       };
-      python3Dependencies = p:
-        with p; [
+      python3Dependencies =
+        p: with p; [
           pynvim
           jupyter-client
           cairosvg
@@ -434,7 +439,7 @@ in {
       enable = true;
       lazyLoad.settings.event = "DeferredUIEnter";
       modules = {
-        ai = {};
+        ai = { };
         files = {
           content = {
             filter.__raw = ''
@@ -447,10 +452,10 @@ in {
             go_in_plus = "<CR>";
           };
         };
-        extra = {};
-        icons = {};
-        comment = {};
-        move = {};
+        extra = { };
+        icons = { };
+        comment = { };
+        move = { };
         operators = {
           replace = {
             prefix = "gp";
@@ -495,9 +500,9 @@ in {
               path = 1;
             }
           ];
-          lualine_b = [""];
-          lualine_c = [""];
-          lualine_x = [""];
+          lualine_b = [ "" ];
+          lualine_c = [ "" ];
+          lualine_x = [ "" ];
           lualine_y = [
             {
               __unkeyed-1 = "diff";
@@ -519,13 +524,13 @@ in {
               };
             }
           ];
-          lualine_z = [""];
+          lualine_z = [ "" ];
         };
         inactive_winbar = {
-          lualine_a = ["filename"];
-          lualine_b = [""];
-          lualine_c = [""];
-          lualine_x = [""];
+          lualine_a = [ "filename" ];
+          lualine_b = [ "" ];
+          lualine_c = [ "" ];
+          lualine_x = [ "" ];
           lualine_y = [
             {
               __unkeyed-1 = "diff";
@@ -547,7 +552,7 @@ in {
               };
             }
           ];
-          lualine_z = [""];
+          lualine_z = [ "" ];
         };
         sections = {
           lualine_a = [
@@ -592,8 +597,8 @@ in {
               '';
             }
           ];
-          lualine_c = [""];
-          lualine_x = ["diagnostics"];
+          lualine_c = [ "" ];
+          lualine_x = [ "diagnostics" ];
         };
       };
     };
@@ -676,7 +681,7 @@ in {
         codeRunner = {
           enabled = true;
           default_method = "molten";
-          never_run = ["yaml"];
+          never_run = [ "yaml" ];
         };
       };
     };
@@ -720,11 +725,11 @@ in {
           };
           "coreclr" = {
             command = "${pkgs.netcoredbg}/bin/netcoredbg";
-            args = ["--interpreter=vscode"];
+            args = [ "--interpreter=vscode" ];
           };
           "netcoredbg" = {
             command = "${pkgs.netcoredbg}/bin/netcoredbg";
-            args = ["--interpreter=vscode"];
+            args = [ "--interpreter=vscode" ];
           };
           "node" = {
             command = "node";
@@ -998,10 +1003,9 @@ in {
         };
         formatting = {
           alejandra.enable = true;
-          black.enable = true;
           astyle = {
             enable = true;
-            settings.disabled_filetypes = ["cs"];
+            settings.disabled_filetypes = [ "cs" ];
           };
           csharpier.enable = true;
           gdformat.enable = true;
@@ -1071,6 +1075,9 @@ in {
         }
       '';
       servers = {
+        dockerls.enable = true;
+        docker_compose_language_service.enable = true;
+        ruff.enable = true;
         ltex = {
           enable = true;
           filetypes = [
@@ -1098,7 +1105,6 @@ in {
             checkFrequency = "save";
           };
         };
-        dockerls.enable = true;
         digestif.enable = true;
         nil_ls.enable = true;
         clangd.enable = true;
@@ -1110,28 +1116,28 @@ in {
           enable = true;
           package = null;
         };
-        # ts_ls = {
-        #   enable = true;
-        #   extraOptions = {
-        #     init_options = {
-        #       preferences = {
-        #         includeInlayParameterNameHints = "all";
-        #         includeInlayParameterNameHintsWhenArgumentMatchesName = true;
-        #         includeInlayFunctionParameterTypeHints = true;
-        #         includeInlayVariableTypeHints = true;
-        #         includeInlayPropertyDeclarationTypeHints = true;
-        #         includeInlayFunctionLikeReturnTypeHints = true;
-        #         includeInlayEnumMemberValueHints = true;
-        #         importModuleSpecifierPreference = "non-relative";
-        #       };
-        #     };
-        #   };
-        # };
+        ts_ls = {
+          enable = true;
+          extraOptions = {
+            init_options = {
+              preferences = {
+                includeInlayParameterNameHints = "all";
+                includeInlayParameterNameHintsWhenArgumentMatchesName = true;
+                includeInlayFunctionParameterTypeHints = true;
+                includeInlayVariableTypeHints = true;
+                includeInlayPropertyDeclarationTypeHints = true;
+                includeInlayFunctionLikeReturnTypeHints = true;
+                includeInlayEnumMemberValueHints = true;
+                importModuleSpecifierPreference = "non-relative";
+              };
+            };
+          };
+        };
         jdtls.enable = true;
         svelte.enable = true;
         # tailwindcss.enable = true;
         lua_ls.enable = true;
-        pyright.enable = true;
+        # pyright.enable = true;
         cssls.enable = true;
         html.enable = true;
         phpactor.enable = true;
@@ -1161,7 +1167,7 @@ in {
         rootDir.__raw = ''vim.fs.dirname(vim.fs.find({'pom.xml'}, { upward = true })[1])'';
         initOptions = {
           bundles = [
-            "${pkgs.vscode-extensions.vscjava.vscode-java-debug}/share/vscode/extensions/vscjava.vscode-java-debug/server/com.microsoft.java.debug.plugin-0.50.0.jar"
+            "${pkgs.vscode-extensions.vscjava.vscode-java-debug}/share/vscode/extensions/vscjava.vscode-java-debug/server/com.microsoft.java.debug.plugin-0.53.1.jar"
           ];
         };
       };

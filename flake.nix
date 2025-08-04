@@ -117,7 +117,7 @@
     nixosModules = import ./modules/nixos;
     # Reusable home-manager modules you might want to export
     # These are usually stuff you would upstream into home-manager
-    homeManagerModules = import ./modules/home-manager;
+    homeModules = import ./modules/home-manager;
 
     # NixOS configuration entrypoint
     # Available through 'nixos-rebuild --flake .#your-hostname'
@@ -134,7 +134,7 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.sharedModules = [
-              self.homeManagerModules.godot4-mono-schnozzlecat
+              self.homeModules.godot4-mono-schnozzlecat
             ];
             home-manager.users.linus = import ./home/linus-vm.nix;
           }
@@ -185,9 +185,9 @@
           # > Our main home-manager configuration file <
           ./home/linus-desktop.nix
           nix-colors.homeManagerModules.default
-          nixvim.homeManagerModules.nixvim
-          self.homeManagerModules.sunshine
-          self.homeManagerModules.godot4-mono-schnozzlecat
+          nixvim.homeModules.nixvim
+          self.homeModules.sunshine
+          self.homeModules.godot4-mono-schnozzlecat
           inputs.spicetify-nix.homeManagerModules.default
         ];
       };
@@ -200,9 +200,9 @@
           # > Our main home-manager configuration file <
           ./home/linus-laptop.nix
           nix-colors.homeManagerModules.default
-          nixvim.homeManagerModules.nixvim
-          self.homeManagerModules.sunshine
-          self.homeManagerModules.godot4-mono-schnozzlecat
+          nixvim.homeModules.nixvim
+          self.homeModules.sunshine
+          self.homeModules.godot4-mono-schnozzlecat
           inputs.spicetify-nix.homeManagerModules.default
         ];
       };
@@ -215,7 +215,7 @@
           # > Our main home-manager configuration file <
           ./home/linus-server.nix
           nix-colors.homeManagerModules.default
-          nixvim.homeManagerModules.nixvim
+          nixvim.homeModules.nixvim
         ];
       };
 

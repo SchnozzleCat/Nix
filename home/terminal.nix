@@ -5,13 +5,10 @@
   config,
   pkgs,
   nix-colors,
-  master,
   ...
-}:
-let
+}: let
   colors = config.colorScheme.palette;
-in
-{
+in {
   imports = [
     ./neovim/neovim.nix
   ];
@@ -40,7 +37,8 @@ in
     pipes
     pistol
     nix-output-monitor
-    tattoy
+    master.tattoy
+    dive
 
     ripgrep
     fzf
@@ -64,7 +62,7 @@ in
   home.file.".config/yazi/flavors".source = ./yazi/flavors;
   home.file.".config/yazi/plugins".source = ./yazi/plugins;
   home.file.".config/yazi/theme.toml".source = ./yazi/theme.toml;
-  home.file.".config/yazi/keymap.toml".text = import ./yazi/keymap.nix { inherit pkgs; };
+  home.file.".config/yazi/keymap.toml".text = import ./yazi/keymap.nix {inherit pkgs;};
   home.file.".config/yazi/yazi.toml".source = ./yazi/yazi.toml;
 
   programs.btop = {
@@ -111,7 +109,7 @@ in
   programs.zellij = {
     enable = true;
   };
-  home.file.".config/zellij/config.kdl".text = import ./zellij.nix { inherit pkgs inputs; };
+  home.file.".config/zellij/config.kdl".text = import ./zellij.nix {inherit pkgs inputs;};
   home.file.".config/zellij/layouts/default.kdl".text = import ./zellij-default.nix {
     inherit pkgs inputs;
   };
