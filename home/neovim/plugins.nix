@@ -39,6 +39,7 @@ in
       enable = true;
       autoLoad = true;
     };
+    jupytext.enable = true;
     arrow = {
       enable = true;
       lazyLoad.settings.event = "DeferredUIEnter";
@@ -329,7 +330,15 @@ in
       enable = true;
       lazyLoad.settings.cmd = "Octo";
     };
-    markdown-preview.enable = true;
+    markdown-preview = {
+      enable = true;
+      settings = {
+        filetypes = [
+          "markdown"
+          "quarto"
+        ];
+      };
+    };
     web-devicons.enable = true;
     vim-surround.enable = true;
     trouble = {
@@ -374,6 +383,7 @@ in
       enable = true;
       settings = {
         virt_text_output = true;
+        auto_open_output = false;
       };
       python3Dependencies =
         p: with p; [
@@ -1137,7 +1147,7 @@ in
         svelte.enable = true;
         # tailwindcss.enable = true;
         lua_ls.enable = true;
-        # pyright.enable = true;
+        pyright.enable = true;
         cssls.enable = true;
         html.enable = true;
         phpactor.enable = true;

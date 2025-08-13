@@ -7,10 +7,12 @@
   nix-colors,
   master,
   ...
-}: let
+}:
+let
   colors = config.colorScheme.palette;
   app-browser = "${pkgs.brave}/bin/brave";
-in {
+in
+{
   imports = [
     ./home.nix
     ./terminal.nix
@@ -99,14 +101,14 @@ in {
 
       # Dev
       # unityhub
-      zed-editor
       devbox
+      zed-editor
       (
         with dotnetCorePackages;
-          combinePackages [
-            sdk_8_0
-            sdk_9_0
-          ]
+        combinePackages [
+          sdk_8_0
+          sdk_9_0
+        ]
       )
       sublime-merge
       (pkgs.buildDotnetGlobalTool {
@@ -118,8 +120,8 @@ in {
         dotnet-sdk = pkgs.dotnetCorePackages.sdk_9_0;
       })
 
-      # jetbrains.rider
-      # jetbrains.datagrip
+      jetbrains.rider
+      jetbrains.datagrip
       inputs.hyprland-qtutils.packages."${pkgs.system}".default
 
       gdtoolkit_4
@@ -196,7 +198,7 @@ in {
           homepage = "https://csharpier.com/";
           changelog = "https://github.com/belav/csharpier/blob/main/CHANGELOG.md";
           license = licenses.mit;
-          maintainers = with maintainers; [zoriya];
+          maintainers = with maintainers; [ zoriya ];
           mainProgram = "csharpier";
         };
       })
@@ -208,7 +210,7 @@ in {
       })
       (writeShellApplication {
         name = "record-screen";
-        text = import ./scripts/record-screen.nix {inherit pkgs;};
+        text = import ./scripts/record-screen.nix { inherit pkgs; };
       })
       (writeShellApplication {
         name = "translate-en-to-de";
@@ -330,15 +332,21 @@ in {
     ];
   };
 
-  programs.spicetify = let
-    spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
-  in {
+  programs.waveterm = {
     enable = true;
-    enabledExtensions = with spicePkgs.extensions; [
-      adblock
-    ];
-    theme = spicePkgs.themes.text;
   };
+
+  programs.spicetify =
+    let
+      spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
+    in
+    {
+      enable = true;
+      enabledExtensions = with spicePkgs.extensions; [
+        adblock
+      ];
+      theme = spicePkgs.themes.text;
+    };
 
   programs.godot4-mono-schnozzlecat = {
     enable = true;
@@ -376,20 +384,20 @@ in {
   xdg.mimeApps = {
     enable = true;
     associations.added = {
-      "inode/directory" = ["yazi.desktop"];
-      "application/pdf" = ["org.pwmt.zathura.desktop"];
-      "image/*" = ["imv.desktop"];
-      "image/png" = ["imv.desktop"];
-      "image/jpg" = ["imv.desktop"];
-      "image/svg+xml" = ["imv.desktop"];
+      "inode/directory" = [ "yazi.desktop" ];
+      "application/pdf" = [ "org.pwmt.zathura.desktop" ];
+      "image/*" = [ "imv.desktop" ];
+      "image/png" = [ "imv.desktop" ];
+      "image/jpg" = [ "imv.desktop" ];
+      "image/svg+xml" = [ "imv.desktop" ];
     };
     defaultApplications = {
-      "inode/directory" = ["yazi.desktop"];
-      "application/pdf" = ["org.pwmt.zathura.desktop"];
-      "image/*" = ["imv.desktop"];
-      "image/png" = ["imv.desktop"];
-      "image/jpg" = ["imv.desktop"];
-      "image/svg+xml" = ["imv.desktop"];
+      "inode/directory" = [ "yazi.desktop" ];
+      "application/pdf" = [ "org.pwmt.zathura.desktop" ];
+      "image/*" = [ "imv.desktop" ];
+      "image/png" = [ "imv.desktop" ];
+      "image/jpg" = [ "imv.desktop" ];
+      "image/svg+xml" = [ "imv.desktop" ];
     };
   };
 
@@ -528,7 +536,7 @@ in {
 
   programs.waybar = {
     enable = true;
-    settings = import ./waybar-config.nix {inherit pkgs;};
+    settings = import ./waybar-config.nix { inherit pkgs; };
     style = import ./waybar-style.nix;
   };
 

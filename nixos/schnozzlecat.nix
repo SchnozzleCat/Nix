@@ -7,19 +7,8 @@
   pkgs,
   hostname,
   ...
-}: let
-  pinPackage = {
-    name,
-    commit,
-    sha256,
-  }:
-    (import (builtins.fetchTarball {
-      inherit sha256;
-      url = "https://github.com/NixOS/nixpkgs/archive/${commit}.tar.gz";
-    }) {system = pkgs.system;}).${
-      name
-    };
-in {
+}:
+{
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
@@ -30,7 +19,7 @@ in {
 
   networking.interfaces."enp8s0".wakeOnLan = {
     enable = true;
-    policy = ["magic"];
+    policy = [ "magic" ];
   };
 
   services.devmon.enable = true;
@@ -49,17 +38,12 @@ in {
     powerOnBoot = true;
   };
 
-  services.ollama = {
-    enable = true;
-    package = pinPackage {
-      name = "ollama";
-      commit = "d0169965cf1ce1cd68e50a63eabff7c8b8959743";
-      sha256 = "sha256:1hh0p0p42yqrm69kqlxwzx30m7i7xqw9m8f224i3bm6wsj4dxm05";
-    };
-    host = "0.0.0.0";
-    acceleration = "rocm";
-    rocmOverrideGfx = "10.3.1";
-  };
+  # services.ollama = {
+  #   enable = true;
+  #   host = "0.0.0.0";
+  #   acceleration = "rocm";
+  #   rocmOverrideGfx = "10.3.1";
+  # };
 
   # boot.blacklistedKernelModules = ["nouveau"];
   hardware.cpu.intel.updateMicrocode = true;
@@ -70,17 +54,17 @@ in {
 
   hardware.i2c.enable = true;
 
-  boot.initrd.kernelModules = ["amdgpu"];
+  boot.initrd.kernelModules = [ "amdgpu" ];
   boot.kernelModules = [
     "hid-nintendo"
     "v4l2loopback"
     "uinput"
   ];
-  boot.extraModulePackages = with config.boot.kernelPackages; [v4l2loopback];
+  boot.extraModulePackages = with config.boot.kernelPackages; [ v4l2loopback ];
   boot.extraModprobeConfig = ''
     options v4l2loopback devices=1 video_nr=1 card_label="OBS Cam" exclusive_caps=1
   '';
-  boot.kernelParams = ["intel_iommu=on"];
+  boot.kernelParams = [ "intel_iommu=on" ];
 
   virtualisation.libvirtd = {
     enable = true;

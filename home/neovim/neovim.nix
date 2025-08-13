@@ -46,6 +46,7 @@ in
     extraPackages = with pkgs; [
       imagemagick
       # nodePackages.ijavascript
+      python312Packages.jupytext
       nodejs
       goose-cli
       quarto
@@ -173,7 +174,7 @@ in
 
       -- Required: Enable the language server
       -- vim.lsp.enable('ty')
-      vim.lsp.enable('pyrefly')
+      -- vim.lsp.enable('pyrefly')
 
     '';
     opts = {

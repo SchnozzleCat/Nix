@@ -84,6 +84,7 @@
     enable = true;
     libraries = with pkgs; [
       stdenv.cc.cc
+      libGL
       zlib
       lzlib
       libxcrypt

@@ -1,8 +1,19 @@
-{pkgs}:
-with pkgs.vimPlugins; [
+{ pkgs }:
+with pkgs.vimPlugins;
+[
   {
     name = "dstein64/vim-startuptime";
     pkg = vim-startuptime;
+  }
+  {
+    name = "A7Lavinraj/fyler.nvim";
+    pkg = fyler-nvim;
+    spec.cmd = "Fyler";
+    spec.after = ''
+      function()
+        require('fyler').setup {}
+      end
+    '';
   }
   {
     name = "mason-org/mason.nvim";

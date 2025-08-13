@@ -6,9 +6,11 @@
   pkgs,
   nix-colors,
   ...
-}: let
+}:
+let
   colors = config.colorScheme.palette;
-in {
+in
+{
   imports = [
     ./neovim/neovim.nix
   ];
@@ -26,6 +28,7 @@ in {
     lazydocker
     ctop
     nix-tree
+    nix-index
 
     # Terminal
     eza
@@ -39,6 +42,9 @@ in {
     nix-output-monitor
     master.tattoy
     dive
+    gemini-cli
+    fabric-ai
+    quarto
 
     ripgrep
     fzf
@@ -62,7 +68,7 @@ in {
   home.file.".config/yazi/flavors".source = ./yazi/flavors;
   home.file.".config/yazi/plugins".source = ./yazi/plugins;
   home.file.".config/yazi/theme.toml".source = ./yazi/theme.toml;
-  home.file.".config/yazi/keymap.toml".text = import ./yazi/keymap.nix {inherit pkgs;};
+  home.file.".config/yazi/keymap.toml".text = import ./yazi/keymap.nix { inherit pkgs; };
   home.file.".config/yazi/yazi.toml".source = ./yazi/yazi.toml;
 
   programs.btop = {
@@ -80,6 +86,9 @@ in {
     enable = true;
     enableFishIntegration = true;
     settings = {
+      line_break = {
+        disabled = true;
+      };
       custom.jj = {
         command = ''
           jj log -r@ -n1 --ignore-working-copy --no-graph --color always  -T '
@@ -109,7 +118,7 @@ in {
   programs.zellij = {
     enable = true;
   };
-  home.file.".config/zellij/config.kdl".text = import ./zellij.nix {inherit pkgs inputs;};
+  home.file.".config/zellij/config.kdl".text = import ./zellij.nix { inherit pkgs inputs; };
   home.file.".config/zellij/layouts/default.kdl".text = import ./zellij-default.nix {
     inherit pkgs inputs;
   };
