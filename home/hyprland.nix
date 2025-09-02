@@ -150,11 +150,6 @@ in ''
     enable_anr_dialog = false
   }
 
-  gestures {
-      # See https://wiki.hyprland.org/Configuring/Variables/ for more
-      workspace_swipe = off
-  }
-
   # Example windowrule v1
   # windowrule = float, ^(kitty)$
   # Example windowrule v2
