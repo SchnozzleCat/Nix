@@ -1,6 +1,5 @@
-{ pkgs }:
-with pkgs.vimPlugins;
-[
+{pkgs}:
+with pkgs.vimPlugins; [
   {
     name = "dstein64/vim-startuptime";
     pkg = vim-startuptime;
@@ -18,6 +17,7 @@ with pkgs.vimPlugins;
   {
     name = "mason-org/mason.nvim";
     pkg = mason-nvim;
+    spec.event = "DeferredUIEnter";
     spec.after = ''
       function()
         require('mason').setup {
@@ -29,7 +29,6 @@ with pkgs.vimPlugins;
         }
       end
     '';
-    spec.cmd = "Mason";
   }
   {
     name = "abecodes/tabout.nvim";
@@ -145,8 +144,29 @@ with pkgs.vimPlugins;
   }
   {
     name = "seblyng/roslyn.nvim";
-    pkg = roslyn-nvim;
-    spec.enabled = false;
+    version = "a199f21a8c644f0807b34e57ff30cf10e92e00a5";
+    hash = "sha256-1k/dd97wTUDxI5AkOHPZ++SpFeHmx4P13ZXSeManogs=";
+    spec.after = ''
+      function()
+        require("roslyn").setup({})
+        vim.lsp.config("roslyn", {
+            filetypes = { "cs", "csharp" },
+            workspace_required = false;
+            settings = {
+                ["csharp|projects"] = {
+                    dotnet_enable_file_based_programs = true,
+                },
+                ["csharp|inlay_hints"] = {
+                    csharp_enable_inlay_hints_for_implicit_object_creation = true,
+                    csharp_enable_inlay_hints_for_implicit_variable_types = true,
+                },
+                ["csharp|code_lens"] = {
+                    dotnet_enable_references_code_lens = true,
+                },
+            },
+        })
+      end
+    '';
   }
   {
     name = "tris203/rzls.nvim";
@@ -167,15 +187,5 @@ with pkgs.vimPlugins;
     name = "2KAbhishek/nerdy.nvim";
     pkg = nerdy-nvim;
     spec.cmd = "Nerdy";
-  }
-  {
-    name = "LiadOz/nvim-dap-repl-highlights";
-    version = "c6d5dfb8e9ce55f60d5fe2a950d3b8f484237226";
-    hash = "sha256-UPgZ+GRCPFj4UjzZYaOVjzlZdf46gCucj0SHakyiDEY=";
-    spec.after = ''
-      function()
-        require('nvim-dap-repl-highlights').setup()
-      end
-    '';
   }
 ]
