@@ -7,12 +7,10 @@
   nix-colors,
   master,
   ...
-}:
-let
+}: let
   colors = config.colorScheme.palette;
   app-browser = "${pkgs.brave}/bin/brave";
-in
-{
+in {
   imports = [
     ./home.nix
     ./terminal.nix
@@ -98,6 +96,11 @@ in
       k6
       jetbrains-toolbox
       slack
+      butt
+      vlc
+
+      android-studio
+      jdk17
 
       # Dev
       # unityhub
@@ -105,16 +108,16 @@ in
       zed-editor
       (
         with dotnetCorePackages;
-        combinePackages [
-          sdk_8_0
-          sdk_9_0
-        ]
+          combinePackages [
+            sdk_8_0
+            sdk_9_0
+          ]
       )
       sublime-merge
       (pkgs.buildDotnetGlobalTool {
         pname = "Microsoft.dotnet-interactive";
-        version = "1.0.522904";
-        nugetHash = "sha256-ULnG2D7BUJV39cSC4sarWlrngtv492vpd/BjeB5dKYQ=";
+        version = "1.0.632301 ";
+        nugetHash = "sha256-bA1DGLfSB4uFUtzufRKUiXR3LpbG5UoewfktXyOswco=";
         executables = "dotnet-interactive";
         dotnet-runtime = pkgs.dotnetCorePackages.sdk_9_0;
         dotnet-sdk = pkgs.dotnetCorePackages.sdk_9_0;
@@ -141,6 +144,7 @@ in
       minikube
       kubectl
       kubernetes
+      texlive.combined.scheme-full
 
       # Games
       steam-run
@@ -166,16 +170,18 @@ in
       libreoffice
       scribus
 
+      godot_4_4-mono
+
       # Misc
       obsidian
       helvum
       easyeffects
       warpinator
       vesktop
-      jellyfin-media-player
       mpv
       mpv-shim-default-shaders
       latexrun
+      inkscape
       distrobox
       # wonderdraft
       krita
@@ -198,7 +204,7 @@ in
           homepage = "https://csharpier.com/";
           changelog = "https://github.com/belav/csharpier/blob/main/CHANGELOG.md";
           license = licenses.mit;
-          maintainers = with maintainers; [ zoriya ];
+          maintainers = with maintainers; [zoriya];
           mainProgram = "csharpier";
         };
       })
@@ -210,7 +216,7 @@ in
       })
       (writeShellApplication {
         name = "record-screen";
-        text = import ./scripts/record-screen.nix { inherit pkgs; };
+        text = import ./scripts/record-screen.nix {inherit pkgs;};
       })
       (writeShellApplication {
         name = "translate-en-to-de";
@@ -336,17 +342,15 @@ in
     enable = true;
   };
 
-  programs.spicetify =
-    let
-      spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
-    in
-    {
-      enable = true;
-      enabledExtensions = with spicePkgs.extensions; [
-        adblock
-      ];
-      theme = spicePkgs.themes.text;
-    };
+  programs.spicetify = let
+    spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
+  in {
+    enable = true;
+    enabledExtensions = with spicePkgs.extensions; [
+      adblock
+    ];
+    theme = spicePkgs.themes.text;
+  };
 
   programs.godot4-mono-schnozzlecat = {
     enable = true;
@@ -384,20 +388,20 @@ in
   xdg.mimeApps = {
     enable = true;
     associations.added = {
-      "inode/directory" = [ "yazi.desktop" ];
-      "application/pdf" = [ "org.pwmt.zathura.desktop" ];
-      "image/*" = [ "imv.desktop" ];
-      "image/png" = [ "imv.desktop" ];
-      "image/jpg" = [ "imv.desktop" ];
-      "image/svg+xml" = [ "imv.desktop" ];
+      "inode/directory" = ["yazi.desktop"];
+      "application/pdf" = ["org.pwmt.zathura.desktop"];
+      "image/*" = ["imv.desktop"];
+      "image/png" = ["imv.desktop"];
+      "image/jpg" = ["imv.desktop"];
+      "image/svg+xml" = ["imv.desktop"];
     };
     defaultApplications = {
-      "inode/directory" = [ "yazi.desktop" ];
-      "application/pdf" = [ "org.pwmt.zathura.desktop" ];
-      "image/*" = [ "imv.desktop" ];
-      "image/png" = [ "imv.desktop" ];
-      "image/jpg" = [ "imv.desktop" ];
-      "image/svg+xml" = [ "imv.desktop" ];
+      "inode/directory" = ["yazi.desktop"];
+      "application/pdf" = ["org.pwmt.zathura.desktop"];
+      "image/*" = ["imv.desktop"];
+      "image/png" = ["imv.desktop"];
+      "image/jpg" = ["imv.desktop"];
+      "image/svg+xml" = ["imv.desktop"];
     };
   };
 
@@ -536,7 +540,7 @@ in
 
   programs.waybar = {
     enable = true;
-    settings = import ./waybar-config.nix { inherit pkgs; };
+    settings = import ./waybar-config.nix {inherit pkgs;};
     style = import ./waybar-style.nix;
   };
 
