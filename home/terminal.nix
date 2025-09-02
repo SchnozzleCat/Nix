@@ -23,6 +23,7 @@ in
 
   home.packages = with pkgs; [
     lazygit
+    lazysql
     jujutsu
     jjui
     lazydocker
