@@ -25,6 +25,12 @@ in
         builtins.filter (p: p ? spec) (import ./extraPlugins.nix { inherit pkgs; })
       );
     };
+    csvview.enable = true;
+    vimtex = {
+      enable = true;
+      settings.viewMethod = "zathura";
+      texlivePackage = pkgs.texlive.combined.scheme-full;
+    };
     easy-dotnet.enable = true;
     visual-multi.enable = true;
     tiny-inline-diagnostic = {
@@ -105,6 +111,10 @@ in
     };
     otter = {
       enable = true;
+      settings.buffer = {
+        write_to_disk = true;
+        set_filetype = true;
+      };
     };
     blink-emoji.enable = true;
     blink-ripgrep.enable = true;
@@ -248,75 +258,75 @@ in
         };
       };
     };
-    copilot-chat = {
-      enable = true;
-      settings = {
-        window = {
-          border = "rounded";
-          width = 0.3;
-        };
-        mappings = {
-          accept_diff = {
-            insert = "<C-y>";
-            normal = "<C-y>";
-          };
-          close = {
-            insert = "<C-c>";
-            normal = "q";
-          };
-          jump_to_diff = {
-            normal = "gj";
-          };
-          quickfix_diffs = {
-            normal = "gq";
-          };
-          reset = {
-            insert = "<C-n";
-            normal = "<C-n>";
-          };
-          show_context = {
-            normal = "gc";
-          };
-          show_diff = {
-            normal = "gd";
-          };
-          show_help = {
-            normal = "gh";
-          };
-          show_info = {
-            normal = "gi";
-          };
-          submit_prompt = {
-            insert = "<C-s>";
-            normal = "<CR>";
-          };
-          toggle_sticky = {
-            detail = "Makes line under cursor sticky or deletes sticky line.";
-            normal = "gr";
-          };
-          yank_diff = {
-            normal = "gy";
-            register = "\"";
-          };
-        };
-        model = "claude-3.7-sonnet";
-        prompts = {
-          Explain = "Explain how it works.";
-          Review = "Review the following code and provide concise suggestions.";
-          Tests = "Briefly explain how the selected code works, then generate unit tests.";
-          Refactor = "Refactor the code to improve clarity and readability.";
-          Documentation = "Create a docstring for the code in the appropriate format.";
-          CommitStaged = {
-            prompt = ''Write commit message for the change with commitizen convention. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.'';
-            selection = ''
-              function(source)
-                return require("CopilotChat.select").gitdiff(source, true)
-              end,
-            '';
-          };
-        };
-      };
-    };
+    # copilot-chat = {
+    #   enable = true;
+    #   settings = {
+    #     window = {
+    #       border = "rounded";
+    #       width = 0.3;
+    #     };
+    #     mappings = {
+    #       accept_diff = {
+    #         insert = "<C-y>";
+    #         normal = "<C-y>";
+    #       };
+    #       close = {
+    #         insert = "<C-c>";
+    #         normal = "q";
+    #       };
+    #       jump_to_diff = {
+    #         normal = "gj";
+    #       };
+    #       quickfix_diffs = {
+    #         normal = "gq";
+    #       };
+    #       reset = {
+    #         insert = "<C-n";
+    #         normal = "<C-n>";
+    #       };
+    #       show_context = {
+    #         normal = "gc";
+    #       };
+    #       show_diff = {
+    #         normal = "gd";
+    #       };
+    #       show_help = {
+    #         normal = "gh";
+    #       };
+    #       show_info = {
+    #         normal = "gi";
+    #       };
+    #       submit_prompt = {
+    #         insert = "<C-s>";
+    #         normal = "<CR>";
+    #       };
+    #       toggle_sticky = {
+    #         detail = "Makes line under cursor sticky or deletes sticky line.";
+    #         normal = "gr";
+    #       };
+    #       yank_diff = {
+    #         normal = "gy";
+    #         register = "\"";
+    #       };
+    #     };
+    #     model = "claude-3.7-sonnet";
+    #     prompts = {
+    #       Explain = "Explain how it works.";
+    #       Review = "Review the following code and provide concise suggestions.";
+    #       Tests = "Briefly explain how the selected code works, then generate unit tests.";
+    #       Refactor = "Refactor the code to improve clarity and readability.";
+    #       Documentation = "Create a docstring for the code in the appropriate format.";
+    #       CommitStaged = {
+    #         prompt = ''Write commit message for the change with commitizen convention. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.'';
+    #         selection = ''
+    #           function(source)
+    #             return require("CopilotChat.select").gitdiff(source, true)
+    #           end,
+    #         '';
+    #       };
+    #     };
+    #   };
+    # };
     neotest = {
       enable = true;
       adapters = {
@@ -352,32 +362,46 @@ in
         };
       };
     };
-    undotree.enable = true;
-    avante = {
+    codecompanion = {
       enable = true;
       settings = {
-        provider = "copilot";
-        providers = {
-          copilot = {
-            model = "gpt-4.1";
-          };
+        chat = {
+          adapter = "copilot";
         };
-        system_prompt.__raw = ''
-          [[
-          ${import ./systemPrompt.nix}
-          ]]
-        '';
-        behaviour = {
-          auto_suggestions = false;
+        inline = {
+          adapter = "copilot";
         };
-        # rag_service = {
-        #   enabled = true;
-        #   host_mount.__raw = ''os.getenv("HOME")'';
-        #   provider = "ollama";
-        #   endpoint = "http://192.168.200.20:11434";
-        # };
+        cmd = {
+          adapter = "copilot";
+        };
       };
     };
+    undotree.enable = true;
+    # avante = {
+    #   enable = true;
+    #   settings = {
+    #     provider = "copilot";
+    #     providers = {
+    #       copilot = {
+    #         model = "gpt-4.1";
+    #       };
+    #     };
+    #     system_prompt.__raw = ''
+    #       [[
+    #       ${import ./systemPrompt.nix}
+    #       ]]
+    #     '';
+    #     behaviour = {
+    #       auto_suggestions = false;
+    #     };
+    #     # rag_service = {
+    #     #   enabled = true;
+    #     #   host_mount.__raw = ''os.getenv("HOME")'';
+    #     #   provider = "ollama";
+    #     #   endpoint = "http://192.168.200.20:11434";
+    #     # };
+    #   };
+    # };
     neogen.enable = true;
     molten = {
       enable = true;
@@ -1034,24 +1058,24 @@ in
     lsp = {
       enable = true;
       lazyLoad.settings.event = "DeferredUIEnter";
-      postConfig = ''
-        _G["__lspCapabilities"] = __lspCapabilities
-        _G["__lspOnAttach"] = __lspOnAttach
-        vim.filetype.add {
-          extension = {
-            razor = 'razor',
-            cshtml = 'razor',
-          },
-        }
-        require('rzls').setup {}
-        require("roslyn").setup({
-          settings = {
-            ["csharp|projects"] = {
-                dotnet_enable_file_based_programs = true,
-            },
-        },
-        })
-      '';
+      # postConfig = ''
+      #   _G["__lspCapabilities"] = __lspCapabilities
+      #   _G["__lspOnAttach"] = __lspOnAttach
+      #   vim.filetype.add {
+      #     extension = {
+      #       razor = 'razor',
+      #       cshtml = 'razor',
+      #     },
+      #   }
+      #   require('rzls').setup {}
+      #   require("roslyn").setup({
+      #     settings = {
+      #       ["csharp|projects"] = {
+      #           dotnet_enable_file_based_programs = true,
+      #       },
+      #   },
+      #   })
+      # '';
       onAttach = ''
         vim.api.nvim_create_autocmd({ 'TextChanged', 'InsertLeave' }, {
             buffer = bufnr,
