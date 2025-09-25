@@ -47,6 +47,31 @@
     settings.general.inhibit_screensaver = 0;
   };
 
+  security.pki.certificates = [
+    ''
+      -----BEGIN CERTIFICATE-----
+      MIIDPjCCAiagAwIBAgIIEbl6mqEzb4swDQYJKoZIhvcNAQELBQAwFDESMBAGA1UE
+      AxMJbG9jYWxob3N0MB4XDTI1MDkwMzEyMzUyOFoXDTI2MDkwMzEyMzUyOFowFDES
+      MBAGA1UEAxMJbG9jYWxob3N0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+      AQEA4e5U2pMTj4M9Y7a3PhuRz9op3AD3SjCn9fteEA3dlQtBDrna4CHj2PCV7u53
+      0p7oMxBKNlMdeIPGCalcQl3bJ2voTYj6fWutEAbByeSqU814d6rZ1P3zwFjWKprZ
+      8um36lGIep9dtut1OfN1ZAuJ6z22eWLp31YAo0igbQZ/wb9oD+0CY4XWtxWTfQ6Q
+      nDQPjXIzARxAnYAGt+V+7GmZ700rBLR1umlkU4mdXAUFpQbQ8PpdEDIi6ATjOfqf
+      wXgHPHw5jEuMf1lTGapgmICGgm+Wy/qF91uDC/MVWw3K0EwW9HjB7SqGMFIrg/gK
+      oTOxpvkL1iGIGNVcVzx4coTMNQIDAQABo4GTMIGQMAwGA1UdEwEB/wQCMAAwDgYD
+      VR0PAQH/BAQDAgWgMBYGA1UdJQEB/wQMMAoGCCsGAQUFBwMBMEcGA1UdEQEB/wQ9
+      MDuCCWxvY2FsaG9zdIIUaG9zdC5kb2NrZXIuaW50ZXJuYWyCGGhvc3QuY29udGFp
+      bmVycy5pbnRlcm5hbDAPBgorBgEEAYI3VAEBBAEDMA0GCSqGSIb3DQEBCwUAA4IB
+      AQDNeuz5uCMTcB4bKegwpuK7psfdJ/mQUrjbNSiT6+EkYm6rYYyBqZcUyixN7b/S
+      Fr4XnAlg/W2C7i7CIMzEesV7/7LhdheE7KLjk3+r5D2C5umFULDNdSKsEVK/LpeY
+      5IUsol1L3YjZN55iFg+KkJ5pvum8HS5QPRltiNBKAI8K87yGU9AUWfHf9zGLDEHo
+      hHVKtdEVjIjcLdagdscHpQmCZ3+mbRXVI5g1qOeCtf4uLDqew54Dd/dBPGxiOBcW
+      84v7GuLPdVDshcURHAY+s8TwHBMzRi+H8DOxpGLxdBDEBmlTqwXSSn2SHZABFQYN
+      +PKsPQl34qX0WOd76iFYK7tc
+      -----END CERTIFICATE-----
+    ''
+  ];
+
   programs.command-not-found = {
     enable = true;
     dbPath = "${inputs.programs-db}/programs.sqlite";
