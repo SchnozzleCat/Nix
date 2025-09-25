@@ -116,12 +116,13 @@
       glib
       fuse3
       icu
+      icu.dev
       fontconfig
       freetype
       nss
       dbus.lib
       krb5.lib
-      openssl
+      openssl.dev
       curl
       expat
       vulkan-loader
