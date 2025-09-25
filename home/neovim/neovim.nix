@@ -3,15 +3,12 @@
   pkgs,
   lib,
   ...
-}:
-let
-  buildPlugin =
-    p:
-    let
-      split = builtins.filter (e: !builtins.isList e) (builtins.split "/" p.name);
-      owner = builtins.elemAt split 0;
-      plugin = builtins.elemAt split 1;
-    in
+}: let
+  buildPlugin = p: let
+    split = builtins.filter (e: !builtins.isList e) (builtins.split "/" p.name);
+    owner = builtins.elemAt split 0;
+    plugin = builtins.elemAt split 1;
+  in
     pkgs.vimUtils.buildVimPlugin {
       pname = plugin;
       version = p.version;
@@ -24,14 +21,17 @@ let
       };
     };
 
-  parsedPlugins = map (p: if p ? pkg then p.pkg else buildPlugin p) (
-    import ./extraPlugins.nix { inherit pkgs; }
+  parsedPlugins = map (p:
+    if p ? pkg
+    then p.pkg
+    else buildPlugin p) (
+    import ./extraPlugins.nix {inherit pkgs;}
   );
-in
-{
+in {
   imports = [
     ./plugins.nix
     ./keymaps.nix
+    ./lsp.nix
   ];
 
   home.packages = with pkgs; [
@@ -69,7 +69,7 @@ in
           homepage = "https://csharpier.com/";
           changelog = "https://github.com/belav/csharpier/blob/main/CHANGELOG.md";
           license = licenses.mit;
-          maintainers = with maintainers; [ zoriya ];
+          maintainers = with maintainers; [zoriya];
           mainProgram = "csharpier";
         };
       })
@@ -89,8 +89,8 @@ in
     extraLuaPackages = ps: [
       pkgs.luajitPackages.magick
     ];
-    extraPython3Packages =
-      python-pkgs: with python-pkgs; [
+    extraPython3Packages = python-pkgs:
+      with python-pkgs; [
         pytest
         prompt-toolkit
         pyperclip

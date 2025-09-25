@@ -3,26 +3,21 @@
   pkgs,
   lib,
   ...
-}:
-let
-  toLzSpec =
-    p:
-    let
-      split = builtins.filter (e: !builtins.isList e) (builtins.split "/" p.name);
-      plugin = builtins.elemAt split 1;
-      spec = p.spec;
-    in
-    if spec ? __raw then
-      { __raw = spec.__raw; }
-    else
-      builtins.removeAttrs ({ __unkeyed-1 = plugin; } // spec) [ ];
-in
-{
+}: let
+  toLzSpec = p: let
+    split = builtins.filter (e: !builtins.isList e) (builtins.split "/" p.name);
+    plugin = builtins.elemAt split 1;
+    spec = p.spec;
+  in
+    if spec ? __raw
+    then {__raw = spec.__raw;}
+    else builtins.removeAttrs ({__unkeyed-1 = plugin;} // spec) [];
+in {
   programs.nixvim.plugins = {
     lz-n = {
       enable = true;
       plugins = map toLzSpec (
-        builtins.filter (p: p ? spec) (import ./extraPlugins.nix { inherit pkgs; })
+        builtins.filter (p: p ? spec) (import ./extraPlugins.nix {inherit pkgs;})
       );
     };
     csvview.enable = true;
@@ -111,9 +106,58 @@ in
     };
     otter = {
       enable = true;
-      settings.buffer = {
-        write_to_disk = true;
-        set_filetype = true;
+      settings = {
+        buffers = {
+          write_to_disk = true;
+          set_filetype = true;
+        };
+        extensions = {
+          asm = "asm";
+          bash = "sh";
+          bib = "bib";
+          c = "c";
+          clojure = "clj";
+          cpp = "cpp";
+          cs = "cs";
+          css = "css";
+          dot = "dot";
+          elixir = "ex";
+          fish = "fish";
+          fsharp = "fs";
+          gleam = "gleam";
+          go = "go";
+          haskell = "hs";
+          htmldjango = "htmldjango";
+          html = "html";
+          javascript = "js";
+          json = "json";
+          julia = "jl";
+          lua = "lua";
+          markdown = "md";
+          nim = "nim";
+          nix = "nix";
+          ocaml = "ml";
+          ojs = "js";
+          php = "php";
+          pyodide = "py";
+          python = "py";
+          roc = "roc";
+          r = "R";
+          ruby = "rb";
+          rust = "rs";
+          sh = "sh";
+          sql = "sql";
+          svelte = "svelte";
+          swift = "swift";
+          tex = "tex";
+          typescript = "ts";
+          typst = "typ";
+          vim = "vim";
+          webc = "webc";
+          webr = "R";
+          yaml = "yml";
+          zig = "zig";
+        };
       };
     };
     blink-emoji.enable = true;
@@ -409,8 +453,8 @@ in
         virt_text_output = true;
         auto_open_output = false;
       };
-      python3Dependencies =
-        p: with p; [
+      python3Dependencies = p:
+        with p; [
           pynvim
           jupyter-client
           cairosvg
@@ -431,11 +475,14 @@ in
     fastaction.enable = true;
     copilot-lua = {
       enable = true;
-      settings.suggestion = {
-        enabled = true;
-        auto_trigger = true;
-        keymap = {
-          accept = "<C-f>";
+      settings = {
+        nes.enabled = true;
+        suggestion = {
+          enabled = true;
+          auto_trigger = true;
+          keymap = {
+            accept = "<C-f>";
+          };
         };
       };
     };
@@ -473,7 +520,7 @@ in
       enable = true;
       lazyLoad.settings.event = "DeferredUIEnter";
       modules = {
-        ai = { };
+        ai = {};
         files = {
           content = {
             filter.__raw = ''
@@ -486,10 +533,10 @@ in
             go_in_plus = "<CR>";
           };
         };
-        extra = { };
-        icons = { };
-        comment = { };
-        move = { };
+        extra = {};
+        icons = {};
+        comment = {};
+        move = {};
         operators = {
           replace = {
             prefix = "gp";
@@ -534,9 +581,9 @@ in
               path = 1;
             }
           ];
-          lualine_b = [ "" ];
-          lualine_c = [ "" ];
-          lualine_x = [ "" ];
+          lualine_b = [""];
+          lualine_c = [""];
+          lualine_x = [""];
           lualine_y = [
             {
               __unkeyed-1 = "diff";
@@ -558,13 +605,13 @@ in
               };
             }
           ];
-          lualine_z = [ "" ];
+          lualine_z = [""];
         };
         inactive_winbar = {
-          lualine_a = [ "filename" ];
-          lualine_b = [ "" ];
-          lualine_c = [ "" ];
-          lualine_x = [ "" ];
+          lualine_a = ["filename"];
+          lualine_b = [""];
+          lualine_c = [""];
+          lualine_x = [""];
           lualine_y = [
             {
               __unkeyed-1 = "diff";
@@ -586,7 +633,7 @@ in
               };
             }
           ];
-          lualine_z = [ "" ];
+          lualine_z = [""];
         };
         sections = {
           lualine_a = [
@@ -631,8 +678,8 @@ in
               '';
             }
           ];
-          lualine_c = [ "" ];
-          lualine_x = [ "diagnostics" ];
+          lualine_c = [""];
+          lualine_x = ["diagnostics"];
         };
       };
     };
@@ -715,7 +762,7 @@ in
         codeRunner = {
           enabled = true;
           default_method = "molten";
-          never_run = [ "yaml" ];
+          never_run = ["yaml"];
         };
       };
     };
@@ -759,11 +806,11 @@ in
           };
           "coreclr" = {
             command = "${pkgs.netcoredbg}/bin/netcoredbg";
-            args = [ "--interpreter=vscode" ];
+            args = ["--interpreter=vscode"];
           };
           "netcoredbg" = {
             command = "${pkgs.netcoredbg}/bin/netcoredbg";
-            args = [ "--interpreter=vscode" ];
+            args = ["--interpreter=vscode"];
           };
           "node" = {
             command = "node";
@@ -1039,7 +1086,7 @@ in
           alejandra.enable = true;
           astyle = {
             enable = true;
-            settings.disabled_filetypes = [ "cs" ];
+            settings.disabled_filetypes = ["cs"];
           };
           csharpier.enable = true;
           gdformat.enable = true;
@@ -1055,180 +1102,9 @@ in
         };
       };
     };
-    lsp = {
-      enable = true;
-      lazyLoad.settings.event = "DeferredUIEnter";
-      # postConfig = ''
-      #   _G["__lspCapabilities"] = __lspCapabilities
-      #   _G["__lspOnAttach"] = __lspOnAttach
-      #   vim.filetype.add {
-      #     extension = {
-      #       razor = 'razor',
-      #       cshtml = 'razor',
-      #     },
-      #   }
-      #   require('rzls').setup {}
-      #   require("roslyn").setup({
-      #     settings = {
-      #       ["csharp|projects"] = {
-      #           dotnet_enable_file_based_programs = true,
-      #       },
-      #   },
-      #   })
-      # '';
-      onAttach = ''
-        vim.api.nvim_create_autocmd({ 'TextChanged', 'InsertLeave' }, {
-            buffer = bufnr,
-            callback = function()
-              vim.defer_fn(function(timer)
-                if vim.api.nvim_buf_is_valid(bufnr) then
-                  vim.lsp.codelens.refresh()
-                end
-              end, 250)
-            end
-        })
-        vim.lsp.codelens.refresh()
-      '';
-      capabilities = ''
-        capabilities.textDocument.completion.completionItem = {
-          documentationFormat = { "markdown", "plaintext" },
-            snippetSupport = true,
-            preselectSupport = true,
-            insertReplaceSupport = true,
-            labelDetailsSupport = true,
-            deprecatedSupport = true,
-            commitCharactersSupport = true,
-            tagSupport = { valueSet = { 1 } },
-            resolveSupport = {
-              properties = {
-                "documentation",
-                "detail",
-                "additionalTextEdits",
-              },
-            }
-        }
-      '';
-      servers = {
-        dockerls.enable = true;
-        docker_compose_language_service.enable = true;
-        ruff.enable = true;
-        ltex = {
-          enable = true;
-          filetypes = [
-            "tex"
-            "markdown"
-          ];
-          autostart = false;
-          onAttach = {
-            function = ''
-              require("ltex_extra").setup {
-                load_langs = { "en-US" },
-                path = "ltex",
-                init_check = true,
-              }
-            '';
-          };
-          settings = {
-            language = "en-US";
-            dictionary = {
-              "en-US" = [
-                "Neovim"
-                "ltex-ls"
-              ];
-            };
-            checkFrequency = "save";
-          };
-        };
-        digestif.enable = true;
-        nil_ls.enable = true;
-        clangd.enable = true;
-        gdscript = {
-          enable = true;
-          package = null;
-        };
-        gdshader_lsp = {
-          enable = true;
-          package = null;
-        };
-        ts_ls = {
-          enable = true;
-          extraOptions = {
-            init_options = {
-              preferences = {
-                includeInlayParameterNameHints = "all";
-                includeInlayParameterNameHintsWhenArgumentMatchesName = true;
-                includeInlayFunctionParameterTypeHints = true;
-                includeInlayVariableTypeHints = true;
-                includeInlayPropertyDeclarationTypeHints = true;
-                includeInlayFunctionLikeReturnTypeHints = true;
-                includeInlayEnumMemberValueHints = true;
-                importModuleSpecifierPreference = "non-relative";
-              };
-            };
-          };
-        };
-        jdtls.enable = true;
-        svelte.enable = true;
-        # tailwindcss.enable = true;
-        lua_ls.enable = true;
-        pyright.enable = true;
-        cssls.enable = true;
-        html.enable = true;
-        phpactor.enable = true;
-        eslint.enable = true;
-      };
-    };
-    # java = {
-    #   enable = true;
-    #   settings = {
-    #     jdk = {
-    #       auto_install = false;
-    #     };
-    #     mason = {
-    #       registries = {
-    #       };
-    #     };
-    #   };
-    # };
-    jdtls = {
-      enable = true;
-      settings = {
-        cmd = [
-          "${pkgs.jdt-language-server}/bin/jdtls"
-          "-data /home/linus/.cache/jdtls/workspace"
-          "-configuration /home/linus/.cache/jdtls/config"
-        ];
-        rootDir.__raw = ''vim.fs.dirname(vim.fs.find({'pom.xml'}, { upward = true })[1])'';
-        initOptions = {
-          bundles = [
-            "${pkgs.vscode-extensions.vscjava.vscode-java-debug}/share/vscode/extensions/vscjava.vscode-java-debug/server/com.microsoft.java.debug.plugin-0.53.1.jar"
-          ];
-        };
-      };
-    };
     todo-comments = {
       enable = true;
       lazyLoad.settings.event = "DeferredUIEnter";
-    };
-    typescript-tools = {
-      enable = true;
-    };
-    treesitter = {
-      enable = true;
-      lazyLoad.settings.event = "DeferredUIEnter";
-      settings = {
-        indent.enable = true;
-        highlight = {
-          enable = true;
-        };
-      };
-    };
-    treesitter-context = {
-      enable = true;
-      lazyLoad.settings.event = "DeferredUIEnter";
-      settings = {
-        separator = "-";
-      };
     };
   };
 }
