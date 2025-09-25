@@ -143,6 +143,7 @@ in {
       xfce.thunar
       minikube
       kubectl
+      docker-machine-kvm2
       kubernetes
       texlive.combined.scheme-full
 
