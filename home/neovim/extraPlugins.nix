@@ -144,14 +144,13 @@ with pkgs.vimPlugins; [
   }
   {
     name = "seblyng/roslyn.nvim";
-    version = "a199f21a8c644f0807b34e57ff30cf10e92e00a5";
-    hash = "sha256-1k/dd97wTUDxI5AkOHPZ++SpFeHmx4P13ZXSeManogs=";
+    version = "0c4a6f5b64122b51a64e0c8f7aae140ec979690e";
+    hash = "sha256-tZDH6VDRKaRaoSuz3zyeN/omoAwOf5So8PGUXHt2TLk=";
     spec.after = ''
       function()
         require("roslyn").setup({})
         vim.lsp.config("roslyn", {
-            filetypes = { "cs", "csharp" },
-            workspace_required = false;
+            filetypes = { "cs" },
             settings = {
                 ["csharp|projects"] = {
                     dotnet_enable_file_based_programs = true,
