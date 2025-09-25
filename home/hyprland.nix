@@ -54,10 +54,6 @@ in ''
   windowrulev2=noinitialfocus,class:^(UnrealEditor)$,title:^\w*$
   windowrulev2=noanim,class:^(UnrealEditor)$,title:^\w*$
 
-  windowrulev2=noinitialfocus,initialclass:^(Unity)$
-
-  windowrulev2=noinitialfocus,initialclass:^(jetbrains-rider)$
-
   bind = $mainMod, Z, pin
 
   # For all categories, see https://wiki.hyprland.org/Configuring/Variables/
