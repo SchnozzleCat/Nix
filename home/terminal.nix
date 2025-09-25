@@ -6,11 +6,9 @@
   pkgs,
   nix-colors,
   ...
-}:
-let
+}: let
   colors = config.colorScheme.palette;
-in
-{
+in {
   imports = [
     ./neovim/neovim.nix
   ];
@@ -69,7 +67,7 @@ in
   home.file.".config/yazi/flavors".source = ./yazi/flavors;
   home.file.".config/yazi/plugins".source = ./yazi/plugins;
   home.file.".config/yazi/theme.toml".source = ./yazi/theme.toml;
-  home.file.".config/yazi/keymap.toml".text = import ./yazi/keymap.nix { inherit pkgs; };
+  home.file.".config/yazi/keymap.toml".text = import ./yazi/keymap.nix {inherit pkgs;};
   home.file.".config/yazi/yazi.toml".source = ./yazi/yazi.toml;
 
   programs.btop = {
@@ -90,36 +88,36 @@ in
       line_break = {
         disabled = true;
       };
-      custom.jj = {
-        command = ''
-          jj log -r@ -n1 --ignore-working-copy --no-graph --color always  -T '
-            separate(" ",
-              bookmarks.map(|x| truncate_end(10, x.name(), "…")).join(" "),
-              tags.map(|x| truncate_end(10, x.name(), "…")).join(" "),
-              surround("\"", "\"", truncate_end(24, description.first_line(), "…")),
-              if(conflict, "conflict"),
-              if(divergent, "divergent"),
-              if(hidden, "hidden"),
-            )
-          '
-        '';
-
-        when = "jj root";
-        symbol = "jj";
-      };
-      custom.jjstate = {
-        when = "jj root";
-        command = ''
-          jj log -r@ -n1 --no-graph -T "" --stat | tail -n1 | sd "(\d+) files? changed, (\d+) insertions?\(\+\), (\d+) deletions?\(-\)" ' ''\${1}m ''\${2}+ ''\${3}-' | sd " 0." ""
-        '';
-      };
+      # custom.jj = {
+      #   command = ''
+      #     jj log -r@ -n1 --ignore-working-copy --no-graph --color always  -T '
+      #       separate(" ",
+      #         bookmarks.map(|x| truncate_end(10, x.name(), "…")).join(" "),
+      #         tags.map(|x| truncate_end(10, x.name(), "…")).join(" "),
+      #         surround("\"", "\"", truncate_end(24, description.first_line(), "…")),
+      #         if(conflict, "conflict"),
+      #         if(divergent, "divergent"),
+      #         if(hidden, "hidden"),
+      #       )
+      #     '
+      #   '';
+      #
+      #   when = "jj root";
+      #   symbol = "jj";
+      # };
+      # custom.jjstate = {
+      #   when = "jj root";
+      #   command = ''
+      #     jj log -r@ -n1 --no-graph -T "" --stat | tail -n1 | sd "(\d+) files? changed, (\d+) insertions?\(\+\), (\d+) deletions?\(-\)" ' ''\${1}m ''\${2}+ ''\${3}-' | sd " 0." ""
+      #   '';
+      # };
     };
   };
 
   programs.zellij = {
     enable = true;
   };
-  home.file.".config/zellij/config.kdl".text = import ./zellij.nix { inherit pkgs inputs; };
+  home.file.".config/zellij/config.kdl".text = import ./zellij.nix {inherit pkgs inputs;};
   home.file.".config/zellij/layouts/default.kdl".text = import ./zellij-default.nix {
     inherit pkgs inputs;
   };
