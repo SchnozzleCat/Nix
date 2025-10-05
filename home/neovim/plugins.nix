@@ -12,6 +12,11 @@
     if spec ? __raw
     then {__raw = spec.__raw;}
     else builtins.removeAttrs ({__unkeyed-1 = plugin;} // spec) [];
+
+  neotest-old = import (builtins.fetchTarball {
+    url = "https://github.com/nixos/nixpkgs/archive/0a1284dba699a615315997d15b49e687eac3492f.tar.gz";
+    sha256 = "1zna95ji1fgfinnmxv4k4j64mpg4nhi7fgmb9q2h3sbphdx6x22v";
+  }) {system = pkgs.system;};
 in {
   programs.nixvim.plugins = {
     lz-n = {
@@ -373,6 +378,7 @@ in {
     # };
     neotest = {
       enable = true;
+      package = neotest-old.pkgs.vimPlugins.neotest;
       adapters = {
         java.enable = true;
         python.enable = true;
@@ -406,46 +412,7 @@ in {
         };
       };
     };
-    codecompanion = {
-      enable = true;
-      settings = {
-        chat = {
-          adapter = "copilot";
-        };
-        inline = {
-          adapter = "copilot";
-        };
-        cmd = {
-          adapter = "copilot";
-        };
-      };
-    };
     undotree.enable = true;
-    # avante = {
-    #   enable = true;
-    #   settings = {
-    #     provider = "copilot";
-    #     providers = {
-    #       copilot = {
-    #         model = "gpt-4.1";
-    #       };
-    #     };
-    #     system_prompt.__raw = ''
-    #       [[
-    #       ${import ./systemPrompt.nix}
-    #       ]]
-    #     '';
-    #     behaviour = {
-    #       auto_suggestions = false;
-    #     };
-    #     # rag_service = {
-    #     #   enabled = true;
-    #     #   host_mount.__raw = ''os.getenv("HOME")'';
-    #     #   provider = "ollama";
-    #     #   endpoint = "http://192.168.200.20:11434";
-    #     # };
-    #   };
-    # };
     neogen.enable = true;
     molten = {
       enable = true;
@@ -467,16 +434,39 @@ in {
           pnglatex
         ];
     };
-    lspsaga = {
-      enable = true;
-      symbolInWinbar.enable = false;
-      lightbulb.enable = false;
-    };
     fastaction.enable = true;
+    treesitter-textobjects.enable = true;
+    sidekick = {
+      enable = true;
+      package = pkgs.vimPlugins.sidekick-nvim.overrideAttrs (old: {
+        src = pkgs.fetchFromGitHub {
+          owner = "folke";
+          repo = "sidekick.nvim";
+          rev = "373b9f71d864209b1ccf64d6c73a434c33c2d67e";
+          sha256 = "sha256-so/28fFNL1xZv/SFoAbdRKXx11NvDQ2Nxa5TD8Tmtjs=";
+        };
+      });
+      settings = {
+        cli = {
+          win = {
+            keys = {
+              hide_n = [
+                "<c-w><c-w>"
+                "blur"
+              ];
+            };
+          };
+          mux = {
+            backend = "zellij";
+            enabled = true;
+          };
+        };
+      };
+    };
+    # lsp-signature.enable = true;
     copilot-lua = {
       enable = true;
       settings = {
-        nes.enabled = true;
         suggestion = {
           enabled = true;
           auto_trigger = true;

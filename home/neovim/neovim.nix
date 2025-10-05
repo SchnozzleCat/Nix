@@ -42,6 +42,7 @@ in {
 
   programs.nixvim = {
     enable = true;
+    nixpkgs.config.allowUnfree = true;
     # package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.neovim;
     extraPackages = with pkgs; [
       imagemagick

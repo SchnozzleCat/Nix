@@ -8,56 +8,6 @@
     enable = true;
   };
   programs.nixvim.lsp = {
-    # postConfig = ''
-    #   _G["__lspCapabilities"] = __lspCapabilities
-    #   _G["__lspOnAttach"] = __lspOnAttach
-    #   vim.filetype.add {
-    #     extension = {
-    #       razor = 'razor',
-    #       cshtml = 'razor',
-    #     },
-    #   }
-    #   require('rzls').setup {}
-    #   require("roslyn").setup({
-    #     settings = {
-    #       ["csharp|projects"] = {
-    #           dotnet_enable_file_based_programs = true,
-    #       },
-    #   },
-    #   })
-    # '';
-    # onAttach = ''
-    #   vim.api.nvim_create_autocmd({ 'TextChanged', 'InsertLeave' }, {
-    #       buffer = bufnr,
-    #       callback = function()
-    #         vim.defer_fn(function(timer)
-    #           if vim.api.nvim_buf_is_valid(bufnr) then
-    #             vim.lsp.codelens.refresh()
-    #           end
-    #         end, 250)
-    #       end
-    #   })
-    #   vim.lsp.codelens.refresh()
-    # '';
-    # capabilities = ''
-    #   capabilities.textDocument.completion.completionItem = {
-    #     documentationFormat = { "markdown", "plaintext" },
-    #       snippetSupport = true,
-    #       preselectSupport = true,
-    #       insertReplaceSupport = true,
-    #       labelDetailsSupport = true,
-    #       deprecatedSupport = true,
-    #       commitCharactersSupport = true,
-    #       tagSupport = { valueSet = { 1 } },
-    #       resolveSupport = {
-    #         properties = {
-    #           "documentation",
-    #           "detail",
-    #           "additionalTextEdits",
-    #         },
-    #       }
-    #   }
-    # '';
     servers = {
       dockerls.enable = true;
       docker_compose_language_service.enable = true;
@@ -103,23 +53,6 @@
         package = null;
       };
       terraformls.enable = true;
-      # ts_ls = {
-      #   enable = true;
-      #   settings = {
-      #     init_options = {
-      #       preferences = {
-      #         includeInlayParameterNameHints = "all";
-      #         includeInlayParameterNameHintsWhenArgumentMatchesName = true;
-      #         includeInlayFunctionParameterTypeHints = true;
-      #         includeInlayVariableTypeHints = true;
-      #         includeInlayPropertyDeclarationTypeHints = true;
-      #         includeInlayFunctionLikeReturnTypeHints = true;
-      #         includeInlayEnumMemberValueHints = true;
-      #         importModuleSpecifierPreference = "non-relative";
-      #       };
-      #     };
-      #   };
-      # };
       jdtls.enable = true;
       svelte.enable = true;
       # tailwindcss.enable = true;
@@ -129,52 +62,9 @@
       html.enable = true;
       phpactor.enable = true;
       eslint.enable = true;
-      #   roslyn_ls = {
-      #     enable = true;
-      #     settings = {
-      #       filetypes = [
-      #         "cs"
-      #         "csharp"
-      #       ];
-      #       settings.__raw = ''
-      #         {
-      #                       ["csharp|projects"] = {
-      #                           dotnet_enable_file_based_programs = true,
-      #                       };
-      #                       ["csharp|inlay_hints"] = {
-      #                           csharp_enable_inlay_hints_for_implicit_object_creation = true,
-      #                           csharp_enable_inlay_hints_for_implicit_variable_types = true,
-      #                       },
-      #                       ["csharp|code_lens"] = {
-      #                           dotnet_enable_references_code_lens = true,
-      #                       },
-      #                   }'';
-      #       cmd.__raw = ''
-      #         {
-      #             vim.fn.stdpath('data') .. "/mason/bin/roslyn",
-      #             '--logLevel',
-      #             'Information',
-      #             '--extensionLogDirectory',
-      #             vim.fs.joinpath(vim.uv.os_tmpdir(), 'roslyn_ls/logs'),
-      #             '--stdio',
-      #           }'';
-      #     };
-      #   };
     };
   };
   programs.nixvim.plugins = {
-    # java = {
-    #   enable = true;
-    #   settings = {
-    #     jdk = {
-    #       auto_install = false;
-    #     };
-    #     mason = {
-    #       registries = {
-    #       };
-    #     };
-    #   };
-    # };
     jdtls = {
       enable = true;
       settings = {

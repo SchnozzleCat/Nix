@@ -564,54 +564,59 @@
       action = "<cmd> Gitsigns undo_stage_hunk <cr>";
       options.desc = "Undo Stage Hunk";
     }
-    # Copilot
+    # AI
     {
-      mode = ["v"];
-      key = "<leader>cc";
-      action = ":CopilotChat<cr>";
-      options.desc = "Copilot Chat";
+      mode = ["n"];
+      key = "<leader>aa";
+      action = "<cmd> Sidekick cli show <cr>";
+      options.desc = "Show AI Assistant";
     }
     {
       mode = ["n"];
-      key = "<leader>cc";
-      action = "<cmd>CopilotChat<cr>";
-      options.desc = "Copilot Chat";
+      key = "<c-f>";
+      action = ''<cmd> lua require("sidekick").nes_jump_or_apply() <cr>'';
+      options.desc = "NES Jump or Apply";
     }
     {
-      mode = ["v"];
-      key = "<leader>cd";
-      action = ":CopilotChatDocs<cr>";
-      options.desc = "Write Documentation";
+      mode = [
+        "x"
+        "n"
+      ];
+      key = "<leader>at";
+      action = ''<cmd> lua require("sidekick.cli").send({ msg = "{this}" }) <cr>'';
+      options.desc = "Send This";
     }
     {
-      mode = ["n"];
-      key = "<leader>ce";
-      action = "<cmd> CopilotChatExplain <cr>";
-      options.desc = "Copilot Explain";
+      mode = [
+        "x"
+        "n"
+      ];
+      key = "<leader>as";
+      action = ''<cmd> lua require("sidekick.cli").send({ msg = "{selection}" }) <cr>'';
+      options.desc = "Send Selection";
     }
     {
-      mode = ["n"];
-      key = "<leader>cr";
-      action = "<cmd> CopilotChatRefactor <cr>";
-      options.desc = "Copilot Refactor";
+      mode = [
+        "x"
+        "n"
+      ];
+      key = "<leader>ap";
+      action = ''<cmd> lua require("sidekick.cli").prompt() <cr>'';
+      options.desc = "AI Prompt";
     }
     {
-      mode = ["n"];
-      key = "<leader>cq";
-      action = ":CopilotChat ";
-      options.desc = "Copilot Question";
+      mode = [
+        "n"
+      ];
+      key = "<leader>an";
+      action = ''<cmd> Sidekick nes toggle <cr>'';
+      options.desc = "Toggle NES";
     }
-    {
-      mode = ["n"];
-      key = "<leader>ct";
-      action = "<cmd> CopilotChatTests <cr>";
-      options.desc = "Copilot Tests";
-    }
-    # LSP Saga
+    # LSP
     {
       mode = ["n"];
       key = "<leader>ra";
-      action = "<cmd> Lspsaga rename <cr>";
+      action = "<cmd> lua vim.lsp.buf.rename() <cr>";
       options.desc = "Rename";
     }
     {
