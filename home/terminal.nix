@@ -6,9 +6,11 @@
   pkgs,
   nix-colors,
   ...
-}: let
+}:
+let
   colors = config.colorScheme.palette;
-in {
+in
+{
   imports = [
     ./neovim/neovim.nix
   ];
@@ -31,6 +33,7 @@ in {
 
     # Terminal
     eza
+    fd
     television
     bat
     du-dust
@@ -67,7 +70,7 @@ in {
   home.file.".config/yazi/flavors".source = ./yazi/flavors;
   home.file.".config/yazi/plugins".source = ./yazi/plugins;
   home.file.".config/yazi/theme.toml".source = ./yazi/theme.toml;
-  home.file.".config/yazi/keymap.toml".text = import ./yazi/keymap.nix {inherit pkgs;};
+  home.file.".config/yazi/keymap.toml".text = import ./yazi/keymap.nix { inherit pkgs; };
   home.file.".config/yazi/yazi.toml".source = ./yazi/yazi.toml;
 
   programs.btop = {
@@ -117,7 +120,7 @@ in {
   programs.zellij = {
     enable = true;
   };
-  home.file.".config/zellij/config.kdl".text = import ./zellij.nix {inherit pkgs inputs;};
+  home.file.".config/zellij/config.kdl".text = import ./zellij.nix { inherit pkgs inputs; };
   home.file.".config/zellij/layouts/default.kdl".text = import ./zellij-default.nix {
     inherit pkgs inputs;
   };
@@ -162,7 +165,7 @@ in {
       desktop-home = ''sshfs -o sftp_server="$(ssh linus@192.168.200.20 -p 6969 'nix eval nixpkgs#openssh --raw')/libexec/sftp-server" -p 6969 linus@192.168.200.20:/home/linus ~/Mounts/desktop'';
       pi-ssd = ''sshfs -o sftp_server="/run/wrappers/bin/sudo $(ssh linus@192.168.200.48 -p 6969 'nix eval nixpkgs#openssh --raw')/libexec/sftp-server" -p 6969 linus@192.168.200.48:/mnt/ssd ~/Mounts/ssd'';
       pi-build = ''NIX_SSHOPTS="-p 6969" nixos-rebuild switch --target-host linus@192.168.200.48 --flake ~/.nixos#schnozzlecat-server --use-remote-sudo'';
-      neovim = ''ANTHROPIC_API_KEY=(cat /home/linus/.nixos/secrets/keys/anthropic.key) nvim'';
+      neovim = ''nvim'';
     };
     shellAbbrs = {
       os-rebuild = "sudo nixos-rebuild switch --flake ~/.nixos/ &| ${pkgs.nix-output-monitor}/bin/nom";
