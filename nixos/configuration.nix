@@ -29,6 +29,11 @@
     user = "linus";
   };
 
+  programs.fuse.enable = true;
+
+  # Link /bin/
+  services.envfs.enable = true;
+
   # Networking
   networking.hostName = hostname;
   networking.networkmanager.enable = true;
@@ -115,6 +120,15 @@
       libxcrypt
       glib
       fuse3
+      nspr
+      cups.lib
+      libdrm
+      gdk-pixbuf
+      gtk3
+      pango
+      cairo
+      at-spi2-atk
+      fuse
       icu
       icu.dev
       fontconfig
@@ -128,6 +142,9 @@
       vulkan-loader
       libGL
       speechd
+      libgbm
+      xorg.libXcomposite
+      xorg.libXdamage
       xorg.libX11
       xorg.libXcursor
       xorg.libXinerama
