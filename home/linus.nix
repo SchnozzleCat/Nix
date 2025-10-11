@@ -86,7 +86,6 @@ in {
       wally-cli
       blueman
       hyprshade
-      moonlight-embedded
       csharprepl
       goose-cli
 
@@ -186,7 +185,7 @@ in {
       distrobox
       # wonderdraft
       krita
-      aseprite
+      # aseprite
       protonvpn-gui
       gh-copilot
       rocmPackages.rocm-smi

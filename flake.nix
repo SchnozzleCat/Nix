@@ -59,11 +59,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    csharp-language-server = {
-      url = "github:SofusA/csharp-language-server";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     nix-software-center.url = "github:snowfallorg/nix-software-center";
 
     # nix-citizen.url = "github:LovingMelody/nix-citizen";
@@ -92,7 +87,6 @@
     lix-module,
     zjstatus,
     Hyprspace,
-    csharp-language-server,
     nix-software-center,
     ...
   } @ inputs: let
