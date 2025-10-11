@@ -7,10 +7,9 @@ with pkgs.vimPlugins; [
   {
     name = "A7Lavinraj/fyler.nvim";
     pkg = fyler-nvim;
-    spec.cmd = "Fyler";
     spec.after = ''
       function()
-        require('fyler').setup {}
+        require('fyler').setup({})
       end
     '';
   }
@@ -52,32 +51,30 @@ with pkgs.vimPlugins; [
     '';
   }
   {
-    name = "chrisbra/csv.vim";
-    pkg = csv-vim;
-  }
-  {
-    name = "lewis6991/hover.nvim";
-    pkg = hover-nvim;
+    name = "SchnozzleCat/hover.nvim";
+    version = "da68e79bb2779b653696fad537d21541dfd8b0bd";
+    hash = "sha256-KaOB5ov2Ie1sNElkkjIS6MmX6dj9f81hM5sMXblF3bs=";
     spec.event = "DeferredUIEnter";
     spec.after = ''
       function()
-        require("hover").setup {
-          init = function()
-              require("hover.providers.lsp")
-              require('hover.providers.gh')
-              require('hover.providers.gh_user')
-              require('hover.providers.dap')
-              require('hover.providers.fold_preview')
-              require('hover.providers.diagnostic')
-              require('hover.providers.man')
-              require('hover.providers.dictionary')
-          end,
+        require("hover").config({
+          providers = {
+            'hover.providers.diagnostic',
+            'hover.providers.lsp',
+            'hover.providers.dap',
+            'hover.providers.man',
+            'hover.providers.dictionary',
+            'hover.providers.gh',
+            'hover.providers.gh_user',
+          },
           preview_opts = {
-              border = 'single'
+            border = 'single'
           },
           preview_window = false,
           title = true,
-        }
+        })
+        vim.api.nvim_set_hl(0, 'HoverSourceLine', { bg = 'none' })
+        vim.api.nvim_set_hl(0, 'HoverBorder', { bg = 'none' })
       end
     '';
   }
@@ -89,18 +86,6 @@ with pkgs.vimPlugins; [
       cmd = "Store";
       after = ''
         function()
-        end
-      '';
-    };
-  }
-  {
-    name = "azorng/goose.nvim";
-    version = "ada7651562bbcd0601d08896741cf7b4862178a8";
-    hash = "sha256-u7NabwnlwNixc0Axu50Kr81TkHMNbWKvCTTsPQascbA=";
-    spec = {
-      after = ''
-        function()
-          require("goose").setup()
         end
       '';
     };
@@ -121,7 +106,20 @@ with pkgs.vimPlugins; [
       '';
     };
   }
-
+  {
+    name = "Wansmer/symbol-usage.nvim";
+    version = "e07c07dfe7504295a369281e95a24e1afa14b243";
+    hash = "sha256-zWT6ZGYGpWLwuUrMlmyTIE5UZtPLX2FnywhycTxUaRQ=";
+    spec = {
+      after = ''
+        function()
+          require('symbol-usage').setup({
+             vt_position = 'end_of_line'
+          })
+        end
+      '';
+    };
+  }
   {
     name = "xzbdmw/clasp.nvim";
     version = "25442429aae1b1de0627f358740613f77ec57410";

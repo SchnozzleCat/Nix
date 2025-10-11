@@ -8,13 +8,14 @@
     enable = true;
   };
   programs.nixvim.lsp = {
+    inlayHints.enable = true;
     servers = {
       dockerls.enable = true;
       docker_compose_language_service.enable = true;
       ruff.enable = true;
       ltex = {
         enable = true;
-        settings = {
+        config = {
           filetypes = [
             "tex"
             "markdown"
@@ -98,8 +99,11 @@
       enable = true;
       lazyLoad.settings.event = "DeferredUIEnter";
       settings = {
-        separator = "-";
+        separator = "─";
       };
+      luaConfig.post = ''
+        vim.api.nvim_set_hl(0, 'TreesitterContextSeparator', { bg = 'none' })
+      '';
     };
   };
 }

@@ -26,12 +26,12 @@ in {
       );
     };
     csvview.enable = true;
-    vimtex = {
+    easy-dotnet = {
       enable = true;
-      settings.viewMethod = "zathura";
-      texlivePackage = pkgs.texlive.combined.scheme-full;
+      settings = {
+        lsp.enabled = false;
+      };
     };
-    easy-dotnet.enable = true;
     visual-multi.enable = true;
     tiny-inline-diagnostic = {
       enable = true;
@@ -45,7 +45,6 @@ in {
       enable = true;
       autoLoad = true;
     };
-    jupytext.enable = true;
     arrow = {
       enable = true;
       lazyLoad.settings.event = "DeferredUIEnter";
@@ -80,14 +79,6 @@ in {
     vim-dadbod-ui.enable = true;
     vim-dadbod-completion.enable = true;
     fugitive.enable = true;
-    dotnet = {
-      enable = true;
-      lazyLoad.settings.cmd = "DotnetUI";
-    };
-    grug-far = {
-      enable = true;
-      lazyLoad.settings.cmd = "GrugFar";
-    };
     transparent = {
       enable = true;
       lazyLoad.settings.event = "DeferredUIEnter";
@@ -100,7 +91,6 @@ in {
         stages = "static";
       };
     };
-
     noice = {
       enable = true;
       settings = {
@@ -165,8 +155,6 @@ in {
         };
       };
     };
-    blink-emoji.enable = true;
-    blink-ripgrep.enable = true;
     blink-cmp = {
       enable = true;
       settings = {
@@ -177,6 +165,19 @@ in {
             "snippets"
             "buffer"
           ];
+          per_filetype = {
+            sql = [
+              "snippets"
+              "dadbod"
+              "buffer"
+            ];
+          };
+          providers = {
+            dadbod = {
+              name = "Dadbod";
+              module = "vim_dadbod_completion.blink";
+            };
+          };
         };
         signature = {
           enabled = true;
@@ -307,75 +308,6 @@ in {
         };
       };
     };
-    # copilot-chat = {
-    #   enable = true;
-    #   settings = {
-    #     window = {
-    #       border = "rounded";
-    #       width = 0.3;
-    #     };
-    #     mappings = {
-    #       accept_diff = {
-    #         insert = "<C-y>";
-    #         normal = "<C-y>";
-    #       };
-    #       close = {
-    #         insert = "<C-c>";
-    #         normal = "q";
-    #       };
-    #       jump_to_diff = {
-    #         normal = "gj";
-    #       };
-    #       quickfix_diffs = {
-    #         normal = "gq";
-    #       };
-    #       reset = {
-    #         insert = "<C-n";
-    #         normal = "<C-n>";
-    #       };
-    #       show_context = {
-    #         normal = "gc";
-    #       };
-    #       show_diff = {
-    #         normal = "gd";
-    #       };
-    #       show_help = {
-    #         normal = "gh";
-    #       };
-    #       show_info = {
-    #         normal = "gi";
-    #       };
-    #       submit_prompt = {
-    #         insert = "<C-s>";
-    #         normal = "<CR>";
-    #       };
-    #       toggle_sticky = {
-    #         detail = "Makes line under cursor sticky or deletes sticky line.";
-    #         normal = "gr";
-    #       };
-    #       yank_diff = {
-    #         normal = "gy";
-    #         register = "\"";
-    #       };
-    #     };
-    #     model = "claude-3.7-sonnet";
-    #     prompts = {
-    #       Explain = "Explain how it works.";
-    #       Review = "Review the following code and provide concise suggestions.";
-    #       Tests = "Briefly explain how the selected code works, then generate unit tests.";
-    #       Refactor = "Refactor the code to improve clarity and readability.";
-    #       Documentation = "Create a docstring for the code in the appropriate format.";
-    #       CommitStaged = {
-    #         prompt = ''Write commit message for the change with commitizen convention. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.'';
-    #         selection = ''
-    #           function(source)
-    #             return require("CopilotChat.select").gitdiff(source, true)
-    #           end,
-    #         '';
-    #       };
-    #     };
-    #   };
-    # };
     neotest = {
       enable = true;
       package = neotest-old.pkgs.vimPlugins.neotest;
@@ -476,14 +408,6 @@ in {
         };
       };
     };
-    codesnap = {
-      enable = true;
-      lazyLoad.settings.cmd = "CodeSnap";
-      settings = {
-        mac_window_bar = false;
-        watermark = "hello";
-      };
-    };
     snacks = {
       enable = true;
       settings = {
@@ -504,7 +428,11 @@ in {
         scratch.enabled = true;
         bigfile.enabled = true;
         bufdelete.enabled = true;
+        layout.enabled = true;
       };
+      luaConfig.post = ''
+        vim.api.nvim_set_hl(0, 'SnacksPickerBorder', { bg = 'none' })
+      '';
     };
     mini = {
       enable = true;
@@ -559,120 +487,6 @@ in {
     };
     gitsigns.enable = true;
     nvim-lightbulb.enable = true;
-    lualine = {
-      enable = true;
-      lazyLoad.settings.event = "BufEnter";
-      settings = {
-        winbar = {
-          lualine_a = [
-            {
-              __unkeyed-1 = "filename";
-              file_status = true;
-              path = 1;
-            }
-          ];
-          lualine_b = [""];
-          lualine_c = [""];
-          lualine_x = [""];
-          lualine_y = [
-            {
-              __unkeyed-1 = "diff";
-              symbols = {
-                added = " ";
-                modified = "󰝤 ";
-                removed = " ";
-              };
-              diff_color = {
-                added = {
-                  fg = "#98be65";
-                };
-                modified = {
-                  fg = "#FF8800";
-                };
-                removed = {
-                  fg = "#ec5f67";
-                };
-              };
-            }
-          ];
-          lualine_z = [""];
-        };
-        inactive_winbar = {
-          lualine_a = ["filename"];
-          lualine_b = [""];
-          lualine_c = [""];
-          lualine_x = [""];
-          lualine_y = [
-            {
-              __unkeyed-1 = "diff";
-              symbols = {
-                added = " ";
-                modified = "󰝤 ";
-                removed = " ";
-              };
-              diff_color = {
-                added = {
-                  fg = "#98be65";
-                };
-                modified = {
-                  fg = "#FF8800";
-                };
-                removed = {
-                  fg = "#ec5f67";
-                };
-              };
-            }
-          ];
-          lualine_z = [""];
-        };
-        sections = {
-          lualine_a = [
-            {
-              __raw = ''
-                {
-                  function()
-                    return vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
-                  end
-                }
-              '';
-            }
-            "branch"
-            {
-              __raw = ''
-                {
-                  function()
-                    return " " .. #vim.fn.getbufinfo { buflisted = 1 }
-                  end
-                }
-              '';
-            }
-          ];
-          lualine_b = [
-            {
-              __raw = ''
-                {
-                  function()
-                    local statusline = "󱐋"
-                    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-                        if vim.api.nvim_buf_get_option(buf, 'modified') then
-                            local filename = vim.api.nvim_buf_get_name(buf):match("^.+/(.+)$")
-                            if not string.find(filename, '.otter') then
-                              local icon = MiniIcons.get("file", filename)
-                              statusline = string.format("%s %s %s", statusline, icon, filename)
-                            end
-                        end
-                    end
-                    return statusline
-                  end
-                }
-              '';
-            }
-          ];
-          lualine_c = [""];
-          lualine_x = ["diagnostics"];
-        };
-      };
-    };
     yazi.enable = true;
     alpha = {
       enable = true;
@@ -726,7 +540,6 @@ in {
         }
       ];
     };
-    # fidget.enable = true;
     render-markdown = {
       enable = true;
       lazyLoad.settings.ft = [
@@ -1055,7 +868,7 @@ in {
     lsp-format = {
       enable = true;
       settings = {
-        "csharp" = {
+        "cs" = {
           exclude = [
             "roslyn"
           ];
@@ -1095,6 +908,121 @@ in {
     todo-comments = {
       enable = true;
       lazyLoad.settings.event = "DeferredUIEnter";
+    };
+
+    lualine = {
+      enable = true;
+      lazyLoad.settings.event = "BufEnter";
+      settings = {
+        winbar = {
+          lualine_a = [
+            {
+              __unkeyed-1 = "filename";
+              file_status = true;
+              path = 1;
+            }
+          ];
+          lualine_b = [""];
+          lualine_c = [""];
+          lualine_x = [""];
+          lualine_y = [
+            {
+              __unkeyed-1 = "diff";
+              symbols = {
+                added = " ";
+                modified = "󰝤 ";
+                removed = " ";
+              };
+              diff_color = {
+                added = {
+                  fg = "#98be65";
+                };
+                modified = {
+                  fg = "#FF8800";
+                };
+                removed = {
+                  fg = "#ec5f67";
+                };
+              };
+            }
+          ];
+          lualine_z = ["tabs"];
+        };
+        inactive_winbar = {
+          lualine_a = ["filename"];
+          lualine_b = [""];
+          lualine_c = [""];
+          lualine_x = [""];
+          lualine_y = [
+            {
+              __unkeyed-1 = "diff";
+              symbols = {
+                added = " ";
+                modified = "󰝤 ";
+                removed = " ";
+              };
+              diff_color = {
+                added = {
+                  fg = "#98be65";
+                };
+                modified = {
+                  fg = "#FF8800";
+                };
+                removed = {
+                  fg = "#ec5f67";
+                };
+              };
+            }
+          ];
+          lualine_z = [""];
+        };
+        sections = {
+          lualine_a = [
+            {
+              __raw = ''
+                {
+                  function()
+                    return vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
+                  end
+                }
+              '';
+            }
+            "branch"
+            {
+              __raw = ''
+                {
+                  function()
+                    return " " .. #vim.fn.getbufinfo { buflisted = 1 }
+                  end
+                }
+              '';
+            }
+          ];
+          lualine_b = [
+            {
+              __raw = ''
+                {
+                  function()
+                    local statusline = "󱐋"
+                    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+                        if vim.api.nvim_buf_get_option(buf, 'modified') then
+                            local filename = vim.api.nvim_buf_get_name(buf):match("^.+/(.+)$")
+                            if not string.find(filename, '.otter') then
+                              local icon = MiniIcons.get("file", filename)
+                              statusline = string.format("%s %s %s", statusline, icon, filename)
+                            end
+                        end
+                    end
+                    return statusline
+                  end
+                }
+              '';
+            }
+          ];
+          lualine_c = [""];
+          lualine_x = ["diagnostics"];
+        };
+      };
     };
   };
 }

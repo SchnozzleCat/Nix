@@ -59,6 +59,21 @@ in {
       jdk
       imv
       (buildDotnetGlobalTool {
+        pname = "EasyDotnet";
+        version = "2.3.1";
+        executables = "dotnet-easydotnet";
+
+        nugetHash = "sha256-HW9e5YD/bfqnIHfBhuyIVxz8Xg8e9ibQnDrhF5r7ZgM=";
+
+        meta = with lib; {
+          description = "C# JSON-RPC server powering the easy-dotnet.nvim Neovim plugin";
+          homepage = "https://github.com/GustavEikaas/easy-dotnet.nvim";
+          license = licenses.mit;
+          maintainers = with maintainers; [];
+          mainProgram = "dotnet-easydotnet";
+        };
+      })
+      (buildDotnetGlobalTool {
         pname = "csharpier";
         version = "1.0.0";
         executables = "csharpier";
@@ -79,10 +94,10 @@ in {
         paths = [
           (
             with pkgs.dotnetCorePackages;
-            combinePackages [
-              sdk_9_0
-              sdk_8_0
-            ]
+              combinePackages [
+                sdk_9_0
+                sdk_8_0
+              ]
           )
         ];
       })
@@ -119,14 +134,12 @@ in {
       Float.bg = "none";
       NormalFloat.bg = "none";
       NotifyBackground.bg = "#000000";
+      SnacksPickerBorder.bg = "none";
+      TreesitterContextSeparator.bg = "none";
     };
     extraConfigVim = ''
       autocmd FileType nix setlocal commentstring=#\ %s
       autocmd FileType gdscript setlocal commentstring=#\ %s
-      sign define DiagnosticSignError text= numhl=DiagnosticDefaultErro
-      sign define DiagnosticSignWarn text= numhl=DiagnosticDefaultWarn
-      sign define DiagnosticSignInfo text= numhl=DiagnosticDefaultInfo
-      sign define DiagnosticSignHint text= numhl=DiagnosticDefaultHint
       let &t_TI = "\<Esc>[>4;2m"
       let &t_TE = "\<Esc>[>4;m"
 
@@ -158,6 +171,17 @@ in {
               bufnr = bufnr,
           })
       end
+
+      vim.diagnostic.config({
+        signs = {
+            text = {
+                [vim.diagnostic.severity.ERROR] = "",
+                [vim.diagnostic.severity.WARN] = "",
+                [vim.diagnostic.severity.INFO] = "",
+                [vim.diagnostic.severity.HINT] = "",
+            },
+          },
+      })
 
       vim.opt.fillchars = {
         diff = '╱',

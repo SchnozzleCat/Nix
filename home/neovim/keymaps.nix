@@ -8,6 +8,12 @@
     # Misc
     {
       mode = ["n"];
+      key = "<S-Tab>";
+      action = ''tabNext'';
+      options.desc = "Next Tab";
+    }
+    {
+      mode = ["n"];
       key = "<leader>y";
       action = ''<cmd> lua vim.fn.setreg('+', '@' .. vim.fn.expand('%:.')) <cr>'';
       options.desc = "Yank Path";
@@ -32,14 +38,14 @@
     }
     {
       mode = ["n"];
-      key = "<c-p>";
-      action = ''<cmd> lua require("hover").hover_switch("next") <cr>'';
+      key = "<C-p>";
+      action = ''<cmd> lua require("hover").switch("next") <cr>'';
       options.desc = "Show Next Hover Doc";
     }
     {
       mode = ["n"];
-      key = "<c-n>";
-      action = ''<cmd> lua require("hover").hover_switch("previous") <cr>'';
+      key = "<C-n>";
+      action = ''<cmd> lua require("hover").switch("previous") <cr>'';
       options.desc = "Show Previous Hover Doc";
     }
     {
@@ -86,6 +92,12 @@
       key = "<leader>e";
       action = ''<cmd>lua explorer()<cr>'';
       options.desc = "Pick Explorer";
+    }
+    {
+      mode = "n";
+      key = "<leader>o";
+      action = ''<cmd>Fyler kind=float<cr>'';
+      options.desc = "Fyler Float";
     }
     {
       mode = "n";
@@ -421,19 +433,6 @@
       key = "<leader>n";
       action = ''<cmd>lua require("yazi").yazi()<cr>'';
       options.desc = "LF";
-    }
-    # Mini Files
-    {
-      mode = "n";
-      key = "<leader>o";
-      action = "<cmd>lua MiniFiles.open(vim.api.nvim_buf_get_name(0), false) <cr>";
-      options.desc = "Mini Files";
-    }
-    {
-      mode = "n";
-      key = "<leader>O";
-      action = "<cmd>lua MiniFiles.open(nil, false) <cr>";
-      options.desc = "Mini Files Working Directory";
     }
     # Buffers
     {
