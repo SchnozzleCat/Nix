@@ -6,11 +6,9 @@
   pkgs,
   nix-colors,
   ...
-}:
-let
+}: let
   colors = config.colorScheme.palette;
-in
-{
+in {
   imports = [
     ./neovim/neovim.nix
   ];
@@ -22,6 +20,8 @@ in
   home.file.".config/jj/config.toml".source = ./jj.toml;
 
   home.packages = with pkgs; [
+    (haskellPackages.ghcWithPackages (pkgs: with pkgs; [tidal]))
+    supercollider-with-sc3-plugins
     lazygit
     lazysql
     jujutsu
@@ -32,6 +32,7 @@ in
     nix-index
 
     # Terminal
+    p7zip
     eza
     fd
     television
@@ -70,7 +71,7 @@ in
   home.file.".config/yazi/flavors".source = ./yazi/flavors;
   home.file.".config/yazi/plugins".source = ./yazi/plugins;
   home.file.".config/yazi/theme.toml".source = ./yazi/theme.toml;
-  home.file.".config/yazi/keymap.toml".text = import ./yazi/keymap.nix { inherit pkgs; };
+  home.file.".config/yazi/keymap.toml".text = import ./yazi/keymap.nix {inherit pkgs;};
   home.file.".config/yazi/yazi.toml".source = ./yazi/yazi.toml;
 
   programs.btop = {
@@ -120,7 +121,7 @@ in
   programs.zellij = {
     enable = true;
   };
-  home.file.".config/zellij/config.kdl".text = import ./zellij.nix { inherit pkgs inputs; };
+  home.file.".config/zellij/config.kdl".text = import ./zellij.nix {inherit pkgs inputs;};
   home.file.".config/zellij/layouts/default.kdl".text = import ./zellij-default.nix {
     inherit pkgs inputs;
   };
@@ -164,7 +165,8 @@ in
       pi-hdd = ''sshfs -o sftp_server="/run/wrappers/bin/sudo $(ssh linus@192.168.200.48 -p 6969 'nix eval nixpkgs#openssh --raw')/libexec/sftp-server" -p 6969 linus@192.168.200.48:/mnt/hdd ~/Mounts/hdd'';
       desktop-home = ''sshfs -o sftp_server="$(ssh linus@192.168.200.20 -p 6969 'nix eval nixpkgs#openssh --raw')/libexec/sftp-server" -p 6969 linus@192.168.200.20:/home/linus ~/Mounts/desktop'';
       pi-ssd = ''sshfs -o sftp_server="/run/wrappers/bin/sudo $(ssh linus@192.168.200.48 -p 6969 'nix eval nixpkgs#openssh --raw')/libexec/sftp-server" -p 6969 linus@192.168.200.48:/mnt/ssd ~/Mounts/ssd'';
-      pi-build = ''NIX_SSHOPTS="-p 6969" nixos-rebuild switch --target-host linus@192.168.200.48 --flake ~/.nixos#schnozzlecat-server --use-remote-sudo'';
+      pi-raid = ''sshfs -o sftp_server="/run/wrappers/bin/sudo $(ssh linus@192.168.200.48 -p 6969 'nix eval nixpkgs#openssh --raw')/libexec/sftp-server" -p 6969 linus@192.168.200.48:/mnt/raid ~/Mounts/raid'';
+      pi-build = ''NIX_SSHOPTS="-p 6969" nixos-rebuild switch --target-host linus@192.168.200.48 --flake ~/.nixos#schnozzlecat-server --sudo'';
       neovim = ''nvim'';
     };
     shellAbbrs = {

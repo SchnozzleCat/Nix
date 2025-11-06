@@ -5,6 +5,29 @@ with pkgs.vimPlugins; [
     pkg = vim-startuptime;
   }
   {
+    name = "itaranto/preview.nvim";
+    version = "b97da7fb9444701afb30f0949a35bdf01a8c5c28";
+    src = pkgs.fetchFromGitLab {
+      owner = "itaranto";
+      repo = "preview.nvim";
+      rev = "b97da7fb9444701afb30f0949a35bdf01a8c5c28";
+      hash = "sha256-oY/vjythAKaOjlLNTil0uooDrhW2dakvpCpgnRsCLGc=";
+    };
+    spec.after = ''
+      function()
+        require('preview').setup {
+          previewers_by_ft = {
+              plantuml = {
+                name = 'plantuml_svg',
+                renderer = { type = 'command', opts = { cmd = { 'imv' } } },
+              },
+            },
+            render_on_write = true,
+          }
+      end
+    '';
+  }
+  {
     name = "A7Lavinraj/fyler.nvim";
     pkg = fyler-nvim;
     spec.after = ''
@@ -49,6 +72,73 @@ with pkgs.vimPlugins; [
         })
       end
     '';
+  }
+  {
+    name = "iofq/dart.nvim";
+    version = "f059335a22811374d5a7e22c97889ea712db58d7";
+    hash = "sha256-BBjs+YCOzgb6N2lew4vEmyS6s70y0z5xStKjGQaf55g=";
+    spec.after = ''
+      function()
+        require('dart').setup({
+          marklist = { 'a', 's', 'd', 'f', 'j', 'k', 'l', ';' },
+          buflist = { 'q', 'w', 'e', 'r' },
+          mappings = {
+            mark = "'''", -- Mark current buffer
+            jump = "'", -- Jump to buffer marked by next character i.e `;a`
+            pick = "<leader>'", -- Open Dart.pick
+            next = "<S-u>", -- Cycle right through the tabline
+            prev = "<S-i>", -- Cycle left through the tabline
+            unmark_all = "'=", -- Close all marked and recent buffers
+          },
+          tabline = {
+            order = function()
+              local order = {}
+              for i, key in ipairs(vim.list_extend(vim.deepcopy(Dart.config.marklist), Dart.config.buflist)) do
+                order[key] = i
+              end
+              return order
+            end,
+          }
+        })
+        vim.api.nvim_create_autocmd('ColorScheme', {
+          callback = function()
+            vim.api.nvim_set_hl(0, 'DartMarkedLabel', { fg = 'teal', bg = '#11111B', bold = true })
+            vim.api.nvim_set_hl(0, 'DartMarkedCurrentModified', { fg = '#defcb5' })
+            vim.api.nvim_set_hl(0, 'DartMarkedModified', { fg = '#defcb5', bg = '#11111B', bold = true })
+            vim.api.nvim_set_hl(0, 'DartMarkedLabelModified', { fg = 'teal', bg = '#11111B', bold = true })
+            vim.api.nvim_set_hl(0, 'DartMarkedCurrentLabel', { fg = 'teal', bold = true })
+            vim.api.nvim_set_hl(0, 'DartMarkedCurrentLabelModified', { fg = 'teal', bold = true })
+
+            vim.api.nvim_set_hl(0, 'DartVisibleLabel', { fg = 'orange', bg = '#11111B' })
+            vim.api.nvim_set_hl(0, 'DartVisibleLabelModified', { fg = 'orange', bg = '#11111B' })
+            vim.api.nvim_set_hl(0, 'DartCurrentModified', { fg = '#defcb5', bg = '#1E1E29' })
+            vim.api.nvim_set_hl(0, 'DartCurrentLabelModified', { fg = 'orange', bg = '#1E1E29' })
+            vim.api.nvim_set_hl(0, 'DartVisibleModified', { fg = '#defcb5', bg = '#11111B' })
+          end
+        })
+        function pick_dart()
+          local files = {}
+          for _, item in ipairs(Dart.state()) do
+            table.insert(files, {
+              file = item.filename,
+              text = item.mark .. " " .. item.filename,
+              label = item.mark,
+            })
+          end
+          Snacks.picker.pick {
+            source = 'dart.nvim',
+            items = files,
+            format = 'file',
+            title = 'dart.nvim buffers',
+          }
+        end
+      end
+    '';
+  }
+  {
+    name = "tidalcycles/vim-tidal";
+    version = "e440fe5bdfe07f805e21e6872099685d38e8b761";
+    hash = "sha256-8gyk17YLeKpLpz3LRtxiwbpsIbZka9bb63nK5/9IUoA=";
   }
   {
     name = "SchnozzleCat/hover.nvim";
@@ -139,36 +229,6 @@ with pkgs.vimPlugins; [
         end
       '';
     };
-  }
-  {
-    name = "seblyng/roslyn.nvim";
-    version = "0c4a6f5b64122b51a64e0c8f7aae140ec979690e";
-    hash = "sha256-tZDH6VDRKaRaoSuz3zyeN/omoAwOf5So8PGUXHt2TLk=";
-    spec.after = ''
-      function()
-        require("roslyn").setup({})
-        vim.lsp.config("roslyn", {
-            filetypes = { "cs" },
-            settings = {
-                ["csharp|projects"] = {
-                    dotnet_enable_file_based_programs = true,
-                },
-                ["csharp|inlay_hints"] = {
-                    csharp_enable_inlay_hints_for_implicit_object_creation = true,
-                    csharp_enable_inlay_hints_for_implicit_variable_types = true,
-                },
-                ["csharp|code_lens"] = {
-                    dotnet_enable_references_code_lens = true,
-                },
-            },
-        })
-      end
-    '';
-  }
-  {
-    name = "tris203/rzls.nvim";
-    pkg = rzls-nvim;
-    spec.enabled = false;
   }
   {
     name = "dmmulroy/tsc.nvim";

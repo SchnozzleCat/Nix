@@ -13,12 +13,16 @@
       pname = plugin;
       version = p.version;
       doCheck = false;
-      src = pkgs.fetchFromGitHub {
-        owner = owner;
-        repo = plugin;
-        rev = p.version;
-        sha256 = p.hash;
-      };
+      src =
+        if p ? src
+        then p.src
+        else
+          pkgs.fetchFromGitHub {
+            owner = owner;
+            repo = plugin;
+            rev = p.version;
+            sha256 = p.hash;
+          };
     };
 
   parsedPlugins = map (p:
@@ -54,8 +58,11 @@ in {
       typescript
       jq
       fd
+      (haskellPackages.ghcWithPackages (pkgs: with pkgs; [tidal]))
+      supercollider-with-sc3-plugins
       ripgrep
       zf
+      plantuml
       jdk
       imv
       (buildDotnetGlobalTool {
@@ -125,6 +132,8 @@ in {
       TroubleNormal.bg = "none";
       TroubleNormalNC.bg = "none";
       MiniFilesNormal.bg = "none";
+      MiniFilesTitleFocused.bg = "none";
+      MiniFilesBorder.bg = "none";
       WhichKeyNormal.bg = "none";
       GrappleNormal.bg = "none";
       Pmenu = {
@@ -200,7 +209,6 @@ in {
       -- Required: Enable the language server
       -- vim.lsp.enable('ty')
       -- vim.lsp.enable('pyrefly')
-
     '';
     opts = {
       showtabline = 0;

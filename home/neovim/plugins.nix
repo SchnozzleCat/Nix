@@ -41,32 +41,10 @@ in {
         };
       };
     };
+    quickmath.enable = true;
     hunk = {
       enable = true;
       autoLoad = true;
-    };
-    arrow = {
-      enable = true;
-      lazyLoad.settings.event = "DeferredUIEnter";
-      settings = {
-        hide_handbook = true;
-        show_icons = true;
-        leader_key = "'";
-        buffer_leader_key = "m";
-        mappings = {
-          edit = "e";
-          delete_mode = "D";
-          clear_all_items = "C";
-          toggle = "'";
-          open_vertical = "v";
-          open_horizontal = "h";
-          quit = "q";
-          remove = "x";
-          next_item = "]";
-          prev_item = "[";
-        };
-        index_keys = "asdfjkl;1234567890";
-      };
     };
     smear-cursor = {
       enable = true;
@@ -328,6 +306,7 @@ in {
         filetypes = [
           "markdown"
           "quarto"
+          "mermaid"
         ];
       };
     };
@@ -374,8 +353,8 @@ in {
         src = pkgs.fetchFromGitHub {
           owner = "folke";
           repo = "sidekick.nvim";
-          rev = "373b9f71d864209b1ccf64d6c73a434c33c2d67e";
-          sha256 = "sha256-so/28fFNL1xZv/SFoAbdRKXx11NvDQ2Nxa5TD8Tmtjs=";
+          rev = "v2.1.0";
+          sha256 = "sha256-DsDJPDIm07Uxxah7AP2GR7D+jxya9fnsJ1OS/ia5ipw=";
         };
       });
       settings = {
@@ -431,7 +410,11 @@ in {
         layout.enabled = true;
       };
       luaConfig.post = ''
-        vim.api.nvim_set_hl(0, 'SnacksPickerBorder', { bg = 'none' })
+        vim.api.nvim_create_autocmd('ColorScheme', {
+          callback = function()
+            vim.api.nvim_set_hl(0, 'SnacksPickerBorder', { bg = 'none' })
+          end
+        })
       '';
     };
     mini = {
@@ -453,6 +436,24 @@ in {
         };
         extra = {};
         icons = {};
+        sessions = {
+          hooks = {
+            pre = {
+              write.__raw = ''
+                function(session)
+                  Dart.write_session(session["name"])
+                end
+              '';
+            };
+            post = {
+              read.__raw = ''
+                function(session)
+                  Dart.read_session(session["name"])
+                end
+              '';
+            };
+          };
+        };
         comment = {};
         move = {};
         operators = {
@@ -915,65 +916,19 @@ in {
       lazyLoad.settings.event = "BufEnter";
       settings = {
         winbar = {
-          lualine_a = [
-            {
-              __unkeyed-1 = "filename";
-              file_status = true;
-              path = 1;
-            }
-          ];
+          lualine_a = [""];
           lualine_b = [""];
           lualine_c = [""];
           lualine_x = [""];
-          lualine_y = [
-            {
-              __unkeyed-1 = "diff";
-              symbols = {
-                added = " ";
-                modified = "󰝤 ";
-                removed = " ";
-              };
-              diff_color = {
-                added = {
-                  fg = "#98be65";
-                };
-                modified = {
-                  fg = "#FF8800";
-                };
-                removed = {
-                  fg = "#ec5f67";
-                };
-              };
-            }
-          ];
-          lualine_z = ["tabs"];
+          lualine_y = [""];
+          lualine_z = [""];
         };
         inactive_winbar = {
-          lualine_a = ["filename"];
+          lualine_a = [""];
           lualine_b = [""];
           lualine_c = [""];
           lualine_x = [""];
-          lualine_y = [
-            {
-              __unkeyed-1 = "diff";
-              symbols = {
-                added = " ";
-                modified = "󰝤 ";
-                removed = " ";
-              };
-              diff_color = {
-                added = {
-                  fg = "#98be65";
-                };
-                modified = {
-                  fg = "#FF8800";
-                };
-                removed = {
-                  fg = "#ec5f67";
-                };
-              };
-            }
-          ];
+          lualine_y = [""];
           lualine_z = [""];
         };
         sections = {
@@ -1019,8 +974,16 @@ in {
               '';
             }
           ];
-          lualine_c = [""];
+          lualine_c = [
+            {
+              __unkeyed-1 = "filename";
+              file_status = true;
+              path = 1;
+            }
+          ];
+
           lualine_x = ["diagnostics"];
+          lualine_z = ["tabs"];
         };
       };
     };

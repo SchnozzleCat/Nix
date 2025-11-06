@@ -66,6 +66,44 @@
     };
   };
   programs.nixvim.plugins = {
+    roslyn = {
+      enable = true;
+      luaConfig.post = ''
+        vim.lsp.config("roslyn", {
+            on_attach = function()
+                print("This will run when the server attaches!")
+            end,
+            cmd = {
+              "roslyn",
+              "--stdio",
+              "--logLevel=Information",
+              "--extensionLogDirectory=" .. vim.fs.dirname(vim.lsp.get_log_path()),
+              "--razorSourceGenerator=" .. vim.fs.joinpath("${pkgs.rzls}/lib/rzls", "Microsoft.CodeAnalysis.Razor.Compiler.dll"),
+              "--razorDesignTimePath=" .. vim.fs.joinpath("${pkgs.rzls}/lib/rzls", "Targets", "Microsoft.NET.Sdk.Razor.DesignTime.targets"),
+              "--extension",
+              vim.fs.joinpath("${pkgs.rzls}/lib/rzls", "RazorExtension", "Microsoft.VisualStudioCode.RazorExtension.dll"),
+            },
+            settings = {
+                ["csharp|inlay_hints"] = {
+                    csharp_enable_inlay_hints_for_implicit_object_creation = true,
+                    csharp_enable_inlay_hints_for_implicit_variable_types = true,
+                },
+                ["csharp|code_lens"] = {
+                    dotnet_enable_references_code_lens = true,
+                },
+            },
+        })
+      '';
+
+      settings = {
+        config = {
+          handlers.__raw = ''require("rzls.roslyn_handlers")'';
+        };
+      };
+    };
+    rzls = {
+      enable = true;
+    };
     jdtls = {
       enable = true;
       settings = {

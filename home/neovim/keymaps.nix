@@ -95,7 +95,7 @@
     }
     {
       mode = "n";
-      key = "<leader>o";
+      key = "<leader>O";
       action = ''<cmd>Fyler kind=float<cr>'';
       options.desc = "Fyler Float";
     }
@@ -433,6 +433,32 @@
       key = "<leader>n";
       action = ''<cmd>lua require("yazi").yazi()<cr>'';
       options.desc = "LF";
+    }
+    # Mini Sessions
+    {
+      mode = "n";
+      key = "<leader>ss";
+      action = "<cmd>lua MiniSessions.select() <cr>";
+      options.desc = "Mini Select Session";
+    }
+    {
+      mode = "n";
+      key = "<leader>sc";
+      action = "<cmd>lua MiniSessions.write(vim.fn.fnamemodify(vim.fn.getcwd(), ':t'))<cr>";
+      options.desc = "Mini Create Session";
+    }
+    {
+      mode = "n";
+      key = "<leader>sd";
+      action = "<cmd>lua MiniSessions.delete(MiniSessions.get_latest, { force = true })<cr>";
+      options.desc = "Mini Delete Session";
+    }
+    # Mini Files
+    {
+      mode = "n";
+      key = "<leader>o";
+      action = "<cmd>lua MiniFiles.open(vim.api.nvim_buf_get_name(0), false) <cr>";
+      options.desc = "Mini Files";
     }
     # Buffers
     {
