@@ -15,6 +15,8 @@ in {
   boot.loader.generic-extlinux-compatible.enable = true;
   boot.kernel.sysctl."net.ipv4.ip_forward" = 1;
   boot.kernel.sysctl."net.ipv6.conf.all.forwarding" = 1;
+  boot.kernel.sysctl."dev.raid.speed_limit_max" = 300000;
+  boot.swraid.enable = true;
 
   nixpkgs = {
     config = {
@@ -50,7 +52,7 @@ in {
         ports = [
           "53:53/tcp"
           "53:53/udp"
-          "80:80/tcp"
+          "1337:80/tcp"
         ];
         environment = {
           ServerIP = "localhost";
@@ -77,6 +79,36 @@ in {
           "--privileged"
         ];
       };
+      # nextcloud-aio-mastercontainer = {
+      #   autoStart = true;
+      #   image = "ghcr.io/nextcloud-releases/all-in-one:latest";
+      #   volumes = [
+      #     "nextcloud_aio_mastercontainer:/mnt/docker-aio-config"
+      #     "/var/run/docker.sock:/var/run/docker.sock:ro"
+      #   ];
+      #   ports = [
+      #     "80:80"
+      #     "8080:8080"
+      #     "8443:8443"
+      #   ];
+      #   environment = {
+      #     NEXTCLOUD_DATADIR = "/mnt/raid/nextcloud";
+      #     SKIP_DOMAIN_VALIDATION = "true";
+      #     APACHE_PORT = "11000";
+      #     APACHE_IP_BINDING = "0.0.0.0";
+      #   };
+      #   extraOptions = [
+      #     "--sig-proxy=false"
+      #   ];
+      # };
+    };
+  };
+
+  services.cloudflared = {
+    enable = true;
+    tunnels."a2879f0a-4e3f-44c5-8141-a5884cf85f9c.json" = {
+      credentialsFile = "/home/linus/.cloudflared/a2879f0a-4e3f-44c5-8141-a5884cf85f9c.json";
+      default = "http_status:404";
     };
   };
 
@@ -100,13 +132,25 @@ in {
   # Open ports in the firewall
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [53 42069 8123];
-    allowedUDPPorts = [53 51111];
+    allowedTCPPorts = [
+      53
+      42069
+      8123
+    ];
+    allowedUDPPorts = [
+      53
+      51111
+    ];
   };
 
   hardware.bluetooth = {
     enable = true;
     powerOnBoot = true;
+  };
+
+  fileSystems."/mnt/raid" = {
+    device = "/dev/disk/by-uuid/72767823-2106-41a6-8a38-448c6fe46682";
+    fsType = "ext4";
   };
 
   fileSystems."/mnt/ssd" = {
@@ -175,14 +219,15 @@ in {
 
   # This will add each flake input as a registry
   # To make nix3 commands consistent with your flake
-  nix.registry = (lib.mapAttrs (_: flake: {inherit flake;})) ((lib.filterAttrs (_: lib.isType "flake")) inputs);
+  nix.registry = (lib.mapAttrs (_: flake: {inherit flake;})) (
+    (lib.filterAttrs (_: lib.isType "flake")) inputs
+  );
 
   # This will additionally add your inputs to the system's legacy channels
   # Making legacy nix commands consistent as well, awesome!
   nix.nixPath = ["/etc/nix/path"];
   environment.etc =
-    lib.mapAttrs'
-    (name: value: {
+    lib.mapAttrs' (name: value: {
       name = "nix/path/${name}";
       value.source = value.flake;
     })
@@ -196,6 +241,7 @@ in {
 
   environment.systemPackages = with pkgs; [
     git
+    cloudflared
   ];
 
   networking.hostName = "schnozzlecat-server";
@@ -206,7 +252,10 @@ in {
   users.users = {
     linus = {
       isNormalUser = true;
-      extraGroups = ["wheel" "docker"];
+      extraGroups = [
+        "wheel"
+        "docker"
+      ];
       initialPassword = "password";
       createHome = true;
       home = "/home/linus";
