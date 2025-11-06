@@ -29,6 +29,8 @@
     user = "linus";
   };
 
+  services.blueman.enable = true;
+
   programs.fuse.enable = true;
 
   # Link /bin/
@@ -212,6 +214,7 @@
     alsa.support32Bit = true;
     pulse.enable = true;
     wireplumber.enable = true;
+    jack.enable = true;
   };
 
   # Localization
