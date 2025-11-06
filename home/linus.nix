@@ -25,6 +25,8 @@ in {
   };
   nixpkgs.config.android_sdk.accept_license = true;
 
+  services.blueman-applet.enable = true;
+
   programs.command-not-found.enable = true;
 
   gtk = {
@@ -61,6 +63,7 @@ in {
 
   nixpkgs.config.permittedInsecurePackages = [
     "electron-25.9.0"
+    "qtwebengine-5.15.19"
   ];
 
   xdg.desktopEntries.oryx = {
@@ -170,7 +173,7 @@ in {
       libreoffice
       scribus
 
-      godot_4_4-mono
+      godot_4_5-mono
 
       # Misc
       obsidian
@@ -376,6 +379,7 @@ in {
 
   programs.imv = {
     enable = true;
+    settings.options.background = "ffffff";
   };
 
   programs.mpv = {
