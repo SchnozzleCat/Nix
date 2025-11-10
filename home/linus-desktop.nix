@@ -109,7 +109,7 @@
       monitor=DP-1,3440x1440@144,0x0,1
       monitor=DP-2,1920x1080@60,0x-1080,1
       monitor=DP-3,1920x1080@60,1920x-1080,1
-      monitor=HDMI-A-1,3840x2160@120,3440x-1080,1
+      monitor=HDMI-A-1,3840x2160@120,3440x0,1
 
       workspace=1, monitor:DP-1, persistent:true
       workspace=2, monitor:DP-1, persistent:true
