@@ -250,7 +250,7 @@
       nerd-fonts.symbols-only
       font-awesome
       noto-fonts
-      noto-fonts-emoji
+      noto-fonts-color-emoji
     ];
     fontconfig.defaultFonts = {
       monospace = ["JetBrainsMono NerdFont"];

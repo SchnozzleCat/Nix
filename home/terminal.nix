@@ -37,7 +37,7 @@ in {
     fd
     television
     bat
-    du-dust
+    dust
     neofetch
     cbonsai
     pipes

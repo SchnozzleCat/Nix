@@ -390,6 +390,9 @@ in {
     snacks = {
       enable = true;
       settings = {
+        gh = {
+          enabled = true;
+        };
         picker = {
           enabled = true;
           layout.preset = "ivy";
@@ -491,7 +494,7 @@ in {
     yazi.enable = true;
     alpha = {
       enable = true;
-      layout = [
+      settings.layout = [
         {
           type = "padding";
           val = 5;
