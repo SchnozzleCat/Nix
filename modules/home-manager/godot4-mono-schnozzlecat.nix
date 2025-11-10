@@ -6,15 +6,9 @@
 }:
 with lib; let
   cfg = config.programs.godot4-mono-schnozzlecat;
-  version = "SchnozzleCat-${lib.substring 0 10 cfg.commitHash}";
-  pkg = (pkgs.callPackage ../../pkgs/godot4-mono-schnozzlecat {}).overrideAttrs (oldAttrs: {
-    src = pkgs.fetchFromGitHub {
-      owner = "SchnozzleCat";
-      repo = "godot";
-      rev = cfg.commitHash;
-      sha256 = cfg.hash;
-    };
-  });
+  version = "4.5.1";
+  suffix = "schnozzlecat-${lib.substring 0 4 cfg.commitHash}";
+  pkg = (pkgs.callPackage ../../pkgs/godot4-mono-schnozzlecat {}).godotPackages_4_5.godot-mono;
 in {
   options.programs.godot4-mono-schnozzlecat = {
     enable = mkEnableOption (lib.mdDoc ''Godot4-mono SchnozzleCat'');
@@ -40,7 +34,7 @@ in {
       <?xml version="1.0" encoding="utf-8"?>
       <configuration>
         <packageSources>
-          <add key="${version}" value="${pkg}/${version}"/>
+          <add key="${version}-${suffix}" value="${pkg}/libexec/${suffix}"/>
         </packageSources>
       </configuration>
     '';

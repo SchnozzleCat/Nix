@@ -1,13 +1,13 @@
 {
   pkgs,
-  nuget-to-nix,
+  nuget-to-json,
 }: let
   godot4-mono = pkgs.callPackage ./default.nix {deps = null;};
 in
   godot4-mono.overrideAttrs (base: {
     pname = "godot_4-mono-make-deps";
 
-    nativeBuildInputs = base.nativeBuildInputs ++ [nuget-to-nix];
+    nativeBuildInputs = base.nativeBuildInputs ++ [nuget-to-json];
 
     outputs = ["out"];
 
@@ -50,7 +50,7 @@ in
         nugetRestore modules/mono/editor/GodotTools/GodotTools.sln
         nugetRestore modules/mono/editor/Godot.NET.Sdk/Godot.NET.Sdk.sln
 
-        nuget-to-nix ~/.nuget/packages > "$outdir"/deps.nix
+        nuget-to-json ~/.nuget/packages > "$outdir"/deps.nix
       popd > /dev/null
     '';
 

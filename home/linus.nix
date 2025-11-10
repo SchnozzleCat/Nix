@@ -173,7 +173,7 @@ in {
       libreoffice
       scribus
 
-      godot_4_5-mono
+      # godot_4_5-mono
 
       # Misc
       obsidian
@@ -357,9 +357,9 @@ in {
 
   programs.godot4-mono-schnozzlecat = {
     enable = true;
-    version = "4.4.1";
-    commitHash = "4093498c254cf24aad3afddf1b4b29423744e6ff";
-    hash = "sha256-DyWVGLmK5JbhKYUdHIBHyDMZEjZ/N7Ooyfpir2+kAEk=";
+    version = "4.5.1";
+    commitHash = "756e119906219f4b4b34778e21ef7b9a2ea12a4a";
+    hash = "sha256-2TJgdgfZS3UIOBK7qBChss7zxCfX5KJNj+Pm2goi/Sk=";
   };
 
   programs.ncspot = {
