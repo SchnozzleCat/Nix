@@ -337,27 +337,9 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
       inherit version;
       inherit rev;
 
-      src = fetchFromGitHub {
-        owner = "schnozzlecat";
-        repo = "godot";
+      src = fetchGit {
+        url = "file:///home/linus/Repositories/godot";
         rev = rev;
-        inherit hash;
-        # Required for the commit hash to be included in the version number.
-        #
-        # `methods.py` reads the commit hash from `.git/HEAD` and manually follows
-        # refs.
-        #
-        # See also 'hash' in
-        # https://docs.godotengine.org/en/stable/classes/class_engine.html#class-engine-method-get-version-info
-        leaveDotGit = true;
-        # Only keep HEAD, because leaveDotGit is non-deterministic:
-        # https://github.com/NixOS/nixpkgs/issues/8567
-        postFetch = ''
-          hash=$(git -C "$out" rev-parse HEAD)
-          rm -r "$out"/.git
-          mkdir "$out"/.git
-          echo "$hash" > "$out"/.git/HEAD
-        '';
       };
 
       outputs =

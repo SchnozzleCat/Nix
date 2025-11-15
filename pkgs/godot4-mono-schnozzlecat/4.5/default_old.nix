@@ -68,8 +68,6 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
     src = fetchGit {
       url = "file:///home/linus/Repositories/godot";
       rev = commitHash;
-      hash = withHash;
-      fetchSubmodules = true;
     };
 
     keepNugetConfig = deps == null;
