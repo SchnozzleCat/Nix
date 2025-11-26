@@ -106,6 +106,7 @@ in {
 
       # Dev
       # unityhub
+      aseprite
       devbox
       zed-editor
       (
@@ -358,8 +359,8 @@ in {
   programs.godot4-mono-schnozzlecat = {
     enable = true;
     version = "4.5.1";
-    commitHash = "76d34a272c99d516c0c4278e10b7e1892a8314e5";
-    hash = "sha256-apKpoBvhhJO8H0hxDGdd10wUx+nyPR3VFEt0hnoAPmU=";
+    commitHash = "e5155ce2a9ffbc898180438ff6f3942a524d1556";
+    hash = "";
   };
 
   programs.ncspot = {

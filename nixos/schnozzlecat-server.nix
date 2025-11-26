@@ -1,5 +1,4 @@
 {
-  inputs,
   config,
   lib,
   pkgs,
@@ -8,11 +7,9 @@
 in {
   imports = [
     # Include the results of the hardware scan.
-    ./hardware-configuration-schnozzlecat-server.nix
+    # ./hardware-configuration-schnozzlecat-server.nix
   ];
 
-  boot.loader.grub.enable = false;
-  boot.loader.generic-extlinux-compatible.enable = true;
   boot.kernel.sysctl."net.ipv4.ip_forward" = 1;
   boot.kernel.sysctl."net.ipv6.conf.all.forwarding" = 1;
   boot.kernel.sysctl."dev.raid.speed_limit_max" = 300000;
@@ -106,35 +103,34 @@ in {
 
   services.cloudflared = {
     enable = true;
-    tunnels."a2879f0a-4e3f-44c5-8141-a5884cf85f9c.json" = {
-      credentialsFile = "/home/linus/.cloudflared/a2879f0a-4e3f-44c5-8141-a5884cf85f9c.json";
+    tunnels."729e667c-0deb-4724-8614-97f8827279db" = {
+      credentialsFile = "/home/linus/.cloudflared/729e667c-0deb-4724-8614-97f8827279db.json";
       default = "http_status:404";
     };
   };
 
-  systemd.services.foundry = {
-    wantedBy = ["multi-user.target"];
-    enable = true;
-    serviceConfig = {
-      User = "linus";
-      Group = "users";
-      ExecStart = ''${pkgs.nodejs_22}/bin/node /home/linus/foundry/resources/app/main.js --dataPath=/mnt/ssd/files/shared/foundrydata --port=42069'';
-    };
-  };
+  # systemd.services.foundry = {
+  #   wantedBy = [ "multi-user.target" ];
+  #   enable = true;
+  #   serviceConfig = {
+  #     User = "linus";
+  #     Group = "users";
+  #     ExecStart = ''${pkgs.nodejs_22}/bin/node /home/linus/foundry/resources/app/main.js --dataPath=/mnt/ssd/files/shared/foundrydata --port=42069'';
+  #   };
+  # };
 
   # Enable NAT
   networking.nat = {
     enable = true;
     enableIPv6 = true;
     externalInterface = "end0";
-    internalInterfaces = ["wg0"];
+    # internalInterfaces = [ "wg0" ];
   };
   # Open ports in the firewall
   networking.firewall = {
     enable = true;
     allowedTCPPorts = [
       53
-      42069
       8123
     ];
     allowedUDPPorts = [
@@ -163,75 +159,37 @@ in {
     fsType = "exfat";
   };
 
-  services.jellyfin = {
-    enable = true;
-    openFirewall = true;
-  };
-
-  # services.home-assistant = {
+  # services.jellyfin = {
   #   enable = true;
   #   openFirewall = true;
-  #   extraComponents = [
-  #     "esphome"
-  #     "met"
-  #     "radio_browser"
-  #     "tradfri"
-  #     "govee_ble"
-  #     "tplink"
-  #     "tplink_tapo"
-  #   ];
-  #   config = {
-  #     default_config = {};
-  #     homeassistant = {
-  #       name = "Home";
-  #       latitude = "48.10372829240035";
-  #       longitude = "11.597223701105742";
-  #       elevation = "520";
-  #       unit_system = "metric";
-  #       time_zone = "Europe/Berlin";
-  #     };
+  # };
+
+  # networking.wireguard.interfaces = {
+  #   wg0 = {
+  #     ips = [ "10.0.0.1/24" ];
+  #     listenPort = 51111;
+  #     privateKeyFile = "/home/linus/wireguard-keys/private.key";
+  #     postSetup = ''
+  #       ${pkgs.iptables}/bin/iptables -A FORWARD -i wg0 -j ACCEPT
+  #       ${pkgs.iptables}/bin/iptables -A FORWARD -o wg0 -j ACCEPT
+  #       ${pkgs.iptables}/bin/iptables -t nat -A POSTROUTING -s 10.0.0.0/24 -o end0 -j MASQUERADE
+  #     '';
+  #     postShutdown = ''
+  #       ${pkgs.iptables}/bin/iptables -D FORWARD -i wg0 -j ACCEPT
+  #       ${pkgs.iptables}/bin/iptables -D FORWARD -o wg0 -j ACCEPT
+  #       ${pkgs.iptables}/bin/iptables -t nat -D POSTROUTING -s 10.0.0.0/24 -o end0 -j MASQUERADE
+  #     '';
+  #     peers = [
+  #       {
+  #         publicKey = "Bsd/uDa5T6AZbdwUYjDJkI2YQdph/Mj5f0t8cnyJdxo=";
+  #         allowedIPs = [ "10.0.0.2/32" ];
+  #       }
+  #     ];
   #   };
   # };
 
-  networking.wireguard.interfaces = {
-    wg0 = {
-      ips = ["10.0.0.1/24"];
-      listenPort = 51111;
-      privateKeyFile = "/home/linus/wireguard-keys/private.key";
-      postSetup = ''
-        ${pkgs.iptables}/bin/iptables -A FORWARD -i wg0 -j ACCEPT
-        ${pkgs.iptables}/bin/iptables -A FORWARD -o wg0 -j ACCEPT
-        ${pkgs.iptables}/bin/iptables -t nat -A POSTROUTING -s 10.0.0.0/24 -o end0 -j MASQUERADE
-      '';
-      postShutdown = ''
-        ${pkgs.iptables}/bin/iptables -D FORWARD -i wg0 -j ACCEPT
-        ${pkgs.iptables}/bin/iptables -D FORWARD -o wg0 -j ACCEPT
-        ${pkgs.iptables}/bin/iptables -t nat -D POSTROUTING -s 10.0.0.0/24 -o end0 -j MASQUERADE
-      '';
-      peers = [
-        {
-          publicKey = "Bsd/uDa5T6AZbdwUYjDJkI2YQdph/Mj5f0t8cnyJdxo=";
-          allowedIPs = ["10.0.0.2/32"];
-        }
-      ];
-    };
-  };
-
-  # This will add each flake input as a registry
-  # To make nix3 commands consistent with your flake
-  nix.registry = (lib.mapAttrs (_: flake: {inherit flake;})) (
-    (lib.filterAttrs (_: lib.isType "flake")) inputs
-  );
-
   # This will additionally add your inputs to the system's legacy channels
   # Making legacy nix commands consistent as well, awesome!
-  nix.nixPath = ["/etc/nix/path"];
-  environment.etc =
-    lib.mapAttrs' (name: value: {
-      name = "nix/path/${name}";
-      value.source = value.flake;
-    })
-    config.nix.registry;
 
   nix.settings = {
     experimental-features = "nix-command flakes";
@@ -245,7 +203,17 @@ in {
   ];
 
   networking.hostName = "schnozzlecat-server";
-  networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
+  networking.wireless.enable = false;
+  networking.wireless.iwd = {
+    enable = true;
+    settings = {
+      Network = {
+        EnableIPv6 = true;
+        RoutePriorityOffset = 300;
+      };
+      Settings.AutoConnect = true;
+    };
+  };
 
   security.sudo.wheelNeedsPassword = false;
 
@@ -273,8 +241,7 @@ in {
     ];
   };
 
-  # networking.hostName = "nixos"; # Define your hostname.
-
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
-  system.stateVersion = "24.05"; # Did you read the comment?
+
+  system.stateVersion = "25.05"; # Did you read the comment?
 }

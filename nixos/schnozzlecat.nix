@@ -7,8 +7,7 @@
   pkgs,
   hostname,
   ...
-}:
-{
+}: {
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
@@ -22,7 +21,6 @@
     hostname = "trace.schnozzlecat.xyz";
     admin = {
       user = "SchnozzleCat";
-      password = "Wai504w350m3";
     };
     listen = {
       address = "0.0.0.0";
@@ -38,7 +36,7 @@
 
   networking.interfaces."enp8s0".wakeOnLan = {
     enable = true;
-    policy = [ "magic" ];
+    policy = ["magic"];
   };
 
   services.devmon.enable = true;
@@ -73,17 +71,17 @@
 
   hardware.i2c.enable = true;
 
-  boot.initrd.kernelModules = [ "amdgpu" ];
+  boot.initrd.kernelModules = ["amdgpu"];
   boot.kernelModules = [
     "hid-nintendo"
     "v4l2loopback"
     "uinput"
   ];
-  boot.extraModulePackages = with config.boot.kernelPackages; [ v4l2loopback ];
+  boot.extraModulePackages = with config.boot.kernelPackages; [v4l2loopback];
   boot.extraModprobeConfig = ''
     options v4l2loopback devices=1 video_nr=1 card_label="OBS Cam" exclusive_caps=1
   '';
-  boot.kernelParams = [ "intel_iommu=on" ];
+  boot.kernelParams = ["intel_iommu=on"];
 
   virtualisation.libvirtd = {
     enable = true;
