@@ -359,7 +359,7 @@ in {
   programs.godot4-mono-schnozzlecat = {
     enable = true;
     version = "4.5.1";
-    commitHash = "e5155ce2a9ffbc898180438ff6f3942a524d1556";
+    commitHash = "edaecbcff4beef86bb1085eb856ddfa927f7a021";
     hash = "";
   };
 
