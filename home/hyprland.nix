@@ -33,6 +33,7 @@ in ''
   windowrulev2=move 12% 200%,class:^(foot-float)$
 
   windowrulev2=float,class:^(com.saivert.pwvucontrol)$
+  windowrulev2=float,initialTitle:^(Godot)$
 
   bind = $mainMod,s,exec,pwvucontrol
   windowrulev2=float,class:^(pwvucontrol)$
