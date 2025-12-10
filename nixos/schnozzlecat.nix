@@ -16,24 +16,6 @@
     ];
   };
 
-  services.icecast = {
-    enable = true;
-    hostname = "trace.schnozzlecat.xyz";
-    admin = {
-      user = "SchnozzleCat";
-    };
-    listen = {
-      address = "0.0.0.0";
-      port = 9321;
-    };
-    extraConf = ''
-      <authentication>
-        <!-- Sources log in with username 'source' -->
-        <source-password>thisisthePasswordForSources1234</source-password>
-      </authentication>
-    '';
-  };
-
   networking.interfaces."enp8s0".wakeOnLan = {
     enable = true;
     policy = ["magic"];
