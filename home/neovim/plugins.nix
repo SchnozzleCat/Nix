@@ -887,12 +887,12 @@ in {
     lsp-format = {
       enable = true;
       settings = {
-        "cs" = {
-          exclude = [
-            "roslyn"
-          ];
-        };
+        force = true;
+        sync = true;
       };
+      lspServersToEnable = [
+        "null-ls"
+      ];
     };
     none-ls = {
       enable = true;
