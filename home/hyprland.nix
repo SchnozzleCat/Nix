@@ -27,33 +27,38 @@ in ''
   env = WLR_NO_HARDWARE_CURSORS,1
 
   bind = $mainMod,w,exec,pypr toggle term
-  windowrulev2=float,class:^(foot-float)$
-  windowrulev2=size 75% 60%,class:^(foot-float)$
-  windowrulev2=workspace special:scratch_term silent,class:^(foot-float)$
-  windowrulev2=move 12% 200%,class:^(foot-float)$
+  windowrule {
+    name = special:scratch_term
+    match:class = foot-float
+    float = on
+    size = 75% 60%
+    move = 12% 200%
+  }
+  windowrule {
+    name = special:pwvucontrol
+    match:class = com.saivert.pwvucontrol
+    float = on
+  }
 
-  windowrulev2=float,class:^(com.saivert.pwvucontrol)$
-  windowrulev2=float,initialTitle:^(Godot)$
+  windowrule = float on, match:initial_title Godot
 
   bind = $mainMod,s,exec,pwvucontrol
-  windowrulev2=float,class:^(pwvucontrol)$
-  windowrulev2=size 40% 90%,class:^(pwvucontrol)$
-  windowrulev2=workspace special:scratch_volume silent,class:^(pwvucontrol)$
-  windowrulev2=move 200% 5%,class:^(pwvucontrol)$
+  windowrule {
+    name = special:scratch_volume
+    match:class = pwvucontrol
+    float = on
+    size = 40% 90%
+    move = 200% 5%
+  }
 
   bind = $mainMod,m,exec,pypr toggle ncspot
-  windowrulev2=float,class:^(foot-ncspot)$
-  windowrulev2=size 40% 90%,class:^(foot-ncspot)$
-  windowrulev2=workspace special:scratch_volume silent,class:^(foot-ncspot)$
-  windowrulev2=move 200% 5%,class:^(foot-ncspot)$
-
-  windowrulev2 = stayfocused, title:^()$,class:^(steam)$
-  windowrulev2 = minsize 1 1, title:^()$,class:^(steam)$
-
-  windowrulev2=float,class:^(UnrealEditor)$
-  windowrulev2=unset,class:^(UnrealEditor)$,title:^\w*$
-  windowrulev2=noinitialfocus,class:^(UnrealEditor)$,title:^\w*$
-  windowrulev2=noanim,class:^(UnrealEditor)$,title:^\w*$
+  windowrule {
+    name = special:scratch_ncspot
+    match:class = foot-ncspot
+    float = on
+    size = 40% 90%
+    move = 200% 5%
+  }
 
   bind = $mainMod, Z, pin
 
@@ -109,9 +114,8 @@ in ''
       rounding = 5
   }
 
-  # layerrule = blur, waybar
-  layerrule = blur, launcher
-  layerrule = xray on, launcher
+  layerrule = blur on, match:namespace launcher
+  layerrule = xray on, match:namespace launcher
 
   animations {
       enabled = yes

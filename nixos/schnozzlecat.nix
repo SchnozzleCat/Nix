@@ -58,8 +58,7 @@
   services.ollama = {
     enable = true;
     host = "0.0.0.0";
-    acceleration = "rocm";
-    # rocmOverrideGfx = "10.3.1";
+    package = pkgs.ollama-rocm;
   };
 
   # boot.blacklistedKernelModules = ["nouveau"];
