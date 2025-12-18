@@ -150,6 +150,8 @@ in {
       kubernetes
       texlive.combined.scheme-full
 
+      tidal-hifi
+
       # Games
       steam-run
       steam-tui
@@ -359,7 +361,7 @@ in {
   programs.godot4-mono-schnozzlecat = {
     enable = true;
     version = "4.5.1";
-    commitHash = "edaecbcff4beef86bb1085eb856ddfa927f7a021";
+    commitHash = "bf15c1d782eda1149636ee17b456b3cd75e7b905";
     hash = "";
   };
 
