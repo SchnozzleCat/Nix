@@ -292,7 +292,7 @@ in {
       adapters = {
         java.enable = true;
         python.enable = true;
-        dotnet.enable = true;
+        # dotnet.enable = true;
         jest.enable = true;
       };
     };
