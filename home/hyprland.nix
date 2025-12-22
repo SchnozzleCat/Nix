@@ -40,8 +40,6 @@ in ''
     float = on
   }
 
-  windowrule = float on, match:initial_title Godot
-
   bind = $mainMod,s,exec,pwvucontrol
   windowrule {
     name = special:scratch_volume
