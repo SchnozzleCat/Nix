@@ -359,19 +359,22 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
       BUILD_NAME = "nixpkgs";
       GODOT_VERSION_STATUS = "schnozzlecat-${lib.substring 0 4 rev}";
 
-      preConfigure = lib.optionalString (editor && withMono) ''
-        echo "Extracting Steamworks SDK..."
-        mkdir -p modules/godotsteam/sdk
-        unzip -o ${sdk} -d modules/godotsteam
+      preConfigure =
+        ''
+          echo "Extracting Steamworks SDK..."
+          mkdir -p modules/godotsteam/sdk
+          unzip -o ${sdk} -d modules/godotsteam
+        ''
+        + lib.optionalString (editor && withMono) ''
 
-        # TODO: avoid pulling in dependencies of windows-only project
-        dotnet sln modules/mono/editor/GodotTools/GodotTools.sln \
-          remove modules/mono/editor/GodotTools/GodotTools.OpenVisualStudio/GodotTools.OpenVisualStudio.csproj
+          # TODO: avoid pulling in dependencies of windows-only project
+          dotnet sln modules/mono/editor/GodotTools/GodotTools.sln \
+            remove modules/mono/editor/GodotTools/GodotTools.OpenVisualStudio/GodotTools.OpenVisualStudio.csproj
 
-        dotnet restore modules/mono/glue/GodotSharp/GodotSharp.sln
-        dotnet restore modules/mono/editor/GodotTools/GodotTools.sln
-        dotnet restore modules/mono/editor/Godot.NET.Sdk/Godot.NET.Sdk.sln
-      '';
+          dotnet restore modules/mono/glue/GodotSharp/GodotSharp.sln
+          dotnet restore modules/mono/editor/GodotTools/GodotTools.sln
+          dotnet restore modules/mono/editor/Godot.NET.Sdk/Godot.NET.Sdk.sln
+        '';
 
       # From: https://github.com/godotengine/godot/blob/4.2.2-stable/SConstruct
       sconsFlags = mkSconsFlagsFromAttrSet (
@@ -562,9 +565,6 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
           mkdir -p "$out"/{bin,libexec}
           cp -r bin/* "$out"/libexec
 
-          echo "$GODOT_VERSION_STATUS" > "$out"/libexec/.godot_version_status
-          cp -r "$GODOT_VERSION_STATUS" "$out"/libexec/"$GODOT_VERSION_STATUS"
-
           cd "$out"/bin
           ln -s ../libexec/${binary} godot${lib.versions.majorMinor version}${suffix}
           ln -s godot${lib.versions.majorMinor version}${suffix} godot${lib.versions.major version}${suffix}
@@ -634,6 +634,7 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
         }
         // lib.optionalAttrs editor {
           export-template = mkTarget "template_release";
+          export-template-debug = mkTarget "template_debug";
           export-templates-bin = (
             callPackage ./export-templates-bin.nix {
               inherit version rev withMono;
