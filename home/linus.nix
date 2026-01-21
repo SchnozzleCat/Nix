@@ -120,7 +120,7 @@ in {
       sublime-merge
       (pkgs.buildDotnetGlobalTool {
         pname = "Microsoft.dotnet-interactive";
-        version = "1.0.632301 ";
+        version = "1.0.632301";
         nugetHash = "sha256-bA1DGLfSB4uFUtzufRKUiXR3LpbG5UoewfktXyOswco=";
         executables = "dotnet-interactive";
         dotnet-runtime = pkgs.dotnetCorePackages.sdk_9_0;
