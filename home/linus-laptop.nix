@@ -32,22 +32,22 @@
   colorScheme = {
     name = "schnozzlecat";
     palette = {
-      base00 = "#1F1F28";
-      base01 = "#2a273f";
-      base02 = "#393552";
-      base03 = "#6e6a86";
-      base04 = "#908caa";
-      base05 = "#e0def4";
-      base06 = "#e0def4";
-      base07 = "#56526e";
-      base08 = "#eb6f92";
-      base09 = "#f6c177";
-      base0A = "#ea9a97";
-      base0B = "#3e8fb0";
-      base0C = "#9ccfd8";
-      base0D = "#c4a7e7";
-      base0E = "#f6c177";
-      base0F = "#56526e";
+      base00 = "#1D2228";
+      base01 = "#161a1e";
+      base02 = "#254365";
+      base03 = "#414868";
+      base04 = "#89BEFF";
+      base05 = "#919BCA";
+      base06 = "#a9b1d6";
+      base07 = "#E7EAEE";
+      base08 = "#F97791";
+      base09 = "#FFA064";
+      base0A = "#FFA064";
+      base0B = "#38FFA5";
+      base0C = "#5CCEFF";
+      base0D = "#B1A2FF";
+      base0E = "#FFB3EC";
+      base0F = "#F73F64";
     };
   };
 

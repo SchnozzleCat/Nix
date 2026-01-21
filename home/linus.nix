@@ -574,28 +574,34 @@ in {
         gamma-correct-blending = "no";
       };
       cursor = {
-        color = "1A1826 D9E0EE";
+        color = "E7EAEE 33394a";
       };
       colors = {
         alpha = 0.8;
-        foreground = colors.base05;
+        foreground = colors.base07;
         background = colors.base00;
-        regular0 = colors.base02;
-        regular1 = colors.base08;
-        regular2 = colors.base0B;
-        regular3 = colors.base09;
-        regular4 = colors.base0D;
-        regular5 = colors.base0E;
-        regular6 = colors.base0C;
-        regular7 = colors.base06;
-        bright0 = colors.base02;
-        bright1 = colors.base08;
-        bright2 = colors.base0B;
-        bright3 = colors.base09;
-        bright4 = colors.base0D;
-        bright5 = colors.base0E;
-        bright6 = colors.base0C;
-        bright7 = colors.base06;
+        selection-foreground = colors.base07;
+        selection-background = "33394a";
+        urls = "8FEBD3";
+        regular0 = "171b20";
+        regular1 = "F97791";
+        regular2 = "38FFA5";
+        regular3 = "FFE77A";
+        regular4 = "5CCEFF";
+        regular5 = "FFB3EC";
+        regular6 = "0AE7FF";
+        regular7 = "a9b1d6";
+
+        bright0 = "414868";
+        bright1 = "F97791";
+        bright2 = "38FFA5";
+        bright3 = "FFE77A";
+        bright4 = "5CCEFF";
+        bright5 = "FFB3EC";
+        bright6 = "0AE7FF";
+        bright7 = "E7EAEE";
+        "16" = "FFA064";
+        "17" = "F73F64";
       };
     };
   };
@@ -615,9 +621,13 @@ in {
         layer = "overlay";
       };
       colors = {
-        background = "${colors.base00}aa";
-        selection = "${colors.base01}aa";
-        border = "${colors.base08}ff";
+        background = "161a1eff";
+        text = "E7EAEEff";
+        match = "89BEFFff";
+        selection = "3f4552ff";
+        selection-match = "89BEFFff";
+        selection-text = "E7EAEEff";
+        border = "739fd4ff";
       };
       border = {
         radius = 5;

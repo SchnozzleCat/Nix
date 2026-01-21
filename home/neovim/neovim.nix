@@ -122,11 +122,10 @@ in {
     extraPlugins = parsedPlugins;
 
     highlight = {
-      "@type.qualifier.c_sharp".fg = "#7AA8fF";
-      "@type.c_sharp".fg = "#98cb6C";
-      "@struct_declaration".fg = "#aaff9C";
-      "@attribute".fg = "#cb6fe2";
-      "@return_statement".fg = "#eb6f92";
+      "@lsp.type.struct.cs".fg = "#98cb6C";
+      "@lsp.type.recordStruct.cs".fg = "#98cb6C";
+      "@lsp.type.recordClass.cs".fg = "#FFCB77";
+      "@lsp.type.interface".fg = "#93ee64";
     };
     highlightOverride = {
       TreesitterContext.bg = "none";
@@ -146,6 +145,10 @@ in {
       NotifyBackground.bg = "#000000";
       SnacksPickerBorder.bg = "none";
       TreesitterContextSeparator.bg = "none";
+      "@lsp.type.struct.cs".fg = "#98cb6C";
+      "@lsp.type.recordStruct.cs".fg = "#98cb6C";
+      "@lsp.type.recordClass.cs".fg = "#FFCB77";
+      "@lsp.type.interface".fg = "#93ee64";
     };
     extraConfigVim = ''
       autocmd FileType nix setlocal commentstring=#\ %s
@@ -211,6 +214,8 @@ in {
       -- Required: Enable the language server
       -- vim.lsp.enable('ty')
       -- vim.lsp.enable('pyrefly')
+      vim.cmd([[colorscheme teide-dark]])
+      vim.cmd([[highlight @lsp.type.struct.cs guifg=#98cb6C]])
     '';
     opts = {
       showtabline = 0;
@@ -235,12 +240,12 @@ in {
       mapleader = " ";
       maplocalleader = "  ";
     };
-    colorschemes.catppuccin = {
-      enable = true;
-      settings = {
-        transparent_background = true;
-        flavor = "mocha";
-      };
-    };
+    # colorschemes.catppuccin = {
+    #   enable = true;
+    #   settings = {
+    #     transparent_background = true;
+    #     flavor = "mocha";
+    #   };
+    # };
   };
 }

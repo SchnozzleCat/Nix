@@ -28,6 +28,11 @@ with pkgs.vimPlugins; [
     '';
   }
   {
+    name = "serhez/teide.nvim";
+    version = "c8df92c32cd8f9741858241474c9069af74c20ca";
+    hash = "sha256-dKsLTckHL4l7h4gNbYaAfKBNXS9+4JHT23hP1ZwRVF4=";
+  }
+  {
     name = "A7Lavinraj/fyler.nvim";
     pkg = fyler-nvim;
     spec.after = ''
@@ -75,8 +80,8 @@ with pkgs.vimPlugins; [
   }
   {
     name = "iofq/dart.nvim";
-    version = "f059335a22811374d5a7e22c97889ea712db58d7";
-    hash = "sha256-BBjs+YCOzgb6N2lew4vEmyS6s70y0z5xStKjGQaf55g=";
+    version = "0.1.4";
+    hash = "sha256-ULrZW4b8SKRvPpJPt8/jkqqc/blQiIWUriNWVXA33so=";
     spec.after = ''
       function()
         require('dart').setup({
@@ -102,18 +107,20 @@ with pkgs.vimPlugins; [
         })
         vim.api.nvim_create_autocmd('ColorScheme', {
           callback = function()
-            vim.api.nvim_set_hl(0, 'DartMarkedLabel', { fg = 'teal', bg = '#11111B', bold = true })
-            vim.api.nvim_set_hl(0, 'DartMarkedCurrentModified', { fg = '#defcb5' })
-            vim.api.nvim_set_hl(0, 'DartMarkedModified', { fg = '#defcb5', bg = '#11111B', bold = true })
-            vim.api.nvim_set_hl(0, 'DartMarkedLabelModified', { fg = 'teal', bg = '#11111B', bold = true })
-            vim.api.nvim_set_hl(0, 'DartMarkedCurrentLabel', { fg = 'teal', bold = true })
-            vim.api.nvim_set_hl(0, 'DartMarkedCurrentLabelModified', { fg = 'teal', bold = true })
+            vim.api.nvim_set_hl(0, 'DartMarkedLabel', { fg = '#4EA4CC', bold = true })
+            vim.api.nvim_set_hl(0, 'DartMarkedCurrent', { fg = '#4EA4CC',  bold = true })
+            vim.api.nvim_set_hl(0, 'DartMarkedCurrentLabel', { fg = '#4EA4CC', bold = true })
+            vim.api.nvim_set_hl(0, 'DartMarkedModified', { fg = '#315572' })
+            vim.api.nvim_set_hl(0, 'DartMarkedLabelModified', { fg = '#315572' })
+            vim.api.nvim_set_hl(0, 'DartMarkedCurrentModified', { fg = '#8FB2CF', bold = true })
+            vim.api.nvim_set_hl(0, 'DartMarkedCurrentLabelModified', { fg = '#8FB2CF', bold = true })
 
-            vim.api.nvim_set_hl(0, 'DartVisibleLabel', { fg = 'orange', bg = '#11111B' })
-            vim.api.nvim_set_hl(0, 'DartVisibleLabelModified', { fg = 'orange', bg = '#11111B' })
-            vim.api.nvim_set_hl(0, 'DartCurrentModified', { fg = '#defcb5', bg = '#1E1E29' })
-            vim.api.nvim_set_hl(0, 'DartCurrentLabelModified', { fg = 'orange', bg = '#1E1E29' })
-            vim.api.nvim_set_hl(0, 'DartVisibleModified', { fg = '#defcb5', bg = '#11111B' })
+            vim.api.nvim_set_hl(0, 'DartCurrent', { fg = 'orange', bg = 'none', bold = true })
+            vim.api.nvim_set_hl(0, 'DartVisibleLabel', { fg = 'orange' })
+            vim.api.nvim_set_hl(0, 'DartVisibleLabelModified', { fg = '#6f4d15' })
+            vim.api.nvim_set_hl(0, 'DartVisibleModified', { fg = '#6f4d15' })
+            vim.api.nvim_set_hl(0, 'DartCurrentModified', { fg = '#E3B66E' })
+            vim.api.nvim_set_hl(0, 'DartCurrentLabelModified', { fg = '#E3B66E' })
           end
         })
         function pick_dart()

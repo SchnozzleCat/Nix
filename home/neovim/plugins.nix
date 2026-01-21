@@ -933,6 +933,7 @@ in {
       enable = true;
       lazyLoad.settings.event = "BufEnter";
       settings = {
+        theme = "teide";
         winbar = {
           lualine_a = [""];
           lualine_b = [""];

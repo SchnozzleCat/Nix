@@ -36,20 +36,22 @@
       bind "Esc" { SwitchToMode "Normal"; }
     }
   }
-  theme "catppuccin-mocha"
+  theme "teide_dark"
   themes {
-    catppuccin-mocha {
-      bg "#585b70"
-      fg "#cdd6f4"
-      red "#f38ba8"
-      green "#a6e3a1"
-      blue "#89b4fa"
-      yellow "#f9e2af"
-      magenta "#f5c2e7"
-      orange "#fab387"
-      cyan "#89dceb"
-      black "#181825"
-      white "#cdd6f4"
+    teide_dark {
+        fg "#E7EAEE"
+        bg "#2C313A"
+        // Black should match the terminal background color
+        // This ensures the top and bottom bars are transparent
+        black "#191925"
+        red "#F97791"
+        green "#38FFA5"
+        yellow "#FFE77A"
+        blue "#5CCEFF"
+        magenta "#FFB3EC"
+        cyan "#0AE7FF"
+        white "#a9b1d6"
+        orange "#FFA064"
     }
   }
 ''
