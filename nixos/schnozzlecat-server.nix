@@ -77,6 +77,18 @@ in {
           "--privileged"
         ];
       };
+      jellyfin = {
+        autoStart = true;
+        image = "jellyfin/jellyfin:latest";
+        volumes = [
+          "/var/lib/jellyfin/config:/config"
+          "/var/lib/jellyfin/cache:/cache"
+        ];
+        ports = [
+          "8096:8096/tcp"
+          "7359:7359/udp"
+        ];
+      };
       # nextcloud-aio-mastercontainer = {
       #   autoStart = true;
       #   image = "ghcr.io/nextcloud-releases/all-in-one:latest";
@@ -158,11 +170,6 @@ in {
   fileSystems."/mnt/hdd" = {
     device = "/dev/disk/by-uuid/8C72-148E";
     fsType = "exfat";
-  };
-
-  services.jellyfin = {
-    enable = true;
-    openFirewall = true;
   };
 
   # networking.wireguard.interfaces = {
