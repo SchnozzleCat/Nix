@@ -126,8 +126,8 @@
     {
       mode = "n";
       key = "<leader>j";
-      action = "<cmd>lua pick_buffers()<cr>";
-      options.desc = "Pick Buffers";
+      action = "<cmd>lua BufferSticks.jump()<cr>";
+      options.desc = "Buffersticks Jump";
     }
     {
       mode = "v";

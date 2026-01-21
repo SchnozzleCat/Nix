@@ -33,6 +33,32 @@ with pkgs.vimPlugins; [
     hash = "sha256-dKsLTckHL4l7h4gNbYaAfKBNXS9+4JHT23hP1ZwRVF4=";
   }
   {
+    name = "ahkohd/buffer-sticks.nvim";
+    version = "19eac64a7d197b4f684fe878473f1185a4f53c8c";
+    hash = "sha256-1KpO/rLbw/1ngeOgtxL/XAxSml6jvgq24nDt1D4FmWE=";
+    spec = {
+      after = ''
+        function()
+          require("buffer-sticks").setup({
+            filter = { buftypes = { "terminal" } },
+              highlights = {
+                active = { link = "Statement" },
+                alternate = { link = "StorageClass" },
+                inactive = { link = "Whitespace" },
+                active_modified = { link = "Constant" },
+                alternate_modified = { link = "Constant" },
+                inactive_modified = { link = "Constant" },
+                label = { link = "Comment" },
+                filter_selected = { link = "Statement" },
+                filter_title = { link = "Comment" },
+                list_selected = { link = "Statement" },
+              },
+            })
+        end
+      '';
+    };
+  }
+  {
     name = "A7Lavinraj/fyler.nvim";
     pkg = fyler-nvim;
     spec.after = ''
