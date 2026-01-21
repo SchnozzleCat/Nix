@@ -7,26 +7,63 @@
   pkgs,
   modulesPath,
   ...
-}:
-{
+}: {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" ];
-  boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ ];
-  boot.extraModulePackages = [ ];
+  boot.initrd.availableKernelModules = [];
+  boot.initrd.kernelModules = [];
+  boot.kernelModules = [];
+  boot.extraModulePackages = [];
 
-  swapDevices = [ ];
+  fileSystems."/" = {
+    device = "/dev/disk/by-uuid/44444444-4444-4444-8888-888888888888";
+    fsType = "ext4";
+  };
+
+  fileSystems."/boot/firmware" = {
+    device = "systemd-1";
+    fsType = "autofs";
+  };
+
+  fileSystems."/mnt/ssd" = {
+    device = "/dev/disk/by-uuid/7d2166ba-5e9a-402a-af11-8a72b31bd96a";
+    fsType = "ext4";
+  };
+
+  fileSystems."/mnt/raid" = {
+    device = "/dev/disk/by-uuid/72767823-2106-41a6-8a38-448c6fe46682";
+    fsType = "ext4";
+  };
+
+  fileSystems."/mnt/hdd" = {
+    device = "/dev/disk/by-uuid/8C72-148E";
+    fsType = "exfat";
+  };
+
+  fileSystems."/var/lib/docker/overlay2/3c8659ee8859539ffec6ae42165e75a86e1cea349c30c609421c0fdb343f9e09/merged" = {
+    device = "overlay";
+    fsType = "overlay";
+  };
+
+  fileSystems."/var/lib/docker/overlay2/c47cb169004ef348b555179eadca45b3f640cc25692989b243bcd5eb113471ea/merged" = {
+    device = "overlay";
+    fsType = "overlay";
+  };
+
+  swapDevices = [];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
   # still possible to use this option, but it's recommended to use it in conjunction
   # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
   networking.useDHCP = lib.mkDefault true;
+  # networking.interfaces.docker0.useDHCP = lib.mkDefault true;
   # networking.interfaces.end0.useDHCP = lib.mkDefault true;
+  # networking.interfaces.veth164ad81.useDHCP = lib.mkDefault true;
   # networking.interfaces.wlan0.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
+  boot.swraid.enable = true;
 }

@@ -7,13 +7,14 @@
 in {
   imports = [
     # Include the results of the hardware scan.
-    # ./hardware-configuration-schnozzlecat-server.nix
+    ./hardware-configuration-schnozzlecat-server.nix
   ];
 
   boot.kernel.sysctl."net.ipv4.ip_forward" = 1;
   boot.kernel.sysctl."net.ipv6.conf.all.forwarding" = 1;
   boot.kernel.sysctl."dev.raid.speed_limit_max" = 300000;
   boot.swraid.enable = true;
+  boot.loader.grub.device = "nodev";
 
   nixpkgs = {
     config = {
@@ -159,10 +160,10 @@ in {
     fsType = "exfat";
   };
 
-  # services.jellyfin = {
-  #   enable = true;
-  #   openFirewall = true;
-  # };
+  services.jellyfin = {
+    enable = true;
+    openFirewall = true;
+  };
 
   # networking.wireguard.interfaces = {
   #   wg0 = {
