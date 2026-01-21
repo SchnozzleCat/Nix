@@ -591,43 +591,52 @@
     }
     # AI
     {
-      mode = ["n"];
+      mode = ["n" "x"];
       key = "<leader>aa";
-      action = "<cmd> Sidekick cli show <cr>";
-      options.desc = "Show AI Assistant";
+      action = ''<cmd>lua require("opencode").ask("@this: ", { submit = true}) <cr>'';
+      options.desc = "Ask opencode";
+    }
+    {
+      mode = ["n" "x"];
+      key = "<leader>as";
+      action = ''<cmd>lua require("opencode").select()<cr>'';
+      options.desc = "Execute opencode action";
+    }
+    {
+      mode = ["n" "t"];
+      key = "<C-a>";
+      action = ''<cmd>lua require("opencode").toggle()<cr>'';
+      options.desc = "Toggle opencode";
+    }
+    {
+      mode = ["n" "x"];
+      key = "go";
+      action = ''<cmd>lua require("opencode").operator("@this ")<cr>'';
+      options.desc = "Toggle opencode";
     }
     {
       mode = ["n"];
-      key = "<c-f>";
-      action = ''<cmd> lua require("sidekick").nes_jump_or_apply() <cr>'';
-      options.desc = "NES Jump or Apply";
+      key = "goo";
+      action = ''<cmd>lua require("opencode").operator("@this ") .. "_"<cr>'';
+      options.desc = "Toggle opencode";
     }
     {
-      mode = [
-        "x"
-        "n"
-      ];
-      key = "<leader>at";
-      action = ''<cmd> lua require("sidekick.cli").send({ msg = "{this}" }) <cr>'';
-      options.desc = "Send This";
+      mode = ["n"];
+      key = "<S-C-u>";
+      action = ''<cmd>lua require("opencode").command("session.half.page.up")<cr>'';
+      options.desc = "Scroll opencode up";
     }
     {
-      mode = [
-        "x"
-        "n"
-      ];
-      key = "<leader>as";
-      action = ''<cmd> lua require("sidekick.cli").send({ msg = "{selection}" }) <cr>'';
-      options.desc = "Send Selection";
+      mode = ["n"];
+      key = "<S-C-d>";
+      action = ''<cmd>lua require("opencode").command("session.half.page.down")<cr>'';
+      options.desc = "Scroll opencode down";
     }
     {
-      mode = [
-        "x"
-        "n"
-      ];
-      key = "<leader>ap";
-      action = ''<cmd> lua require("sidekick.cli").prompt() <cr>'';
-      options.desc = "AI Prompt";
+      mode = ["n"];
+      key = "<S-C-d>";
+      action = ''<cmd>lua require("opencode").command("session.half.page.down")<cr>'';
+      options.desc = "Scroll opencode down";
     }
     {
       mode = [

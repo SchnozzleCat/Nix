@@ -57,6 +57,7 @@ in {
       quarto
       typescript
       jq
+      lsof
       fd
       (haskellPackages.ghcWithPackages (pkgs: with pkgs; [tidal]))
       supercollider-with-sc3-plugins

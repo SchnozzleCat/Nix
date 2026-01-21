@@ -64,6 +64,13 @@ in {
       };
     };
   };
+
+  home.file.".config/opencode/config.json".text = import ./opencode-config.nix;
+
+  programs.opencode = {
+    enable = true;
+  };
+
   home.packages = with pkgs; [
     (haskellPackages.ghcWithPackages (pkgs: with pkgs; [tidal]))
     supercollider-with-sc3-plugins
