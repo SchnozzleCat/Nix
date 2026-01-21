@@ -1,6 +1,6 @@
 {lib}: rec {
   version = "4.5.1";
-  rev = "bf15c1d782eda1149636ee17b456b3cd75e7b905";
+  rev = "89ff74479a66ee038a97f864cd85bcc70d5998fa";
   hash = "";
   default = {
     exportTemplatesHash = "";
