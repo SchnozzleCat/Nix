@@ -564,7 +564,16 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
 
           mkdir -p "$out"/{bin,libexec}
           cp -r bin/* "$out"/libexec
-
+        ''
+        + (
+          if editor
+          then ''
+            echo "$GODOT_VERSION_STATUS" > "$out"/libexec/.godot_version_status
+            cp -r "$GODOT_VERSION_STATUS" "$out"/libexec/"$GODOT_VERSION_STATUS"
+          ''
+          else ''''
+        )
+        + ''
           cd "$out"/bin
           ln -s ../libexec/${binary} godot${lib.versions.majorMinor version}${suffix}
           ln -s godot${lib.versions.majorMinor version}${suffix} godot${lib.versions.major version}${suffix}
