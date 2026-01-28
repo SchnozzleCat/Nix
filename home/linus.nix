@@ -199,22 +199,7 @@ in {
       nvtopPackages.full
       vdhcoapp
       # smassh
-      (buildDotnetGlobalTool {
-        pname = "csharpier";
-        version = "1.0.0";
-        executables = "csharpier";
-
-        nugetHash = "sha256-wj+Sjvtr4/zqBdxXMM/rYHykzcn+jQ3AVakYpAa3sNU=";
-
-        meta = with lib; {
-          description = "Opinionated code formatter for C#";
-          homepage = "https://csharpier.com/";
-          changelog = "https://github.com/belav/csharpier/blob/main/CHANGELOG.md";
-          license = licenses.mit;
-          maintainers = with maintainers; [zoriya];
-          mainProgram = "csharpier";
-        };
-      })
+      csharpier
 
       # Shell Scripts
       (writeShellApplication {
