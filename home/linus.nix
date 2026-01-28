@@ -194,10 +194,9 @@ in {
       krita
       # aseprite
       protonvpn-gui
-      gh-copilot
+      github-copilot-cli
       rocmPackages.rocm-smi
       nvtopPackages.full
-      vdhcoapp
       # smassh
       csharpier
 
