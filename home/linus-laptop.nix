@@ -83,11 +83,4 @@
               disable_hyprland_logo = true
       }
     '';
-
-  home.file.".config/hypr/hyprpaper.conf".text =
-    (import ./hyprpaper.nix)
-    + ''
-      wallpaper = eDP-1,${../secrets/wallpapers/abstract1.jpg}
-      wallpaper = HDMI-A-1,${../secrets/wallpapers/abstract1.jpg}
-    '';
 }
