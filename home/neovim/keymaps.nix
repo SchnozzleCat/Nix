@@ -642,6 +642,14 @@
       mode = [
         "n"
       ];
+      key = "<c-f>";
+      action = ''<cmd> lua require("sidekick").nes_jump_or_apply() <cr>'';
+      options.desc = "NES Jump or Apply";
+    }
+    {
+      mode = [
+        "n"
+      ];
       key = "<leader>an";
       action = ''<cmd> Sidekick nes toggle <cr>'';
       options.desc = "Toggle NES";
