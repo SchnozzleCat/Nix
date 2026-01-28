@@ -157,7 +157,6 @@ in {
       # Games
       steam-run
       steam-tui
-      steamcmd
       protonup-qt
       protontricks
       (lutris.override {
