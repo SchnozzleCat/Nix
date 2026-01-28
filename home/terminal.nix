@@ -109,9 +109,6 @@ in {
     wget
 
     cabextract
-
-    # inputs.csharp-language-server.packages.${pkgs.system}.csharp-language-server
-    inputs.nix-software-center.packages.${system}.nix-software-center
   ];
 
   programs.yazi = {
