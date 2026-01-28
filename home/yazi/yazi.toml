@@ -1,8 +1,0 @@
-[mgr]
-sort_by = "natural"
-sort_translit = true
-
-[opener]
-extract = [
-	{ run = 'ya pub extract --list "$@"', orphan = true, desc = "Extract here", for = "unix" },
-]

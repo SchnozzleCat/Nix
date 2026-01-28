@@ -117,13 +117,85 @@ in {
   programs.yazi = {
     enable = true;
     enableFishIntegration = true;
-    initLua = ./yazi/init.lua;
+    initLua = ./yazi.lua;
+    plugins = {
+      inherit (pkgs.yaziPlugins) smart-enter;
+      inherit (pkgs.yaziPlugins) smart-filter;
+      inherit (pkgs.yaziPlugins) smart-paste;
+      inherit (pkgs.yaziPlugins) starship;
+      inherit (pkgs.yaziPlugins) diff;
+      inherit (pkgs.yaziPlugins) compress;
+      inherit (pkgs.yaziPlugins) chmod;
+      inherit (pkgs.yaziPlugins) bookmarks;
+      inherit (pkgs.yaziPlugins) full-border;
+      inherit (pkgs.yaziPlugins) git;
+      inherit (pkgs.yaziPlugins) lazygit;
+      inherit (pkgs.yaziPlugins) jjui;
+      inherit (pkgs.yaziPlugins) lsar;
+      inherit (pkgs.yaziPlugins) rich-preview;
+    };
+    keymap = {
+      mgr.prepend_keymap = [
+        {
+          on = ["l"];
+          run = "plugin smart-enter";
+        }
+        {
+          on = ["L"];
+          run = "plugin smart-enter detatch";
+        }
+        {
+          on = ["<C-y>"];
+          run = ''
+            shell '${pkgs.dragon-drop}/bin/xdragon -a -x -T "$@"'
+          '';
+        }
+        {
+          on = ["c" "y"];
+          run = ''
+            shell '${pkgs.dragon-drop}/bin/xdragon -a -x -T "$@"'
+          '';
+        }
+        {
+          on = ["<C-g>"];
+          run = "shell 'lazygit' --confirm --block";
+        }
+        {
+          on = ["T"];
+          run = "tasks_show";
+        }
+        {
+          on = ["F"];
+          run = "plugin --sync max-preview";
+        }
+
+        {
+          on = ["C"];
+          run = "plugin chmod";
+        }
+        {
+          on = ["W"];
+          run = "plugin diff";
+        }
+        {
+          on = ["c" "a"];
+          run = "plugin compress";
+        }
+        {
+          on = ["g" "n"];
+          run = "cd ~/.nixos";
+        }
+        {
+          on = ["g" "l"];
+          run = "cd ~/.local/share";
+        }
+        {
+          on = ["g" "s"];
+          run = "cd ~/.local/share/Steam/steamapps/common";
+        }
+      ];
+    };
   };
-  home.file.".config/yazi/flavors".source = ./yazi/flavors;
-  home.file.".config/yazi/plugins".source = ./yazi/plugins;
-  home.file.".config/yazi/theme.toml".source = ./yazi/theme.toml;
-  home.file.".config/yazi/keymap.toml".text = import ./yazi/keymap.nix {inherit pkgs;};
-  home.file.".config/yazi/yazi.toml".source = ./yazi/yazi.toml;
 
   programs.btop = {
     enable = true;
