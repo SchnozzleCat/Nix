@@ -2,6 +2,18 @@
   {
     "$schema": "https://opencode.ai/config.json",
     "plugin": ["opencode-antigravity-auth@latest"],
+    "permission": {
+      "edit": "ask",
+      "doom_loop": "ask",
+      "bash": {
+        "*": "ask",
+        "ls *": "allow",
+        "grep *": "allow",
+        "git status": "allow",
+        "npm run *": "allow",
+        "npm test *": "allow",
+      }
+    },
     "provider": {
       "google": {
         "models": {
