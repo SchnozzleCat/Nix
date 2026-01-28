@@ -227,8 +227,8 @@ in {
       tabstop = 2;
       conceallevel = 1;
       expandtab = true;
-      autoindent = true;
-      smartindent = false;
+      autoindent = false;
+      smartindent = true;
       cursorline = true;
       pumheight = 10;
       laststatus = 3;

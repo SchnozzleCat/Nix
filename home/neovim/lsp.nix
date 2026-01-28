@@ -116,7 +116,7 @@
       enable = true;
       lazyLoad.settings.event = "DeferredUIEnter";
       settings = {
-        indent.enable = true;
+        # indent.enable = true;
         highlight = {
           enable = true;
         };
