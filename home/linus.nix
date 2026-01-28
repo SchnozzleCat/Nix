@@ -18,7 +18,9 @@ in {
 
   wayland.windowManager.hyprland = {
     enable = true;
-    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland.overrideAttrs (old: {
+      buildInputs = (old.buildInputs or []) ++ [pkgs.glaze pkgs.openssl];
+    });
     # plugins = with inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}; [
     #   inputs.Hyprspace.packages.${pkgs.system}.Hyprspace
     # ];
