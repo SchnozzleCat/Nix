@@ -51,7 +51,7 @@ in {
     extraPackages = with pkgs; [
       imagemagick
       # nodePackages.ijavascript
-      python312Packages.jupytext
+      (python312Packages.jupytext.overridePythonAttrs (old: {doCheck = false;}))
       nodejs
       goose-cli
       quarto
