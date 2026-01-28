@@ -149,7 +149,6 @@ in {
       kubectl
       docker-machine-kvm2
       kubernetes
-      texlive.combined.scheme-full
 
       tidal-hifi
 
