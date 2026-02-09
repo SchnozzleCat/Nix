@@ -10,7 +10,7 @@
         "ls *": "allow",
         "grep *": "allow",
         "git status": "allow",
-        "npm run *": "allow",
+        "npm run test": "allow",
         "npm test *": "allow",
       }
     },
