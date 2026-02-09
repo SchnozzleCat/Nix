@@ -16,6 +16,8 @@
     ];
   };
 
+  services.scx.scheduler = "scx_bpfland";
+
   networking.interfaces."enp8s0".wakeOnLan = {
     enable = true;
     policy = ["magic"];
