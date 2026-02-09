@@ -6,11 +6,11 @@
 }:
 with lib; let
   cfg = config.programs.godot4-mono-schnozzlecat;
-  version = "4.5.1";
+  version = "4.6.1";
   suffix = "schnozzlecat-${lib.substring 0 4 cfg.commitHash}";
-  pkg = (pkgs.callPackage ../../pkgs/godot4-mono-schnozzlecat {}).godotPackages_4_5.godot-mono;
-  export = (pkgs.callPackage ../../pkgs/godot4-mono-schnozzlecat {}).godotPackages_4_5.godot-mono.export-template;
-  export-debug = (pkgs.callPackage ../../pkgs/godot4-mono-schnozzlecat {}).godotPackages_4_5.godot-mono.export-template-debug;
+  pkg = (pkgs.callPackage ../../pkgs/godot4-mono-schnozzlecat {}).godotPackages_4_6.godot-mono;
+  export = (pkgs.callPackage ../../pkgs/godot4-mono-schnozzlecat {}).godotPackages_4_6.godot-mono.export-template;
+  export-debug = (pkgs.callPackage ../../pkgs/godot4-mono-schnozzlecat {}).godotPackages_4_6.godot-mono.export-template-debug;
 in {
   options.programs.godot4-mono-schnozzlecat = {
     enable = mkEnableOption (lib.mdDoc ''Godot4-mono SchnozzleCat'');

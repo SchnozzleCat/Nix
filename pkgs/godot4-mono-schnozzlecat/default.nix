@@ -8,7 +8,7 @@
   fetchzip,
 }: let
   mkGodotPackages = versionPrefix: let
-    attrs = (import (./. + "/${versionPrefix}/default.nix")) {inherit lib;};
+    attrs = import (./. + "/${versionPrefix}/default.nix");
     updateScript = [
       ./update.sh
       versionPrefix
@@ -46,5 +46,5 @@
       export-templates-mono-bin = godot-mono.export-templates-bin;
     };
 in {
-  godotPackages_4_5 = mkGodotPackages "4.5";
+  godotPackages_4_6 = mkGodotPackages "4.6";
 }

@@ -25,6 +25,7 @@ in {
     #   inputs.Hyprspace.packages.${pkgs.system}.Hyprspace
     # ];
   };
+
   nixpkgs.config.android_sdk.accept_license = true;
 
   services.blueman-applet.enable = true;
@@ -345,8 +346,8 @@ in {
 
   programs.godot4-mono-schnozzlecat = {
     enable = true;
-    version = "4.5.1";
-    commitHash = "89ff74479a66ee038a97f864cd85bcc70d5998fa";
+    version = "4.6";
+    commitHash = "a7e8be0cd738f3553af7e917df6a891584f2a55d";
     hash = "";
   };
 

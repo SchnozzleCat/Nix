@@ -89,10 +89,10 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
   );
 
   sdk = requireFile {
-    name = "steamworks_sdk_162.zip";
-    message = "Please download the SDK and then add it with nix-store --add-fixed sha256 steamworks_sdk_162.zip";
+    name = "steamworks_sdk_163.zip";
+    message = "Please download the SDK and then add it with nix-store --add-fixed sha256 steamworks_sdk_163.zip";
     # `sha256sum` on the path
-    sha256 = "8ff4d29dddd225718164b9279dcfde5eed1db26fee5dc49dcca4906c7f1f0c1a";
+    sha256 = "9bd1bb02e696f4b0fa541b9d64baa453d73cf919a629828950b65bb3e566b5f4";
   };
 
   arch = stdenv.hostPlatform.linuxArch;
@@ -441,41 +441,51 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
             url = "https://github.com/godotengine/godot/commit/6ce71f0fb0a091cffb6adb4af8ab3f716ad8930b.patch";
             hash = "sha256-hgAtAtCghF5InyGLdE9M+9PjPS1BWXWGKgIAyeuqkoU=";
           })
+          (fetchpatch {
+            name = "thorvg-header-fix.patch";
+            url = "https://github.com/godotengine/godot/commit/1823460787a6c1bb8e4eaf21ac2a3f90d24d5ee0.patch";
+            hash = "sha256-PcHEMXd0v2c3j6Eitxt5uWi6cD+OmsBAn3TNMNRNPog=";
+          })
           # Fix a crash in the mono test project build. It no longer seems to
           # happen in 4.4, but an existing fix couldn't be identified.
           ./CSharpLanguage-fix-crash-in-reload_assemblies-after-.patch
         ];
 
-      postPatch = ''
-        # this stops scons from hiding e.g. NIX_CFLAGS_COMPILE
-        perl -pi -e '{ $r += s:(env = Environment\(.*):\1\nenv["ENV"] = os.environ: } END { exit ($r != 1) }' SConstruct
+      postPatch =
+        ''
+          # this stops scons from hiding e.g. NIX_CFLAGS_COMPILE
+          perl -pi -e '{ $r += s:(env = Environment\(.*):\1\nenv["ENV"] = os.environ: } END { exit ($r != 1) }' SConstruct
 
-        # disable all builtin libraries by default
-        perl -pi -e '{ $r |= s:(opts.Add\(BoolVariable\("builtin_.*, )True(\)\)):\1False\2: } END { exit ($r != 1) }' SConstruct
+          # disable all builtin libraries by default
+          perl -pi -e '{ $r |= s:(opts.Add\(BoolVariable\("builtin_.*, )True(\)\)):\1False\2: } END { exit ($r != 1) }' SConstruct
 
-        substituteInPlace platform/linuxbsd/detect.py \
-          --replace-fail /usr/include/recastnavigation ${lib.escapeShellArg (lib.getDev recastnavigation)}/include/recastnavigation
+        ''
+        + lib.optionalString (lib.versionOlder version "4.6") ''
+          substituteInPlace platform/linuxbsd/detect.py \
+            --replace-fail /usr/include/recastnavigation ${lib.escapeShellArg (lib.getDev recastnavigation)}/include/recastnavigation
 
-        substituteInPlace thirdparty/glad/egl.c \
-          --replace-fail \
-            'static const char *NAMES[] = {"libEGL.so.1", "libEGL.so"}' \
-            'static const char *NAMES[] = {"${lib.getLib libGL}/lib/libEGL.so"}'
+        ''
+        + ''
+          substituteInPlace thirdparty/glad/egl.c \
+            --replace-fail \
+              'static const char *NAMES[] = {"libEGL.so.1", "libEGL.so"}' \
+              'static const char *NAMES[] = {"${lib.getLib libGL}/lib/libEGL.so"}'
 
-        substituteInPlace thirdparty/glad/gl.c \
-          --replace-fail \
-            'static const char *NAMES[] = {"libGLESv2.so.2", "libGLESv2.so"}' \
-            'static const char *NAMES[] = {"${lib.getLib libGL}/lib/libGLESv2.so"}' \
+          substituteInPlace thirdparty/glad/gl.c \
+            --replace-fail \
+              'static const char *NAMES[] = {"libGLESv2.so.2", "libGLESv2.so"}' \
+              'static const char *NAMES[] = {"${lib.getLib libGL}/lib/libGLESv2.so"}' \
 
-        substituteInPlace thirdparty/glad/gl{,x}.c \
-          --replace-fail \
-            '"libGL.so.1"' \
-            '"${lib.getLib libGL}/lib/libGL.so"'
+          substituteInPlace thirdparty/glad/gl{,x}.c \
+            --replace-fail \
+              '"libGL.so.1"' \
+              '"${lib.getLib libGL}/lib/libGL.so"'
 
-        substituteInPlace thirdparty/volk/volk.c \
-          --replace-fail \
-            'dlopen("libvulkan.so.1"' \
-            'dlopen("${lib.getLib vulkan-loader}/lib/libvulkan.so"'
-      '';
+          substituteInPlace thirdparty/volk/volk.c \
+            --replace-fail \
+              'dlopen("libvulkan.so.1"' \
+              'dlopen("${lib.getLib vulkan-loader}/lib/libvulkan.so"'
+        '';
 
       depsBuildBuild = lib.optionals (stdenv.buildPlatform != stdenv.hostPlatform) [
         buildPackages.stdenv.cc

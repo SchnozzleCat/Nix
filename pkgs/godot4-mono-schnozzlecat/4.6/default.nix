@@ -1,6 +1,6 @@
 {
-  version = "4.5.1";
-  rev = "89ff74479a66ee038a97f864cd85bcc70d5998fa";
+  version = "4.6";
+  rev = "a7e8be0cd738f3553af7e917df6a891584f2a55d";
   hash = "";
   default = {
     exportTemplatesHash = "";
