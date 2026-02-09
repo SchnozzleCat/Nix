@@ -75,6 +75,17 @@
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nixos-raspberrypi.url = "github:nvmd/nixos-raspberrypi/main";
+  };
+
+  nixConfig = {
+    extra-substituters = [
+      "https://nixos-raspberrypi.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "nixos-raspberrypi.cachix.org-1:4iMO9LXa8BqhU+Rpg6LQKiGa2lsNh/j2oiYLNOQ5sPI="
+    ];
   };
 
   outputs = {
@@ -89,6 +100,7 @@
     zjstatus,
     Hyprspace,
     nix-software-center,
+    nixos-raspberrypi,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -155,12 +167,25 @@
           ./nixos/configuration.nix
         ];
       };
-      schnozzlecat-server = nixpkgs.lib.nixosSystem {
+      schnozzlecat-server = nixos-raspberrypi.lib.nixosSystem {
         specialArgs = {
-          inherit inputs outputs;
+          inherit inputs outputs nixos-raspberrypi;
           hostname = "schnozzlecat-server";
         };
         modules = [
+          {
+            # Hardware specific configuration, see section below for a more complete
+            # list of modules
+            imports = with nixos-raspberrypi.nixosModules; [
+              raspberry-pi-5.base
+              raspberry-pi-5.page-size-16k
+              raspberry-pi-5.display-vc4
+              raspberry-pi-5.bluetooth
+            ];
+          }
+          {
+            boot.loader.raspberry-pi.bootloader = "kernel";
+          }
           # > Our main nixos configuration file <
           ./nixos/schnozzlecat-server.nix
         ];

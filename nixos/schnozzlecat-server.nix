@@ -208,6 +208,7 @@ in {
   environment.systemPackages = with pkgs; [
     git
     cloudflared
+    neovim
   ];
 
   networking.hostName = "schnozzlecat-server";
