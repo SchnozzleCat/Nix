@@ -17,7 +17,7 @@
   # Boot
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelPackages = pkgs.linuxPackages;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.kernel.sysctl = {
     "vm.max_map_count" = 16777216;
     "fs.file-max" = 524288;
