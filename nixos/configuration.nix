@@ -41,6 +41,12 @@
   networking.networkmanager.enable = true;
   networking.firewall = {
     enable = true;
+    allowedTCPPorts = [
+      7777
+    ];
+    allowedUDPPorts = [
+      7777
+    ];
   };
 
   # networking.wg-quick.interfaces.proton-de350.configFile = "/home/linus/.nixos/secrets/wireguard/proton-de350.conf";
