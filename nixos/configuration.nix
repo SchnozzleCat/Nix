@@ -162,6 +162,11 @@
       xorg.libXi
       xorg.libXfixes
       xorg.libxcb.out
+      xorg.libXScrnSaver
+      xorg.libXfixes
+      xorg.libxshmfence
+      xorg.libXtst
+      libnotify
       libxkbcommon
       alsa-lib
       mono
