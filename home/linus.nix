@@ -103,6 +103,7 @@ in {
       slack
       butt
       vlc
+      jellyfin-desktop
 
       android-studio
       jdk17
