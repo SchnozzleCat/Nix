@@ -83,13 +83,13 @@ in {
     nix-index
 
     # Terminal
+    fastfetch
     p7zip
     eza
     fd
     television
     bat
     dust
-    neofetch
     cbonsai
     pipes
     pistol
@@ -113,6 +113,7 @@ in {
 
   programs.yazi = {
     enable = true;
+    shellWrapperName = "yy";
     enableFishIntegration = true;
     initLua = ./yazi.lua;
     plugins = {

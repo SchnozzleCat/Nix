@@ -1,8 +1,7 @@
 # This file defines overlays
-{ inputs, ... }:
-{
+{inputs, ...}: {
   # This one brings our custom packages from the 'pkgs' directory
-  additions = final: _prev: import ../pkgs { pkgs = final; };
+  additions = final: _prev: import ../pkgs {pkgs = final;};
 
   # This one contains whatever you want to overlay
   # You can change versions, add patches, set compilation flags, anything really.
@@ -12,10 +11,6 @@
     # ...
     # });
     utillinux = prev.util-linux;
-    glaze = inputs.nixpkgs-glaze.legacyPackages.${final.system}.glaze;
-    hyprland = prev.hyprland.overrideAttrs (old: {
-      buildInputs = (old.buildInputs or []) ++ [ final.glaze final.openssl ];
-    });
   };
 
   # When applied, the unstable nixpkgs set (declared in the flake inputs) will

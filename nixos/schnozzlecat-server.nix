@@ -174,7 +174,6 @@ in {
     fsType = "exfat";
   };
 
-
   networking.wireguard.interfaces = {
     wg0 = {
       ips = ["10.0.0.1/24"];
@@ -240,7 +239,6 @@ in {
     git
     cloudflared
     neovim
-    neofetch
     wireguard-ui
   ];
 

@@ -151,21 +151,21 @@
       libGL
       speechd
       libgbm
-      xorg.libXcomposite
-      xorg.libXdamage
-      xorg.libX11
-      xorg.libXcursor
-      xorg.libXinerama
-      xorg.libXext
-      xorg.libXrandr
-      xorg.libXrender
-      xorg.libXi
-      xorg.libXfixes
-      xorg.libxcb.out
-      xorg.libXScrnSaver
-      xorg.libXfixes
-      xorg.libxshmfence
-      xorg.libXtst
+      libxcomposite
+      libxdamage
+      libx11
+      libxcursor
+      libxinerama
+      libxext
+      libxrandr
+      libxrender
+      libxi
+      libxfixes
+      libxcb.out
+      libxscrnsaver
+      libxfixes
+      libxshmfence
+      libxtst
       libnotify
       libxkbcommon
       alsa-lib
@@ -332,10 +332,10 @@
     package = pkgs.steam.override {
       extraPkgs = pkgs:
         with pkgs; [
-          xorg.libXcursor
-          xorg.libXi
-          xorg.libXinerama
-          xorg.libXScrnSaver
+          libxcursor
+          libxi
+          libxinerama
+          libxscrnsaver
           libpng
           libpulseaudio
           libvorbis

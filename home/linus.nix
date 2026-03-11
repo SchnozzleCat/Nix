@@ -18,9 +18,6 @@ in {
 
   wayland.windowManager.hyprland = {
     enable = true;
-    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland.overrideAttrs (old: {
-      buildInputs = (old.buildInputs or []) ++ [pkgs.glaze pkgs.openssl];
-    });
     # plugins = with inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}; [
     #   inputs.Hyprspace.packages.${pkgs.system}.Hyprspace
     # ];
@@ -148,7 +145,7 @@ in {
       wtype
       git-crypt
       bruno
-      xfce.thunar
+      thunar
       minikube
       kubectl
       kubernetes
@@ -162,13 +159,13 @@ in {
       protontricks
       (lutris.override {
         extraPkgs = pkgs: [
-          wineWowPackages.stable
+          wineWow64Packages.stable
           winetricks
           gamescope
           mesa
         ];
       })
-      (wineWowPackages.full.override {
+      (wineWow64Packages.full.override {
         wineRelease = "staging";
         mingwSupport = true;
       })
@@ -182,7 +179,7 @@ in {
 
       # Misc
       obsidian
-      helvum
+      crosspipe
       easyeffects
       warpinator
       vesktop
@@ -441,7 +438,7 @@ in {
 
   home.file.".config/hypr/hyprpaper.conf".text = import ./hyprpaper.nix;
 
-  home.file.".config/hypr/pyprland.toml".text = ''
+  home.file.".config/pypr/config.toml".text = ''
     [pyprland]
     plugins = ["scratchpads", "expose", "magnify"]
 

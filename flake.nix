@@ -7,7 +7,6 @@
     # You can access packages and modules from different nixpkgs revs
     # at the same time. Here's an working example:
     nixpkgs-master.url = "github:nixos/nixpkgs/master";
-    nixpkgs-glaze.url = "github:nixos/nixpkgs/769af1cc90c29069f644425b5f259dba88bfad18";
     # Also see the 'unstable-packages' overlay at 'overlays/default.nix'.
 
     programs-db.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
