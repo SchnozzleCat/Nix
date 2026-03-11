@@ -1,3 +1,4 @@
+''
 splash = false
 
 wallpaper {
@@ -5,3 +6,4 @@ wallpaper {
     path = ${../secrets/wallpapers/abstract1.jpg}
     fit_mode = cover
 }
+''

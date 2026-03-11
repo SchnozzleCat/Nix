@@ -439,7 +439,7 @@ in {
 
   services.network-manager-applet.enable = true;
 
-  home.file.".config/hypr/hyprpaper.conf".source = ./hyprpaper.conf;
+  home.file.".config/hypr/hyprpaper.conf".text = import ./hyprpaper.nix;
 
   home.file.".config/hypr/pyprland.toml".text = ''
     [pyprland]
