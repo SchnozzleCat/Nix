@@ -79,15 +79,6 @@
     nixos-raspberrypi.url = "github:nvmd/nixos-raspberrypi/main";
   };
 
-  nixConfig = {
-    extra-substituters = [
-      "https://nixos-raspberrypi.cachix.org"
-    ];
-    extra-trusted-public-keys = [
-      "nixos-raspberrypi.cachix.org-1:4iMO9LXa8BqhU+Rpg6LQKiGa2lsNh/j2oiYLNOQ5sPI="
-    ];
-  };
-
   outputs = {
     self,
     nixpkgs,
@@ -188,6 +179,148 @@
           }
           # > Our main nixos configuration file <
           ./nixos/schnozzlecat-server.nix
+        ];
+      };
+      rpi5 = nixos-raspberrypi.lib.nixosSystemFull {
+        specialArgs = inputs;
+        modules = [
+          inputs.home-manager.nixosModules.home-manager
+          {
+            hardware.raspberry-pi.config = {
+              all = {
+                # [all] conditional filter, https://www.raspberrypi.com/documentation/computers/config_txt.html#conditional-filters
+
+                options = {
+                  experimental-features = {
+                    enable = true;
+                    value = "nix-command flakes";
+                  };
+
+                  # https://www.raspberrypi.com/documentation/computers/config_txt.html#enable_uart
+                  # in conjunction with `console=serial0,115200` in kernel command line (`cmdline.txt`)
+                  # creates a serial console, accessible using GPIOs 14 and 15 (pins
+                  #  8 and 10 on the 40-pin header)
+                  enable_uart = {
+                    enable = true;
+                    value = true;
+                  };
+                  # https://www.raspberrypi.com/documentation/computers/config_txt.html#uart_2ndstage
+                  # enable debug logging to the UART, also automatically enables
+                  # UART logging in `start.elf`
+                  uart_2ndstage = {
+                    enable = true;
+                    value = true;
+                  };
+                };
+
+                # Base DTB parameters
+                # https://github.com/raspberrypi/linux/blob/a1d3defcca200077e1e382fe049ca613d16efd2b/arch/arm/boot/dts/overlays/README#L132
+                base-dt-params = {
+                  # https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#enable-pcie
+                  pciex1 = {
+                    enable = true;
+                    value = "on";
+                  };
+                  # PCIe Gen 3.0
+                  # https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#pcie-gen-3-0
+                  pciex1_gen = {
+                    enable = true;
+                    value = "3";
+                  };
+                };
+              };
+            };
+          }
+          (
+            {
+              config,
+              pkgs,
+              lib,
+              nixos-raspberrypi,
+              ...
+            }: {
+              imports = with nixos-raspberrypi.nixosModules; [
+                # Hardware configuration
+                raspberry-pi-5.base
+                raspberry-pi-5.display-vc4
+              ];
+            }
+          )
+          (
+            {
+              config,
+              pkgs,
+              ...
+            }: {
+              boot.loader.raspberryPi.bootloader = "kernel";
+              fileSystems = {
+                "/boot/firmware" = {
+                  device = "/dev/disk/by-label/FIRMWARE";
+                  fsType = "vfat";
+                  options = [
+                    "noatime"
+                    "noauto"
+                    "x-systemd.automount"
+                    "x-systemd.idle-timeout=1min"
+                  ];
+                };
+                "/" = {
+                  device = "/dev/disk/by-label/NIXOS_SD";
+                  fsType = "ext4";
+                  options = ["noatime"];
+                };
+              };
+            }
+          )
+          ({
+            config,
+            pkgs,
+            ...
+          }: {
+            imports = [
+              ./nixos/schnozzlecat-server.nix
+              ./home/linus-server.nix
+            ];
+            system.nixos.tags = let
+              cfg = config.boot.loader.raspberryPi;
+            in [
+              "raspberry-pi-${cfg.variant}"
+              cfg.bootloader
+              config.boot.kernelPackages.kernel.version
+            ];
+          })
+          {
+            boot.tmp.useTmpfs = true;
+          }
+
+          # Advanced: Use non-default kernel from kernel-firmware bundle
+          (
+            {
+              config,
+              pkgs,
+              lib,
+              ...
+            }: let
+              kernelBundle = pkgs.linuxAndFirmware.v6_6_31;
+            in {
+              boot = {
+                loader.raspberryPi.firmwarePackage = kernelBundle.raspberrypifw;
+                kernelPackages = kernelBundle.linuxPackages_rpi5;
+              };
+
+              nixpkgs.overlays = lib.mkAfter [
+                (self: super: {
+                  # This is used in (modulesPath + "/hardware/all-firmware.nix") when at least
+                  # enableRedistributableFirmware is enabled
+                  # I know no easier way to override this package
+                  inherit (kernelBundle) raspberrypiWirelessFirmware;
+                  # Some derivations want to use it as an input,
+                  # e.g. raspberrypi-dtbs, omxplayer, sd-image-* modules
+                  inherit (kernelBundle) raspberrypifw;
+                })
+              ];
+            }
+          )
         ];
       };
     };
