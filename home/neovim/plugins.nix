@@ -80,62 +80,62 @@ in {
         lsp.signature.enabled = false;
       };
     };
-    otter = {
-      enable = true;
-      settings = {
-        buffers = {
-          write_to_disk = true;
-          set_filetype = true;
-        };
-        extensions = {
-          asm = "asm";
-          bash = "sh";
-          bib = "bib";
-          c = "c";
-          clojure = "clj";
-          cpp = "cpp";
-          cs = "cs";
-          css = "css";
-          dot = "dot";
-          elixir = "ex";
-          fish = "fish";
-          fsharp = "fs";
-          gleam = "gleam";
-          go = "go";
-          haskell = "hs";
-          htmldjango = "htmldjango";
-          html = "html";
-          javascript = "js";
-          json = "json";
-          julia = "jl";
-          lua = "lua";
-          markdown = "md";
-          nim = "nim";
-          nix = "nix";
-          ocaml = "ml";
-          ojs = "js";
-          php = "php";
-          pyodide = "py";
-          python = "py";
-          roc = "roc";
-          r = "R";
-          ruby = "rb";
-          rust = "rs";
-          sh = "sh";
-          sql = "sql";
-          svelte = "svelte";
-          swift = "swift";
-          tex = "tex";
-          typescript = "ts";
-          typst = "typ";
-          vim = "vim";
-          webc = "webc";
-          webr = "R";
-          yaml = "yml";
-          zig = "zig";
-        };
-      };
-    };
+    # otter = {
+    #   enable = true;
+    #   settings = {
+    #     buffers = {
+    #       write_to_disk = true;
+    #       set_filetype = true;
+    #     };
+    #     extensions = {
+    #       asm = "asm";
+    #       bash = "sh";
+    #       bib = "bib";
+    #       c = "c";
+    #       clojure = "clj";
+    #       cpp = "cpp";
+    #       cs = "cs";
+    #       css = "css";
+    #       dot = "dot";
+    #       elixir = "ex";
+    #       fish = "fish";
+    #       fsharp = "fs";
+    #       gleam = "gleam";
+    #       go = "go";
+    #       haskell = "hs";
+    #       htmldjango = "htmldjango";
+    #       html = "html";
+    #       javascript = "js";
+    #       json = "json";
+    #       julia = "jl";
+    #       lua = "lua";
+    #       markdown = "md";
+    #       nim = "nim";
+    #       nix = "nix";
+    #       ocaml = "ml";
+    #       ojs = "js";
+    #       php = "php";
+    #       pyodide = "py";
+    #       python = "py";
+    #       roc = "roc";
+    #       r = "R";
+    #       ruby = "rb";
+    #       rust = "rs";
+    #       sh = "sh";
+    #       sql = "sql";
+    #       svelte = "svelte";
+    #       swift = "swift";
+    #       tex = "tex";
+    #       typescript = "ts";
+    #       typst = "typ";
+    #       vim = "vim";
+    #       webc = "webc";
+    #       webr = "R";
+    #       yaml = "yml";
+    #       zig = "zig";
+    #     };
+    #   };
+    # };
     blink-cmp = {
       enable = true;
       settings = {
@@ -351,7 +351,7 @@ in {
     fastaction.enable = true;
     treesitter-textobjects.enable = true;
     sidekick = {
-      enable = true;
+      # enable = true;
       package = pkgs.vimPlugins.sidekick-nvim.overrideAttrs (old: {
         src = pkgs.fetchFromGitHub {
           owner = "folke";
@@ -379,7 +379,7 @@ in {
     };
     # lsp-signature.enable = true;
     copilot-lua = {
-      enable = true;
+      # enable = true;
       settings = {
         suggestion = {
           enabled = true;
