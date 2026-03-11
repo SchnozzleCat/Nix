@@ -7,7 +7,7 @@
 in {
   imports = [
     # Include the results of the hardware scan.
-    ./hardware-configuration-schnozzlecat-server.nix
+    # ./hardware-configuration-schnozzlecat-server.nix
   ];
 
   boot.kernel.sysctl."net.ipv4.ip_forward" = 1;
@@ -83,6 +83,7 @@ in {
         volumes = [
           "/var/lib/jellyfin/config:/config"
           "/var/lib/jellyfin/cache:/cache"
+          "/mnt/raid/media:/media"
         ];
         ports = [
           "8096:8096/tcp"
@@ -137,7 +138,7 @@ in {
     enable = true;
     enableIPv6 = true;
     externalInterface = "end0";
-    # internalInterfaces = [ "wg0" ];
+    internalInterfaces = ["wg0" "wg1"];
   };
   # Open ports in the firewall
   networking.firewall = {
@@ -149,6 +150,7 @@ in {
     allowedUDPPorts = [
       53
       51111
+      51112
     ];
   };
 
@@ -172,29 +174,58 @@ in {
     fsType = "exfat";
   };
 
-  # networking.wireguard.interfaces = {
-  #   wg0 = {
-  #     ips = [ "10.0.0.1/24" ];
-  #     listenPort = 51111;
-  #     privateKeyFile = "/home/linus/wireguard-keys/private.key";
-  #     postSetup = ''
-  #       ${pkgs.iptables}/bin/iptables -A FORWARD -i wg0 -j ACCEPT
-  #       ${pkgs.iptables}/bin/iptables -A FORWARD -o wg0 -j ACCEPT
-  #       ${pkgs.iptables}/bin/iptables -t nat -A POSTROUTING -s 10.0.0.0/24 -o end0 -j MASQUERADE
-  #     '';
-  #     postShutdown = ''
-  #       ${pkgs.iptables}/bin/iptables -D FORWARD -i wg0 -j ACCEPT
-  #       ${pkgs.iptables}/bin/iptables -D FORWARD -o wg0 -j ACCEPT
-  #       ${pkgs.iptables}/bin/iptables -t nat -D POSTROUTING -s 10.0.0.0/24 -o end0 -j MASQUERADE
-  #     '';
-  #     peers = [
-  #       {
-  #         publicKey = "Bsd/uDa5T6AZbdwUYjDJkI2YQdph/Mj5f0t8cnyJdxo=";
-  #         allowedIPs = [ "10.0.0.2/32" ];
-  #       }
-  #     ];
-  #   };
-  # };
+
+  networking.wireguard.interfaces = {
+    wg0 = {
+      ips = ["10.0.0.1/24"];
+      listenPort = 51111;
+      privateKeyFile = "/home/linus/wireguard-keys/private.key";
+      postSetup = ''
+        ${pkgs.iptables}/bin/iptables -A FORWARD -i wg0 -j ACCEPT
+        ${pkgs.iptables}/bin/iptables -A FORWARD -o wg0 -j ACCEPT
+        ${pkgs.iptables}/bin/iptables -t nat -A POSTROUTING -s 10.0.0.0/24 -o end0 -j MASQUERADE
+      '';
+      postShutdown = ''
+        ${pkgs.iptables}/bin/iptables -D FORWARD -i wg0 -j ACCEPT
+        ${pkgs.iptables}/bin/iptables -D FORWARD -o wg0 -j ACCEPT
+        ${pkgs.iptables}/bin/iptables -t nat -D POSTROUTING -s 10.0.0.0/24 -o end0 -j MASQUERADE
+      '';
+      peers = [
+        {
+          publicKey = "Bsd/uDa5T6AZbdwUYjDJkI2YQdph/Mj5f0t8cnyJdxo=";
+          allowedIPs = ["10.0.0.2/32"];
+        }
+      ];
+    };
+    wg1 = {
+      ips = ["10.1.0.1/24"];
+      listenPort = 51112;
+      privateKeyFile = "/home/linus/wireguard-keys/jellyfin.key";
+
+      # No NAT or forwarding needed, since traffic is local to the Pi
+      postSetup = ''
+        # Optional: allow only port 8080
+        ${pkgs.iptables}/bin/iptables -A INPUT -i wg1 -p udp --dport 51112 -j ACCEPT
+        ${pkgs.iptables}/bin/iptables -A INPUT -i wg1 -p tcp --dport 8096 -j ACCEPT
+        ${pkgs.iptables}/bin/iptables -A INPUT -i wg1 -j DROP
+        # Forward WireGuard traffic to localhost where Jellyfin listens
+        ${pkgs.iptables}/bin/iptables -t nat -A PREROUTING -i wg1 -p tcp --dport 8096 -j DNAT --to-destination 127.0.0.1:8096
+      '';
+      postShutdown = ''
+        ${pkgs.iptables}/bin/iptables -D INPUT -i wg1 -p udp --dport 51112 -j ACCEPT
+        ${pkgs.iptables}/bin/iptables -D INPUT -i wg1 -p tcp --dport 8096 -j ACCEPT
+        ${pkgs.iptables}/bin/iptables -D INPUT -i wg1 -j DROP
+        ${pkgs.iptables}/bin/iptables -t nat -D PREROUTING -i wg1 -p tcp --dport 8096 -j DNAT --to-destination 127.0.0.1:8096
+      '';
+
+      peers = [
+        {
+          publicKey = "261oRRpK/yeyXfcB34djnKVMfyLlk3pMyL/TNaGa4F4=";
+          allowedIPs = ["10.1.0.2/32"];
+        }
+      ];
+    };
+  };
 
   # This will additionally add your inputs to the system's legacy channels
   # Making legacy nix commands consistent as well, awesome!
@@ -209,6 +240,8 @@ in {
     git
     cloudflared
     neovim
+    neofetch
+    wireguard-ui
   ];
 
   networking.hostName = "schnozzlecat-server";
