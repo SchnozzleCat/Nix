@@ -39,6 +39,11 @@ in ''
     match:class = com.saivert.pwvucontrol
     float = on
   }
+  windowrule {
+    name = special:godot-game
+    match:initial_class = LemonBattery
+    float = on
+  }
 
   bind = $mainMod,s,exec,pwvucontrol
   windowrule {
