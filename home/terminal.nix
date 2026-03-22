@@ -67,6 +67,10 @@ in {
 
   home.file.".config/opencode/config.json".text = import ./opencode-config.nix;
 
+  programs.claude-code = {
+    enable = true;
+  };
+
   programs.opencode = {
     enable = true;
   };
