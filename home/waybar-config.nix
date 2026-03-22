@@ -1,5 +1,4 @@
-{ pkgs }:
-{
+{pkgs}: {
   mainBar = {
     id = "top";
     height = 0;
@@ -10,12 +9,9 @@
     modules-right = [
       "clock"
       "pulseaudio"
-      "backlight"
-      "battery"
-      "custom/wattage"
       "tray"
     ];
-    modules-center = [ "hyprland/workspaces" ];
+    modules-center = ["hyprland/workspaces"];
     modules-left = [
       "disk"
       "memory"
