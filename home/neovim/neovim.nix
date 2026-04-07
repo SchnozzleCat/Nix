@@ -41,7 +41,7 @@ in {
   home.packages = with pkgs; [
     netcoredbg
     gh
-    postgresql_16
+    postgresql_17
   ];
 
   programs.nixvim = {
@@ -53,7 +53,6 @@ in {
       # nodePackages.ijavascript
       (python312Packages.jupytext.overridePythonAttrs (old: {doCheck = false;}))
       nodejs
-      goose-cli
       quarto
       typescript
       jq
@@ -68,10 +67,10 @@ in {
       imv
       (buildDotnetGlobalTool {
         pname = "EasyDotnet";
-        version = "2.3.60";
+        version = "3.0.9";
         executables = "dotnet-easydotnet";
 
-        nugetHash = "sha256-HQmAfN0GUxon1S0wq/sEOAAPXOpGgEnzoapKH5P1jjc=";
+        nugetHash = "sha256-b9E+ziyzKgglK2dqWjy7+BwaNFju/7TNXIKROUtT6GU=";
 
         meta = with lib; {
           description = "C# JSON-RPC server powering the easy-dotnet.nvim Neovim plugin";
@@ -95,9 +94,6 @@ in {
           )
         ];
       })
-    ];
-    extraLuaPackages = ps: [
-      pkgs.luajitPackages.magick
     ];
     extraPython3Packages = python-pkgs:
       with python-pkgs; [

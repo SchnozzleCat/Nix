@@ -90,7 +90,6 @@ in {
       blueman
       hyprshade
       csharprepl
-      goose-cli
 
       # Web
       qbittorrent

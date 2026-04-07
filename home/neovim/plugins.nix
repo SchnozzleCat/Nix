@@ -13,10 +13,6 @@
     then {__raw = spec.__raw;}
     else builtins.removeAttrs ({__unkeyed-1 = plugin;} // spec) [];
 
-  neotest-old = import (builtins.fetchTarball {
-    url = "https://github.com/nixos/nixpkgs/archive/0a1284dba699a615315997d15b49e687eac3492f.tar.gz";
-    sha256 = "1zna95ji1fgfinnmxv4k4j64mpg4nhi7fgmb9q2h3sbphdx6x22v";
-  }) {system = pkgs.system;};
 in {
   programs.nixvim.plugins = {
     lz-n = {
@@ -291,7 +287,6 @@ in {
     };
     neotest = {
       enable = true;
-      package = neotest-old.pkgs.vimPlugins.neotest;
       adapters = {
         java.enable = true;
         python.enable = true;
