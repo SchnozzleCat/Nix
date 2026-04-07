@@ -107,6 +107,7 @@ in {
       # Dev
       # unityhub
       aseprite
+      sprite-illuminator
       devbox
       zed-editor
       (
