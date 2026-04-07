@@ -4,7 +4,6 @@
 }:
 # kdl
 ''
-  pane_frames false
   show_startup_tips false
   on_force_close "quit"
   keybinds clear-defaults=true {
@@ -24,7 +23,8 @@
       bind "Ctrl Alt u" { GoToPreviousTab; }
       bind "Ctrl Alt i" { GoToNextTab; }
       bind "Ctrl Alt d" { Detach; }
-      bind "Ctrl Alt r" { SwitchToMode "RenameTab"; TabNameInput 0; }
+      bind "Ctrl Alt r" { SwitchToMode "RenamePane"; PaneNameInput 0; }
+      bind "Ctrl Alt R" { SwitchToMode "RenameTab"; TabNameInput 0; }
       bind "Ctrl Alt y" {
         LaunchOrFocusPlugin "zellij:session-manager" {
           floating true
@@ -33,6 +33,9 @@
       }
     }
     renametab {
+      bind "Esc" { SwitchToMode "Normal"; }
+    }
+    renamepane {
       bind "Esc" { SwitchToMode "Normal"; }
     }
   }
