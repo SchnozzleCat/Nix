@@ -294,29 +294,63 @@ in {
       line_break = {
         disabled = true;
       };
-      # custom.jj = {
-      #   command = ''
-      #     jj log -r@ -n1 --ignore-working-copy --no-graph --color always  -T '
-      #       separate(" ",
-      #         bookmarks.map(|x| truncate_end(10, x.name(), "…")).join(" "),
-      #         tags.map(|x| truncate_end(10, x.name(), "…")).join(" "),
-      #         surround("\"", "\"", truncate_end(24, description.first_line(), "…")),
-      #         if(conflict, "conflict"),
-      #         if(divergent, "divergent"),
-      #         if(hidden, "hidden"),
-      #       )
-      #     '
-      #   '';
-      #
-      #   when = "jj root";
-      #   symbol = "jj";
-      # };
-      # custom.jjstate = {
-      #   when = "jj root";
-      #   command = ''
-      #     jj log -r@ -n1 --no-graph -T "" --stat | tail -n1 | sd "(\d+) files? changed, (\d+) insertions?\(\+\), (\d+) deletions?\(-\)" ' ''\${1}m ''\${2}+ ''\${3}-' | sd " 0." ""
-      #   '';
-      # };
+      custom.jj = {
+        description = "The current jj status";
+        when = "jj --ignore-working-copy root";
+        symbol = "🥋 ";
+        command = ''
+          jj log --revisions @ --no-graph --ignore-working-copy --color always --limit 1 --template '
+            separate(" ",
+              change_id.shortest(4),
+              bookmarks,
+              "|",
+              concat(
+                if(conflict, "💥"),
+                if(divergent, "🚧"),
+                if(hidden, "👻"),
+                if(immutable, "🔒"),
+              ),
+              raw_escape_sequence("\x1b[1;32m") ++ if(empty, "(empty)"),
+              raw_escape_sequence("\x1b[1;32m") ++ coalesce(
+                truncate_end(29, description.first_line(), "…"),
+                "(no description set)",
+              ) ++ raw_escape_sequence("\x1b[0m"),
+            )
+          '
+        '';
+      };
+
+      git_status.disabled = true;
+      custom.git_status = {
+        when = "! jj --ignore-working-copy root";
+        command = "starship module git_status";
+        style = "";
+        description = "Only show git_status if we're not in a jj repo";
+      };
+
+      git_commit.disabled = true;
+      custom.git_commit = {
+        when = "! jj --ignore-working-copy root";
+        command = "starship module git_commit";
+        style = "";
+        description = "Only show git_commit if we're not in a jj repo";
+      };
+
+      git_metrics.disabled = true;
+      custom.git_metrics = {
+        when = "! jj --ignore-working-copy root";
+        command = "starship module git_metrics";
+        description = "Only show git_metrics if we're not in a jj repo";
+        style = "";
+      };
+
+      git_branch.disabled = true;
+      custom.git_branch = {
+        when = "! jj --ignore-working-copy root";
+        command = "starship module git_branch";
+        description = "Only show git_branch if we're not in a jj repo";
+        style = "";
+      };
     };
   };
 
