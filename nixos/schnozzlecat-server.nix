@@ -264,7 +264,7 @@ in {
         "wheel"
         "docker"
       ];
-      initialPassword = "password";
+      hashedPassword = "$6$0rMCuSINeEd6ATar$d1xHn4kxrVfL359Pn.F8Ig8B.u5nCg5xE35b7qiOBfEK5ZOCP09RV/sad8HqIzGn7s8d118PLE4ydQLcxKIYv.";
       createHome = true;
       home = "/home/linus";
       openssh.authorizedKeys.keys = [
