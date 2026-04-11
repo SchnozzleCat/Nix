@@ -373,6 +373,7 @@ in {
   home.file.".config/zellij/layouts/default.kdl".text = import ./zellij-default.nix {
     inherit pkgs inputs;
   };
+  home.file.".config/zellij/plugins/zellij-pane-tracker.wasm".source = "${pkgs.zellij-pane-tracker}/bin/zellij-pane-tracker.wasm";
 
   programs.zoxide = {
     enable = true;

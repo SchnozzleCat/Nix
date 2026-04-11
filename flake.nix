@@ -76,6 +76,11 @@
     };
 
     nixos-raspberrypi.url = "github:nvmd/nixos-raspberrypi/main";
+
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -333,6 +338,7 @@
           system = "x86_64-linux";
           config.allowUnfree = true;
           overlays = [
+            self.overlays.rust-overlay
             self.overlays.additions
             self.overlays.modifications
             self.overlays.unstable-packages
@@ -357,6 +363,7 @@
           system = "x86_64-linux";
           config.allowUnfree = true;
           overlays = [
+            self.overlays.rust-overlay
             self.overlays.additions
             self.overlays.modifications
             self.overlays.unstable-packages

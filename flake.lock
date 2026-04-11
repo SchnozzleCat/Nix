@@ -1178,12 +1178,33 @@
         "nixpkgs-master": "nixpkgs-master",
         "nixvim": "nixvim",
         "programs-db": "programs-db",
+        "rust-overlay": "rust-overlay",
         "spicetify-nix": "spicetify-nix",
         "zen-browser": "zen-browser",
         "zjstatus": "zjstatus"
       }
     },
     "rust-overlay": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1775531562,
+        "narHash": "sha256-G83GDxQo6lqO5aeTSD5RFLhnh2g6DzJpSvSju2EjjrQ=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "d8b1b209203665924c81eabf750492530754f27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
+      }
+    },
+    "rust-overlay_2": {
       "inputs": {
         "nixpkgs": [
           "zjstatus",
@@ -1432,7 +1453,7 @@
         "nixpkgs": [
           "nixpkgs"
         ],
-        "rust-overlay": "rust-overlay"
+        "rust-overlay": "rust-overlay_2"
       },
       "locked": {
         "lastModified": 1773119656,

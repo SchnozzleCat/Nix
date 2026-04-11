@@ -6,6 +6,9 @@
 ''
   show_startup_tips false
   on_force_close "quit"
+  load_plugins {
+    "file:~/.config/zellij/plugins/zellij-pane-tracker.wasm"
+  }
   keybinds clear-defaults=true {
     shared_except "locked" {
       bind "Ctrl Alt n" { NewPane; }

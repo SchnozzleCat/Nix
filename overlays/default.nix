@@ -1,5 +1,7 @@
 # This file defines overlays
 {inputs, ...}: {
+  rust-overlay = inputs.rust-overlay.overlays.default;
+
   # This one brings our custom packages from the 'pkgs' directory
   additions = final: _prev: import ../pkgs {pkgs = final;};
 
