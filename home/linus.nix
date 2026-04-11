@@ -444,12 +444,7 @@ in {
     plugins = ["scratchpads", "expose", "magnify"]
 
     [scratchpads.term]
-    command = "foot -a foot-float -- zellij"
-    animation = "fromBottom"
-    margin = 50
-
-    [scratchpads.ncspot]
-    command = "sleep 3 && foot -a foot-ncspot ncspot"
+    command = "alacritty --class terminal-float -e zellij"
     animation = "fromBottom"
     margin = 50
   '';
@@ -551,45 +546,53 @@ in {
     ];
   };
 
-  programs.foot = {
+  programs.alacritty = {
     enable = true;
+    theme = "catppuccin_mocha";
     settings = {
-      main = {
-        font = "JetBrainsMono Nerd Font:size=10";
-        gamma-correct-blending = "no";
-      };
-      cursor = {
-        color = "E7EAEE 33394a";
-      };
-      colors = {
-        alpha = 0.8;
-        foreground = colors.base07;
-        background = colors.base00;
-        selection-foreground = colors.base07;
-        selection-background = "33394a";
-        urls = "8FEBD3";
-        regular0 = "171b20";
-        regular1 = "F97791";
-        regular2 = "38FFA5";
-        regular3 = "FFE77A";
-        regular4 = "5CCEFF";
-        regular5 = "FFB3EC";
-        regular6 = "0AE7FF";
-        regular7 = "a9b1d6";
-
-        bright0 = "414868";
-        bright1 = "F97791";
-        bright2 = "38FFA5";
-        bright3 = "FFE77A";
-        bright4 = "5CCEFF";
-        bright5 = "FFB3EC";
-        bright6 = "0AE7FF";
-        bright7 = "E7EAEE";
-        "16" = "FFA064";
-        "17" = "F73F64";
-      };
+      font.size = 10;
     };
   };
+
+  # programs.foot = {
+  #   enable = true;
+  #   settings = {
+  #     main = {
+  #       font = "JetBrainsMono Nerd Font:size=10";
+  #       gamma-correct-blending = "no";
+  #     };
+  #     cursor = {
+  #       color = "E7EAEE 33394a";
+  #     };
+  #     colors = {
+  #       alpha = 0.8;
+  #       foreground = colors.base07;
+  #       background = colors.base00;
+  #       selection-foreground = colors.base07;
+  #       selection-background = "33394a";
+  #       urls = "8FEBD3";
+  #       regular0 = "171b20";
+  #       regular1 = "F97791";
+  #       regular2 = "38FFA5";
+  #       regular3 = "FFE77A";
+  #       regular4 = "5CCEFF";
+  #       regular5 = "FFB3EC";
+  #       regular6 = "0AE7FF";
+  #       regular7 = "a9b1d6";
+  #
+  #       bright0 = "414868";
+  #       bright1 = "F97791";
+  #       bright2 = "38FFA5";
+  #       bright3 = "FFE77A";
+  #       bright4 = "5CCEFF";
+  #       bright5 = "FFB3EC";
+  #       bright6 = "0AE7FF";
+  #       bright7 = "E7EAEE";
+  #       "16" = "FFA064";
+  #       "17" = "F73F64";
+  #     };
+  #   };
+  # };
 
   programs.fuzzel = {
     enable = true;
@@ -601,7 +604,7 @@ in {
         icon-theme = "Tela-circle-dark";
         line-height = 25;
         fields = "name,generic,comment,categories,filename,keywords";
-        terminal = "foot -e";
+        terminal = "alacritty -e";
         prompt = "       ";
         layer = "overlay";
       };

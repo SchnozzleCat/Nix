@@ -30,7 +30,7 @@ in ''
   bind = $mainMod,w,exec,pypr toggle term
   windowrule {
     name = special:scratch_term
-    match:class = foot-float
+    match:class = terminal-float
     float = on
     size = 75% 60%
     move = 12% 200%
@@ -50,15 +50,6 @@ in ''
   windowrule {
     name = special:scratch_volume
     match:class = pwvucontrol
-    float = on
-    size = 40% 90%
-    move = 200% 5%
-  }
-
-  bind = $mainMod,m,exec,pypr toggle ncspot
-  windowrule {
-    name = special:scratch_ncspot
-    match:class = foot-ncspot
     float = on
     size = 40% 90%
     move = 200% 5%
@@ -165,10 +156,10 @@ in ''
   # See https://wiki.hyprland.org/Configuring/Keywords/ for more
 
   # Example binds, see https://wiki.hyprland.org/Configuring/Binds/ for more
-  bind = $mainMod, a, exec, foot -- zellij
-  bind = $mainModShift, a, exec, foot
-  bind = $mainMod, n, exec, [float;size 60% 60%;center] foot ${pkgs.master.yazi}/bin/yazi
-  bind = $mainMod, z, exec, [float;size 60% 60%;center] foot ${pkgs.master.yazi}/bin/yazi
+  bind = $mainMod, a, exec, alacritty -e zellij
+  bind = $mainModShift, a, exec, alacritty
+  bind = $mainMod, n, exec, [float;size 60% 60%;center] alacritty -e ${pkgs.master.yazi}/bin/yazi
+  bind = $mainMod, z, exec, [float;size 60% 60%;center] alacritty -e ${pkgs.master.yazi}/bin/yazi
   bind = $mainMod, d, exec, fuzzel
   bind = $mainModSHIFT, Q, killactive,
   bind = $mainModSHIFT, b, exec, lock-monitor

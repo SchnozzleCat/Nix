@@ -76,7 +76,7 @@
       bind = $mainMod Shift Ctrl, o, submap, reset
       submap = reset
 
-      bind = $mainMod, e, exec, foot -- ssh 192.168.200.20 -p 6969
+      bind = $mainMod, e, exec, alacritty -e ssh 192.168.200.20 -p 6969
       bind = $mainMod Shift, e, exec, remote-desktop
       misc {
               key_press_enables_dpms = true
