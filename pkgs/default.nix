@@ -4,5 +4,6 @@
   inky = pkgs.callPackage ./inky {};
   godot-custom = (pkgs.callPackage ./godot4-mono-schnozzlecat {}).godotPackages_4_6.godot-mono;
   sprite-illuminator = pkgs.callPackage ./sprite-illuminator {};
+  linear-cli = pkgs.callPackage ./linear-cli {};
   meridian = pkgs.callPackage ./meridian {};
 }
