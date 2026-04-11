@@ -73,6 +73,18 @@ in {
 
   programs.opencode = {
     enable = true;
+    package = pkgs.symlinkJoin {
+      name = "opencode-wrapped";
+      paths = [pkgs.opencode];
+
+      buildInputs = [pkgs.makeWrapper];
+
+      postBuild = ''
+        wrapProgram $out/bin/opencode \
+          --set ANTHROPIC_API_KEY x \
+          --set ANTHROPIC_BASE_URL http://127.0.0.1:3456
+      '';
+    };
   };
 
   home.packages = with pkgs; [

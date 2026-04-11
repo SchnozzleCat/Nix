@@ -108,6 +108,7 @@ in {
       # unityhub
       aseprite
       sprite-illuminator
+      meridian
       devbox
       zed-editor
       (
