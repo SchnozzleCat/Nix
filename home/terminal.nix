@@ -382,10 +382,9 @@ in {
     enable = true;
     interactiveShellInit = ''
       set -g fish_greeting
-      bind -s \ce "zellij_tab_name_update neovim && neovim && zellij_tab_name_update shell"
-      bind -s \cj "zellij_tab_name_update lazygit && jjui && zellij_tab_name_update shell"
-      bind -s \cg "zellij_tab_name_update lazygit && lazygit && zellij_tab_name_update shell"
-      bind -s \cb "zellij_tab_name_update television && z (z ~/Repositories && tv git-repos) && zellij_tab_name_update shell && commandline -f repaint"
+      bind -s \ce "neovim"
+      bind -s \cg "lazygit"
+      bind -s \cb "television && z (z ~/Repositories && tv git-repos)"
       function yy
         set tmp (mktemp -t "yazi-cwd.XXXXXX")
         yazi $argv --cwd-file="$tmp"
@@ -393,18 +392,6 @@ in {
           cd -- "$cwd"
         end
         rm -f -- "$tmp"
-      end
-      zellij action rename-tab shell
-      function zellij_tab_name_update --on-event fish_preexec
-          if set -q ZELLIJ
-              set title (string split ' ' $argv)[1]
-              command nohup zellij action rename-tab $title >/dev/null 2>&1
-          end
-      end
-      function zellij_tab_name_exit --on-event fish_postexec
-          if set -q ZELLIJ
-              command nohup zellij action rename-tab shell >/dev/null 2>&1
-          end
       end
       clear
 
@@ -445,7 +432,6 @@ in {
       set -g fish_pager_color_selected_background --background=$selection
     '';
     shellAliases = {
-      gpt = "DEFAULT_MODEL=gpt-4-1106-preview OPENAI_API_KEY=$(gpg -q --decrypt $OPENAI_API_KEY_DIR) sgpt";
       pi-hdd = ''sshfs -o sftp_server="/run/wrappers/bin/sudo $(ssh linus@192.168.200.66 -p 6969 'nix eval nixpkgs#openssh --raw')/libexec/sftp-server" -p 6969 linus@192.168.200.66:/mnt/hdd ~/Mounts/hdd'';
       desktop-home = ''sshfs -o sftp_server="$(ssh linus@192.168.200.20 -p 6969 'nix eval nixpkgs#openssh --raw')/libexec/sftp-server" -p 6969 linus@192.168.200.20:/home/linus ~/Mounts/desktop'';
       pi-ssd = ''sshfs -o sftp_server="/run/wrappers/bin/sudo $(ssh linus@192.168.200.66 -p 6969 'nix eval nixpkgs#openssh --raw')/libexec/sftp-server" -p 6969 linus@192.168.200.66:/mnt/ssd ~/Mounts/ssd'';
