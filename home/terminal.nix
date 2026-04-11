@@ -374,6 +374,7 @@ in {
     inherit pkgs inputs;
   };
   home.file.".config/zellij/plugins/zellij-pane-tracker.wasm".source = "${pkgs.zellij-pane-tracker}/bin/zellij-pane-tracker.wasm";
+  home.file.".config/zellij/plugins/zrpc.wasm".source = "${pkgs.zjctl}/bin/zrpc.wasm";
 
   programs.zoxide = {
     enable = true;

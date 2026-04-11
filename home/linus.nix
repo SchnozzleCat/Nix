@@ -109,6 +109,7 @@ in {
       aseprite
       sprite-illuminator
       linear-cli
+      zjctl
       meridian
       devbox
       zed-editor

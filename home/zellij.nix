@@ -8,6 +8,7 @@
   on_force_close "quit"
   load_plugins {
     "file:~/.config/zellij/plugins/zellij-pane-tracker.wasm"
+    "file:~/.config/zellij/plugins/zrpc.wasm"
   }
   keybinds clear-defaults=true {
     shared_except "locked" {
