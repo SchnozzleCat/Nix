@@ -322,7 +322,6 @@ AThhLtMjnC7Bm1MOPdvlmav1GH3YuDfOMB9RRlMRrdLzXLAE5LMHsBMD5IufuoCL
       ];
       # TODO: Be sure to add any other groups you need (such as networkmanager, audio, docker, etc)
       extraGroups = [
-        "code-server"
         "wheel"
         "networkmanager"
         "audio"
