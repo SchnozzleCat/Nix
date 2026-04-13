@@ -76,6 +76,13 @@
     };
 
     nixos-raspberrypi.url = "github:nvmd/nixos-raspberrypi/main";
+
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    googleworkspace-cli.url = "github:googleworkspace/cli";
   };
 
   outputs = {
@@ -91,6 +98,7 @@
     Hyprspace,
     nix-software-center,
     nixos-raspberrypi,
+    sops-nix,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -153,6 +161,7 @@
           hostname = "schnozzlecat-laptop";
         };
         modules = [
+          sops-nix.nixosModules.sops
           # > Our main nixos configuration file <
           ./nixos/configuration.nix
         ];
@@ -163,6 +172,7 @@
           hostname = "schnozzlecat-server";
         };
         modules = [
+          sops-nix.nixosModules.sops
           {
             # Hardware specific configuration, see section below for a more complete
             # list of modules
@@ -183,6 +193,7 @@
       rpi5 = nixos-raspberrypi.lib.nixosSystemFull {
         specialArgs = inputs;
         modules = [
+          sops-nix.nixosModules.sops
           inputs.home-manager.nixosModules.home-manager
           {
             hardware.raspberry-pi.config = {
