@@ -115,6 +115,7 @@ in {
     gemini-cli
     fabric-ai
     quarto
+    inputs.googleworkspace-cli.packages.${pkgs.system}.default
 
     ripgrep
     fzf
