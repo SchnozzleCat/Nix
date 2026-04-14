@@ -108,6 +108,7 @@ in {
       # unityhub
       aseprite
       sprite-illuminator
+      linear-cli
       meridian
       devbox
       zed-editor
