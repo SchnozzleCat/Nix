@@ -11,6 +11,7 @@
 in {
   imports = [
     ./neovim/neovim.nix
+    ./agent-skills.nix
   ];
 
   nixpkgs.overlays = [
@@ -71,7 +72,7 @@ in {
     enable = true;
   };
 
-  home.file.".agents/skills".source = ./skills;
+
 
   programs.opencode = {
     enable = true;
