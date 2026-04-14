@@ -71,6 +71,8 @@ in {
     enable = true;
   };
 
+  home.file.".agents/skills".source = ./skills;
+
   programs.opencode = {
     enable = true;
     package = pkgs.symlinkJoin {
