@@ -11,7 +11,9 @@
         "find *": "allow",
         "git status": "allow",
         "npm run test": "allow",
-        "npm test *": "allow"
+        "npm test *": "allow",
+        "npm ls *": "allow",
+        "npm info *": "allow"
       }
     },
     "provider": {
