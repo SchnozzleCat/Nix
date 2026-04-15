@@ -72,8 +72,6 @@ in {
     enable = true;
   };
 
-
-
   programs.opencode = {
     enable = true;
     package = pkgs.symlinkJoin {
@@ -180,7 +178,7 @@ in {
         }
         {
           on = ["T"];
-          run = "tasks_show";
+          run = "tasks:show";
         }
         {
           on = ["F"];
