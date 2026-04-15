@@ -267,6 +267,9 @@ in {
           fi
         '';
       })
+      (writeShellScriptBin "kk" ''
+        nix run ~/Repositories/KomradKat -- "$@"
+      '')
       (writeShellApplication {
         name = "soundscaper";
         text = ''
