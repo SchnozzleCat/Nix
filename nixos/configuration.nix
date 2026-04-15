@@ -130,9 +130,10 @@ AThhLtMjnC7Bm1MOPdvlmav1GH3YuDfOMB9RRlMRrdLzXLAE5LMHsBMD5IufuoCL
     dbPath = "${inputs.programs-db}/programs.sqlite";
   };
 
-  virtualisation.docker.rootless = {
+  virtualisation.podman = {
     enable = true;
-    setSocketVariable = true;
+    dockerCompat = true;
+    dockerSocket.enable = true;
   };
 
   virtualisation.containerd = {
@@ -325,7 +326,7 @@ AThhLtMjnC7Bm1MOPdvlmav1GH3YuDfOMB9RRlMRrdLzXLAE5LMHsBMD5IufuoCL
         "wheel"
         "networkmanager"
         "audio"
-        "docker"
+        "podman"
         "corectrl"
         "libvirtd"
         "tss"
@@ -344,7 +345,7 @@ AThhLtMjnC7Bm1MOPdvlmav1GH3YuDfOMB9RRlMRrdLzXLAE5LMHsBMD5IufuoCL
     hyprpaper
     yubikey-manager
     pinentry-gnome3
-    docker-compose
+    podman-compose
     sshfs
     gamescope
     (sddm-chili-theme.overrideAttrs (old: {
