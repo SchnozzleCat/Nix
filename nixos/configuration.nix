@@ -159,63 +159,63 @@ AThhLtMjnC7Bm1MOPdvlmav1GH3YuDfOMB9RRlMRrdLzXLAE5LMHsBMD5IufuoCL
     pinentryPackage = pkgs.pinentry-all;
   };
 
-  programs.nix-ld = {
-    enable = true;
-    libraries = with pkgs; [
-      stdenv.cc.cc
-      libGL
-      zlib
-      lzlib
-      libxcrypt
-      glib
-      fuse3
-      nspr
-      cups.lib
-      libdrm
-      gdk-pixbuf
-      gtk3
-      pango
-      cairo
-      at-spi2-atk
-      fuse
-      icu
-      icu.dev
-      fontconfig
-      freetype
-      nss
-      dbus.lib
-      krb5.lib
-      openssl.dev
-      curl
-      expat
-      vulkan-loader
-      libGL
-      speechd
-      libgbm
-      libxcomposite
-      libxdamage
-      libx11
-      libxcursor
-      libxinerama
-      libxext
-      libxrandr
-      libxrender
-      libxi
-      libxfixes
-      libxcb.out
-      libxscrnsaver
-      libxfixes
-      libxshmfence
-      libxtst
-      libnotify
-      libxkbcommon
-      alsa-lib
-      mono
-      wayland-scanner
-      wayland
-      libdecor
-    ];
-  };
+  # programs.nix-ld = {
+  #   enable = true;
+  #   libraries = with pkgs; [
+  #     stdenv.cc.cc
+  #     libGL
+  #     zlib
+  #     lzlib
+  #     libxcrypt
+  #     glib
+  #     fuse3
+  #     nspr
+  #     cups.lib
+  #     libdrm
+  #     gdk-pixbuf
+  #     gtk3
+  #     pango
+  #     cairo
+  #     at-spi2-atk
+  #     fuse
+  #     icu
+  #     icu.dev
+  #     fontconfig
+  #     freetype
+  #     nss
+  #     dbus.lib
+  #     krb5.lib
+  #     openssl.dev
+  #     curl
+  #     expat
+  #     vulkan-loader
+  #     libGL
+  #     speechd
+  #     libgbm
+  #     libxcomposite
+  #     libxdamage
+  #     libx11
+  #     libxcursor
+  #     libxinerama
+  #     libxext
+  #     libxrandr
+  #     libxrender
+  #     libxi
+  #     libxfixes
+  #     libxcb.out
+  #     libxscrnsaver
+  #     libxfixes
+  #     libxshmfence
+  #     libxtst
+  #     libnotify
+  #     libxkbcommon
+  #     alsa-lib
+  #     mono
+  #     wayland-scanner
+  #     wayland
+  #     libdecor
+  #   ];
+  # };
 
   # TPM
   security.tpm2 = {

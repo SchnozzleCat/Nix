@@ -4,8 +4,7 @@
     repo,
     rev,
     hash,
-  }:
-    "${pkgs.fetchFromGitHub {inherit owner repo rev hash;}}/skills";
+  }: "${pkgs.fetchFromGitHub {inherit owner repo rev hash;}}/skills";
   remoteAgentSkills = [
     (agentSkillsFrom {
       owner = "googleworkspace";

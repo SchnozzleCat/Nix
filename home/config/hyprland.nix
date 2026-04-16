@@ -14,7 +14,6 @@ in ''
 
   exec-once = ${pkgs.waybar}/bin/waybar
   exec-once = pypr
-  exec-once = meridian
   exec-once = solaar --window=hide
   exec-once = hyprctrl dispatch layoutmsg "preselect r"
   exec-once = wl-paste -t text --watch ${pkgs.clipman}/bin/clipman store --max-items 1024

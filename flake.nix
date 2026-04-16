@@ -127,24 +127,6 @@
     # NixOS configuration entrypoint
     # Available through 'nixos-rebuild --flake .#your-hostname'
     nixosConfigurations = {
-      schnozzlecat-vm = nixpkgs.lib.nixosSystem {
-        specialArgs = {
-          inherit inputs outputs;
-          hostname = "schnozzlecat-vm";
-        };
-        modules = [
-          ./nixos/schnozzlecat-vm.nix
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.sharedModules = [
-              self.homeModules.godot4-mono-schnozzlecat
-            ];
-            home-manager.users.linus = import ./home/linus-vm.nix;
-          }
-        ];
-      };
       schnozzlecat = nixpkgs.lib.nixosSystem {
         specialArgs = {
           inherit inputs outputs;

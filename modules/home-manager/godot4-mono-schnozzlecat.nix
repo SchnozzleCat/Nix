@@ -28,18 +28,18 @@ in {
   };
 
   config = mkIf cfg.enable {
-    home.packages = [
-      pkg
-    ];
-    home.file.".local/share/godot/export_templates/${version}.${suffix}.mono/linux_release.x86_64".source = "${export}/bin/godot-mono-template";
-    home.file.".local/share/godot/export_templates/${version}.${suffix}.mono/linux_debug.x86_64".source = "${export-debug}/bin/godot-mono-template";
-    home.file."NuGet.Config".text = ''
-      <?xml version="1.0" encoding="utf-8"?>
-      <configuration>
-        <packageSources>
-          <add key="${version}-${suffix}" value="${pkg}/libexec/${suffix}"/>
-        </packageSources>
-      </configuration>
-    '';
+    # home.packages = [
+    #   pkg
+    # ];
+    # home.file.".local/share/godot/export_templates/${version}.${suffix}.mono/linux_release.x86_64".source = "${export}/bin/godot-mono-template";
+    # home.file.".local/share/godot/export_templates/${version}.${suffix}.mono/linux_debug.x86_64".source = "${export-debug}/bin/godot-mono-template";
+    # home.file."NuGet.Config".text = ''
+    #   <?xml version="1.0" encoding="utf-8"?>
+    #   <configuration>
+    #     <packageSources>
+    #       <add key="${version}-${suffix}" value="${pkg}/libexec/${suffix}"/>
+    #     </packageSources>
+    #   </configuration>
+    # '';
   };
 }

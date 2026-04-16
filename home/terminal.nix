@@ -11,14 +11,14 @@
 in {
   imports = [
     ./neovim/neovim.nix
-    ./agent-skills.nix
+    ./config/agent-skills.nix
   ];
 
   nixpkgs.overlays = [
     inputs.neovim-nightly-overlay.overlays.default
   ];
 
-  home.file.".config/jj/config.toml".source = ./jj.toml;
+  home.file.".config/jj/config.toml".source = ./config/jj.toml;
 
   programs.lazygit = {
     enable = true;
@@ -66,7 +66,7 @@ in {
     };
   };
 
-  home.file.".config/opencode/config.json".text = import ./opencode-config.nix;
+  home.file.".config/opencode/config.json".text = import ./config/opencode-config.nix;
 
   programs.claude-code = {
     enable = true;
@@ -77,20 +77,11 @@ in {
     package = pkgs.symlinkJoin {
       name = "opencode-wrapped";
       paths = [pkgs.opencode];
-
       buildInputs = [pkgs.makeWrapper];
-
-      postBuild = ''
-        wrapProgram $out/bin/opencode \
-          --set ANTHROPIC_API_KEY x \
-          --set ANTHROPIC_BASE_URL http://127.0.0.1:3456
-      '';
     };
   };
 
   home.packages = with pkgs; [
-    (haskellPackages.ghcWithPackages (pkgs: with pkgs; [tidal]))
-    supercollider-with-sc3-plugins
     lazysql
     jujutsu
     jjui
@@ -107,14 +98,8 @@ in {
     television
     bat
     dust
-    cbonsai
-    pipes
-    pistol
     nix-output-monitor
-    master.tattoy
     dive
-    gemini-cli
-    fabric-ai
     quarto
     inputs.googleworkspace-cli.packages.${pkgs.system}.default
 
@@ -133,7 +118,7 @@ in {
     enable = true;
     shellWrapperName = "yy";
     enableFishIntegration = true;
-    initLua = ./yazi.lua;
+    initLua = ./config/yazi.lua;
     plugins = {
       inherit (pkgs.yaziPlugins) smart-enter;
       inherit (pkgs.yaziPlugins) smart-filter;
@@ -371,8 +356,8 @@ in {
   programs.zellij = {
     enable = true;
   };
-  home.file.".config/zellij/config.kdl".text = import ./zellij.nix {inherit pkgs inputs;};
-  home.file.".config/zellij/layouts/default.kdl".text = import ./zellij-default.nix {
+  home.file.".config/zellij/config.kdl".text = import ./config/zellij.nix {inherit pkgs inputs;};
+  home.file.".config/zellij/layouts/default.kdl".text = import ./config/zellij-default.nix {
     inherit pkgs inputs;
   };
 

@@ -18,9 +18,6 @@ in {
 
   wayland.windowManager.hyprland = {
     enable = true;
-    # plugins = with inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}; [
-    #   inputs.Hyprspace.packages.${pkgs.system}.Hyprspace
-    # ];
   };
 
   nixpkgs.config.android_sdk.accept_license = true;
@@ -55,15 +52,9 @@ in {
       name = "Bibata-Modern-Classic";
       size = 1;
     };
-    # iconTheme = {
-    #   package = pkgs.tela-circle-icon-theme;
-    #   name = "Tela-circle-dark";
-    # };
   };
 
   nixpkgs.config.permittedInsecurePackages = [
-    "electron-25.9.0"
-    "qtwebengine-5.15.19"
   ];
 
   xdg.desktopEntries.oryx = {
@@ -86,7 +77,6 @@ in {
       # OS
       wl-clipboard
       pyprland
-      wally-cli
       blueman
       hyprshade
       csharprepl
@@ -94,24 +84,11 @@ in {
       # Web
       qbittorrent
       yt-dlp
-      k6
       jetbrains-toolbox
-      slack
-      butt
-      vlc
       jellyfin-desktop
 
-      android-studio
-      jdk17
-
       # Dev
-      # unityhub
       aseprite
-      sprite-illuminator
-      linear-cli
-      meridian
-      devbox
-      zed-editor
       (
         with dotnetCorePackages;
           combinePackages [
@@ -120,84 +97,32 @@ in {
             sdk_10_0
           ]
       )
-      sublime-merge
-      (pkgs.buildDotnetGlobalTool {
-        pname = "Microsoft.dotnet-interactive";
-        version = "1.0.632301";
-        nugetHash = "sha256-bA1DGLfSB4uFUtzufRKUiXR3LpbG5UoewfktXyOswco=";
-        executables = "dotnet-interactive";
-        dotnet-runtime = pkgs.dotnetCorePackages.sdk_9_0;
-        dotnet-sdk = pkgs.dotnetCorePackages.sdk_9_0;
-      })
 
-      jetbrains.rider
       jetbrains.datagrip
       inputs.hyprland-qtutils.packages."${pkgs.system}".default
-
-      gdtoolkit_4
-      inky
-
-      bitwarden-desktop
 
       inputs.zen-browser.packages."${pkgs.system}".default
 
       # Utilities
-      lm_sensors
       solaar
       wtype
       git-crypt
       bruno
       thunar
-      minikube
-      kubectl
-      kubernetes
-
       tidal-hifi
 
       # Games
       steam-run
-      steam-tui
       protonup-qt
-      protontricks
-      (lutris.override {
-        extraPkgs = pkgs: [
-          wineWow64Packages.stable
-          winetricks
-          gamescope
-          mesa
-        ];
-      })
-      (wineWow64Packages.full.override {
-        wineRelease = "staging";
-        mingwSupport = true;
-      })
-      winetricks
-      bottles
-      runelite
       libreoffice
-      scribus
-
-      # godot_4_5-mono
 
       # Misc
       obsidian
       crosspipe
       easyeffects
-      warpinator
       vesktop
-      mpv
-      mpv-shim-default-shaders
-      latexrun
-      inkscape
-      distrobox
-      # wonderdraft
-      krita
-      # aseprite
       protonvpn-gui
-      github-copilot-cli
-      rocmPackages.rocm-smi
       nvtopPackages.full
-      # smassh
       csharpier
 
       # Shell Scripts
@@ -208,37 +133,6 @@ in {
       (writeShellApplication {
         name = "record-screen";
         text = import ./scripts/record-screen.nix {inherit pkgs;};
-      })
-      (writeShellApplication {
-        name = "translate-en-to-de";
-        text = ''
-          text=$(echo "" | fuzzel --dmenu --dmenu --prompt="EN -> DE: " --lines=0)
-          if [ -z "$text" ]; then exit; fi
-          ${pkgs.translate-shell}/bin/trans -no-ansi en:de "$text" | fuzzel --dmenu --width=50 --lines=20
-        '';
-      })
-      (writeShellApplication {
-        name = "convert-cards";
-        text = ''
-          ${pkgs.poppler-utils}/bin/pdftoppm -png "$1" "$1"-images
-          ${pkgs.imagemagick}/bin/convert "$1"-images-* -shave 10x10 "$1"-cropped.png
-        '';
-      })
-      (writeShellApplication {
-        name = "translate-de-to-en";
-        text = ''
-          text=$(echo "" | fuzzel --dmenu --dmenu --prompt="DE -> EN: " --lines=0)
-          if [ -z "$text" ]; then exit; fi
-          ${pkgs.translate-shell}/bin/trans -no-ansi de:en "$text" | fuzzel --dmenu --width=50 --lines=20
-        '';
-      })
-      (writeShellApplication {
-        name = "synonym";
-        text = ''
-          text=$(echo "" | fuzzel --dmenu --dmenu --prompt="Synonym: " --lines=0)
-          if [ -z "$text" ]; then exit; fi
-          ${pkgs.wordnet}/bin/wn "$text" -synsn -synsv -synsa -synsr | fuzzel --dmenu --width=50 --lines=20
-        '';
       })
       (writeShellApplication {
         name = "pipe-notify";
@@ -299,51 +193,12 @@ in {
         '';
       })
       (writeShellApplication {
-        name = "ghs";
-        text = ''
-          gh copilot suggest "$*"
-        '';
-      })
-      (writeShellApplication {
-        name = "ghe";
-        text = ''
-          gh copilot explain "$*"
-        '';
-      })
-      (writeShellApplication {
         name = "where";
         text = ''
           readlink -e "$(which "$1")"
         '';
       })
-      (writeShellScriptBin "autobuild-godot" ''
-        FOCUSED=$(hyprctl activewindow | grep Godot)
-
-        while true
-        do
-          NEW_FOCUS=$(hyprctl activewindow | grep Godot)
-          if [[ -n "$NEW_FOCUS" && -z "$FOCUSED" ]]; then
-            dotnet build
-          fi
-          FOCUSED=$NEW_FOCUS
-          sleep .5
-        done
-      '')
     ];
-  };
-
-  programs.waveterm = {
-    enable = true;
-  };
-
-  programs.spicetify = let
-    spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
-  in {
-    enable = true;
-    enabledExtensions = with spicePkgs.extensions; [
-      adblock
-    ];
-    theme = spicePkgs.themes.text;
   };
 
   programs.godot4-mono-schnozzlecat = {
@@ -352,21 +207,6 @@ in {
     commitHash = "a7e8be0cd738f3553af7e917df6a891584f2a55d";
     hash = "";
   };
-
-  programs.ncspot = {
-    enable = true;
-    settings = {
-      keybindings = {
-        "Ctrl+f" = "focus search";
-        "Ctrl+q" = "focus queue";
-        "Ctrl+l" = "focus library";
-      };
-    };
-  };
-
-  # services.pulseeffects = {
-  #   enable = true;
-  # };
 
   programs.imv = {
     enable = true;
@@ -397,6 +237,9 @@ in {
       "image/png" = ["imv.desktop"];
       "image/jpg" = ["imv.desktop"];
       "image/svg+xml" = ["imv.desktop"];
+      "text/html" = ["zen.desktop"];
+      "x-scheme-handler/http" = ["zen.desktop"];
+      "x-scheme-handler/https" = ["zen.desktop"];
     };
   };
 
@@ -420,8 +263,6 @@ in {
     };
   };
 
-  home.file.".ideavimrc".source = ./.ideavimrc;
-
   programs.mangohud = {
     enable = true;
     settings = {
@@ -441,7 +282,7 @@ in {
 
   services.network-manager-applet.enable = true;
 
-  home.file.".config/hypr/hyprpaper.conf".text = import ./hyprpaper.nix;
+  home.file.".config/hypr/hyprpaper.conf".text = import ./config/hyprpaper.nix;
 
   home.file.".config/pypr/config.toml".text = ''
     [pyprland]
@@ -460,7 +301,7 @@ in {
     end_time = 06:00:00
   '';
 
-  home.file.".config/hypr/hyprlock.conf".text = import ./hyprlock.nix;
+  home.file.".config/hypr/hyprlock.conf".text = import ./config/hyprlock.nix;
 
   home.file.".config/hypr/shaders/blue-light-filter-custom.glsl".text = ''
     /*
@@ -536,8 +377,8 @@ in {
 
   programs.waybar = {
     enable = true;
-    settings = import ./waybar-config.nix {inherit pkgs;};
-    style = import ./waybar-style.nix;
+    settings = import ./config/waybar-config.nix {inherit pkgs;};
+    style = import ./config/waybar-style.nix;
   };
 
   programs.gpg = {
@@ -557,46 +398,6 @@ in {
       font.size = 10;
     };
   };
-
-  # programs.foot = {
-  #   enable = true;
-  #   settings = {
-  #     main = {
-  #       font = "JetBrainsMono Nerd Font:size=10";
-  #       gamma-correct-blending = "no";
-  #     };
-  #     cursor = {
-  #       color = "E7EAEE 33394a";
-  #     };
-  #     colors = {
-  #       alpha = 0.8;
-  #       foreground = colors.base07;
-  #       background = colors.base00;
-  #       selection-foreground = colors.base07;
-  #       selection-background = "33394a";
-  #       urls = "8FEBD3";
-  #       regular0 = "171b20";
-  #       regular1 = "F97791";
-  #       regular2 = "38FFA5";
-  #       regular3 = "FFE77A";
-  #       regular4 = "5CCEFF";
-  #       regular5 = "FFB3EC";
-  #       regular6 = "0AE7FF";
-  #       regular7 = "a9b1d6";
-  #
-  #       bright0 = "414868";
-  #       bright1 = "F97791";
-  #       bright2 = "38FFA5";
-  #       bright3 = "FFE77A";
-  #       bright4 = "5CCEFF";
-  #       bright5 = "FFB3EC";
-  #       bright6 = "0AE7FF";
-  #       bright7 = "E7EAEE";
-  #       "16" = "FFA064";
-  #       "17" = "F73F64";
-  #     };
-  #   };
-  # };
 
   programs.fuzzel = {
     enable = true;
