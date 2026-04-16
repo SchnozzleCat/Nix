@@ -173,7 +173,7 @@ in {
       (writeShellApplication {
         name = "dvt";
         text = ''
-          nix flake init -t "github:the-nix-way/dev-templates#$1"
+          nix flake init -t "github:SchnozzleCat/dev-templates#$1"
           direnv allow
         '';
       })
