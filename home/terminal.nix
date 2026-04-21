@@ -455,7 +455,7 @@ in {
       home-rebuild = "home-manager switch --flake ~/.nixos/ &| ${pkgs.nix-output-monitor}/bin/nom";
       ls = "eza -la";
       cat = "bat";
-      pi = "ssh linus@192.168.200.66 -p 6969";
+      pi-ssh = "ssh linus@192.168.200.66 -p 6969";
       rm = "rm -I";
       mv = "mv -i";
       untar = "tar -xvf";

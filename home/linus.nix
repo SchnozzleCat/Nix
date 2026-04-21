@@ -70,6 +70,34 @@ in {
     paths = [./config/skills] ++ import ./config/remote-agent-skills.nix {inherit pkgs;};
   };
 
+  programs.pi-sandbox = {
+    enable = true;
+    envVars = {
+      OPENCODE_API_KEY = "pina/opencode-api-key";
+    };
+    forwardGpg = true;
+    forwardGitConfig = true;
+    hostCommands = {
+      zellij = {
+        command = "${pkgs.zellij}/bin/zellij";
+        allowedArgs = [
+          ["list-sessions"]
+          ["list-panes"]
+          ["action" "dump-layout"]
+          ["action" "dump-screen"]
+          ["-s" "*" "list-panes"]
+          ["-s" "*" "action" "dump-layout"]
+          ["-s" "*" "action" "dump-screen"]
+          ["-s" "*" "action" "list-panes"]
+          ["--session" "*" "list-panes"]
+          ["--session" "*" "action" "dump-layout"]
+          ["--session" "*" "action" "dump-screen"]
+          ["--session" "*" "action" "list-panes"]
+        ];
+      };
+    };
+  };
+
   home = {
     username = "linus";
     homeDirectory = "/home/linus";
