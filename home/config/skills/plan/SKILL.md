@@ -1,5 +1,5 @@
 ---
-name: implementation-plan
+name: plan
 description: Create an implementation plan from a ticket using the project template. Supports inline ticket info or fetching via CLI integrations (e.g. Linear). Iteratively refines the plan through conversation with the user.
 allowed-tools: Bash(linear:*), Bash(git:*), Bash(cat:*), Bash(mkdir:*), Bash(grep:*), Bash(find:*), Read, Edit, Write
 ---
