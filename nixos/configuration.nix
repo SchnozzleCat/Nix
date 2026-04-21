@@ -159,6 +159,11 @@ AThhLtMjnC7Bm1MOPdvlmav1GH3YuDfOMB9RRlMRrdLzXLAE5LMHsBMD5IufuoCL
     pinentryPackage = pkgs.pinentry-all;
   };
 
+  programs.yubikey-touch-detector = {
+    enable = true;
+    libnotify = true;
+  };
+
   # programs.nix-ld = {
   #   enable = true;
   #   libraries = with pkgs; [
