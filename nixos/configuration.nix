@@ -125,10 +125,7 @@ AThhLtMjnC7Bm1MOPdvlmav1GH3YuDfOMB9RRlMRrdLzXLAE5LMHsBMD5IufuoCL
 -----END CERTIFICATE-----"
   ];
 
-  programs.command-not-found = {
-    enable = true;
-    dbPath = "${inputs.programs-db}/programs.sqlite";
-  };
+  programs.command-not-found.enable = false;
 
   virtualisation.podman = {
     enable = true;

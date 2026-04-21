@@ -24,8 +24,6 @@ in {
 
   services.blueman-applet.enable = true;
 
-  programs.command-not-found.enable = true;
-
   gtk = {
     enable = true;
     gtk2.extraConfig = ''

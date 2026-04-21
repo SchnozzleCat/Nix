@@ -82,6 +82,13 @@ in {
     };
   };
 
+  programs.command-not-found.enable = false;
+
+  programs.nix-index = {
+    enable = true;
+    enableFishIntegration = true;
+  };
+
   home.packages = with pkgs; [
     lazysql
     jujutsu
@@ -89,7 +96,6 @@ in {
     lazydocker
     ctop
     nix-tree
-    nix-index
 
     # Terminal
     pass
