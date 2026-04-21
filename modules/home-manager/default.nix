@@ -5,4 +5,5 @@
   # my-module = import ./my-module.nix;
   sunshine = import ./sunshine.nix;
   godot4-mono-schnozzlecat = import ./godot4-mono-schnozzlecat.nix;
+  pi-sandbox = import ./pi-sandbox.nix;
 }

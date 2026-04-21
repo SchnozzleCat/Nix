@@ -12,6 +12,7 @@
   imports = [
     ./hardware-configuration-${hostname}.nix
     ./${hostname}.nix
+    ../modules/home-manager/pi-sandbox-netns.nix
   ];
 
   # Boot
@@ -38,6 +39,7 @@
 
   # Networking
   networking.hostName = hostname;
+  networking.hosts."10.200.1.2" = ["sandbox"];
   networking.networkmanager.enable = true;
   networking.firewall = {
     enable = true;
@@ -47,6 +49,7 @@
     allowedUDPPorts = [
       7777
     ];
+    interfaces."veth-pisb-h".allowedTCPPorts = [5432 5433 5434 6379 6380];
   };
 
   # networking.wg-quick.interfaces.proton-de350.configFile = "/home/linus/.nixos/secrets/wireguard/proton-de350.conf";
@@ -133,9 +136,63 @@ AThhLtMjnC7Bm1MOPdvlmav1GH3YuDfOMB9RRlMRrdLzXLAE5LMHsBMD5IufuoCL
     dockerSocket.enable = true;
   };
 
+  services.pi-sandbox-netns = {
+    enable = true;
+    allowedDomains = [
+      # AI/LLM APIs
+      "api.anthropic.com"
+      ".openai.com"
+      "opencode.ai"
+
+      # Git hosting
+      ".github.com"
+      ".githubusercontent.com"
+      ".gitlab.com"
+      ".bitbucket.org"
+
+      # Package registries
+      ".npmjs.org"
+      ".npmjs.com"
+      ".yarnpkg.com"
+      ".pypi.org"
+      ".pythonhosted.org"
+      ".crates.io"
+      ".rubygems.org"
+      ".nuget.org"
+      ".pkg.dev"
+      ".registry.npmjs.org"
+
+      # Project management
+      ".linear.app"
+
+      # Documentation / common dev resources
+      ".stackoverflow.com"
+      ".stackexchange.com"
+      ".docs.rs"
+      ".doc.rust-lang.org"
+      ".developer.mozilla.org"
+      ".nodejs.org"
+      ".nixos.org"
+      ".nixpkgs.org"
+      ".nix-community.org"
+      ".cachix.org"
+      ".cache.nixos.org"
+
+      # CDNs commonly used by the above
+      ".cloudflare.com"
+      ".cloudfront.net"
+      ".fastly.net"
+    ];
+    allowHostPorts = [5432 5433 5434 6379 6380];
+  };
+
   virtualisation.containerd = {
     enable = true;
   };
+
+  # Allow user-level systemd slices (e.g. pi-sandbox) to enforce cgroup limits.
+  # Without this, MemoryMax/CPUQuota in user slices are silently ignored.
+  services.logind.settings.Login.Delegate = "memory pids cpu";
 
   users.groups.plugdev = {
     name = "plugdev";

@@ -346,6 +346,7 @@
           self.homeModules.sunshine
           self.homeModules.godot4-mono-schnozzlecat
           inputs.spicetify-nix.homeManagerModules.default
+          self.homeModules.pi-sandbox
           inputs.nix-index-database.hmModules.nix-index
         ];
       };
@@ -371,6 +372,7 @@
           self.homeModules.sunshine
           self.homeModules.godot4-mono-schnozzlecat
           inputs.spicetify-nix.homeManagerModules.default
+          self.homeModules.pi-sandbox
           inputs.nix-index-database.hmModules.nix-index
         ];
       };
