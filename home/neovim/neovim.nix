@@ -40,8 +40,6 @@ in {
 
   home.packages = with pkgs; [
     netcoredbg
-    gh
-    postgresql_17
   ];
 
   programs.nixvim = {
