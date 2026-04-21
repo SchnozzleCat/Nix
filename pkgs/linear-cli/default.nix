@@ -25,7 +25,7 @@ stdenv.mkDerivation (finalAttrs: {
   # Implemented as a fixed-output derivation; bump outputHash on version bumps.
   outputHashMode = "recursive";
   outputHashAlgo = "sha256";
-  outputHash = "sha256-eFTq1rU8tpfZrd3DvFZvZVq+Y9bPEfIi2tIXNRBE9s8=";
+  outputHash = "sha256-2LtPESKHix1k9SFIgMSgtzOcYrLQNY4dXn0DGoTA8Zo=";
 
   buildPhase = ''
     runHook preBuild
