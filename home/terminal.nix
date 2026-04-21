@@ -8,6 +8,7 @@
   ...
 }: let
   colors = config.colorScheme.palette;
+  wrap = import ./utility/wrap.nix {inherit pkgs;};
 in {
   imports = [
     ./neovim/neovim.nix
@@ -91,6 +92,7 @@ in {
     nix-index
 
     # Terminal
+    pass
     fastfetch
     p7zip
     eza
@@ -102,9 +104,25 @@ in {
     dive
     quarto
     inputs.googleworkspace-cli.packages.${pkgs.system}.default
+    (wrap {
+      pkg = pkgs.linear-cli;
+      bin = "linear";
+      env = {
+        LINEAR_API_KEY = "$(${pass}/bin/pass pina/linear-api-key)";
+      };
+    })
+
+    (wrap {
+      pkg = pkgs.gh;
+      bin = "gh";
+      env = {
+        GH_TOKEN = "$(${pkgs.pass}/bin/pass github 2>/dev/null)";
+      };
+    })
 
     ripgrep
     fzf
+    wtype
 
     zip
     unzip
