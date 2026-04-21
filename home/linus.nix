@@ -65,6 +65,11 @@ in {
     exec = "${app-browser} --app=https://derkyjadex.github.io/M8WebDisplay/";
   };
 
+  home.file.".agents/skills".source = pkgs.symlinkJoin {
+    name = "agent-skills";
+    paths = [./config/skills] ++ import ./config/remote-agent-skills.nix {inherit pkgs;};
+  };
+
   home = {
     username = "linus";
     homeDirectory = "/home/linus";

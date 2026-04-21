@@ -12,7 +12,6 @@
 in {
   imports = [
     ./neovim/neovim.nix
-    ./config/agent-skills.nix
   ];
 
   nixpkgs.overlays = [
