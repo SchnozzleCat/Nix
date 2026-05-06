@@ -72,9 +72,6 @@ in {
 
   programs.pi-sandbox = {
     enable = true;
-    envVars = {
-      OPENCODE_API_KEY = "pina/opencode-api-key";
-    };
     forwardGpg = true;
     forwardGitConfig = true;
     hostCommands = {
@@ -106,6 +103,10 @@ in {
       DOCKER_HOST = "unix:///run/user/1000/podman/podman.sock";
     };
     packages = with pkgs; [
+      (writeShellScriptBin "pi" ''
+        exec sandbox pi "$@"
+      '')
+
       # OS
       wl-clipboard
       pyprland

@@ -9,5 +9,5 @@ in {
   linear-cli = pkgs.callPackage ./linear-cli {};
   meridian = pkgs.callPackage ./meridian {};
   pi-sandbox-image = pi-sandbox.image;
-  pi-coding-agent-pin = pi-sandbox.piPkg;
+  pi-coding-agent-pin = pi-sandbox.piPkgUnwrapped;
 }

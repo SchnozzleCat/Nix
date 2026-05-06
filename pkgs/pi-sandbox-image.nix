@@ -26,18 +26,26 @@
     };
   };
 
-  piPkg = pkgs.pi-coding-agent.overrideAttrs (oldAttrs: rec {
-    version = "0.67.68";
+  piPkgUnwrapped = pkgs.pi-coding-agent.overrideAttrs (oldAttrs: rec {
+    version = "0.70.5";
     src = oldAttrs.src.override {
       tag = "v${version}";
-      hash = "sha256-1k9tHb5Dle37a5qHm8xT14vI5cQZOb8ASGQ1KxzPCr4=";
+      hash = "sha256-Jn+hvS/DIwbwAff+UovdIVnmrb4o8gsC4IR24MnwF1I=";
     };
     npmDeps = pkgs.fetchNpmDeps {
       name = "pi-coding-agent-${version}-npm-deps";
       inherit src;
-      hash = "sha256-xQQZECkDuiCdu0FlKbAKgk6EatLf2jMIXKDfRRwN/gA=";
+      hash = "sha256-MZgcHJdGFGSNgQ26/24iA12FdmO7S5vWv4crSNFhHi0=";
     };
   });
+
+  piPkg = wrap {
+    pkg = piPkgUnwrapped;
+    bin = "pi";
+    env = {
+      OPENCODE_API_KEY = "$(pass pina/opencode-api-key 2>/dev/null)";
+    };
+  };
 
   # Agent skills baked into the image
   skills = pkgs.symlinkJoin {
@@ -53,8 +61,12 @@
         eval "$(starship init bash)"
       '')
       (pkgs.writeTextDir ".config/starship.toml" ''
+        palette = "custom"
+
         [container]
         format = "[$symbol sandbox]($style) "
+
+        [palettes.custom]
       '')
       (pkgs.runCommand "pi-sandbox-skills" {} ''
         mkdir -p $out/.agents
@@ -63,7 +75,7 @@
     ];
   };
 in {
-  inherit piPkg;
+  inherit piPkg piPkgUnwrapped;
   hostcmdDaemon = hostcmd.daemon;
 
   image = pkgs.dockerTools.buildImage {
@@ -86,6 +98,7 @@ in {
           jq
           nodejs
           python3
+          python3Packages.uv
           gcc
           gnumake
           cmake
@@ -105,9 +118,12 @@ in {
           gnupg
           jujutsu
           gnugrep
+          procps
           gh-wrapped
           linear-cli-wrapped
           starship
+          stdenv.cc.cc.lib
+          dotnetCorePackages.sdk_10_0
         ]
         ++ lib.optional (hostCommands != {}) hostcmd.wrappers;
       pathsToLink = ["/bin" "/lib" "/etc" "/share"];
@@ -115,13 +131,9 @@ in {
 
     runAsRoot = ''
       #!${pkgs.runtimeShell}
-      mkdir -p /etc/ssl/certs /lib64 /usr/bin
+      mkdir -p /lib64 /usr/bin /etc/homeConfig
       ln -s /bin/env /usr/bin/env
-      # Deno-compiled binaries (like linear-cli) hardcode /lib64/ld-linux-x86-64.so.2
-      # as their ELF interpreter, which doesn't exist in this container. Symlink it
-      # to the nix store glibc so they can run.
       ln -s ${pkgs.glibc}/lib/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2
-      mkdir -p /home/sandbox /etc/homeConfig
       cp -rL ${homeConfig}/. /etc/homeConfig/
       echo "root:x:0:0::/root:/bin/bash" >> /etc/passwd
       echo "root:x:0:" >> /etc/group
@@ -137,6 +149,7 @@ in {
         "HOME=/home/sandbox"
         "PI_CODING_AGENT_DIR=/pi-config"
         "TMPDIR=/tmp"
+        "LD_LIBRARY_PATH=/lib"
       ];
       WorkingDir = "/";
     };

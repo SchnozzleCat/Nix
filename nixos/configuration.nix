@@ -142,7 +142,7 @@ AThhLtMjnC7Bm1MOPdvlmav1GH3YuDfOMB9RRlMRrdLzXLAE5LMHsBMD5IufuoCL
       # AI/LLM APIs
       "api.anthropic.com"
       ".openai.com"
-      "opencode.ai"
+      ".opencode.ai"
 
       # Git hosting
       ".github.com"
@@ -180,8 +180,13 @@ AThhLtMjnC7Bm1MOPdvlmav1GH3YuDfOMB9RRlMRrdLzXLAE5LMHsBMD5IufuoCL
 
       # CDNs commonly used by the above
       ".cloudflare.com"
+      ".cloudflare.net"
       ".cloudfront.net"
       ".fastly.net"
+
+      ".auth0.com"
+      ".auth0edge.com"
+      "t-staging.eu.auth0.com"
     ];
     allowHostPorts = [5432 5433 5434 6379 6380];
   };
