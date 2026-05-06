@@ -848,7 +848,7 @@ in {
         workspaces = [
           {
             name = "Obsidian Vault";
-            path = "~/Repositories/ObsidianVault";
+            path = "~/Repositories/personal/ObsidianVault";
           }
         ];
       };
