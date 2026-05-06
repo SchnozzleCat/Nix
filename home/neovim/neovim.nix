@@ -65,10 +65,10 @@ in {
       imv
       (buildDotnetGlobalTool {
         pname = "EasyDotnet";
-        version = "3.0.9";
+        version = "3.1.3";
         executables = "dotnet-easydotnet";
 
-        nugetHash = "sha256-b9E+ziyzKgglK2dqWjy7+BwaNFju/7TNXIKROUtT6GU=";
+        nugetHash = "sha256-MasiP8L7t/wvUX2azAqG9DxLezr2nNl2DA0ZUKbnPD8=";
 
         meta = with lib; {
           description = "C# JSON-RPC server powering the easy-dotnet.nvim Neovim plugin";
