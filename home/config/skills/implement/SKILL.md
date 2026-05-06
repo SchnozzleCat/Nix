@@ -54,7 +54,12 @@ Work through the feature incrementally. Follow existing code conventions — mat
 - If the plan has work packages, follow them in order.
 - If you encounter an ambiguity that blocks progress, ask the user. Otherwise, make a reasonable choice and keep going.
 
-### 4. Checkpoint: lint, test, commit
+### 4. Test
+
+Once a part or the entire feature is implemented, think about whether it should require new tests. Consider edge cases that might occur for the new feature, and look at other tests in the repository for testing styles.
+Only add new tests if they are meaningful and cover a case that is not yet covered.
+
+### 5. Checkpoint: lint, test, commit
 
 After completing a meaningful unit of work (a work package, a logical feature slice, or the full implementation), run the checkpoint sequence:
 
