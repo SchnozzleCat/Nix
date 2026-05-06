@@ -72,15 +72,6 @@ in {
     enable = true;
   };
 
-  programs.opencode = {
-    enable = true;
-    package = pkgs.symlinkJoin {
-      name = "opencode-wrapped";
-      paths = [pkgs.opencode];
-      buildInputs = [pkgs.makeWrapper];
-    };
-  };
-
   programs.command-not-found.enable = false;
 
   programs.nix-index = {
