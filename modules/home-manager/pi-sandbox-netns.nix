@@ -100,44 +100,61 @@ with lib; let
     }
   '';
 
-  # Periodically resolves all allowed domains and populates the nft sets.
-  # Runs every 30s to keep the set fresh as DNS records change.
-  # No race condition: the set is pre-populated before containers need it.
+  # Base domains for initial nft set population (strip "." prefix)
   allowedDomainsList = concatMapStringsSep " " (domain: removePrefix "." domain) cfg.allowedDomains;
 
+  # Reactively populates the nft IP sets by tailing unbound's reply log.
+  # On startup, pre-populates from the configured base domains, then watches
+  # for any new domain resolutions (including wildcard subdomains).
   nftUpdaterScript = pkgs.writeShellScript "pi-sandbox-nft-updater" ''
     set -euo pipefail
     DIG="${pkgs.dig}/bin/dig"
-    DOMAINS="${allowedDomainsList}"
+    NFT="${pkgs.nftables}/bin/nft"
+    AWK="${pkgs.gawk}/bin/awk"
+    LOG="/run/pi-sandbox-dns/unbound.log"
 
-    while true; do
-      for domain in $DOMAINS; do
-        # Resolve A records
-        ips=$("$DIG" +short @${nsAddr} "$domain" A 2>/dev/null || true)
-        for ip in $ips; do
-          case "$ip" in
-            0.0.0.0|127.*|"") continue ;;
-          esac
-          # Skip non-IP lines (CNAME records etc)
-          if echo "$ip" | ${pkgs.gnugrep}/bin/grep -qP '^(\d{1,3}\.){3}\d{1,3}$'; then
-            ${pkgs.nftables}/bin/nft add element inet filter allowed_ips "{ $ip timeout 5m }" 2>/dev/null || true
-          fi
-        done
+    add_ips() {
+      local domain="$1"
 
-        # Resolve AAAA records
-        ips6=$("$DIG" +short @${nsAddr} "$domain" AAAA 2>/dev/null || true)
-        for ip in $ips6; do
-          case "$ip" in
-            ::1|::|"") continue ;;
-          esac
-          if echo "$ip" | ${pkgs.gnugrep}/bin/grep -qP '^[0-9a-fA-F:]+$'; then
-            ${pkgs.nftables}/bin/nft add element inet filter allowed_ips6 "{ $ip timeout 5m }" 2>/dev/null || true
-          fi
-        done
+      local ips ip
+      ips=$("$DIG" +short @${nsAddr} "$domain" A 2>/dev/null || true)
+      for ip in $ips; do
+        case "$ip" in
+          0.0.0.0|127.*|"") continue ;;
+          *[!0-9.]*) continue ;;
+        esac
+        $NFT add element inet filter allowed_ips "{ $ip timeout 5m }" 2>/dev/null || true
       done
 
-      sleep 30
+      local ips6 ip6
+      ips6=$("$DIG" +short @${nsAddr} "$domain" AAAA 2>/dev/null || true)
+      for ip6 in $ips6; do
+        case "$ip6" in
+          ::1|::|"") continue ;;
+          *[!0-9a-fA-F:]*) continue ;;
+        esac
+        $NFT add element inet filter allowed_ips6 "{ $ip6 timeout 5m }" 2>/dev/null || true
+      done
+    }
+
+    # Pre-populate base domains
+    for domain in ${allowedDomainsList}; do
+      add_ips "$domain" &
     done
+    wait
+
+    # Wait for log file
+    while [ ! -f "$LOG" ]; do sleep 0.5; done
+
+    # Tail unbound reply log — reactively add IPs for every resolved domain.
+    # This captures wildcard subdomain resolutions that the base list misses.
+    # First connect may race (IP added ms after reply), but clients retry and
+    # established connections are allowed by conntrack regardless.
+    ${pkgs.coreutils}/bin/tail -n 0 -F "$LOG" \
+      | "$AWK" '/info:.*NOERROR/ { for(i=1;i<=NF;i++) if($i=="info:") { d=$(i+2); sub(/\.$/,"",d); print d; fflush(); break } }' \
+      | while IFS= read -r domain; do
+          add_ips "$domain"
+        done
   '';
 
   setupScript = pkgs.writeShellScript "pi-sandbox-netns-setup" ''
@@ -273,9 +290,9 @@ in {
       };
     };
 
-    # Periodically resolves allowed domains and populates nftables IP sets
+    # Reactively populates nftables IP sets from unbound reply log
     systemd.services.pi-sandbox-nft-updater = {
-      description = "Populate nftables allowed_ips set by resolving allowed domains";
+      description = "Populate nftables allowed_ips set from unbound reply log";
       after = ["pi-sandbox-unbound.service"];
       bindsTo = ["pi-sandbox-unbound.service"];
       wantedBy = ["multi-user.target"];
