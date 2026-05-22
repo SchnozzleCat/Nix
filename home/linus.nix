@@ -143,6 +143,9 @@ in {
       bruno
       thunar
       tidal-hifi
+      kubectl
+      awscli
+      fswatch
 
       # Games
       steam-run
