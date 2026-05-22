@@ -88,12 +88,17 @@ in {
           # Parse flags
           PORTS=()
           HOST_PORTS=()
+          NO_FIREWALL=false
           while [ $# -gt 0 ]; do
             case "$1" in
               -p)
                 PORTS+=("-p" "$2")
                 HOST_PORTS+=("$2")
                 shift 2
+                ;;
+              --no-firewall)
+                NO_FIREWALL=true
+                shift
                 ;;
               *) break ;;
             esac
@@ -184,7 +189,7 @@ in {
               NETWORK_FLAGS+=("--network" "none")
             ''
             else ''
-              if [ -e /run/netns/pi-restricted ]; then
+              if [ "$NO_FIREWALL" = false ] && [ -e /run/netns/pi-restricted ]; then
                 NETWORK_FLAGS+=("--network" "pasta:--address,10.200.100.1" "--dns" "10.200.1.2")
                 RUN_PREFIX=(sudo "${nsenterWrapper}" systemd-run --user --scope --slice=pi_sandbox --)
               else
