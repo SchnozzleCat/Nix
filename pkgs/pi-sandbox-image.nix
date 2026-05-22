@@ -81,6 +81,7 @@ in {
   image = pkgs.dockerTools.buildImage {
     name = "pi-sandbox";
     tag = "latest";
+    diskSize = 4096;
 
     copyToRoot = pkgs.buildEnv {
       name = "pi-sandbox-root";
@@ -119,11 +120,14 @@ in {
           jujutsu
           gnugrep
           procps
+          just
           gh-wrapped
           linear-cli-wrapped
           starship
           stdenv.cc.cc.lib
           dotnetCorePackages.sdk_10_0
+          R
+          icu.dev
         ]
         ++ lib.optional (hostCommands != {}) hostcmd.wrappers;
       pathsToLink = ["/bin" "/lib" "/etc" "/share"];
