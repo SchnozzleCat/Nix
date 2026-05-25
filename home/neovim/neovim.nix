@@ -143,6 +143,7 @@ in {
     '';
     extraConfigLua = ''
       if vim.fn.filereadable(vim.fn.getcwd() .. "/project.godot") == 1 then
+        -- Use 'nvim --server /tmp/godot.pipe --remote-send "<C-\><C-N>:n {file}<CR>{line}G{col}|"' to connect
         local addr = "/tmp/godot.pipe"
         vim.fn.serverstart(addr)
       end
