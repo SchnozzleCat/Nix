@@ -260,7 +260,7 @@ in {
             "hide_documentation"
           ];
           "<CR>" = [
-            "accept"
+            "select_and_accept"
             "fallback"
           ];
           "<Down>" = [
