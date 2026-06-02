@@ -27,15 +27,15 @@
   };
 
   piPkgUnwrapped = pkgs.pi-coding-agent.overrideAttrs (oldAttrs: rec {
-    version = "0.70.5";
+    version = "0.77.0";
     src = oldAttrs.src.override {
       tag = "v${version}";
-      hash = "sha256-Jn+hvS/DIwbwAff+UovdIVnmrb4o8gsC4IR24MnwF1I=";
+      hash = "sha256-PJyhLWfqoPjHoYl4pKJVD3uMD5YjQB5YIk5mBZvGi8E=";
     };
     npmDeps = pkgs.fetchNpmDeps {
       name = "pi-coding-agent-${version}-npm-deps";
       inherit src;
-      hash = "sha256-MZgcHJdGFGSNgQ26/24iA12FdmO7S5vWv4crSNFhHi0=";
+      hash = "sha256-X0qMLqAi5pgrtTw5+DfSPsgIEngUnHwGxqYE6PL8NJU=";
     };
   });
 
