@@ -129,6 +129,7 @@ in {
           dotnetCorePackages.sdk_10_0
           R
           icu.dev
+          maven
         ]
         ++ lib.optional (hostCommands != {}) hostcmd.wrappers;
       pathsToLink = ["/bin" "/lib" "/etc" "/share"];
