@@ -74,6 +74,9 @@
   programs.nixvim.plugins = {
     roslyn = {
       enable = true;
+      settings = {
+        filewatching = "off";
+      };
       luaConfig.post = ''
         vim.lsp.config("roslyn", {
             settings = {
