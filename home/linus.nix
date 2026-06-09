@@ -74,6 +74,7 @@ in {
     enable = true;
     forwardGpg = true;
     forwardGitConfig = true;
+    forwardClaude = true;
     hostCommands = {
       zellij = {
         command = "${pkgs.zellij}/bin/zellij";

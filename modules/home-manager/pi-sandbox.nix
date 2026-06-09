@@ -30,6 +30,19 @@ in {
         description = mdDoc "Forward ~/.config/git/config into the container.";
       };
 
+      forwardClaude = mkOption {
+        type = types.bool;
+        default = false;
+        description = mdDoc ''
+          Forward the host Claude Code config (~/.claude and ~/.claude.json)
+          into the container so `claude` runs authenticated, via
+          CLAUDE_CONFIG_DIR=/claude-config. Mounted read-write: the sandboxed
+          agent can read your OAuth token and modify your host Claude state
+          (project history, settings), so the sandbox's isolation no longer
+          fully covers Claude credentials.
+        '';
+      };
+
       extraEnv = mkOption {
         type = types.attrsOf types.str;
         default = {};
@@ -143,6 +156,26 @@ in {
             fi
           ''}
 
+          # Forward host Claude Code config so `claude` runs authenticated.
+          # Claude stores its config dir at CLAUDE_CONFIG_DIR but keeps
+          # .claude.json beside it, so both are mounted: the dir carries the
+          # OAuth token (.credentials.json) + settings/sessions, and the file
+          # carries onboarding/trust state so no re-onboarding is needed.
+          declare -a CLAUDE_FLAGS=()
+          ${optionalString cfg.forwardClaude ''
+            if [ -d "$HOME/.claude" ]; then
+              CLAUDE_FLAGS+=(
+                "-v" "$HOME/.claude:/claude-config"
+                "-e" "CLAUDE_CONFIG_DIR=/claude-config"
+              )
+              if [ -f "$HOME/.claude.json" ]; then
+                CLAUDE_FLAGS+=("-v" "$HOME/.claude.json:/claude-config/.claude.json")
+              fi
+            else
+              echo "sandbox: ~/.claude not found, skipping Claude config forwarding" >&2
+            fi
+          ''}
+
           TTY_FLAG=""
           if [ -t 0 ]; then
             TTY_FLAG="-t"
@@ -247,6 +280,7 @@ in {
             ${concatStringsSep " " (mapAttrsToList (k: v: ''-e "${k}=${v}"'') cfg.extraEnv)} \
             "''${GPG_FLAGS[@]+"''${GPG_FLAGS[@]}"}" \
             "''${GIT_FLAGS[@]+"''${GIT_FLAGS[@]}"}" \
+            "''${CLAUDE_FLAGS[@]+"''${CLAUDE_FLAGS[@]}"}" \
             "''${MOUNT_FLAGS[@]+"''${MOUNT_FLAGS[@]}"}" \
             "''${HOSTCMD_FLAGS[@]+"''${HOSTCMD_FLAGS[@]}"}" \
             "''${PORT_FLAGS[@]+"''${PORT_FLAGS[@]}"}" \

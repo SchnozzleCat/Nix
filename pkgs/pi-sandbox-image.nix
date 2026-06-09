@@ -88,6 +88,7 @@ in {
       paths = with pkgs;
         [
           piPkg
+          claude-code
           bashInteractive
           coreutils
           findutils
