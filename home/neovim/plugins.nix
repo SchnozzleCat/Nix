@@ -586,6 +586,12 @@ in {
         };
       };
     };
+    dap-lldb = {
+      enable = true;
+      settings = {
+        codelldb_path = "${pkgs.vscode-extensions.vadimcn.vscode-lldb}/share/vscode/extensions/vadimcn.vscode-lldb/adapter/codelldb";
+      };
+    };
     dap = {
       enable = true;
       adapters = {
@@ -617,12 +623,8 @@ in {
               "/home/linus/Repositories/pina-checkout-integration-exploration/vscode-php-debug/out/phpDebug.js"
             ];
           };
-          "cppdbg" = {
-            id = "cppdbg";
-            command = "${pkgs.vscode-extensions.ms-vscode.cpptools}/share/vscode/extensions/ms-vscode.cpptools/debugAdapters/bin/OpenDebugAD7";
-            options = {
-              detached = false;
-            };
+          "lldb" = {
+            command = "${pkgs.vscode-extensions.vadimcn.vscode-lldb}/share/vscode/extensions/vadimcn.vscode-lldb/adapter/codelldb";
           };
           "coreclr" = {
             command = "${pkgs.netcoredbg}/bin/netcoredbg";
@@ -695,47 +697,117 @@ in {
         ];
         cpp = [
           {
-            name = "Launch default file";
-            type = "cppdbg";
+            name = "Launch";
+            type = "lldb";
             request = "launch";
             program.__raw = ''
               function()
-                return vim.fn.getcwd() .. "/" .. vim.fn.system "cat debug_entry"
-              end
-            '';
-            cwd = ''''${workspaceFolder}'';
-            stopAtEntry = false;
-            args = [
-              "--editor"
-              "--path"
-              "~/Repositories/dev"
-            ];
-          }
-          {
-            name = "Launch file";
-            type = "cppdbg";
-            request = "launch";
-            program.__raw = ''
-              function()
+                local found = {}
+
+                -- Helper: check if path is an executable binary
+                local function is_binary(path)
+                  if vim.fn.isdirectory(path) == 1 then return false end
+                  if vim.fn.filereadable(path) ~= 1 then return false end
+                  local ext = path:match("%.%w+$") or ""
+                  local skip = {
+                    [".cpp"]=true, [".c"]=true, [".h"]=true, [".hpp"]=true,
+                    [".o"]=true, [".so"]=true, [".a"]=true, [".la"]=true,
+                    [".cmake"]=true, [".txt"]=true, [".json"]=true,
+                    [".xml"]=true, [".yaml"]=true, [".yml"]=true,
+                    [".md"]=true, [".log"]=true, [".py"]=true,
+                    [".sh"]=true, [".lua"]=true, [".toml"]=true,
+                    [".ini"]=true, [".cfg"]=true, [".conf"]=true,
+                  }
+                  if skip[ext] then return false end
+                  local perm = vim.fn.getfperm(path) or ""
+                  return perm:match("x") ~= nil
+                end
+
+                -- Helper: pick via Snacks, falling back to vim.ui.select
+                local function pick(items)
+                  local co = coroutine.running()
+                  if Snacks and Snacks.picker then
+                    Snacks.picker.select(items, { prompt = "Select executable:" }, function(selected)
+                      coroutine.resume(co, selected)
+                    end)
+                  else
+                    vim.ui.select(items, { prompt = "Select executable:" }, function(selected)
+                      coroutine.resume(co, selected)
+                    end)
+                  end
+                  return coroutine.yield()
+                end
+
+                -- 1. Check for debug_entry file
+                local debug_entry = vim.fn.getcwd() .. "/debug_entry"
+                if vim.fn.filereadable(debug_entry) == 1 then
+                  local path = vim.fn.system("cat " .. vim.fn.shellescape(debug_entry)):gsub("\n", "")
+                  if path ~= "" then return path end
+                end
+
+                -- 2. Search common build dirs for executables
+                local build_dirs = { "build", "out", "cmake-build-debug", "cmake-build-release" }
+                for _, dir in ipairs(build_dirs) do
+                  local full = vim.fn.getcwd() .. "/" .. dir
+                  if vim.fn.isdirectory(full) == 1 then
+                    for _, f in ipairs(vim.fn.glob(full .. "/**/*", false, true)) do
+                      if is_binary(f) then table.insert(found, f) end
+                    end
+                  end
+                end
+
+                -- 3. Also check project root
+                for _, f in ipairs(vim.fn.glob(vim.fn.getcwd() .. "/*", false, true)) do
+                  if is_binary(f) and not f:match("debug_entry$") then
+                    table.insert(found, f)
+                  end
+                end
+
+                -- 4. Auto-select if only one candidate
+                if #found == 1 then return found[1] end
+
+                -- 5. Pick if multiple
+                if #found > 1 then
+                  local selected = pick(found)
+                  if selected then return selected end
+                end
+
+                -- 6. Fallback to manual input
                 return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
               end
             '';
             cwd = ''''${workspaceFolder}'';
-            stopAtEntry = true;
+            stopOnEntry = false;
           }
           {
-            name = "Attach to gdbserver :1234";
-            type = "cppdbg";
+            name = "Launch (with args)";
+            type = "lldb";
             request = "launch";
-            MIMode = "gdb";
-            miDebuggerServerAddress = "localhost:1234";
-            miDebuggerPath = "${pkgs.gdb}/bin/gdb";
-            cwd = ''''${workspaceFolder}'';
             program.__raw = ''
               function()
-                return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+                local debug_entry = vim.fn.getcwd() .. "/debug_entry"
+                if vim.fn.filereadable(debug_entry) == 1 then
+                  local path = vim.fn.system("cat " .. vim.fn.shellescape(debug_entry)):gsub("\n", "")
+                  if path ~= "" then return path end
+                end
+                return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
               end
             '';
+            args.__raw = ''
+              function()
+                local args = vim.fn.input('Args: ')
+                return vim.split(args, " ", { trimempty = true })
+              end
+            '';
+            cwd = ''''${workspaceFolder}'';
+            stopOnEntry = false;
+          }
+          {
+            name = "Attach to process";
+            type = "lldb";
+            request = "attach";
+            pid.__raw = ''require('dap.utils').pick_process'';
+            cwd = ''''${workspaceFolder}'';
           }
         ];
         cs = [
@@ -885,10 +957,7 @@ in {
         };
         formatting = {
           alejandra.enable = true;
-          astyle = {
-            enable = true;
-            settings.disabled_filetypes = ["cs"];
-          };
+          clang_format.enable = true;
           csharpier.enable = true;
           gdformat.enable = true;
           isort.enable = true;
