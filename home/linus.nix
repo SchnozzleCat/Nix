@@ -154,6 +154,7 @@ in {
       steam-run
       protonup-qt
       libreoffice
+      inetutils
 
       # Misc
       obsidian
