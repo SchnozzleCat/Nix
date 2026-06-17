@@ -50,7 +50,7 @@
     allowedUDPPorts = [
       7777
     ];
-    interfaces."veth-pisb-h".allowedTCPPorts = [5432 5433 5434 6379 6380];
+    interfaces."veth-pisb-h".allowedTCPPorts = [5432 5433 5434 6379 6380 1234];
   };
 
   # networking.wg-quick.interfaces.proton-de350.configFile = "/home/linus/.nixos/secrets/wireguard/proton-de350.conf";
@@ -152,7 +152,7 @@ R1tH9/wg2FSXDNZKCTJ5iSfZLBrL
       ".auth0edge.com"
       "t-staging.eu.auth0.com"
     ];
-    allowHostPorts = [5432 5433 5434 6379 6380];
+    allowHostPorts = [5432 5433 5434 6379 6380 1234];
   };
 
   virtualisation.containerd = {

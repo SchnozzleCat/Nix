@@ -148,6 +148,7 @@ in {
       kubectl
       awscli
       fswatch
+      lmstudio
 
       # Games
       steam-run
