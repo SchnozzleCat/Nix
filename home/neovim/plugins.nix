@@ -321,7 +321,15 @@ in {
       };
     };
     undotree.enable = true;
-    neogen.enable = true;
+    neogen = {
+      enable = true;
+      package = pkgs.fetchFromGitHub {
+        owner = "romamihalich";
+        repo = "neogen";
+        rev = "08df93cba32425420364aa8511504cb921cde826";
+        sha256 = "sha256-tu29BFUjES/4Pq4uH1zOnV2oJGiW6SjD9fkyhqXVXQM=";
+      };
+    };
     molten = {
       enable = true;
       settings = {
