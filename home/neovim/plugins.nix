@@ -965,7 +965,10 @@ in {
         };
         formatting = {
           alejandra.enable = true;
-          clang_format.enable = true;
+          clang_format = {
+            enable = true;
+            settings.filetypes = ["c" "cpp"];
+          };
           csharpier.enable = true;
           gdformat.enable = true;
           isort.enable = true;
