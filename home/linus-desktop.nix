@@ -42,9 +42,15 @@
     };
   };
 
+  programs.obs-studio = {
+    enable = true;
+    plugins = with pkgs.obs-studio-plugins; [
+      wlrobs
+      obs-vkcapture
+    ];
+  };
+
   home.packages = with pkgs; [
-    obs-studio
-    obs-studio-plugins.wlrobs
     (writeShellApplication {
       name = "swap-audio";
       text = ''
