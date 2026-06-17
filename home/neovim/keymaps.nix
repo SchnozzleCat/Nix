@@ -355,7 +355,7 @@
     {
       mode = "n";
       key = "<leader>dv";
-      action = ''<cmd> lua require("dapui").toggle() <cr>'';
+      action = ''<cmd> DapViewToggle <cr>'';
       options.desc = "Toggle DAP UI";
     }
     {
