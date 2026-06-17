@@ -318,7 +318,10 @@ R1tH9/wg2FSXDNZKCTJ5iSfZLBrL
     # package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
     # portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
   };
-  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+  environment.sessionVariables = {
+    TZDIR = "/etc/zoneinfo";
+    NIXOS_OZONE_WL = "1";
+  };
 
   hardware.opentabletdriver.enable = true;
 

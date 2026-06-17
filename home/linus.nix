@@ -102,6 +102,7 @@ in {
     sessionVariables = {
       EDITOR = "nvim";
       DOCKER_HOST = "unix:///run/user/1000/podman/podman.sock";
+      TZDIR = "/etc/zoneinfo";
     };
     packages = with pkgs; [
       (writeShellScriptBin "pi" ''
