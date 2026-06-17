@@ -92,6 +92,11 @@ R1tH9/wg2FSXDNZKCTJ5iSfZLBrL
 
   programs.command-not-found.enable = false;
 
+  programs.localsend = {
+    enable = true;
+    openFirewall = true;
+  };
+
   virtualisation.podman = {
     enable = true;
     dockerCompat = true;
