@@ -78,7 +78,6 @@ in {
           mainProgram = "dotnet-easydotnet";
         };
       })
-      csharpier
       (pkgs.buildEnv {
         name = "combinedSdk";
         paths = [
