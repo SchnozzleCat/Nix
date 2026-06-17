@@ -205,6 +205,15 @@ in {
         nix run ~/Repositories/KomradKat -- "$@"
       '')
       (writeShellApplication {
+        name = "twitch-chat-sound";
+        runtimeInputs = [python3 pulseaudio libnotify];
+        text = ''
+          export TWITCH_SOUND="''${TWITCH_SOUND:-${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/message.oga}"
+          export TWITCH_PLAYER="''${TWITCH_PLAYER:-paplay}"
+          exec python3 ${./scripts/twitch-chat-sound.py} "$@"
+        '';
+      })
+      (writeShellApplication {
         name = "soundscaper";
         text = ''
           echo "$1" | ${pkgs.socat}/bin/socat - UNIX-CONNECT:/tmp/CoreFxPipe_SoundScaper
@@ -236,6 +245,70 @@ in {
         name = "where";
         text = ''
           readlink -e "$(which "$1")"
+        '';
+      })
+      (writeShellApplication {
+        name = "virtual-audio";
+        runtimeInputs = [pulseaudio];
+        text = ''
+          name="''${1:-Virtual}"
+          pactl load-module module-null-sink \
+            sink_name="$name" \
+            sink_properties=device.description="$name"
+        '';
+      })
+      (writeShellApplication {
+        name = "stream-start";
+        runtimeInputs = [pulseaudio];
+        text = ''
+          pids=()
+
+          cleanup() {
+            echo "[stream-start] shutting down..."
+            for pid in "''${pids[@]}"; do
+              kill "$pid" 2>/dev/null || true
+            done
+            if [[ -n "''${music_module:-}" ]]; then
+              pactl unload-module "$music_module" 2>/dev/null || true
+            fi
+          }
+          trap cleanup EXIT INT TERM
+
+          echo "[stream-start] creating 'music' virtual audio cable"
+          music_module=$(virtual-audio music)
+
+          echo "[stream-start] listening to #schnozzlecat chat"
+          twitch-chat-sound schnozzlecat &
+          pids+=("$!")
+
+          echo "[stream-start] starting obs-lemonbattery"
+          obs-lemonbattery &
+          pids+=("$!")
+
+          echo "[stream-start] running (Ctrl-C to stop)"
+          wait
+        '';
+      })
+      (writeShellApplication {
+        name = "obs-lemonbattery";
+        runtimeInputs = [socat hyprland];
+        text = ''
+          socat -U - "UNIX-CONNECT:$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" |
+            while IFS= read -r line; do
+              [[ "$line" == activewindow\>\>* ]] || continue
+              rest="''${line#activewindow>>}"
+              title="''${rest#*,}"
+              case "$title" in
+                *Schnozzle.LemonBattery*)
+                  hyprctl dispatch sendshortcut ",F8,class:^(com.obsproject.Studio)$" ;;
+                *"LemonBattery (DEBUG)"*)
+                  hyprctl dispatch sendshortcut ",F10,class:^(com.obsproject.Studio)$" ;;
+                *LemonBattery*)
+                  hyprctl dispatch sendshortcut ",F9,class:^(com.obsproject.Studio)$" ;;
+                *)
+                  hyprctl dispatch sendshortcut ",F9,class:^(com.obsproject.Studio)$" ;;
+              esac
+            done
         '';
       })
     ];
