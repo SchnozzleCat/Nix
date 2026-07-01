@@ -69,6 +69,19 @@
       html.enable = true;
       phpactor.enable = true;
       eslint.enable = true;
+      qmlls = {
+        enable = true;
+        config = {
+          # `-E` makes qmlls read QML_IMPORT_PATH from the environment, which
+          # per-project dev shells (e.g. quickshell flakes) export so it can
+          # resolve QtQuick/Quickshell modules. Launch nvim inside the project's
+          # direnv shell for this to take effect.
+          cmd = [
+            "${pkgs.qt6.qtdeclarative}/bin/qmlls"
+            "-E"
+          ];
+        };
+      };
     };
   };
   programs.nixvim.plugins = {

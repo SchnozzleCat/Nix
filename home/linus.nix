@@ -70,6 +70,10 @@ in {
     paths = [./config/skills] ++ import ./config/remote-agent-skills.nix {inherit pkgs;};
   };
 
+  programs.quickshell = {
+    enable = true;
+  };
+
   programs.pi-sandbox = {
     enable = true;
     forwardGpg = true;
