@@ -13,6 +13,13 @@ with lib; let
   piImage = pi-sandbox.image;
 
   nsenterWrapper = import ../../pkgs/pi-sandbox-nsenter.nix {inherit pkgs;};
+
+  # pasta network spec for --no-firewall mode when testcontainers support is on:
+  # a deterministic address+gateway with --map-gw so the gateway resolves to
+  # the host's loopback, where the host rootless podman daemon publishes ports.
+  tcNetwork = if cfg.forwardTestcontainers && cfg.forwardDocker
+    then "pasta:--address,10.200.200.1,--gateway,10.200.200.2,--map-gw"
+    else "pasta";
 in {
   options = {
     programs.pi-sandbox = {
@@ -59,6 +66,43 @@ in {
         type = types.bool;
         default = true;
         description = mdDoc "Enable network access. When false, the container runs with --network none.";
+      };
+
+      forwardDocker = mkOption {
+        type = types.bool;
+        default = false;
+        description = mdDoc ''
+          Forward the host rootless Podman socket into the container so
+          `docker` (and `podman`) commands run against the host daemon.
+          The socket is your user Podman socket at
+          $XDG_RUNTIME_DIR/podman/podman.sock, which is started
+          automatically as a systemd user socket. Inside the container it
+          is mounted at /run/podman/podman.sock and exposed via
+          DOCKER_HOST/CONTAINER_HOST.
+        '';
+      };
+
+      forwardTestcontainers = mkOption {
+        type = types.bool;
+        default = false;
+        description = mdDoc ''
+          Make docker/podman-driven test containers reachable from the sandbox
+          when run without the firewall (`sandbox --no-firewall`). In no-firewall
+          mode the host rootless Podman daemon publishes test-container ports on
+          the host's loopback; this adds a pasta `--map-gw` route to a pinned
+          gateway address (10.200.200.2) that maps to host-loopback, and exports
+          the standard TESTCONTAINERS_* env vars so testcontainers libraries
+          resolve published ports back to that gateway.
+
+          Requires forwardDocker. Only effective in --no-firewall mode: with the
+          firewall on, test containers run in the host netns and are unreachable
+          without a dedicated in-netns podman daemon.
+
+          Side effects: TESTCONTAINERS_RYUK_DISABLED and
+          TESTCONTAINERS_CHECKS_DISABLED are set (Ryuk does not start cleanly
+          under a forwarded rootless podman socket), so testcontainers relies on
+          its own cleanup instead of the Ryuk reaper container.
+        '';
       };
 
       hostCommands = mkOption {
@@ -176,6 +220,23 @@ in {
             fi
           ''}
 
+          # Forward the host rootless Podman socket so `docker`/`podman` inside
+          # the sandbox talk to the host daemon. The socket is owned by the
+          # calling user, so it maps cleanly under --userns=keep-id.
+          declare -a DOCKER_FLAGS=()
+          ${optionalString cfg.forwardDocker ''
+            DOCKER_SOCK="$XDG_RUNTIME_DIR/podman/podman.sock"
+            if [ -S "$DOCKER_SOCK" ]; then
+              DOCKER_FLAGS+=(
+                "-v" "$DOCKER_SOCK:/run/podman/podman.sock"
+                "-e" "DOCKER_HOST=unix:///run/podman/podman.sock"
+                "-e" "CONTAINER_HOST=unix:///run/podman/podman.sock"
+              )
+            else
+              echo "sandbox: Podman socket not found at $DOCKER_SOCK (enable podman.socket user unit), skipping docker forwarding" >&2
+            fi
+          ''}
+
           TTY_FLAG=""
           if [ -t 0 ]; then
             TTY_FLAG="-t"
@@ -197,6 +258,23 @@ in {
               REPO_FLAGS+=("-v" "$JJ_BACKING:$JJ_BACKING")
             fi
           fi
+
+          # testcontainers (requires forwardDocker + --no-firewall): the map-gw
+          # pasta route (see tcNetwork) maps the deterministic gateway to
+          # host-loopback, so we point testcontainers libraries at that gateway
+          # and disable Ryuk/checks (Ryuk won't start cleanly under a forwarded
+          # rootless podman socket).
+          declare -a TC_FLAGS=()
+          ${optionalString (cfg.forwardTestcontainers && cfg.forwardDocker) ''
+            if [ "$NO_FIREWALL" = true ] && [ -S "$XDG_RUNTIME_DIR/podman/podman.sock" ]; then
+              TC_FLAGS+=(
+                "-e" "TESTCONTAINERS_HOST_OVERRIDE=10.200.200.2"
+                "-e" "TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=$XDG_RUNTIME_DIR/podman/podman.sock"
+                "-e" "TESTCONTAINERS_RYUK_DISABLED=true"
+                "-e" "TESTCONTAINERS_CHECKS_DISABLED=true"
+              )
+            fi
+          ''}
 
           declare -a MOUNT_FLAGS=()
           ${
@@ -226,7 +304,7 @@ in {
                 NETWORK_FLAGS+=("--network" "pasta:--address,10.200.100.1" "--dns" "10.200.1.2")
                 RUN_PREFIX=(sudo "${nsenterWrapper}" systemd-run --user --scope --slice=pi_sandbox --)
               else
-                NETWORK_FLAGS+=("--network" "pasta")
+                NETWORK_FLAGS+=("--network" "${tcNetwork}")
               fi
             ''
           }
@@ -281,6 +359,8 @@ in {
             "''${GPG_FLAGS[@]+"''${GPG_FLAGS[@]}"}" \
             "''${GIT_FLAGS[@]+"''${GIT_FLAGS[@]}"}" \
             "''${CLAUDE_FLAGS[@]+"''${CLAUDE_FLAGS[@]}"}" \
+            "''${DOCKER_FLAGS[@]+"''${DOCKER_FLAGS[@]}"}" \
+            "''${TC_FLAGS[@]+"''${TC_FLAGS[@]}"}" \
             "''${MOUNT_FLAGS[@]+"''${MOUNT_FLAGS[@]}"}" \
             "''${HOSTCMD_FLAGS[@]+"''${HOSTCMD_FLAGS[@]}"}" \
             "''${PORT_FLAGS[@]+"''${PORT_FLAGS[@]}"}" \
@@ -313,6 +393,31 @@ in {
         };
         Install = {
           WantedBy = ["default.target"];
+        };
+      };
+
+      # Rootless Podman API socket, so `docker`/`podman` in the sandbox can
+      # talk to the host daemon. Mirrors the upstream podman.socket user unit.
+      systemd.user.sockets.podman = mkIf cfg.forwardDocker {
+        Unit = {Description = "Podman API Socket for user";};
+        Socket = {
+          ListenStream = ["%t/podman/podman.sock"];
+          SocketMode = "0660";
+        };
+        Install = {
+          WantedBy = ["sockets.target"];
+        };
+      };
+
+      systemd.user.services.podman = mkIf cfg.forwardDocker {
+        Unit = {
+          Description = "Podman API Service";
+          Requires = ["podman.socket"];
+          After = ["podman.socket"];
+        };
+        Service = {
+          Type = "exec";
+          ExecStart = "${pkgs.podman}/bin/podman system service --time=0";
         };
       };
     }

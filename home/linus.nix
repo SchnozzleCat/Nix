@@ -79,6 +79,8 @@ in {
     forwardGpg = true;
     forwardGitConfig = true;
     forwardClaude = true;
+    forwardDocker = true;
+    forwardTestcontainers = true;
     hostCommands = {
       zellij = {
         command = "${pkgs.zellij}/bin/zellij";

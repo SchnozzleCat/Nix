@@ -124,11 +124,21 @@ in {
           just
           gh-wrapped
           linear-cli-wrapped
+          docker
           starship
           stdenv.cc.cc.lib
           dotnetCorePackages.sdk_10_0
           R
           icu.dev
+          icu
+          openssl.out
+          xorg.libX11
+          xorg.libXext
+          xorg.libXrender
+          xorg.libXtst
+          xorg.libXi
+          fontconfig.lib
+          jdk8
           maven
         ]
         ++ lib.optional (hostCommands != {}) hostcmd.wrappers;
