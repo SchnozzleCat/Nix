@@ -88,7 +88,7 @@
     roslyn = {
       enable = true;
       settings = {
-        filewatching = "off";
+        # filewatching = "off";
       };
       luaConfig.post = ''
         vim.lsp.config("roslyn", {
