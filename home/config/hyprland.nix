@@ -99,8 +99,8 @@ in ''
 
       blur {
           enabled = true
-          size = 12
-          passes = 5
+          size = 8
+          passes = 3
           special = true
           xray = true
       }

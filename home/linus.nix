@@ -509,6 +509,7 @@ in {
     theme = "catppuccin_mocha";
     settings = {
       font.size = 10;
+      window.opacity = 0.9;
     };
   };
 
