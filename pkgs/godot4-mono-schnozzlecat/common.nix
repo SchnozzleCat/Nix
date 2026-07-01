@@ -745,7 +745,8 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
             echo "${finalAttrs.combined-sdk}" >> "$out"/nix-support/propagated-build-inputs
 
             wrapProgram "$out"/libexec/${binary} \
-              --prefix PATH : "${lib.makeBinPath [finalAttrs.combined-sdk]}"
+              --prefix PATH : "${lib.makeBinPath [finalAttrs.combined-sdk]}" \
+              --set-default TZDIR /etc/zoneinfo
 
             runHook postInstall
           '';
