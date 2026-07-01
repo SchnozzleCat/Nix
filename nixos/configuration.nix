@@ -59,6 +59,11 @@
   services.udev.packages = [pkgs.yubikey-personalization];
   services.pcscd.enable = true;
 
+  programs.ausweisapp = {
+    enable = true;
+    openFirewall = true;
+  };
+
   programs.gamemode = {
     enable = true;
     settings.general.inhibit_screensaver = 0;
