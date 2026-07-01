@@ -86,6 +86,11 @@
     };
 
     googleworkspace-cli.url = "github:googleworkspace/cli";
+
+    pi-jail = {
+      url = "path:./flakes/pi-jail";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {

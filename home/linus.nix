@@ -82,6 +82,9 @@ in {
       TZDIR = "/etc/zoneinfo";
     };
     packages = with pkgs; [
+      # Jailed pi coding agent (bwrap sandbox, see flakes/pi-jail)
+      (inputs.pi-jail.lib.${pkgs.system}.makeJailedPi {})
+
       # OS
       wl-clipboard
       pyprland
