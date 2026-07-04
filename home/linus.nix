@@ -74,47 +74,14 @@ in {
     enable = true;
   };
 
-  programs.pi-sandbox = {
-    enable = true;
-    forwardGpg = true;
-    forwardGitConfig = true;
-    forwardClaude = true;
-    forwardDocker = true;
-    forwardTestcontainers = true;
-    hostCommands = {
-      zellij = {
-        command = "${pkgs.zellij}/bin/zellij";
-        allowedArgs = [
-          ["list-sessions"]
-          ["list-panes"]
-          ["action" "dump-layout"]
-          ["action" "dump-screen"]
-          ["-s" "*" "list-panes"]
-          ["-s" "*" "action" "dump-layout"]
-          ["-s" "*" "action" "dump-screen"]
-          ["-s" "*" "action" "list-panes"]
-          ["--session" "*" "list-panes"]
-          ["--session" "*" "action" "dump-layout"]
-          ["--session" "*" "action" "dump-screen"]
-          ["--session" "*" "action" "list-panes"]
-        ];
-      };
-    };
-  };
-
   home = {
     username = "linus";
     homeDirectory = "/home/linus";
     sessionVariables = {
       EDITOR = "nvim";
-      DOCKER_HOST = "unix:///run/user/1000/podman/podman.sock";
       TZDIR = "/etc/zoneinfo";
     };
     packages = with pkgs; [
-      (writeShellScriptBin "pi" ''
-        exec sandbox pi "$@"
-      '')
-
       # OS
       wl-clipboard
       pyprland
