@@ -18,6 +18,8 @@ in {
 
   wayland.windowManager.hyprland = {
     enable = true;
+    configType = "hyprlang";
+    settings = {};
   };
 
   nixpkgs.config.android_sdk.accept_license = true;
