@@ -66,11 +66,6 @@ in {
     };
   };
 
-
-  programs.claude-code = {
-    enable = true;
-  };
-
   programs.command-not-found.enable = false;
 
   programs.nix-index = {
