@@ -136,7 +136,7 @@
         mount-cwd
 
         # Credentials resolved from the host pass store at invocation time.
-        (pass-env "OPENCODE_API_KEY" "pina/opencode-api-key")
+        (pass-env "OPENCODE_API_KEY" "opencode-api-key")
 
         # Forward optional proxy vars if the host exports them (no-op if unset).
         (try-fwd-env "HTTPS_PROXY")
