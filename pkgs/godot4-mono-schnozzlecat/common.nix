@@ -89,10 +89,10 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
   );
 
   sdk = requireFile {
-    name = "steamworks_sdk_163.zip";
-    message = "Please download the SDK and then add it with nix-store --add-fixed sha256 steamworks_sdk_163.zip";
+    name = "steamworks_sdk_164.zip";
+    message = "Please download the SDK and then add it with nix-store --add-fixed sha256 steamworks_sdk_164.zip";
     # `sha256sum` on the path
-    sha256 = "9bd1bb02e696f4b0fa541b9d64baa453d73cf919a629828950b65bb3e566b5f4";
+    sha256 = "55c525b61de0fc820099b84ebd2cbd3890b9378dd3d12909c0f33d74ea05243c";
   };
 
   arch = stdenv.hostPlatform.linuxArch;
@@ -117,6 +117,16 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
     else null;
 
   dottedVersion = lib.replaceStrings ["-"] ["."] version + lib.optionalString withMono ".mono";
+
+  harfbuzz-raster = harfbuzz.override {
+    withRaster = lib.versionAtLeast version "4.7";
+    withCairo = lib.versionAtLeast version "4.7";
+  };
+
+  harfbuzz-icu = harfbuzz-raster.override {
+    withIcu = true;
+    harfbuzz = harfbuzz-raster;
+  };
 
   mkTarget = target: let
     editor = target == "editor";
@@ -311,7 +321,7 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
 
                   # stripping dlls results in:
                   # Failed to load System.Private.CoreLib.dll (error code 0x8007000B)
-                  stripExclude = lib.optional withMono ["*.dll"];
+                  stripExclude = lib.optionals withMono ["*.dll"];
 
                   runtimeDependencies =
                     prev.runtimeDependencies or []
@@ -349,15 +359,19 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
         ++ lib.optional editor "man";
       separateDebugInfo = true;
 
-      # Set the build name which is part of the version. In official downloads, this
-      # is set to 'official'. When not specified explicitly, it is set to
-      # 'custom_build'. Other platforms packaging Godot (Gentoo, Arch, Flatpack
-      # etc.) usually set this to their name as well.
-      #
-      # See also 'methods.py' in the Godot repo and 'build' in
-      # https://docs.godotengine.org/en/stable/classes/class_engine.html#class-engine-method-get-version-info
-      BUILD_NAME = "nixpkgs";
-      GODOT_VERSION_STATUS = "schnozzlecat-${lib.substring 0 4 rev}";
+      __structuredAttrs = true;
+
+      env = {
+        # Set the build name which is part of the version. In official downloads, this
+        # is set to 'official'. When not specified explicitly, it is set to
+        # 'custom_build'. Other platforms packaging Godot (Gentoo, Arch, Flatpack
+        # etc.) usually set this to their name as well.
+        #
+        # See also 'methods.py' in the Godot repo and 'build' in
+        # https://docs.godotengine.org/en/stable/classes/class_engine.html#class-engine-method-get-version-info
+        BUILD_NAME = "nixpkgs";
+        GODOT_VERSION_STATUS = "schnozzlecat-${lib.substring 0 4 rev}";
+      };
 
       preConfigure =
         ''
@@ -375,6 +389,13 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
           dotnet restore modules/mono/editor/GodotTools/GodotTools.sln
           dotnet restore modules/mono/editor/Godot.NET.Sdk/Godot.NET.Sdk.sln
         '';
+
+      # Godot 4.7 with system HarfBuzz needs explicit raster linkage, but this
+      # should be resolved upstream with 4.7.1.
+      # See https://github.com/godotengine/godot/pull/120568
+      preBuild = lib.optionalString (lib.versionAtLeast version "4.7") ''
+        export NIX_LDFLAGS="$NIX_LDFLAGS -lharfbuzz-raster"
+      '';
 
       # From: https://github.com/godotengine/godot/blob/4.2.2-stable/SConstruct
       sconsFlags = mkSconsFlagsFromAttrSet (
@@ -432,7 +453,7 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
       strictDeps = true;
 
       patches =
-        [
+        lib.optionals (lib.versionOlder version "4.6") [
           ./Linux-fix-missing-library-with-builtin_glslang-false.patch
         ]
         ++ lib.optionals (lib.versionOlder version "4.4") [
@@ -465,7 +486,7 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
             --replace-fail /usr/include/recastnavigation ${lib.escapeShellArg (lib.getDev recastnavigation)}/include/recastnavigation
 
         ''
-        + ''
+        + lib.optionalString (libGL != null) ''
           substituteInPlace thirdparty/glad/egl.c \
             --replace-fail \
               'static const char *NAMES[] = {"libEGL.so.1", "libEGL.so"}' \
@@ -480,7 +501,8 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
             --replace-fail \
               '"libGL.so.1"' \
               '"${lib.getLib libGL}/lib/libGL.so"'
-
+        ''
+        + ''
           substituteInPlace thirdparty/volk/volk.c \
             --replace-fail \
               'dlopen("libvulkan.so.1"' \
@@ -499,7 +521,7 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
           freetype
           glslang
           graphite2
-          (harfbuzz.override {withIcu = true;})
+          harfbuzz-icu
           icu
           libtheora
           libwebp
@@ -554,7 +576,7 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
           unzip
         ]
         ++ lib.optionals withWayland [wayland-scanner]
-        ++ lib.optional (editor && withMono) [
+        ++ lib.optionals (editor && withMono) [
           makeWrapper
           combined-sdk
         ];
@@ -605,8 +627,17 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
                 --replace-fail "Godot Engine" "Godot Engine ${
                 lib.versions.majorMinor version + lib.optionalString withMono " (Mono)"
               }"
-              cp icon.svg "$out/share/icons/hicolor/scalable/apps/godot.svg"
-              cp icon.png "$out/share/icons/godot.png"
+              ${
+                if lib.versionOlder version "4.7"
+                then ''
+                  cp icon.svg "$out/share/icons/hicolor/scalable/apps/godot.svg"
+                  cp icon.png "$out/share/icons/godot.png"
+                ''
+                else ''
+                  cp misc/logo/icon.svg "$out/share/icons/hicolor/scalable/apps/godot.svg"
+                  cp misc/logo/icon.png "$out/share/icons/godot.png"
+                ''
+              }
             ''
             + lib.optionalString withMono ''
               mkdir -p "$out"/share/nuget

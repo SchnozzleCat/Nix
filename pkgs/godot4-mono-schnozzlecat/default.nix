@@ -47,4 +47,5 @@
     };
 in {
   godotPackages_4_6 = mkGodotPackages "4.6";
+  godotPackages_4_7 = mkGodotPackages "4.7";
 }
