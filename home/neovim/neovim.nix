@@ -51,7 +51,7 @@ in {
       # nodePackages.ijavascript
       (python312Packages.jupytext.overridePythonAttrs (old: {doCheck = false;}))
       nodejs
-      quarto
+      #quarto
       typescript
       jq
       lsof

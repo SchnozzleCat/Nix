@@ -92,15 +92,15 @@ in {
     dust
     nix-output-monitor
     dive
-    quarto
+    #quarto
     inputs.googleworkspace-cli.packages.${pkgs.system}.default
-    (wrap {
-      pkg = pkgs.linear-cli;
-      bin = "linear";
-      env = {
-        LINEAR_API_KEY = "$(${pass}/bin/pass pina/linear-api-key)";
-      };
-    })
+    # (wrap {
+    #   pkg = pkgs.linear-cli;
+    #   bin = "linear";
+    #   env = {
+    #     LINEAR_API_KEY = "$(${pass}/bin/pass pina/linear-api-key)";
+    #   };
+    # })
 
     (wrap {
       pkg = pkgs.gh;
