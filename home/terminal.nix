@@ -66,7 +66,6 @@ in {
     };
   };
 
-  home.file.".config/opencode/config.json".text = import ./config/opencode-config.nix;
 
   programs.claude-code = {
     enable = true;

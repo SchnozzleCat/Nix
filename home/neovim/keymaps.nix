@@ -593,66 +593,26 @@
     {
       mode = ["n" "x"];
       key = "<leader>aa";
-      action = ''<cmd>lua require("opencode").ask("@this: ", { submit = true}) <cr>'';
-      options.desc = "Ask opencode";
+      action = ''<cmd>Pi<cr>'';
+      options.desc = "Pi";
     }
     {
       mode = ["n" "x"];
-      key = "<leader>as";
-      action = ''<cmd>lua require("opencode").select()<cr>'';
-      options.desc = "Execute opencode action";
-    }
-    {
-      mode = ["n" "t"];
-      key = "<C-a>";
-      action = ''<cmd>lua require("opencode").toggle()<cr>'';
-      options.desc = "Toggle opencode";
+      key = "<leader>ar";
+      action = ''<cmd>PiResume<cr>'';
+      options.desc = "Pi Resume";
     }
     {
       mode = ["n" "x"];
-      key = "go";
-      action = ''<cmd>lua require("opencode").operator("@this ")<cr>'';
-      options.desc = "Toggle opencode";
+      key = "<leader>ab";
+      action = ''<cmd>PiAbort<cr>'';
+      options.desc = "Pi Abort";
     }
     {
-      mode = ["n"];
-      key = "goo";
-      action = ''<cmd>lua require("opencode").operator("@this ") .. "_"<cr>'';
-      options.desc = "Toggle opencode";
-    }
-    {
-      mode = ["n"];
-      key = "<S-C-u>";
-      action = ''<cmd>lua require("opencode").command("session.half.page.up")<cr>'';
-      options.desc = "Scroll opencode up";
-    }
-    {
-      mode = ["n"];
-      key = "<S-C-d>";
-      action = ''<cmd>lua require("opencode").command("session.half.page.down")<cr>'';
-      options.desc = "Scroll opencode down";
-    }
-    {
-      mode = ["n"];
-      key = "<S-C-d>";
-      action = ''<cmd>lua require("opencode").command("session.half.page.down")<cr>'';
-      options.desc = "Scroll opencode down";
-    }
-    {
-      mode = [
-        "n"
-      ];
-      key = "<c-f>";
-      action = ''<cmd> lua require("sidekick").nes_jump_or_apply() <cr>'';
-      options.desc = "NES Jump or Apply";
-    }
-    {
-      mode = [
-        "n"
-      ];
-      key = "<leader>an";
-      action = ''<cmd> Sidekick nes toggle <cr>'';
-      options.desc = "Toggle NES";
+      mode = ["n" "v"];
+      key = "<leader>am";
+      action = ''<cmd>PiSendMention<cr>'';
+      options.desc = "Pi Send Mention";
     }
     # LSP
     {

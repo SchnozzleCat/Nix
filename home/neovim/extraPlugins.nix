@@ -33,6 +33,27 @@ with pkgs.vimPlugins; [
     hash = "sha256-dKsLTckHL4l7h4gNbYaAfKBNXS9+4JHT23hP1ZwRVF4=";
   }
   {
+    name = "alex35mil/pi.nvim";
+    version = "0f9f015433404da949c2e8388842c1449e88f793";
+    hash = "sha256-nDb37FWBCmcVHtQlvIW2nkRQW8uoFcbPFHeygfMXKOc=";
+    spec = {
+      after = ''
+        function()
+          require("pi").setup({
+              zen = {
+                  keys = {
+                      toggle = { "<leader>az", modes = { "n", "i" } },
+                      exit = {
+                          { "<Esc>", modes = "n" },
+                      },
+                  },
+              },
+          })
+        end
+      '';
+    };
+  }
+  {
     name = "ahkohd/buffer-sticks.nvim";
     version = "19eac64a7d197b4f684fe878473f1185a4f53c8c";
     hash = "sha256-1KpO/rLbw/1ngeOgtxL/XAxSml6jvgq24nDt1D4FmWE=";

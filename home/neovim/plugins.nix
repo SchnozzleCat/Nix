@@ -51,9 +51,6 @@ in {
     vim-dadbod.enable = true;
     vim-dadbod-ui.enable = true;
     vim-dadbod-completion.enable = true;
-    opencode = {
-      enable = true;
-    };
     fugitive.enable = true;
     transparent = {
       enable = true;
