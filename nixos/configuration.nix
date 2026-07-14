@@ -12,6 +12,7 @@
   imports = [
     ./hardware-configuration-${hostname}.nix
     ./${hostname}.nix
+    inputs.noctalia.nixosModules.default
   ];
 
   # Boot
@@ -316,6 +317,11 @@ R1tH9/wg2FSXDNZKCTJ5iSfZLBrL
         "gamemode"
       ];
     };
+  };
+
+  programs.noctalia = {
+    enable = true;
+    recommendedServices.enable = true;
   };
 
   environment.systemPackages = with pkgs; [

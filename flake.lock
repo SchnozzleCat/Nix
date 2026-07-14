@@ -1225,6 +1225,26 @@
         "type": "github"
       }
     },
+    "noctalia": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1784035159,
+        "narHash": "sha256-SgtoiL0Dx4fsjM/FmIZomxeM8PJ37zh/zGuBYAkpEGQ=",
+        "owner": "noctalia-dev",
+        "repo": "noctalia",
+        "rev": "5533eb763b50b42149d957d587e920c557d14c31",
+        "type": "github"
+      },
+      "original": {
+        "owner": "noctalia-dev",
+        "repo": "noctalia",
+        "type": "github"
+      }
+    },
     "pi-jail": {
       "inputs": {
         "flake-utils": "flake-utils_3",
@@ -1285,6 +1305,7 @@
         "nixpkgs": "nixpkgs_6",
         "nixpkgs-master": "nixpkgs-master",
         "nixvim": "nixvim",
+        "noctalia": "noctalia",
         "pi-jail": "pi-jail",
         "sops-nix": "sops-nix",
         "spicetify-nix": "spicetify-nix",

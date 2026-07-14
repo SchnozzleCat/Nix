@@ -96,6 +96,11 @@
       url = "github:alex35mil/agentic-af/5505c49da4dd7a0171e6b921ad809f7636db02b7";
       flake = false;
     };
+
+    noctalia = {
+      url = "github:noctalia-dev/noctalia";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {

@@ -12,7 +12,7 @@ in ''
   exec-once = hyprpaper
   exec-once = hyprshade auto
 
-  exec-once = ${pkgs.waybar}/bin/waybar
+  exec-once = noctalia
   exec-once = pypr
   exec-once = solaar --window=hide
   exec-once = hyprctrl dispatch layoutmsg "preselect r"
