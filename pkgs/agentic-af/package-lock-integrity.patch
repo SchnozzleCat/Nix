@@ -1,0 +1,26 @@
+--- a/package-lock.json	2026-07-11 01:18:27.290887346 +0200
++++ b/package-lock.json	2026-07-11 01:18:27.294164783 +0200
+@@ -1279,6 +1279,7 @@
+     "node_modules/@earendil-works/pi-coding-agent/node_modules/@earendil-works/pi-agent-core": {
+       "version": "0.79.6",
+       "resolved": "https://registry.npmjs.org/@earendil-works/pi-agent-core/-/pi-agent-core-0.79.6.tgz",
++      "integrity": "sha512-SXZc4rQI+3zgUmAJDbU0GzFEHCPHbhItjN7QLsahj3TKfQAon4guwCqsrwZBLH5lPcub2+evTojPNrPItL62tA==",
+       "license": "MIT",
+       "peer": true,
+       "dependencies": {
+@@ -1294,6 +1295,7 @@
+     "node_modules/@earendil-works/pi-coding-agent/node_modules/@earendil-works/pi-ai": {
+       "version": "0.79.6",
+       "resolved": "https://registry.npmjs.org/@earendil-works/pi-ai/-/pi-ai-0.79.6.tgz",
++      "integrity": "sha512-KGepEdgEeWDs7Imwlp96tBsO8TjSIpcDBvazsCDtHRa81+uwJI/YGetTegI52pMlKhVpJFLIGajRi4PCGC5MUg==",
+       "license": "MIT",
+       "peer": true,
+       "dependencies": {
+@@ -1318,6 +1320,7 @@
+     "node_modules/@earendil-works/pi-coding-agent/node_modules/@earendil-works/pi-tui": {
+       "version": "0.79.6",
+       "resolved": "https://registry.npmjs.org/@earendil-works/pi-tui/-/pi-tui-0.79.6.tgz",
++      "integrity": "sha512-6JCq780X0UuqvJsUDSJmi4V54ObB8qSwFQiBOI1jhPpC+Ydusd8SEXn2HtyIqve/utMgwcZT9aOyZM72m26A0w==",
+       "license": "MIT",
+       "peer": true,
+       "dependencies": {

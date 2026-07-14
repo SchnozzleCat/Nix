@@ -91,6 +91,11 @@
       url = "path:./flakes/pi-jail";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    agentic-af = {
+      url = "github:alex35mil/agentic-af/5505c49da4dd7a0171e6b921ad809f7636db02b7";
+      flake = false;
+    };
   };
 
   outputs = {
@@ -119,7 +124,7 @@
   in {
     # Your custom packages
     # Accessible through 'nix build', 'nix shell', etc
-    packages = forAllSystems (pkgs: import ./pkgs pkgs);
+    packages = forAllSystems (pkgs: import ./pkgs {inherit pkgs inputs;});
     # Formatter for your nix files, available through 'nix fmt'
     # Other options beside 'alejandra' include 'nixpkgs-fmt'
     formatter = forAllSystems (pkgs: pkgs.alejandra);

@@ -137,6 +137,7 @@
 
         # Credentials resolved from the host pass store at invocation time.
         (pass-env "OPENCODE_API_KEY" "opencode-api-key")
+        (pass-env "BRAVE_SEARCH_API_KEY" "brave-search-api-key")
 
         # Forward optional proxy vars if the host exports them (no-op if unset).
         (try-fwd-env "HTTPS_PROXY")
@@ -188,12 +189,43 @@
       # `extraCombinators` lets a consuming devshell inject project-specific
       # jail combinators (extra readwrite mounts, env, capabilities, etc.)
       # without redefining the common baseline.
+      # `extensionPackages` adds pi extension *packages* (store paths that
+      # are directories with a `package.json` `pi` manifest, plus the
+      # `node_modules` they need) to every jailed pi invocation. Each is
+      # passed to pi via `pi -e <store path>`, so pi loads it through its
+      # package rules and registers the bundled tools/commands without us
+      # having to touch the user's mutable `~/.pi/agent/settings.json`.
+      #
+      # Mechanism: we swap pi-pkg for a tiny `writeShellApplication` wrapper
+      # whose `text` interpolates the real pi binary path and each extension
+      # package's store path. jail.nix's `bind-nix-store-runtime-closure`
+      # scans that text for store paths and bind-mounts the whole runtime
+      # closure (pi + every extension package + their node_modules) into the
+      # sandbox, so the wrapper can `exec` pi and `-e` the packages from
+      # inside the jail without anything extra on `$PATH`.
       makeJailedPi = {
         name ? "pi",
         extraPkgs ? [],
         extraCombinators ? [],
-      }:
-        jail name pi-pkg (with jail.combinators; (
+        extensionPackages ? [],
+      }: let
+        extArgs =
+          pkgs.lib.concatMapStringsSep " "
+          (p: "-e ${p}")
+          extensionPackages;
+        program =
+          if extensionPackages == []
+          then pi-pkg
+          else
+            pkgs.writeShellApplication {
+              inherit name;
+              # Keep pi itself in the wrapper's closure even if a future
+              # change stops interpolating the path into `text`.
+              runtimeInputs = [pi-pkg];
+              text = ''exec ${pkgs.lib.getExe pi-pkg} ${extArgs} "$@"'';
+            };
+      in
+        jail name program (with jail.combinators; (
           commonJailOptions
           ++ extraCombinators
           ++ [

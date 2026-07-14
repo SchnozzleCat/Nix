@@ -76,6 +76,18 @@ in {
     enable = true;
   };
 
+  home.file.".pi/permission.settings.json".text = ''
+    {
+      "defaultMode": "ask",
+      "allow": ["read", "bash(git *)"],
+      "deny": ["bash(rm -rf *)"],
+      "ask": ["write", "edit"],
+      "keybindings": {
+        "autoAcceptEdits": "ctrl+shift+a"
+      }
+    }
+  '';
+
   home = {
     username = "linus";
     homeDirectory = "/home/linus";
@@ -84,8 +96,14 @@ in {
       TZDIR = "/etc/zoneinfo";
     };
     packages = with pkgs; [
-      # Jailed pi coding agent (bwrap sandbox, see flakes/pi-jail)
-      (inputs.pi-jail.lib.${pkgs.system}.makeJailedPi {})
+      # Jailed pi coding agent (bwrap sandbox, see flakes/pi-jail).
+      # `extensionPackages` loads the agentic-af extensions
+      # (context, fetch, web-search, mcp, rules) via `pi -e` so they're
+      # available in every session without editing settings.json. permission
+      # is excluded from the TUI build (pi.nvim-only) -- see pkgs/agentic-af.
+      (inputs.pi-jail.lib.${pkgs.system}.makeJailedPi {
+        extensionPackages = [pkgs.agentic-af];
+      })
 
       # OS
       wl-clipboard
