@@ -18,8 +18,9 @@ in {
 
   wayland.windowManager.hyprland = {
     enable = true;
-    configType = "hyprlang";
+    configType = "lua";
     settings = {};
+    extraConfig = import ./config/hyprland.lua.nix {inherit config pkgs;};
   };
 
   nixpkgs.config.android_sdk.accept_license = true;

@@ -66,21 +66,5 @@
   ];
 
   wayland.windowManager.hyprland.extraConfig =
-    (import ./hyprland.nix {inherit config pkgs;})
-    + ''
-      monitor=eDP-1,2880x1800@120,0x0,1.6
-      monitor=HDMI-A-1,1920x1080@60,2880x0,1
-
-      bind = $mainMod Shift Ctrl, o, submap, empty
-      submap = empty
-      bind = $mainMod Shift Ctrl, o, submap, reset
-      submap = reset
-
-      bind = $mainMod, e, exec, alacritty -e ssh 192.168.200.20 -p 6969
-      bind = $mainMod Shift, e, exec, remote-desktop
-      misc {
-              key_press_enables_dpms = true
-              disable_hyprland_logo = true
-      }
-    '';
+    import ./config/hyprland-laptop.lua.nix {inherit config pkgs;};
 }

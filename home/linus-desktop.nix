@@ -110,26 +110,5 @@
   ];
 
   wayland.windowManager.hyprland.extraConfig =
-    (import ./config/hyprland.nix {inherit config pkgs;})
-    + ''
-      monitor=DP-1,3440x1440@144,0x0,1
-      monitor=DP-2,1920x1080@60,0x-1080,1
-      monitor=DP-3,1920x1080@60,1920x-1080,1
-      monitor=HDMI-A-1,3840x2160@120,3440x0,1
-
-      workspace=1, monitor:DP-1, persistent:true
-      workspace=2, monitor:DP-1, persistent:true
-      workspace=3, monitor:DP-1, persistent:true
-      workspace=4, monitor:DP-2, persistent:true
-      workspace=5, monitor:DP-3, persistent:true
-
-      bind = $mainMod,o,exec, swap-audio
-      bind = $mainMod Shift,o,exec, hyprctl dispatch dpms off
-      bind = $mainMod Ctrl Shift,o,exec, hyprctl dispatch dpms on
-
-      misc {
-              key_press_enables_dpms = false
-              disable_hyprland_logo = true
-      }
-    '';
+    import ./config/hyprland-desktop.lua.nix {inherit config pkgs;};
 }
