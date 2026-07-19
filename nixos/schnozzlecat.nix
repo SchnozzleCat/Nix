@@ -32,12 +32,6 @@
     powerOnBoot = true;
   };
 
-  services.ollama = {
-    enable = true;
-    host = "0.0.0.0";
-    package = pkgs.ollama-rocm;
-  };
-
   # boot.blacklistedKernelModules = ["nouveau"];
   hardware.cpu.intel.updateMicrocode = true;
 
