@@ -100,35 +100,6 @@ in {
       ];
     extraPlugins = parsedPlugins;
 
-    highlight = {
-      "@lsp.type.struct.cs".fg = "#98cb6C";
-      "@lsp.type.recordStruct.cs".fg = "#98cb6C";
-      "@lsp.type.recordClass.cs".fg = "#FFCB77";
-      "@lsp.type.interface".fg = "#93ee64";
-    };
-    highlightOverride = {
-      TreesitterContext.bg = "none";
-      TroubleNormal.bg = "none";
-      TroubleNormalNC.bg = "none";
-      MiniFilesNormal.bg = "none";
-      MiniFilesTitleFocused.bg = "none";
-      MiniFilesBorder.bg = "none";
-      WhichKeyNormal.bg = "none";
-      GrappleNormal.bg = "none";
-      Pmenu = {
-        fg = "#61AAC3";
-        bg = "none";
-      };
-      Float.bg = "none";
-      NormalFloat.bg = "none";
-      NotifyBackground.bg = "#000000";
-      SnacksPickerBorder.bg = "none";
-      TreesitterContextSeparator.bg = "none";
-      "@lsp.type.struct.cs".fg = "#98cb6C";
-      "@lsp.type.recordStruct.cs".fg = "#98cb6C";
-      "@lsp.type.recordClass.cs".fg = "#FFCB77";
-      "@lsp.type.interface".fg = "#93ee64";
-    };
     extraConfigVim = ''
       autocmd FileType nix setlocal commentstring=#\ %s
       autocmd FileType gdscript setlocal commentstring=#\ %s
@@ -191,11 +162,90 @@ in {
         'indent-heuristic',
       }
 
-      -- Required: Enable the language server
-      -- vim.lsp.enable('ty')
-      -- vim.lsp.enable('pyrefly')
+      -- vim.cmd([[highlight @lsp.type.struct.cs guifg=#98cb6C]])
+
+      -- require('matugen').setup()
+
+      -- Force transparency after the teide-dark colorscheme loads.
+      -- transparent.nvim gets overridden when the colorscheme reapplies.
+      vim.api.nvim_create_autocmd("ColorScheme", {
+        callback = function()
+          local transparent_groups = {
+            "Normal",
+            "NormalNC",
+            "NormalFloat",
+            "FloatBorder",
+            "SignColumn",
+            "LineNr",
+            "CursorLine",
+            "CursorLineNr",
+            "StatusLine",
+            "StatusLineNC",
+            "TabLine",
+            "TabLineFill",
+            "TabLineSel",
+            "Pmenu",
+            "PmenuSbar",
+            "PmenuThumb",
+            "WinSeparator",
+            "VertSplit",
+            "EndOfBuffer",
+            "TreesitterContext",
+            "TreesitterContextBottom",
+            "TreesitterContextLineNumber",
+            "TreesitterContextSeparator",
+            "BlinkCmpMenu",
+            "BlinkCmpMenuBorder",
+            "BlinkCmpMenuSelection",
+            "BlinkCmpScrollBarThumb",
+            "BlinkCmpScrollBarGutter",
+            "BlinkCmpLabel",
+            "BlinkCmpLabelDeprecated",
+            "BlinkCmpKind",
+            "BlinkCmpSource",
+          }
+          for _, group in ipairs(transparent_groups) do
+            local hl = vim.api.nvim_get_hl(0, { name = group, link = false })
+            if hl.bg then
+              hl.bg = nil
+              vim.api.nvim_set_hl(0, group, hl)
+            end
+          end
+
+          vim.api.nvim_set_hl(0, "lualine_a_normal", { fg = "cyan" })
+
+          -- dart.nvim tabline highlights.
+          for _, name in ipairs(vim.fn.getcompletion("Dart", "highlight")) do
+            local hl = vim.api.nvim_get_hl(0, { name = name, link = false })
+            if hl.bg then
+              hl.bg = nil
+              vim.api.nvim_set_hl(0, name, hl)
+            end
+          end
+        end,
+      })
+
+      -- lualine creates its highlight groups lazily; force them transparent
+      -- as a fallback in case the theme doesn't cover every section.
+      local function clear_lualine_bg()
+        for _, name in ipairs(vim.fn.getcompletion("lualine_", "highlight")) do
+          local hl = vim.api.nvim_get_hl(0, { name = name, link = false })
+          if hl.bg then
+            hl.bg = nil
+            vim.api.nvim_set_hl(0, name, hl)
+          end
+        end
+      end
+      vim.api.nvim_create_autocmd("ColorScheme", { callback = clear_lualine_bg })
+      vim.api.nvim_create_autocmd("VimEnter", {
+        callback = function()
+          vim.defer_fn(clear_lualine_bg, 100)
+        end,
+      })
+
       vim.cmd([[colorscheme teide-dark]])
-      vim.cmd([[highlight @lsp.type.struct.cs guifg=#98cb6C]])
+      vim.api.nvim_exec_autocmds("ColorScheme", { modeline = false })
+      vim.defer_fn(clear_lualine_bg, 200)
     '';
     opts = {
       showtabline = 0;
@@ -220,12 +270,5 @@ in {
       mapleader = " ";
       maplocalleader = "  ";
     };
-    # colorschemes.catppuccin = {
-    #   enable = true;
-    #   settings = {
-    #     transparent_background = true;
-    #     flavor = "mocha";
-    #   };
-    # };
   };
 }
