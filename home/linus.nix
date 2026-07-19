@@ -274,34 +274,8 @@ in {
           twitch-chat-sound schnozzlecat &
           pids+=("$!")
 
-          echo "[stream-start] starting obs-lemonbattery"
-          obs-lemonbattery &
-          pids+=("$!")
-
           echo "[stream-start] running (Ctrl-C to stop)"
           wait
-        '';
-      })
-      (writeShellApplication {
-        name = "obs-lemonbattery";
-        runtimeInputs = [socat hyprland];
-        text = ''
-          socat -U - "UNIX-CONNECT:$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" |
-            while IFS= read -r line; do
-              [[ "$line" == activewindow\>\>* ]] || continue
-              rest="''${line#activewindow>>}"
-              title="''${rest#*,}"
-              case "$title" in
-                *Schnozzle.LemonBattery*)
-                  hyprctl dispatch sendshortcut ",F8,class:^(com.obsproject.Studio)$" ;;
-                *"LemonBattery (DEBUG)"*)
-                  hyprctl dispatch sendshortcut ",F10,class:^(com.obsproject.Studio)$" ;;
-                *LemonBattery*)
-                  hyprctl dispatch sendshortcut ",F9,class:^(com.obsproject.Studio)$" ;;
-                *)
-                  hyprctl dispatch sendshortcut ",F9,class:^(com.obsproject.Studio)$" ;;
-              esac
-            done
         '';
       })
     ];

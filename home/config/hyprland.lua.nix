@@ -265,4 +265,25 @@ in ''
   -- Power menu
   hl.bind(mainMod .. " + CTRL + SHIFT + q", hl.dsp.exec_cmd("noctalia msg panel-toggle session"))
 
+  -- OBS LemonBattery scene switching on active window change
+  hl.on("window.active", function(win, focusReason)
+    local title = win.title or ""
+
+    local key
+    if title:match("Schnozzle%.LemonBattery") then
+      key = "F8"
+    elseif title:match("LemonBattery %(DEBUG%)") then
+      key = "F10"
+    elseif title:match("LemonBattery") then
+      key = "F9"
+    else
+      key = "F9"
+    end
+
+    hl.dispatch(hl.dsp.send_shortcut({
+      mods   = "",
+      key    = key,
+      window = "class:^(com.obsproject.Studio)$",
+    }))
+  end)
 ''
