@@ -104,11 +104,6 @@
     # inputs.nix-citizen.packages.x86_64-linux.star-citizen
   ];
 
-  hardware.amdgpu.overdrive = {
-    enable = true;
-    ppfeaturemask = "0xffffffff";
-  };
-
   programs.corectrl = {
     enable = true;
   };
