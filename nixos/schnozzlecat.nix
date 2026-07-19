@@ -70,8 +70,10 @@
   '';
   boot.kernelParams = [
     "intel_iommu=on"
+    "iommu=pt"
     "pcie_aspm=off"
     "amdgpu.runpm=0"
+    "reboot=acpi"
   ];
 
   virtualisation.libvirtd = {
