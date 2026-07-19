@@ -136,6 +136,7 @@ in {
       inputs.zen-browser.packages."${pkgs.system}".default
 
       # Utilities
+      libnotify
       solaar
       wtype
       git-crypt
