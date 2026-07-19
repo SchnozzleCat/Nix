@@ -473,8 +473,8 @@ in {
 
   programs.alacritty = {
     enable = true;
-    theme = "catppuccin_mocha";
     settings = {
+      general.import = ["~/.config/alacritty/themes/noctalia.toml"];
       font.size = 10;
       window.opacity = 0.9;
     };
