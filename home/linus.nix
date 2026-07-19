@@ -164,10 +164,6 @@ in {
 
       # Shell Scripts
       (writeShellApplication {
-        name = "power-menu";
-        text = import ./scripts/power-menu.nix;
-      })
-      (writeShellApplication {
         name = "record-screen";
         text = import ./scripts/record-screen.nix {inherit pkgs;};
       })

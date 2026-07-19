@@ -17,14 +17,11 @@ in ''
   -- --------------------------------------------------------
   hl.on("hyprland.start", function()
     hl.exec_cmd("hyprctl setcursor Bibata-Modern-Classic 1")
-    hl.exec_cmd("hyprpaper")
-    hl.exec_cmd("hyprshade auto")
     hl.exec_cmd("noctalia")
     hl.exec_cmd("pypr")
     hl.exec_cmd("solaar --window=hide")
     hl.exec_cmd("hyprctl dispatch layoutmsg \"preselect r\"")
-    hl.exec_cmd("wl-paste -t text --watch ${pkgs.clipman}/bin/clipman store --max-items 1024")
-    hl.exec_cmd("corectrl")
+    hl.exec_cmd("corectrl --minimize-systray")
   end)
 
   -- --------------------------------------------------------
@@ -189,7 +186,7 @@ in ''
 
   -- Scratchpads
   hl.bind(mainMod .. " + w", hl.dsp.exec_cmd("pypr toggle term"))
-  hl.bind(mainMod .. " + s", hl.dsp.exec_cmd("pwvucontrol"))
+  hl.bind(mainMod .. " + s", hl.dsp.exec_cmd("noctalia msg panel-toggle control-center audio"))
 
   -- Window management
   hl.bind(mainMod .. " + Z", hl.dsp.window.pin())
@@ -205,7 +202,7 @@ in ''
     size = { "monitor_w * 0.60", "monitor_h * 0.60" },
     center = true,
   }))
-  hl.bind(mainMod .. " + d", hl.dsp.exec_cmd("fuzzel"))
+  hl.bind(mainMod .. " + d", hl.dsp.exec_cmd("noctalia msg panel-toggle launcher"))
   hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.close())
   hl.bind(mainMod .. " + SHIFT + b", hl.dsp.exec_cmd("lock-monitor"))
   hl.bind(mainMod .. " + y", hl.dsp.exec_cmd("${pkgs.wl-mirror}/bin/wl-mirror --scaling cover --fullscreen DP-1"))
@@ -214,10 +211,6 @@ in ''
   -- Media controls
   hl.bind(mainMod .. " + code:21", hl.dsp.exec_cmd("${pkgs.playerctl}/bin/playerctl -a next"))
   hl.bind(mainMod .. " + code:48", hl.dsp.exec_cmd("${pkgs.playerctl}/bin/playerctl -a previous"))
-
-  -- Brightness scripts
-  hl.bind(mainMod .. " + comma", hl.dsp.exec_cmd("~/.config/hypr/dec-brightness.sh"))
-  hl.bind(mainMod .. " + period", hl.dsp.exec_cmd("~/.config/hypr/inc-brightness.sh"))
 
   -- Focus movement
   hl.bind(mainMod .. " + h", hl.dsp.focus({ direction = "l" }))
@@ -237,10 +230,6 @@ in ''
   hl.bind(mainMod .. " + SHIFT + CTRL + j", hl.dsp.window.resize({ x = 0,  y = -25, relative = true }), { repeating = true })
   hl.bind(mainMod .. " + SHIFT + CTRL + k", hl.dsp.window.resize({ x = 0,  y = 25,  relative = true }), { repeating = true })
   hl.bind(mainMod .. " + SHIFT + CTRL + l", hl.dsp.window.resize({ x = 25, y = 0,   relative = true }), { repeating = true })
-
-  -- Mouse workspace scrolling
-  hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
-  hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
 
   -- Window state
   hl.bind(mainMod .. " + f",            hl.dsp.window.fullscreen())
@@ -270,23 +259,10 @@ in ''
 
   -- Lock / notifications / clipboard / emoji
   hl.bind(mainMod .. " + i", hl.dsp.exec_cmd("${pkgs.hyprlock}/bin/hyprlock"))
-  hl.bind(mainMod .. " + u", hl.dsp.exec_cmd("fnottctl dismiss"))
-  hl.bind(mainMod .. " + c", hl.dsp.exec_cmd("${pkgs.clipman}/bin/clipman pick --tool=CUSTOM --tool-args=\"fuzzel -d\""))
-  hl.bind(mainMod .. " + semicolon", hl.dsp.exec_cmd("BEMOJI_PICKER_CMD='fuzzel --dmenu' ${pkgs.bemoji}/bin/bemoji -t"))
-
-  -- Ollama / translation helpers
-  hl.bind(mainMod .. " + q", hl.dsp.exec_cmd("echo \"\" | fuzzel --dmenu --dmenu --prompt=\"Ask: \" --lines=0 --width=125 | ollama run gemma4 | pipe-notify"))
-  hl.bind(mainMod .. " + t", hl.dsp.exec_cmd("translate-en-to-de"))
-  hl.bind(mainMod .. " + SHIFT + t", hl.dsp.exec_cmd("translate-de-to-en"))
-  hl.bind(mainMod .. " + CTRL + SHIFT + t", hl.dsp.exec_cmd("synonym"))
-
-  -- VM / Looking Glass
-  hl.bind(mainMod .. " + SHIFT + v",      hl.dsp.exec_cmd("${pkgs.looking-glass-client}/bin/looking-glass-client -F"))
-  hl.bind(mainMod .. " + CTRL + SHIFT + v", hl.dsp.exec_cmd("toggle-vm"))
+  hl.bind(mainMod .. " + u", hl.dsp.exec_cmd("noctalia msg notification-clear-active"))
+  hl.bind(mainMod .. " + c", hl.dsp.exec_cmd("noctalia msg panel-toggle clipboard"))
 
   -- Power menu
-  hl.bind(mainMod .. " + CTRL + SHIFT + q", hl.dsp.exec_cmd("power-menu"))
+  hl.bind(mainMod .. " + CTRL + SHIFT + q", hl.dsp.exec_cmd("noctalia msg panel-toggle session"))
 
-  -- Calculator
-  hl.bind(mainMod .. " + SHIFT + m", hl.dsp.exec_cmd("~/.config/sway/calc.sh"))
 ''
