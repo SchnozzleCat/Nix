@@ -513,26 +513,6 @@ in {
     };
   };
 
-  services.fnott = {
-    enable = true;
-    settings = {
-      main = {
-        background = "${colors.base00}ff";
-        icon-theme = "Tela-circle-dark";
-        selection-helper = "fuzzel --dmenu";
-        border-size = 1;
-        border-color = "${colors.base08}ff";
-        title-color = "${colors.base0A}ff";
-        body-color = "${colors.base05}ff";
-        body-font = "JetBrainsMono Nerd Font";
-        title-font = "JetBrainsMono Nerd Font";
-        min-width = 600;
-        max-width = 600;
-        output = "DP-1";
-      };
-    };
-  };
-
   programs.zathura = {
     enable = true;
     options = {
