@@ -363,17 +363,6 @@ in {
     };
     snacks = {
       enable = true;
-      package = pkgs.vimUtils.buildVimPlugin {
-        pname = "snacks.nvim";
-        version = "2025-11-17";
-        doCheck = false;
-        src = pkgs.fetchFromGitHub {
-          owner = "folke";
-          repo = "snacks.nvim";
-          rev = "836e07336ba523d4da480cd66f0241815393e98e";
-          sha256 = "sha256-SjZIYC8X4tr0RhgNu87wQRhY6hUm2hpXoyu+snJJdL8=";
-        };
-      };
       settings = {
         gh = {
           enabled = true;
