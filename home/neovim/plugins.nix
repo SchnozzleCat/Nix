@@ -349,34 +349,6 @@ in {
     };
     fastaction.enable = true;
     treesitter-textobjects.enable = true;
-    sidekick = {
-      # enable = true;
-      package = pkgs.vimPlugins.sidekick-nvim.overrideAttrs (old: {
-        src = pkgs.fetchFromGitHub {
-          owner = "folke";
-          repo = "sidekick.nvim";
-          rev = "v2.1.0";
-          sha256 = "sha256-DsDJPDIm07Uxxah7AP2GR7D+jxya9fnsJ1OS/ia5ipw=";
-        };
-      });
-      settings = {
-        cli = {
-          win = {
-            keys = {
-              hide_n = [
-                "<c-w><c-w>"
-                "blur"
-              ];
-            };
-          };
-          mux = {
-            backend = "zellij";
-            enabled = true;
-          };
-        };
-      };
-    };
-    # lsp-signature.enable = true;
     copilot-lua = {
       # enable = true;
       settings = {
