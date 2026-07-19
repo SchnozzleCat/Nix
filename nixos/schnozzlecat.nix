@@ -8,6 +8,23 @@
   hostname,
   ...
 }: {
+  # Bleeding-edge Mesa (git main) with AMD-only drivers. Used as a workaround
+  # for Crimson Desert 1.05 respawn-time GPU wedges; community reports the
+  # crash stops on Mesa Git but persists on nixos-unstable Mesa 26.1.x stable.
+  # The module sets hardware.graphics.package / package32 for us.
+  imports = [
+    inputs.mesa-git-nix.nixosModules.default
+  ];
+
+  nixpkgs.overlays = [
+    inputs.mesa-git-nix.overlays.default
+  ];
+
+  mesa-git = {
+    enable = true;
+    drivers = ["amd"]; # 6950 XT only — keep build time sane
+  };
+
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
@@ -51,7 +68,11 @@
   boot.extraModprobeConfig = ''
     options v4l2loopback devices=1 video_nr=1 card_label="OBS Cam" exclusive_caps=1
   '';
-  boot.kernelParams = ["intel_iommu=on"];
+  boot.kernelParams = [
+    "intel_iommu=on"
+    "pcie_aspm=off"
+    "amdgpu.runpm=0"
+  ];
 
   virtualisation.libvirtd = {
     enable = true;
