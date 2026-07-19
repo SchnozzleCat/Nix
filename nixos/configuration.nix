@@ -229,6 +229,32 @@ R1tH9/wg2FSXDNZKCTJ5iSfZLBrL
     pulse.enable = true;
     wireplumber.enable = true;
     jack.enable = true;
+
+    # Virtual audio cable "music" that automatically forwards to the default output.
+    extraConfig.pipewire."10-music-cable" = {
+      "context.modules" = [
+        {
+          name = "libpipewire-module-loopback";
+          args = {
+            "audio.position" = ["FL" "FR"];
+            "capture.props" = {
+              "media.class" = "Audio/Sink";
+              "node.name" = "music";
+              "node.description" = "music";
+              "device.description" = "music";
+              "device.class" = "sound";
+              "device.icon-name" = "audio-card";
+              "node.virtual" = false;
+            };
+            "playback.props" = {
+              "node.name" = "music-output";
+              "node.passive" = true;
+              # No target.object -> WirePlumber routes playback to the default sink.
+            };
+          };
+        }
+      ];
+    };
   };
 
   # Localization
