@@ -73,6 +73,25 @@
     "iommu=pt"
     "pcie_aspm=off"
     "amdgpu.runpm=0"
+    # Force GPUVM page-table updates through the CPU (via the PCIe BAR) instead
+    # of through the GPU's SDMA copy engines. Default is SDMA, which is faster
+    # but shares the GPU's memory fabric with the graphics/compute rings --
+    # under Crimson Desert's heavy respawn-time resource rebuild burst, SDMA
+    # can stall waiting on memory arbitration, wedging the GPU silently.
+    # Modes: 0=SDMA everywhere, 1=CPU for graphics, 2=CPU for compute,
+    # 3=CPU for both. We use 3 to remove SDMA VM-update pressure entirely.
+    # Cost: slightly slower CPU-driven page-table updates (small memory stores
+    # over PCIe + TLB-flush ioctl); in practice unmeasurable on a Gen4 x16 link.
+    # WARNING: emits 'WARNING: drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:2631' on
+    # boot when a KFD compute VM is created -- this is a known artifact of the
+    # CPU-VM-update path, NOT a fault.
+    #
+    # Bisection evidence for keeping this on:
+    #   - Added it alongside other speculative params: silent wedge stopped
+    #   - Removed it in a cleanup pass: silent wedge returned (plus new
+    #     'perf: interrupt took too long' warnings firing before the wedge)
+    #   - Re-added 2026-07-23 after the revert-test correlated the symptom.
+    "amdgpu.vm_update_mode=3"
     "reboot=acpi"
   ];
 
