@@ -62,6 +62,11 @@
     openFirewall = true;
   };
 
+  hardware.sane = {
+    enable = true;
+    openFirewall = true;
+  };
+
   programs.gamemode = {
     enable = true;
     settings.general.inhibit_screensaver = 0;
@@ -335,6 +340,7 @@ R1tH9/wg2FSXDNZKCTJ5iSfZLBrL
 
   environment.systemPackages = with pkgs; [
     git
+    naps2
     pwvucontrol
     alsa-utils
     brightnessctl
