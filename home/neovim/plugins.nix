@@ -71,6 +71,7 @@ in {
         lsp.signature.enabled = false;
       };
     };
+    devdocs.enable = true;
     # otter = {
     #   enable = true;
     #   settings = {
