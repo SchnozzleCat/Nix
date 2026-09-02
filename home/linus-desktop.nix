@@ -48,6 +48,7 @@
       wlrobs
       obs-vkcapture
       obs-aitum-multistream
+      obs-vertical-canvas
     ];
   };
 
