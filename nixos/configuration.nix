@@ -436,6 +436,12 @@ R1tH9/wg2FSXDNZKCTJ5iSfZLBrL
   nix = let
     flakeInputs = lib.filterAttrs (_: lib.isType "flake") inputs;
   in {
+    # Lix straight from nixpkgs, per https://lix.systems/add-to-config/:
+    # stable release, binary-cached on cache.nixos.org. Replaces the old
+    # lix-module flake input, which was never imported by any system and
+    # pulled from the flaky self-hosted git.lix.systems on every eval.
+    package = pkgs.lixPackageSets.stable.lix;
+
     settings = {
       # Enable flakes and new 'nix' command
       experimental-features = "nix-command flakes";

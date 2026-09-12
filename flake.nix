@@ -14,11 +14,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    lix-module = {
-      url = "https://git.lix.systems/lix-project/nixos-module/archive/2.91.0.tar.gz";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # Home manager
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -55,6 +50,12 @@
     };
     hyprland-qtutils = {
       url = "github:hyprwm/hyprland-qtutils";
+      # Follow the main nixpkgs like the rest of the hyprland ecosystem
+      # inputs do. Without this, qtutils pins its own (older) nixpkgs, which
+      # (a) adds a second nixpkgs evaluation to the closure and (b) triggers
+      # Lix's "or as an identifier" deprecation warnings from that old
+      # nixpkgs' lib every eval.
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nixvim = {
@@ -88,7 +89,17 @@
     googleworkspace-cli.url = "github:googleworkspace/cli";
 
     pi-jail = {
-      url = "path:./flakes/pi-jail";
+      # The narHash is pinned because CppNix and Lix disagree on how to lock
+      # relative-path "subflake" inputs: CppNix writes them WITHOUT narHash
+      # (using a `parent` field Lix doesn't support), and Lix refuses to read
+      # hash-less path nodes ("lock file contains mutable lock"). A narHash
+      # pinned in the URL is the one form both accept.
+      #
+      # RITUAL: whenever you edit anything under flakes/pi-jail, the next
+      # build fails with "NAR hash mismatch in input ... expected ... got ..."
+      # -- paste the 'got' hash (percent-encode '+' as %2B and '=' as %3D)
+      # into this URL.
+      url = "path:./flakes/pi-jail?narHash=sha256-b9txS/dhy%2BcMFvq6PKDU0RUA6mn9Wgx5YYnBNkIrp5g%3D";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -115,7 +126,6 @@
     nixvim,
     nix-colors,
     # nix-citizen,
-    lix-module,
     zjstatus,
     Hyprspace,
     nix-software-center,
@@ -365,7 +375,7 @@
           self.homeModules.sunshine
           self.homeModules.godot4-mono-schnozzlecat
           inputs.spicetify-nix.homeManagerModules.default
-          inputs.nix-index-database.hmModules.nix-index
+          inputs.nix-index-database.homeModules.nix-index
         ];
       };
       "linus@schnozzlecat-laptop" = home-manager.lib.homeManagerConfiguration {
@@ -390,7 +400,7 @@
           self.homeModules.sunshine
           self.homeModules.godot4-mono-schnozzlecat
           inputs.spicetify-nix.homeManagerModules.default
-          inputs.nix-index-database.hmModules.nix-index
+          inputs.nix-index-database.homeModules.nix-index
         ];
       };
       "linus@schnozzlecat-server" = home-manager.lib.homeManagerConfiguration {
@@ -403,7 +413,7 @@
           ./home/linus-server.nix
           nix-colors.homeManagerModules.default
           nixvim.homeModules.nixvim
-          inputs.nix-index-database.hmModules.nix-index
+          inputs.nix-index-database.homeModules.nix-index
         ];
       };
 
@@ -416,7 +426,7 @@
           # > Our main home-manager configuration file <
           ./home/linus-vm.nix
           nix-colors.homeManagerModules.default
-          inputs.nix-index-database.hmModules.nix-index
+          inputs.nix-index-database.homeModules.nix-index
         ];
       };
     };

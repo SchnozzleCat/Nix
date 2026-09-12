@@ -24,6 +24,16 @@
           inline-snapshot = python-prev.inline-snapshot.overridePythonAttrs (old: {
             doCheck = false;
           });
+          # backrefs' test_timeout is timing-sensitive and flaky under the
+          # build sandbox: it busy-waits 0.5s against a 2s regex timeout, and
+          # on fast machines the regex wins the race, failing with "DID NOT
+          # RAISE TimeoutError". It sits under jupytext -> copier/mkdocs in
+          # the neovim closure. Deselect just the flaky test.
+          backrefs = python-prev.backrefs.overridePythonAttrs (old: {
+            disabledTestPaths = [
+              "tests/test_bregex.py::TestExceptions::test_timeout"
+            ];
+          });
           # Defensive: if their own check phases are also flaky on this
           # nixpkgs rev, skip them too rather than blocking the build.
           fastapi = python-prev.fastapi.overridePythonAttrs (old: {
@@ -40,14 +50,14 @@
   # be accessible through 'pkgs.unstable'
   unstable-packages = final: _prev: {
     unstable = import inputs.nixpkgs-unstable {
-      system = final.system;
+      system = final.stdenv.hostPlatform.system;
       config.allowUnfree = true;
     };
   };
 
   master-packages = final: _prev: {
     master = import inputs.nixpkgs-master {
-      system = final.system;
+      system = final.stdenv.hostPlatform.system;
       config.allowUnfree = true;
     };
   };

@@ -53,7 +53,7 @@
     "custom/gpu-temperature" = {
       format = "{}";
       interval = 10;
-      exec = "sensors amdgpu-pci-0300 | grep junction | awk '{print substr($2,2)}' | sed 's/\\\.0//g' | sed 's/^/󰎓 /'";
+      exec = "sensors amdgpu-pci-0300 | grep junction | awk '{print substr($2,2)}' | sed 's/\\.0//g' | sed 's/^/󰎓 /'";
     };
     "battery" = {
       format = "{icon} {capacity}%";

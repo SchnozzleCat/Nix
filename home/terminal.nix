@@ -93,7 +93,7 @@ in {
     nix-output-monitor
     dive
     #quarto
-    inputs.googleworkspace-cli.packages.${pkgs.system}.default
+    inputs.googleworkspace-cli.packages.${pkgs.stdenv.hostPlatform.system}.default
     # (wrap {
     #   pkg = pkgs.linear-cli;
     #   bin = "linear";

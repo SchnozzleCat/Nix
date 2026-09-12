@@ -44,10 +44,10 @@ in {
       gtk-enable-event-sounds = 0;
       gtk-enable-input-feedback-sounds = 0;
     };
-    theme = {
-      package = pkgs.layan-gtk-theme;
-      name = "Layan-Dark";
-    };
+    # theme = {
+    #   package = pkgs.layan-gtk-theme;
+    #   name = "Layan-Dark";
+    # };
     cursorTheme = {
       package = pkgs.bibata-cursors;
       name = "Bibata-Modern-Classic";
@@ -102,7 +102,7 @@ in {
       # (context, fetch, web-search, mcp, rules) via `pi -e` so they're
       # available in every session without editing settings.json. permission
       # is excluded from the TUI build (pi.nvim-only) -- see pkgs/agentic-af.
-      (inputs.pi-jail.lib.${pkgs.system}.makeJailedPi {
+      (inputs.pi-jail.lib.${pkgs.stdenv.hostPlatform.system}.makeJailedPi {
         extensionPackages = [pkgs.agentic-af];
       })
 
@@ -131,9 +131,9 @@ in {
       )
 
       jetbrains.datagrip
-      inputs.hyprland-qtutils.packages."${pkgs.system}".default
+      inputs.hyprland-qtutils.packages."${pkgs.stdenv.hostPlatform.system}".default
 
-      inputs.zen-browser.packages."${pkgs.system}".default
+      inputs.zen-browser.packages."${pkgs.stdenv.hostPlatform.system}".default
 
       # Utilities
       libnotify
@@ -159,7 +159,7 @@ in {
       crosspipe
       easyeffects
       vesktop
-      protonvpn-gui
+      proton-vpn
       nvtopPackages.full
       csharpier
 

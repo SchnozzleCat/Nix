@@ -19,20 +19,16 @@
       };
       jail = jail-nix.lib.init pkgs;
 
-      # Pi is packaged in nixpkgs as `pi-coding-agent`. Pin it to the version
-      # the rest of the host setup expects so behaviour stays consistent.
-      pi-pkg = pkgs.pi-coding-agent.overrideAttrs (oldAttrs: rec {
-        version = "0.79.8";
-        src = oldAttrs.src.override {
-          tag = "v${version}";
-          hash = "sha256-eH1+vHrKBu1GcUXnTdvRtNuLuf0EdReAnFit8UqiXB4=";
-        };
-        npmDeps = pkgs.fetchNpmDeps {
-          name = "pi-coding-agent-${version}-npm-deps";
-          inherit src;
-          hash = "sha256-xrTpu4TkRmlflg7pMaw/QVsN+poQ41slVA5PET+NDoI=";
-        };
-      });
+      # Pi is packaged in nixpkgs as `pi-coding-agent`. nixos-unstable now
+      # ships 0.84.4, the version the rest of the host setup expects, so we
+      # use it directly. NOTE: if you ever re-pin to a newer version than
+      # nixpkgs ships, the override must ALSO provide `modelData` (the
+      # gitignored generated provider catalog fetched from the matching
+      # @earendil-works/pi-ai npm tarball) and match whatever the current
+      # nixpkgs recipe's buildPhase/postInstall expect -- the recipe changes
+      # between upstream versions, so a bare version/src/npmDeps override
+      # will break the build (see the 0.80.x -> 0.84.4 packaging rework).
+      pi-pkg = pkgs.pi-coding-agent;
 
       # Common packages available to the jailed pi agent.
       #

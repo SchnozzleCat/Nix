@@ -45,7 +45,12 @@ in {
   programs.nixvim = {
     enable = true;
     nixpkgs.config.allowUnfree = true;
-    # package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.neovim;
+    # Explicitly pin the nixpkgs that nixvim imports to our flake input.
+    # With the flake-level `follows`, nixvim warns that its default nixpkgs
+    # source was affected by the follow; declaring it explicitly documents
+    # that this is intentional and suppresses the warning.
+    nixpkgs.source = inputs.nixpkgs;
+    # package = inputs.neovim-nightly-overlay.packages.${pkgs.stdenv.hostPlatform.system}.neovim;
     extraPackages = with pkgs; [
       imagemagick
       # nodePackages.ijavascript

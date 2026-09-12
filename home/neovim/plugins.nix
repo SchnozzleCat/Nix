@@ -327,26 +327,25 @@ in {
         sha256 = "sha256-tu29BFUjES/4Pq4uH1zOnV2oJGiW6SjD9fkyhqXVXQM=";
       };
     };
-    molten = {
-      enable = true;
-      settings = {
-        virt_text_output = true;
-        auto_open_output = false;
-      };
-      python3Dependencies = p:
-        with p; [
-          pynvim
-          jupyter-client
-          cairosvg
-          ipython
-          nbformat
-          pillow
-          plotly
-          ipykernel
-          requests
-          pnglatex
-        ];
-    };
+    # molten = {
+    #   enable = true;
+    #   settings = {
+    #     virt_text_output = true;
+    #     auto_open_output = false;
+    #   };
+    #   python3Dependencies = p:
+    #     with p; [
+    #       pynvim
+    #       cairosvg
+    #       ipython
+    #       nbformat
+    #       pillow
+    #       plotly
+    #       ipykernel
+    #       requests
+    #       pnglatex
+    #     ];
+    # };
     fastaction.enable = true;
     treesitter-textobjects.enable = true;
     copilot-lua = {
