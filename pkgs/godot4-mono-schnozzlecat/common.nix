@@ -37,6 +37,7 @@
   libXrender,
   makeWrapper,
   mbedtls,
+  mesaNir ? null,
   miniupnpc,
   openxr-loader,
   pcre2,
@@ -76,6 +77,11 @@
   requireFile,
   unzip,
   rev,
+  # Generated C# API bindings ("mono glue") produced by a Linux editor build
+  # of the same source rev. Required for editor builds with mono on the
+  # windows platform, because glue generation requires running the built
+  # editor binary (impossible without wine when cross-compiling).
+  mono-glue ? null,
 }:
 assert lib.asserts.assertOneOf "withPrecision" withPrecision [
   "single"
@@ -95,7 +101,22 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
     sha256 = "55c525b61de0fc820099b84ebd2cbd3890b9378dd3d12909c0f33d74ea05243c";
   };
 
-  arch = stdenv.hostPlatform.linuxArch;
+  isWindows = withPlatform == "windows";
+
+  # For platform=windows this derivation must be evaluated in a cross
+  # environment (e.g. via pkgs.pkgsCross.mingwW64.callPackage), so that
+  # `stdenv` is the x86_64-w64-mingw32 cross stdenv. SCons uses its own
+  # arch names for the windows platform.
+  arch =
+    if isWindows
+    then
+      {
+        x86_64 = "x86_64";
+        aarch64 = "arm64";
+        i686 = "x86_32";
+      }
+      .${stdenv.hostPlatform.parsed.cpu.name}
+    else stdenv.hostPlatform.linuxArch;
 
   dotnet-sdk =
     if withMono
@@ -141,15 +162,21 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
       ++ [arch]
       ++ lib.optional withMono "mono"
     );
+    # The actual file name of the built binary (`bin/`); windows binaries
+    # additionally carry the `.exe` extension.
+    binaryExe = binary + lib.optionalString isWindows ".exe";
 
     mkTests = pkg: dotnet-sdk:
+      lib.optionalAttrs (!isWindows)
+      # Running the built binaries for tests requires an emulator (e.g. wine)
+      # when cross-compiling for windows, which we don't support here.
       {
         version = testers.testVersion {
           package = pkg;
           version = dottedVersion;
         };
       }
-      // lib.optionalAttrs editor (
+      // lib.optionalAttrs (editor && !isWindows) (
         let
           project-src =
             runCommand "${pkg.name}-project-src"
@@ -356,8 +383,10 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
         [
           "out"
         ]
-        ++ lib.optional editor "man";
-      separateDebugInfo = true;
+        ++ lib.optional (editor && !isWindows) "man";
+      # Splitting debug info uses objcopy against the built binary; that
+      # doesn't work for PE (windows) binaries with the Linux host objcopy.
+      separateDebugInfo = !isWindows;
 
       __structuredAttrs = true;
 
@@ -379,6 +408,14 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
           mkdir -p modules/godotsteam/sdk
           unzip -o ${sdk} -d modules/godotsteam
         ''
+        + lib.optionalString (editor && withMono && isWindows) ''
+          # Copy the C# API bindings generated on Linux (from the `mono-glue`
+          # derivation) into the source tree, matching the official
+          # cross-compilation recipe:
+          # https://github.com/godotengine/godot-build-scripts/blob/master/build-windows/build.sh
+          cp -r ${mono-glue}/GodotSharp/GodotSharp/Generated modules/mono/glue/GodotSharp/GodotSharp/
+          cp -r ${mono-glue}/GodotSharp/GodotSharpEditor/Generated modules/mono/glue/GodotSharp/GodotSharpEditor/
+        ''
         + lib.optionalString (editor && withMono) ''
 
           # TODO: avoid pulling in dependencies of windows-only project
@@ -388,12 +425,28 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
           dotnet restore modules/mono/glue/GodotSharp/GodotSharp.sln
           dotnet restore modules/mono/editor/GodotTools/GodotTools.sln
           dotnet restore modules/mono/editor/Godot.NET.Sdk/Godot.NET.Sdk.sln
+        ''
+        + lib.optionalString isWindows ''
+          # Godot's SCons looks for the archiver as `<target>-gcc-ar` (and
+          # gcc-ranlib/gcc-nm), which the nixpkgs cross gcc wrapper does not
+          # provide. Without a shim SCons would fall back to the native
+          # (x86_64-linux) gcc-ar, which cannot handle PE objects. Shim them
+          # with the cross binutils tools.
+          shims="$PWD/.nix-mingw-shims"
+          mkdir -p "$shims"
+          for tool in gcc-ar gcc-ranlib gcc-nm; do
+            if ! command -v "${stdenv.hostPlatform.config}-$tool" >/dev/null 2>&1; then
+              ln -s "$(command -v ${stdenv.hostPlatform.config}-''${tool#gcc-})" \
+                "$shims/${stdenv.hostPlatform.config}-$tool"
+            fi
+          done
+          export PATH="$shims:$PATH"
         '';
 
       # Godot 4.7 with system HarfBuzz needs explicit raster linkage, but this
       # should be resolved upstream with 4.7.1.
       # See https://github.com/godotengine/godot/pull/120568
-      preBuild = lib.optionalString (lib.versionAtLeast version "4.7") ''
+      preBuild = lib.optionalString (!isWindows && lib.versionAtLeast version "4.7") ''
         export NIX_LDFLAGS="$NIX_LDFLAGS -lharfbuzz-raster"
       '';
 
@@ -405,18 +458,12 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
           production = true; # Set defaults to build Godot for use in production
           platform = withPlatform;
           inherit target;
-          debug_symbols = true;
-
-          # Options from 'platform/linuxbsd/detect.py'
-          alsa = withAlsa;
-          dbus = withDbus; # Use D-Bus to handle screensaver and portal desktop settings
-          fontconfig = withFontconfig; # Use fontconfig for system fonts support
-          pulseaudio = withPulseaudio; # Use PulseAudio
-          speechd = withSpeechd; # Use Speech Dispatcher for Text-to-Speech support
-          touch = withTouch; # Enable touch events
-          udev = withUdev; # Use udev for gamepad connection callbacks
-          wayland = withWayland; # Compile with Wayland support
-          x11 = withX11; # Compile with X11 support
+          # Windows GCC/MinGW embeds DWARF debug info into the binary itself
+          # (MSVC puts it in a separate .pdb), so keeping symbols balloons the
+          # exe to >1GB. Match upstream's release flags: symbols off for the
+          # editor and the release template, kept for template_debug (whose
+          # purpose is debugging exported games).
+          debug_symbols = !isWindows || target == "template_debug";
 
           module_mono_enabled = withMono;
 
@@ -433,9 +480,38 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
 
           # using system clipper2 is currently not implemented
           builtin_clipper2 = true;
-
-          use_sowrap = false;
         }
+        // (
+          if isWindows
+          then {
+            # Options from 'platform/windows/detect.py'
+            # Always explicit: auto-detection would use the build host's
+            # architecture, not the target's.
+            arch = arch;
+            use_mingw = true; # We always cross-compile with MinGW from Linux
+            # D3D12 is enabled by passing the prebuilt Mesa/NIR static
+            # libraries (godot-nir-static, see d3d12-deps.nix). With this
+            # set, detect.py's d3d12 default of "true" works as-is.
+            mesa_libs = "${mesaNir}/mesa-x86_64-gcc";
+            # LTO "auto" enables full LTO for MinGW builds, which is fragile
+            # (see GH-102867). Keep the windows builds simple instead.
+            lto = "none";
+          }
+          else {
+            # Options from 'platform/linuxbsd/detect.py'
+            alsa = withAlsa;
+            dbus = withDbus; # Use D-Bus to handle screensaver and portal desktop settings
+            fontconfig = withFontconfig; # Use fontconfig for system fonts support
+            pulseaudio = withPulseaudio; # Use PulseAudio
+            speechd = withSpeechd; # Use Speech Dispatcher for Text-to-Speech support
+            touch = withTouch; # Enable touch events
+            udev = withUdev; # Use udev for gamepad connection callbacks
+            wayland = withWayland; # Compile with Wayland support
+            x11 = withX11; # Compile with X11 support
+
+            use_sowrap = false;
+          }
+        )
         // lib.optionalAttrs (lib.versionOlder version "4.4") {
           # libraries that aren't available in nixpkgs
           builtin_squish = true;
@@ -476,46 +552,55 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
         ''
           # this stops scons from hiding e.g. NIX_CFLAGS_COMPILE
           perl -pi -e '{ $r += s:(env = Environment\(.*):\1\nenv["ENV"] = os.environ: } END { exit ($r != 1) }' SConstruct
-
+        ''
+        # The windows build uses all builtin (vendored) libraries, since
+        # cross-compiled system libraries for mingw are not available in
+        # nixpkgs.
+        + lib.optionalString (!isWindows) ''
           # disable all builtin libraries by default
           perl -pi -e '{ $r |= s:(opts.Add\(BoolVariable\("builtin_.*, )True(\)\)):\1False\2: } END { exit ($r != 1) }' SConstruct
-
         ''
-        + lib.optionalString (lib.versionOlder version "4.6") ''
+        + lib.optionalString (!isWindows && lib.versionOlder version "4.6") ''
           substituteInPlace platform/linuxbsd/detect.py \
             --replace-fail /usr/include/recastnavigation ${lib.escapeShellArg (lib.getDev recastnavigation)}/include/recastnavigation
 
         ''
-        + lib.optionalString (libGL != null) ''
-          substituteInPlace thirdparty/glad/egl.c \
-            --replace-fail \
-              'static const char *NAMES[] = {"libEGL.so.1", "libEGL.so"}' \
-              'static const char *NAMES[] = {"${lib.getLib libGL}/lib/libEGL.so"}'
+        + lib.optionalString (!isWindows) ''
+          ${lib.optionalString (libGL != null) ''
+            substituteInPlace thirdparty/glad/egl.c \
+              --replace-fail \
+                'static const char *NAMES[] = {"libEGL.so.1", "libEGL.so"}' \
+                'static const char *NAMES[] = {"${lib.getLib libGL}/lib/libEGL.so"}'
 
-          substituteInPlace thirdparty/glad/gl.c \
-            --replace-fail \
-              'static const char *NAMES[] = {"libGLESv2.so.2", "libGLESv2.so"}' \
-              'static const char *NAMES[] = {"${lib.getLib libGL}/lib/libGLESv2.so"}' \
+            substituteInPlace thirdparty/glad/gl.c \
+              --replace-fail \
+                'static const char *NAMES[] = {"libGLESv2.so.2", "libGLESv2.so"}' \
+                'static const char *NAMES[] = {"${lib.getLib libGL}/lib/libGLESv2.so"}' \
 
-          substituteInPlace thirdparty/glad/gl{,x}.c \
-            --replace-fail \
-              '"libGL.so.1"' \
-              '"${lib.getLib libGL}/lib/libGL.so"'
-        ''
-        + ''
+            substituteInPlace thirdparty/glad/gl{,x}.c \
+              --replace-fail \
+                '"libGL.so.1"' \
+                '"${lib.getLib libGL}/lib/libGL.so"'
+          ''}
+
           substituteInPlace thirdparty/volk/volk.c \
             --replace-fail \
               'dlopen("libvulkan.so.1"' \
               'dlopen("${lib.getLib vulkan-loader}/lib/libvulkan.so"'
         '';
 
-      depsBuildBuild = lib.optionals (stdenv.buildPlatform != stdenv.hostPlatform) [
-        buildPackages.stdenv.cc
-        pkg-config
-      ];
+      depsBuildBuild =
+        lib.optionals (stdenv.buildPlatform != stdenv.hostPlatform) [
+          buildPackages.stdenv.cc
+        ]
+        # pkg-config is only needed by the linuxbsd build (system libraries);
+        # the windows build uses builtin libraries exclusively.
+        ++ lib.optionals (!isWindows && stdenv.buildPlatform != stdenv.hostPlatform) [
+          pkg-config
+        ];
 
       buildInputs =
-        [
+        lib.optionals (!isWindows) [
           embree
           enet
           freetype
@@ -533,65 +618,136 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
           wslay
           zstd
         ]
-        ++ lib.optionals (lib.versionAtLeast version "4.5") [
+        ++ lib.optionals (!isWindows && lib.versionAtLeast version "4.5") [
           libjpeg_turbo
           sdl3
         ]
-        ++ lib.optionals (editor && withMono) combined-sdk.packages
-        ++ lib.optional withAlsa alsa-lib
-        ++ lib.optional (withX11 || withWayland) libxkbcommon
-        ++ lib.optionals withX11 [
-          libX11
-          libXcursor
-          libXext
-          libXfixes
-          libXi
-          libXinerama
-          libXrandr
-          libXrender
-        ]
-        ++ lib.optionals withWayland [
-          libdecor
-          wayland
-        ]
-        ++ lib.optionals withDbus [
-          dbus
-        ]
-        ++ lib.optionals withFontconfig [
-          fontconfig
-        ]
-        ++ lib.optional withPulseaudio libpulseaudio
-        ++ lib.optionals withSpeechd [
-          speechd-minimal
-          glib
-        ]
-        ++ lib.optional withUdev udev;
+        ++ lib.optionals (!isWindows && editor && withMono) combined-sdk.packages
+        ++ lib.optionals (!isWindows) (
+          lib.optional withAlsa alsa-lib
+          ++ lib.optional (withX11 || withWayland) libxkbcommon
+          ++ lib.optionals withX11 [
+            libX11
+            libXcursor
+            libXext
+            libXfixes
+            libXi
+            libXinerama
+            libXrandr
+            libXrender
+          ]
+          ++ lib.optionals withWayland [
+            libdecor
+            wayland
+          ]
+          ++ lib.optionals withDbus [
+            dbus
+          ]
+          ++ lib.optionals withFontconfig [
+            fontconfig
+          ]
+          ++ lib.optional withPulseaudio libpulseaudio
+          ++ lib.optionals withSpeechd [
+            speechd-minimal
+            glib
+          ]
+          ++ lib.optional withUdev udev
+        );
 
       nativeBuildInputs =
         [
-          installShellFiles
           perl
-          pkg-config
           scons
           unzip
         ]
-        ++ lib.optionals withWayland [wayland-scanner]
+        ++ lib.optionals (!isWindows) [
+          installShellFiles
+          pkg-config
+        ]
+        ++ lib.optionals (!isWindows && withWayland) [wayland-scanner]
         ++ lib.optionals (editor && withMono) [
-          makeWrapper
           combined-sdk
+        ]
+        ++ lib.optionals (!isWindows && editor && withMono) [
+          makeWrapper
         ];
 
-      postBuild = lib.optionalString (editor && withMono) ''
-        cp modules/godotsteam/sdk/redistributable_bin/linux64/libsteam_api.so bin/libsteam_api.so
-
-        echo "Generating Glue"
-        bin/${binary} --headless --generate-mono-glue modules/mono/glue
-        echo "Building C#/.NET Assemblies"
-        python modules/mono/build_scripts/build_assemblies.py --godot-output-dir bin --precision=${withPrecision} --push-nupkgs-local $GODOT_VERSION_STATUS
-      '';
+      postBuild =
+        lib.optionalString (editor && withMono)
+          # The steam_api library must live next to the built binary.
+          (
+            if isWindows
+            then ''
+              cp modules/godotsteam/sdk/redistributable_bin/win64/steam_api64.dll bin/
+            ''
+            else ''
+              cp modules/godotsteam/sdk/redistributable_bin/linux64/libsteam_api.so bin/libsteam_api.so
+            ''
+          )
+        + lib.optionalString (editor && withMono) (
+          if isWindows
+          then
+            # Glue was pre-generated on Linux (see the `mono-glue` argument);
+            # only the C#/.NET assemblies need building here, targeting the
+            # windows runtime. Matches the official cross-compile recipe:
+            # https://github.com/godotengine/godot-build-scripts/blob/master/build-windows/build.sh
+            ''
+              echo "Building C#/.NET Assemblies"
+              python modules/mono/build_scripts/build_assemblies.py --godot-output-dir bin --precision=${withPrecision} --godot-platform=windows --push-nupkgs-local $GODOT_VERSION_STATUS
+            ''
+          else ''
+            echo "Generating Glue"
+            bin/${binaryExe} --headless --generate-mono-glue modules/mono/glue
+            echo "Building C#/.NET Assemblies"
+            python modules/mono/build_scripts/build_assemblies.py --godot-output-dir bin --precision=${withPrecision} --push-nupkgs-local $GODOT_VERSION_STATUS
+          ''
+        )
+        # The windows export templates also link against steam_api64, so the
+        # runtime DLL has to be shipped next to them (the editor's export
+        # logic will include it in exported games alongside steam_api64.dll).
+        + lib.optionalString (!editor && isWindows) ''
+          cp modules/godotsteam/sdk/redistributable_bin/win64/steam_api64.dll bin/
+        '';
 
       installPhase =
-        ''
+        if isWindows
+        then
+          if editor
+          then
+            # The windows editor is meant to be copied to a Windows machine as
+            # a self-contained directory (exe + console.exe + GodotSharp data
+            # dir + steam_api64.dll), so install everything flat. This also
+            # matches the official release layout (GodotSharp with
+            # `Tools/nupkgs` kept in place).
+            ''
+              runHook preInstall
+
+              mkdir -p "$out"
+              cp -r bin/* "$out"/
+            ''
+          else
+            # Windows export template names use underscores and the .exe
+            # extension, e.g. windows_release_x86_64.exe — exactly what the
+            # "Windows Desktop" exporter expects inside export_templates.
+            let
+              templateKind =
+                if target == "template_release"
+                then "release"
+                else "debug";
+            in ''
+              runHook preInstall
+
+              templates="$out"/share/godot/export_templates/${dottedVersion}
+              mkdir -p "$templates"
+              cp bin/${binary}.exe "$templates"/windows_${templateKind}_${arch}.exe
+              cp bin/${binary}.console.exe "$templates"/windows_${templateKind}_${arch}_console.exe
+              # Kept next to the templates for convenience; the steam_api64
+              # runtime DLL must be present next to exported games when using
+              # GodotSteam on Windows.
+              cp bin/steam_api64.dll "$templates"/steam_api64.dll
+            ''
+        else
+          ''
           runHook preInstall
 
           mkdir -p "$out"/{bin,libexec}
@@ -705,11 +861,14 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
         homepage = "https://godotengine.org";
         license = lib.licenses.mit;
         platforms =
-          [
-            "x86_64-linux"
-            "aarch64-linux"
-          ]
-          ++ lib.optional (!withMono) "i686-linux";
+          if isWindows
+          then ["x86_64-windows"]
+          else
+            [
+              "x86_64-linux"
+              "aarch64-linux"
+            ]
+            ++ lib.optional (!withMono) "i686-linux";
         maintainers = with lib.maintainers; [
           shiryel
           corngood
@@ -724,7 +883,13 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
         dotnetCorePackages.addNuGetDeps {
           inherit nugetDeps;
           overrideFetchAttrs = old: rec {
-            runtimeIds = map (system: dotnetCorePackages.systemToDotnetRid system) old.meta.platforms;
+            runtimeIds =
+              if isWindows
+              then
+                # linux-x64: the rid of the build host performing the restore;
+                # win-x64: the rid of the produced assemblies.
+                ["linux-x64" "win-x64"]
+              else map (system: dotnetCorePackages.systemToDotnetRid system) old.meta.platforms;
             buildInputs =
               old.buildInputs
               ++ lib.concatLists (lib.attrValues (lib.getAttrs runtimeIds combined-sdk.targetPackages));
@@ -735,7 +900,7 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
     );
 
     wrapper =
-      if (editor && withMono)
+      if (editor && withMono && !isWindows)
       then
         stdenv.mkDerivation (finalAttrs: {
           __structuredAttrs = true;
