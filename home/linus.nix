@@ -119,6 +119,8 @@ in {
       jetbrains-toolbox
       jellyfin-desktop
 
+      rimsort
+
       # Dev
       steamcmd
       tracy

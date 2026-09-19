@@ -42,6 +42,14 @@
           openapi-core = python-prev.openapi-core.overridePythonAttrs (old: {
             doCheck = false;
           });
+          # steamworkspy's nixpkgs pname is 'steamworkspy' but upstream
+          # setup.py registers the distribution as 'steamworks' with a
+          # hardcoded version, so pythonMetadataCheckPhase can't find (or
+          # match) the metadata. Skip the check until
+          # https://github.com/NixOS/nixpkgs/pull/528328 lands.
+          steamworkspy = python-prev.steamworkspy.overridePythonAttrs (old: {
+            dontCheckPythonMetadata = true;
+          });
         })
       ];
   };
