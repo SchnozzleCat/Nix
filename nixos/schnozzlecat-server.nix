@@ -203,18 +203,16 @@ in {
 
       # No NAT or forwarding needed, since traffic is local to the Pi
       postSetup = ''
-        # Optional: allow only port 8080
-        ${pkgs.iptables}/bin/iptables -A INPUT -i wg1 -p udp --dport 51112 -j ACCEPT
+        # Allow only Jellyfin traffic in via wg1. No DNAT needed: the Jellyfin
+        # container publishes 0.0.0.0:8096 on the host, so INPUT + docker-proxy
+        # already delivers traffic to 10.1.0.1:8096. (DNAT to 127.0.0.1 gets
+        # dropped as a martian packet on non-loopback interfaces.)
         ${pkgs.iptables}/bin/iptables -A INPUT -i wg1 -p tcp --dport 8096 -j ACCEPT
         ${pkgs.iptables}/bin/iptables -A INPUT -i wg1 -j DROP
-        # Forward WireGuard traffic to localhost where Jellyfin listens
-        ${pkgs.iptables}/bin/iptables -t nat -A PREROUTING -i wg1 -p tcp --dport 8096 -j DNAT --to-destination 127.0.0.1:8096
       '';
       postShutdown = ''
-        ${pkgs.iptables}/bin/iptables -D INPUT -i wg1 -p udp --dport 51112 -j ACCEPT
         ${pkgs.iptables}/bin/iptables -D INPUT -i wg1 -p tcp --dport 8096 -j ACCEPT
         ${pkgs.iptables}/bin/iptables -D INPUT -i wg1 -j DROP
-        ${pkgs.iptables}/bin/iptables -t nat -D PREROUTING -i wg1 -p tcp --dport 8096 -j DNAT --to-destination 127.0.0.1:8096
       '';
 
       peers = [
