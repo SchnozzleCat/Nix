@@ -237,6 +237,31 @@ in {
         '';
       })
       (writeShellApplication {
+        name = "tc-lan-latency";
+        text = ''
+          delay="''${1:-100ms}"
+          host="''${2:-192.168.200.9}"
+          dev="$(ip route get "$host" | awk '{for (i = 1; i <= NF; i++) if ($i == "dev") {print $(i+1); exit}}')"
+          if [ -z "$dev" ]; then
+            echo "no route to $host" >&2
+            exit 1
+          fi
+          echo "delaying $delay to/from $host via $dev"
+          sudo tc qdisc add dev "$dev" root handle 1: prio
+          sudo tc qdisc add dev "$dev" parent 1:1 handle 10: netem delay "$delay"
+          sudo tc filter add dev "$dev" protocol ip parent 1:0 prio 1 u32 match ip dst "$host"/32 flowid 1:1
+          sudo tc filter add dev "$dev" protocol ip parent 1:0 prio 1 u32 match ip src "$host"/32 flowid 1:1
+        '';
+      })
+      (writeShellApplication {
+        name = "tc-lan-reset";
+        text = ''
+          host="''${1:-192.168.200.9}"
+          dev="$(ip route get "$host" | awk '{for (i = 1; i <= NF; i++) if ($i == "dev") {print $(i+1); exit}}')"
+          sudo tc qdisc del dev "$dev" root
+        '';
+      })
+      (writeShellApplication {
         name = "tc-reset";
         text = ''
           sudo tc qdisc del dev lo root
