@@ -15,10 +15,21 @@
       versionPrefix
       (builtins.unsafeGetAttrPos "version" attrs).file
     ];
+
+    # Tracy profiler source, needed by builds with `withTracy = true`. The
+    # hash is of the tag tarball itself (builtins.fetchTarball), because a
+    # fetchFromGitHub tree-hash cannot be pre-computed in this environment.
+    # The version must match the one used by the Tracy profiler GUI
+    # ("server") when inspecting recorded traces.
+    # https://docs.godotengine.org/en/stable/engine_details/development/profiling/tracy.html
+    tracy = builtins.fetchTarball {
+      url = "https://github.com/wolfpld/tracy/archive/refs/tags/v0.13.1.tar.gz";
+      sha256 = "sha256-D4aQ5kSfWH9qEUaithR0W/E5pN5on0n9YoBHeMggMSE=";
+    };
   in
     lib.recurseIntoAttrs rec {
       godot = callPackage ./common.nix {
-        inherit updateScript;
+        inherit updateScript tracy;
         inherit
           (attrs)
           version
@@ -39,6 +50,11 @@
           nugetDeps
           ;
       };
+
+      # Builds with the built-in Tracy profiler.
+      # https://docs.godotengine.org/en/stable/engine_details/development/profiling/tracy.html
+      godot-tracy = godot.override {withTracy = true;};
+      godot-mono-tracy = godot-mono.override {withTracy = true;};
 
       export-template = godot.export-template;
       export-template-mono = godot-mono.export-template;
@@ -124,6 +140,9 @@
             exportTemplatesHash
             ;
           withPlatform = "windows";
+          # Tracy profiler source for `withTracy = true` builds (host-fetched;
+          # only used as a source input).
+          inherit tracy;
           # Prebuilt Mesa/NIR static libraries for the D3D12 driver.
           mesaNir = pkgs.callPackage ./d3d12-deps.nix {};
           # The .NET SDK and the requireFile machinery are host (Linux)

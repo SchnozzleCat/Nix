@@ -77,16 +77,40 @@
   requireFile,
   unzip,
   rev,
+  # Source tree of the Tracy profiler (wolfpld/tracy), required when
+  # `withTracy` is enabled:
+  # https://docs.godotengine.org/en/stable/engine_details/development/profiling/tracy.html
+  tracy ? null,
+  # TRACY_CALLSTACK: makes every profile zone capture a callstack. Extremely
+  # useful for attribution, but very expensive while a profiler is connected
+  # (a 62-frame unwind per zone). Does NOT affect Tracy's periodic system
+  # sampler (TracySysTrace), which is enabled by default anyway.
+  withTracySampleCallstack ? false,
+  # GODOT_PROFILER_TRACK_MEMORY: queue an event for every engine
+  # allocation/free. Moderate overhead while connected; useless when not.
+  withTracyTrackMemory ? false,
   # Generated C# API bindings ("mono glue") produced by a Linux editor build
   # of the same source rev. Required for editor builds with mono on the
   # windows platform, because glue generation requires running the built
   # editor binary (impossible without wine when cross-compiling).
   mono-glue ? null,
+  withTracy ? false,
 }:
 assert lib.asserts.assertOneOf "withPrecision" withPrecision [
   "single"
   "double"
-]; let
+];
+assert withTracy -> tracy != null; let
+  # Where the Tracy sources are copied to in preConfigure, and how they are
+  # addressed from there. The relative form is needed because
+  # `core/profiling/SCsub` resolves `profiler_path` with pathlib relative to
+  # its own directory (see its `../../thirdparty/perfetto` default). The
+  # sources must live inside the (writable) source tree: SCons derives
+  # object file paths from the source location, so pointing profiler_path at
+  # the read-only store path would make it try to write TracyClient.*.o into
+  # /nix/store.
+  tracyDir = "profiler-tracy";
+  tracyDirFromScsub = "../../${tracyDir}";
   mkSconsFlagsFromAttrSet = lib.mapAttrsToList (
     k: v:
       if builtins.isString v
@@ -408,6 +432,9 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
           mkdir -p modules/godotsteam/sdk
           unzip -o ${sdk} -d modules/godotsteam
         ''
+        + lib.optionalString withTracy ''
+          cp -r --no-preserve=mode ${tracy} ${tracyDir}
+        ''
         + lib.optionalString (editor && withMono && isWindows) ''
           # Copy the C# API bindings generated on Linux (from the `mono-glue`
           # derivation) into the source tree, matching the official
@@ -463,7 +490,10 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
           # exe to >1GB. Match upstream's release flags: symbols off for the
           # editor and the release template, kept for template_debug (whose
           # purpose is debugging exported games).
-          debug_symbols = !isWindows || target == "template_debug";
+          # Tracy builds always keep symbols: they are needed for Tracy's
+          # sampling features to work.
+          # https://docs.godotengine.org/en/stable/engine_details/development/profiling/tracy.html
+          debug_symbols = withTracy || !isWindows || target == "template_debug";
 
           module_mono_enabled = withMono;
 
@@ -522,6 +552,18 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
         // lib.optionalAttrs (lib.versionAtLeast version "4.5") {
           redirect_build_objects = false; # Avoid copying build objects to output
         }
+        # Built-in Tracy profiler support. `profiler_path` must not be set
+        # without `profiler`, so both are only passed when enabled.
+        # The `profiler_record_on_demand` option (TRACY_ON_DEMAND) defaults to
+        # true upstream, which keeps memory usage bounded when the game runs
+        # without a connected Tracy server.
+        # https://docs.godotengine.org/en/stable/engine_details/development/profiling/tracy.html
+        // lib.optionalAttrs withTracy {
+          profiler = "tracy";
+          profiler_path = tracyDirFromScsub;
+          profiler_sample_callstack = withTracySampleCallstack;
+          profiler_track_memory = withTracyTrackMemory;
+        }
       );
 
       enableParallelBuilding = true;
@@ -552,6 +594,16 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
         ''
           # this stops scons from hiding e.g. NIX_CFLAGS_COMPILE
           perl -pi -e '{ $r += s:(env = Environment\(.*):\1\nenv["ENV"] = os.environ: } END { exit ($r != 1) }' SConstruct
+        ''
+        + lib.optionalString withTracy ''
+          # Upstream only links psapi/dbghelp for debug-feature builds (see
+          # the `env.debug_features` and `editor/template_debug` gates in
+          # platform/windows/detect.py), but TracyClient.cpp references
+          # dbghelp symbols regardless of target, so the release template
+          # fails to link without them.
+          substituteInPlace platform/windows/detect.py \
+            --replace-fail 'if env.debug_features:' 'if env.debug_features or env["profiler"] == "tracy":' \
+            --replace-fail 'if env["target"] in ["editor", "template_debug"]:' 'if env["target"] in ["editor", "template_debug"] or env["profiler"] == "tracy":'
         ''
         # The windows build uses all builtin (vendored) libraries, since
         # cross-compiled system libraries for mingw are not available in

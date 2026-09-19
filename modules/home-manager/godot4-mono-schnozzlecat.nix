@@ -9,12 +9,21 @@ with lib; let
   version = "4.7";
   suffix = "schnozzlecat-${lib.substring 0 4 cfg.commitHash}";
   godotPackages = (pkgs.callPackage ../../pkgs/godot4-mono-schnozzlecat {}).godotPackages_4_7;
-  pkg = godotPackages.godot-mono;
-  export = godotPackages.godot-mono.export-template;
-  export-debug = godotPackages.godot-mono.export-template-debug;
+  # The Tracy profiler variants are built with debug symbols (needed for
+  # Tracy's sampling features); use them for profiling, the normal ones for
+  # everyday work.
+  pkg =
+    if cfg.withTracy
+    then godotPackages.godot-mono-tracy
+    else godotPackages.godot-mono;
+  export = pkg.export-template;
+  export-debug = pkg.export-template-debug;
 
   # Windows (cross-compiled from Linux with MinGW-w64)
-  winEditor = godotPackages.godot-mono-windows;
+  winEditor =
+    if cfg.withTracy
+    then godotPackages.godot-mono-windows.override {withTracy = true;}
+    else godotPackages.godot-mono-windows;
   winTemplate = winEditor.export-template;
   winTemplateDebug = winEditor.export-template-debug;
   winTemplateDir = "${winTemplate}/share/godot/export_templates/${version}.mono";
@@ -44,6 +53,15 @@ in {
       description = ''
         Put the cross-compiled Windows editor in `~/.local/share/godot/windows-editor`
         so it can be copied/zipped to a Windows machine.
+      '';
+    };
+    withTracy = mkOption {
+      type = types.bool;
+      default = false;
+      description = ''
+        Build Godot with the built-in Tracy profiler (editor + all export
+        templates, Windows ones included).
+        https://docs.godotengine.org/en/stable/engine_details/development/profiling/tracy.html
       '';
     };
   };

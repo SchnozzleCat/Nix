@@ -120,6 +120,8 @@ in {
       jellyfin-desktop
 
       # Dev
+      steamcmd
+      tracy
       aseprite
       (
         with dotnetCorePackages;
@@ -288,6 +290,7 @@ in {
     version = "4.7";
     commitHash = "be56b3723412ff156046786a910aafcf7ad25e96";
     hash = "";
+    withTracy = true;
   };
 
   programs.imv = {
