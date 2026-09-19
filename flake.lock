@@ -1307,7 +1307,8 @@
         "narHash": "sha256-b9txS/dhy+cMFvq6PKDU0RUA6mn9Wgx5YYnBNkIrp5g=",
         "path": "./flakes/pi-jail",
         "type": "path"
-      }
+      },
+      "parent": []
     },
     "pre-commit-hooks": {
       "inputs": {

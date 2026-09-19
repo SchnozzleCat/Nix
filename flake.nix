@@ -276,7 +276,7 @@
               pkgs,
               ...
             }: {
-              boot.loader.raspberryPi.bootloader = "kernel";
+              boot.loader.raspberry-pi.bootloader = "kernel";
               fileSystems = {
                 "/boot/firmware" = {
                   device = "/dev/disk/by-label/FIRMWARE";
@@ -306,7 +306,7 @@
               ./home/linus-server.nix
             ];
             system.nixos.tags = let
-              cfg = config.boot.loader.raspberryPi;
+              cfg = config.boot.loader.raspberry-pi;
             in [
               "raspberry-pi-${cfg.variant}"
               cfg.bootloader
@@ -328,7 +328,7 @@
               kernelBundle = pkgs.linuxAndFirmware.v6_6_31;
             in {
               boot = {
-                loader.raspberryPi.firmwarePackage = kernelBundle.raspberrypifw;
+                loader.raspberry-pi.firmwarePackage = kernelBundle.raspberrypifw;
                 kernelPackages = kernelBundle.linuxPackages_rpi5;
               };
 
