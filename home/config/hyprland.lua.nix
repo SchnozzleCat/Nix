@@ -208,6 +208,11 @@ in ''
   hl.bind(mainMod .. " + y", hl.dsp.exec_cmd("${pkgs.wl-mirror}/bin/wl-mirror --scaling cover --fullscreen DP-1"))
   hl.bind(mainMod .. " + SHIFT + y", hl.dsp.exec_cmd("${pkgs.wl-mirror}/bin/wl-mirror --fullscreen DP-1"))
 
+  -- Looking Glass
+  hl.bind(mainMod .. " + v", hl.dsp.exec_cmd("looking-glass-client"))
+  -- Start/stop the win11 VM (toggle-vm script from linus-desktop.nix)
+  hl.bind(mainMod .. " + SHIFT + v", hl.dsp.exec_cmd("toggle-vm"))
+
   -- Media controls
   hl.bind(mainMod .. " + code:21", hl.dsp.exec_cmd("${pkgs.playerctl}/bin/playerctl -a next"))
   hl.bind(mainMod .. " + code:48", hl.dsp.exec_cmd("${pkgs.playerctl}/bin/playerctl -a previous"))

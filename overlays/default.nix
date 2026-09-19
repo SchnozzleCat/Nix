@@ -1,7 +1,11 @@
 # This file defines overlays
 {inputs, ...}: {
   # This one brings our custom packages from the 'pkgs' directory
-  additions = final: _prev: import ../pkgs {pkgs = final; inherit inputs;};
+  additions = final: _prev:
+    import ../pkgs {
+      pkgs = final;
+      inherit inputs;
+    };
 
   # This one contains whatever you want to overlay
   # You can change versions, add patches, set compilation flags, anything really.
@@ -11,6 +15,33 @@
     # ...
     # });
     utillinux = prev.util-linux;
+
+    # Match the host/IDD nightly build (B7-826) installed in the win11 VM.
+    # The stable B7 client in nixpkgs has LGMP/IDD protocol skew against the
+    # nightly host; pinning the client to the same commit keeps them in sync.
+    # Bump the rev + hash together when updating the guest host binaries.
+    looking-glass-client = prev.looking-glass-client.overrideAttrs (old: {
+      version = "B7-826";
+      src = final.fetchFromGitHub {
+        owner = "gnif";
+        repo = "LookingGlass";
+        rev = "236efcb155f952f5d7d9fcd5891a3060ad254e68";
+        hash = "sha256-NAfV4Z0RZp2IGBzVAFysm53aGMEReT03RIN+45TveUU=";
+        # fetchSubmodules is required: LGProtocol/LGMP/gui/nanosvg are git
+        # submodules the build add_subdirectory's directly. NOTE: replacing
+        # src via overrideAttrs drops the derivation's original
+        # fetchSubmodules=true, so it must be restated here.
+        fetchSubmodules = true;
+      };
+      # nixpkgs' nanosvg-unvendor.diff targets stable B7 and no longer applies
+      # (the nightly added a FUSE3 link next to FONTCONFIG in CMakeLists.txt).
+      # The vendored nanosvg submodule is fetched anyway (fetchSubmodules), so
+      # just build against it instead of patching.
+      patches = [];
+      # New nightly deps: fuse3 (client CMakeLists), libunwind + libdw
+      # (elfutils; common/src/platform/linux backtrace support).
+      buildInputs = old.buildInputs ++ [final.fuse3 final.libunwind final.elfutils];
+    });
 
     # inline-snapshot 0.32.5's own test suite fails 3 tests on this nixpkgs
     # rev, which cascades into fastapi and openapi-core (both use it as a

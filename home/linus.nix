@@ -77,6 +77,8 @@ in {
     enable = true;
   };
 
+  programs.looking-glass-client.enable = true;
+
   home.file.".pi/permission.settings.json".text = ''
     {
       "defaultMode": "ask",

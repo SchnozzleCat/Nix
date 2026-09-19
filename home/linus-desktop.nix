@@ -42,6 +42,16 @@
     };
   };
 
+  # Noctalia bar widget plugin: shows when the win11 VM is running.
+  # Placed under ~/.local/share/noctalia/plugins/ -- Noctalia discovers this
+  # as its built-in "local" plugin source. Enable it once with:
+  #   noctalia msg plugins enable linus/vm-status
+  # then add the widget to the bar (type "linus/vm-status:vm").
+  xdg.dataFile."noctalia/plugins/vm-status/plugin.toml".source =
+    ./config/noctalia/vm-status/plugin.toml;
+  xdg.dataFile."noctalia/plugins/vm-status/widget.luau".source =
+    ./config/noctalia/vm-status/widget.luau;
+
   programs.obs-studio = {
     enable = true;
     plugins = with pkgs.obs-studio-plugins; [

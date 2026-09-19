@@ -63,10 +63,16 @@
     "hid-nintendo"
     "v4l2loopback"
     "uinput"
+    "kvmfr"
   ];
-  boot.extraModulePackages = with config.boot.kernelPackages; [v4l2loopback];
+  boot.extraModulePackages = with config.boot.kernelPackages; [v4l2loopback kvmfr];
+  # Looking Glass IVSHMEM via the kvmfr module.
+  # static_size_mb must match the 'size' in the VM's ivshmem memory-backend
+  # exactly. Formula: width*height*4 bytes, rounded up to a power of 2, x2.
+  # 1440p -> 32MB, 4K -> 64MB.
   boot.extraModprobeConfig = ''
     options v4l2loopback devices=1 video_nr=1 card_label="OBS Cam" exclusive_caps=1
+    options kvmfr static_size_mb=64
   '';
   boot.kernelParams = [
     "intel_iommu=on"
@@ -98,13 +104,58 @@
   virtualisation.libvirtd = {
     enable = true;
     qemu.runAsRoot = false;
+    # virtiofsd for virtiofs shared folders (9p has no Windows guest driver).
+    # Packaged into the qemu wrapper so libvirt can find it at domain start.
+    qemu.vhostUserPackages = with pkgs; [virtiofsd];
     onBoot = "ignore";
     onShutdown = "shutdown";
   };
+  # The unprivileged qemu user must be able to open /dev/kvmfr0 (group kvm,
+  # mode 0660 via the udev rule) for the Looking Glass ivshmem backend.
+  users.users."qemu-libvirtd".extraGroups = ["kvm"];
   programs.virt-manager.enable = true;
 
+  # udev rule for the kvmfr char device. Must go through services.udev
+  # (environment.etc under udev/rules.d conflicts with the udev module).
+  # Named 65- so it sorts before 73-seat-late.rules, required for
+  # TAG+="uaccess" to take effect.
+  services.udev.packages = [
+    (pkgs.writeTextFile {
+      name = "kvmfr-udev-rules";
+      destination = "/etc/udev/rules.d/65-kvmfr.rules";
+      text = ''
+        SUBSYSTEM=="kvmfr", GROUP="kvm", MODE="0660", TAG+="uaccess"
+      '';
+    })
+  ];
+
+  # libvirtd applies a device cgroup ACL to the qemu process; /dev/kvmfr0 is
+  # not in the default list, so re-declare it (this overrides the default
+  # list, hence the full set).
+  virtualisation.libvirtd.qemu.verbatimConfig = ''
+    cgroup_device_acl = [
+      "/dev/null", "/dev/full", "/dev/zero",
+      "/dev/random", "/dev/urandom",
+      "/dev/ptmx", "/dev/kvm",
+      "/dev/rtc", "/dev/hpet",
+      "/dev/vfio/vfio",
+      "/dev/kvmfr0"
+    ]
+  '';
+
+  # Only needed for the old /dev/shm method -- remove once the VM XML
+  # has been switched to /dev/kvmfr0.
   systemd.tmpfiles.rules = [
     "f /dev/shm/looking-glass 0660 linus qemu-libvirtd -"
+
+    # VM shared folder: qemu runs unprivileged (runAsRoot = false) as
+    # qemu-libvirtd, so grant it traversal + access via ACLs instead of
+    # loosening home-dir permissions. The "x"-only ACL on ~ lets it traverse
+    # but not list; default ACLs apply to newly created files.
+    "a+ /home/linus           - - - - u:qemu-libvirtd:x"
+    "a+ /home/linus/Mounts    - - - - u:qemu-libvirtd:r-x"
+    "a+ /home/linus/Mounts/vm - - - - u:qemu-libvirtd:rwx"
+    "a+ /home/linus/Mounts/vm - - - - d:u:qemu-libvirtd:rwx"
   ];
 
   # Printers

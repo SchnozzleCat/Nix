@@ -1,0 +1,13 @@
+id = "linus/vm-status"
+name = "VM Status"
+version = "1.0.0"
+plugin_api = 24
+author = "linus"
+license = "MIT"
+icon = "server"
+description = "Bar widget that shows when the win11 VM is running. Click toggles it."
+dependencies = ["virsh"]
+
+[[widget]]
+id = "vm"
+entry = "widget.luau"
