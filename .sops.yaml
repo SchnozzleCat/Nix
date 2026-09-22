@@ -6,12 +6,14 @@
 # After changing keys, re-encrypt existing files with:  sops updatekeys secrets.yaml
 
 keys:
-  - &yubikey age1yubikey1q0fazv8seg47yxz4g4e2npmk7uvaa0dphxtkt65z68kk6u8gsllgyrh0wkz
+  - &yubikey-home age1yubikey1q0fazv8seg47yxz4g4e2npmk7uvaa0dphxtkt65z68kk6u8gsllgyrh0wkz
+  - &yubikey-remote age1yubikey1q2njznzjly49c2gd63jylgadufa3jz8kqxdayw93mld6l5tr4vgqje7jfzg
   - &desktop age19572naqqxlk2k4u3mdwry753845dg2m22yj2wmcfsmyyr402795spz8tg8
 
 creation_rules:
   - path_regex: secrets\.yaml$
     key_groups:
       - age:
-          - *yubikey
+          - *yubikey-home
+          - *yubikey-remote
           - *desktop
