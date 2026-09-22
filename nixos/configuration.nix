@@ -13,7 +13,18 @@
     ./hardware-configuration-${hostname}.nix
     ./${hostname}.nix
     inputs.noctalia.nixosModules.default
+    inputs.sops-nix.nixosModules.sops
   ];
+
+  # Secrets (sops-nix). Decrypted at activation into /run/secrets.
+  # Each host decrypts with its SSH ed25519 host key; values live in secrets.yaml.
+  sops = {
+    defaultSopsFile = ../secrets.yaml;
+    age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
+    secrets = {
+      openai-api-key.owner = "linus";
+    };
+  };
 
   # Boot
   boot.loader.systemd-boot.enable = true;
