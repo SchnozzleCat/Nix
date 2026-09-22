@@ -3,8 +3,8 @@
   background {
       monitor =
       #path = screenshot
-      path = ${../../assets/wallpapers/abstract2.jpg}
-      #color = $background
+      # wallpaper is managed by noctalia
+      color = rgb(101010)
       blur_passes = 2
       contrast = 1
       brightness = 1

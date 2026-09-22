@@ -228,7 +228,6 @@ R1tH9/wg2FSXDNZKCTJ5iSfZLBrL
   # SDDM
   services.displayManager.sddm = {
     enable = true;
-    settings.Theme.FacesDir = "${../assets/avatars}";
     wayland.enable = true;
     theme = "chili";
   };
