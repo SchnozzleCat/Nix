@@ -411,9 +411,11 @@ assert withTracyTrackMemory -> withTracy; let
       inherit version;
       inherit rev;
 
-      src = fetchGit {
-        url = "file:///home/linus/Repositories/godot";
-        rev = rev;
+      src = fetchFromGitHub {
+        owner = "SchnozzleCat";
+        repo = "godot";
+        inherit rev;
+        inherit hash;
       };
 
       outputs =

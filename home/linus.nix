@@ -317,8 +317,8 @@ in {
   programs.godot4-mono-schnozzlecat = {
     enable = true;
     version = "4.7";
-    commitHash = "a68f4ab4c1e3d32a6a99aa3b5128707bc24129c5";
-    hash = "";
+    rev = "1dff05b0e12b7156fe49cd8e3b8bb5ce00e16c19";
+    hash = "sha256-xGJRy3+g4WjpvQBcfTr7Zj7+NgQgscpsH4VDTC1W00A=";
     withTracy = true;
     withTracyTrackMemory = true;
     withTracyExportCapi = true;

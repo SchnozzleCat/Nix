@@ -8,8 +8,10 @@
   fetchzip,
   pkgs,
 }: let
-  mkGodotPackages = versionPrefix: let
-    attrs = import (./. + "/${versionPrefix}/default.nix");
+  mkGodotPackages = versionPrefix: sourceOverrides: let
+    # Pin from the version directory, with user-provided source overrides
+    # (rev/hash) taking precedence.
+    attrs = import (./. + "/${versionPrefix}/default.nix") // sourceOverrides;
     updateScript = [
       ./update.sh
       versionPrefix
@@ -84,7 +86,8 @@
         dbus = null;
         embree = null;
         enet = null;
-        fetchFromGitHub = null;
+        # NOTE: fetchFromGitHub must NOT be nulled here -- it's used for the
+        # source fetch in common.nix and works fine in the cross package set.
         fetchpatch = null;
         fontconfig = null;
         freetype = null;
@@ -171,5 +174,9 @@
       godot-mono-windows-template-debug = godot-mono-windows.export-template-debug;
     };
 in {
-  godotPackages_4_7 = mkGodotPackages "4.7";
+  # Version-parameterized interface so modules can forward their own version
+  # and source overrides: mkGodotPackages "4.7" {} resolves ./4.7/default.nix.
+  inherit mkGodotPackages;
+
+  godotPackages_4_7 = mkGodotPackages "4.7" {};
 }

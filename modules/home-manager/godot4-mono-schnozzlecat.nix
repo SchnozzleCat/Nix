@@ -6,22 +6,25 @@
 }:
 with lib; let
   cfg = config.programs.godot4-mono-schnozzlecat;
-  version = "4.7";
-  suffix = "schnozzlecat-${lib.substring 0 4 cfg.commitHash}";
-  godotPackages = (pkgs.callPackage ../../pkgs/godot4-mono-schnozzlecat {}).godotPackages_4_7;
+  # Version prefix — must match a directory in pkgs/godot4-mono-schnozzlecat/.
+  version = cfg.version;
+  # Optional source overrides: set `rev` (plus the matching `hash`) to build a
+  # different commit than the one pinned in the version dir. Nulls are
+  # filtered out so the version dir's pins apply by default.
+  sourceOverrides = lib.filterAttrs (_: v: v != null) {
+    inherit (cfg) rev hash;
+  };
+  godotPackages = (pkgs.callPackage ../../pkgs/godot4-mono-schnozzlecat {}).mkGodotPackages version sourceOverrides;
+  # Effective source rev (the override if set, otherwise the version dir's pin).
+  rev = godotPackages.godot.rev;
+  suffix = "schnozzlecat-${lib.substring 0 4 rev}";
 
-  # The single editor. With `withTracy` it's built with the Tracy profiler
-  # enabled; otherwise it's the plain build.
+  # Forward all profiler options into the package.
   # https://docs.godotengine.org/en/stable/engine_details/development/profiling/tracy.html
   tracyOverrides = {
-    withTracy = true;
-    withTracyTrackMemory = cfg.withTracyTrackMemory;
-    withTracyExportCapi = cfg.withTracyExportCapi;
+    inherit (cfg) withTracy withTracyTrackMemory withTracyExportCapi;
   };
-  pkg =
-    if cfg.withTracy
-    then godotPackages.godot-mono.override tracyOverrides
-    else godotPackages.godot-mono;
+  pkg = godotPackages.godot-mono.override tracyOverrides;
 
   # Two export template sets:
   #
@@ -69,14 +72,22 @@ in {
     enable = mkEnableOption (lib.mdDoc ''Godot4-mono SchnozzleCat'');
     version = mkOption {
       type = types.str;
-      default = "4.2.2";
-      description = "This must match the current Godot version.";
+      default = "4.7";
+      description = "Version prefix. Must match a directory in pkgs/godot4-mono-schnozzlecat/ and the Godot version being built.";
     };
-    commitHash = mkOption {
-      type = types.str;
+    rev = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = ''
+        Override the godot source commit. Defaults to the rev pinned in the
+        version directory (pkgs/godot4-mono-schnozzlecat/<version>/default.nix).
+        When set, `hash` must be set to the matching source hash.
+      '';
     };
     hash = mkOption {
-      type = types.str;
+      type = types.nullOr types.str;
+      default = null;
+      description = "Source hash for `rev`. Only needed when `rev` is overridden.";
     };
     installWindowsTemplates = mkOption {
       type = types.bool;
