@@ -171,6 +171,5 @@
       godot-mono-windows-template-debug = godot-mono-windows.export-template-debug;
     };
 in {
-  godotPackages_4_6 = mkGodotPackages "4.6";
   godotPackages_4_7 = mkGodotPackages "4.7";
 }
