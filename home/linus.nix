@@ -320,6 +320,8 @@ in {
     commitHash = "a68f4ab4c1e3d32a6a99aa3b5128707bc24129c5";
     hash = "";
     withTracy = true;
+    withTracyTrackMemory = true;
+    withTracyExportCapi = true;
   };
 
   programs.imv = {

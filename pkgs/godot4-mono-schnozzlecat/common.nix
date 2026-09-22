@@ -89,6 +89,16 @@
   # GODOT_PROFILER_TRACK_MEMORY: queue an event for every engine
   # allocation/free. Moderate overhead while connected; useless when not.
   withTracyTrackMemory ? false,
+  # Export Tracy's C API (the `___tracy_*` symbols) from the built binary so
+  # that e.g. C# code running inside a Godot game can P/Invoke into the
+  # engine's single Tracy client instead of instantiating its own (which
+  # would fight over the profiler's listen port and split the timeline).
+  # Linux: links with --export-dynamic. Windows: nothing extra is needed —
+  # TRACY_EXPORTS's __declspec(dllexport) directives already build a minimal
+  # export table (note that --export-all-symbols does NOT work: Godot has
+  # >65535 symbols, beyond the PE export ordinal limit, so ld fails with
+  # "export ordinal too large").
+  withTracyExportCapi ? false,
   # Generated C# API bindings ("mono glue") produced by a Linux editor build
   # of the same source rev. Required for editor builds with mono on the
   # windows platform, because glue generation requires running the built
@@ -100,7 +110,10 @@ assert lib.asserts.assertOneOf "withPrecision" withPrecision [
   "single"
   "double"
 ];
-assert withTracy -> tracy != null; let
+assert withTracy -> tracy != null;
+assert withTracyExportCapi -> withTracy;
+assert withTracySampleCallstack -> withTracy;
+assert withTracyTrackMemory -> withTracy; let
   # Where the Tracy sources are copied to in preConfigure, and how they are
   # addressed from there. The relative form is needed because
   # `core/profiling/SCsub` resolves `profiler_path` with pathlib relative to
@@ -500,7 +513,12 @@ assert withTracy -> tracy != null; let
           # aliasing bugs exist with hardening+LTO
           # https://github.com/godotengine/godot/pull/104501
           ccflags = "-fno-strict-aliasing";
-          linkflags = "-Wl,--build-id";
+          linkflags =
+            "-Wl,--build-id"
+            + lib.optionalString (withTracy && withTracyExportCapi)
+            (if isWindows
+            then "" # dllexport directives from TRACY_EXPORTS suffice on PE
+            else " -Wl,--export-dynamic");
 
           # libraries that aren't available in nixpkgs
           builtin_msdfgen = true;
@@ -604,6 +622,15 @@ assert withTracy -> tracy != null; let
           substituteInPlace platform/windows/detect.py \
             --replace-fail 'if env.debug_features:' 'if env.debug_features or env["profiler"] == "tracy":' \
             --replace-fail 'if env["target"] in ["editor", "template_debug"]:' 'if env["target"] in ["editor", "template_debug"] or env["profiler"] == "tracy":'
+        ''
+        + lib.optionalString (withTracy && withTracyExportCapi) ''
+          # Build TracyClient.cpp with TRACY_EXPORTS so the C API functions
+          # (`___tracy_*`, used by the TracyC.h macro layer) are exported from
+          # the final binary for external consumers (e.g. C# P/Invoke).
+          substituteInPlace core/profiling/SCsub \
+            --replace-fail \
+              'env_tracy.Append(CPPDEFINES=["TRACY_ENABLE"])' \
+              'env_tracy.Append(CPPDEFINES=["TRACY_ENABLE", "TRACY_EXPORTS"])'
         ''
         # The windows build uses all builtin (vendored) libraries, since
         # cross-compiled system libraries for mingw are not available in
