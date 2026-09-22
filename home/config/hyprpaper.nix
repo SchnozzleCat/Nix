@@ -3,7 +3,7 @@
 
   wallpaper {
       monitor =
-      path = ${../../secrets/wallpapers/abstract1.jpg}
+      path = ${../../assets/wallpapers/abstract1.jpg}
       fit_mode = cover
   }
 ''

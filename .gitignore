@@ -1,2 +1,4 @@
 *.otter.*
 result
+# REMOVE this line once secrets.yaml is encrypted (after the first `sops secrets.yaml` save)
+/secrets.yaml

@@ -145,6 +145,7 @@
         specialArgs = inputs;
         modules = [
           inputs.home-manager.nixosModules.home-manager
+          inputs.sops-nix.nixosModules.sops
           {
             hardware.raspberry-pi.config = {
               all = {

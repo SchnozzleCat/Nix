@@ -62,7 +62,7 @@
     ];
   };
 
-  # networking.wg-quick.interfaces.proton-de350.configFile = "/home/linus/.nixos/secrets/wireguard/proton-de350.conf";
+  # networking.wg-quick.interfaces.proton-de350.configFile = config.sops.secrets.wg-proton-de350.path;
 
   # Yubikey
   services.udev.packages = [pkgs.yubikey-personalization];
@@ -228,7 +228,7 @@ R1tH9/wg2FSXDNZKCTJ5iSfZLBrL
   # SDDM
   services.displayManager.sddm = {
     enable = true;
-    settings.Theme.FacesDir = "${../secrets/avatars}";
+    settings.Theme.FacesDir = "${../assets/avatars}";
     wayland.enable = true;
     theme = "chili";
   };

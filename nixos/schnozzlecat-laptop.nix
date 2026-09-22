@@ -125,11 +125,13 @@ in {
   };
 
   # Enable WireGuard
+  sops.secrets.wg-laptop-private = {};
+
   networking.wireguard.interfaces = {
     wg0 = {
       ips = ["10.0.0.2/24"];
       listenPort = 51111;
-      privateKeyFile = "/home/linus/.nixos/secrets/wireguard/private.key";
+      privateKeyFile = config.sops.secrets.wg-laptop-private.path;
 
       peers = [
         {

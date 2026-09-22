@@ -16,7 +16,7 @@
   - trust
   - 5
 - gpg --card-status
-- git stash
-- git-crypt unlock
-- git stash pop
+- sops decrypts secrets at activation using each host's SSH key
+  - add a host: `ssh-to-age < /etc/ssh/ssh_host_ed25519_key.pub`, add the result to `.sops.yaml`, then `sops updatekeys secrets.yaml`
+- edit secrets: `sops secrets.yaml` (requires your YubiKey)
 - home-manager switch --flake ~/.nixos#<hostname> && os-build && reboot

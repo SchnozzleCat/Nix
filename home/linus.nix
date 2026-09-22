@@ -146,7 +146,10 @@ in {
       libnotify
       solaar
       wtype
-      git-crypt
+      # Secrets
+      sops
+      age-plugin-yubikey
+      ssh-to-age
       bruno
       thunar
       tidal-hifi

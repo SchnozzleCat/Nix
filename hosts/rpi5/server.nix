@@ -16,16 +16,27 @@
     };
   };
 
+  # Secrets (decrypted from secrets.yaml at activation)
+  sops = {
+    defaultSopsFile = ../../secrets.yaml;
+    age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
+    secrets = {
+      cloudflare-token = {};
+      cloudflared-credentials = {};
+      wg-rpi5-private = {};
+    };
+  };
+
   services.ddclient = {
     enable = true;
     interval = "10min";
     usev4 = "webv4,webv4='https://cloudflare.com/cdn-cgi/trace', web-skip='ip='";
     ssl = true;
+    passwordFile = config.sops.secrets.cloudflare-token.path;
     extraConfig = ''
       protocol=cloudflare
       zone=schnozzlecat.xyz
       username=token
-      password=${import ../../secrets/keys/cloudflare.key}
       trace.schnozzlecat.xyz
     '';
   };
@@ -117,7 +128,7 @@
   services.cloudflared = {
     enable = true;
     tunnels."729e667c-0deb-4724-8614-97f8827279db" = {
-      credentialsFile = "/home/linus/.cloudflared/729e667c-0deb-4724-8614-97f8827279db.json";
+      credentialsFile = config.sops.secrets.cloudflared-credentials.path;
       default = "http_status:404";
     };
   };
@@ -177,7 +188,7 @@
     wg0 = {
       ips = ["10.0.0.1/24"];
       listenPort = 51111;
-      privateKeyFile = "/home/linus/wireguard-keys/private.key";
+      privateKeyFile = config.sops.secrets.wg-rpi5-private.path;
       postSetup = ''
         ${pkgs.iptables}/bin/iptables -A FORWARD -i wg0 -j ACCEPT
         ${pkgs.iptables}/bin/iptables -A FORWARD -o wg0 -j ACCEPT

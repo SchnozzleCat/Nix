@@ -3,7 +3,7 @@
   background {
       monitor =
       #path = screenshot
-      path = /home/linus/.nixos/secrets/wallpapers/abstract2.jpg
+      path = ${../../assets/wallpapers/abstract2.jpg}
       #color = $background
       blur_passes = 2
       contrast = 1
