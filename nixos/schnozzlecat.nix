@@ -143,15 +143,11 @@
     ]
   '';
 
-  # Only needed for the old /dev/shm method -- remove once the VM XML
-  # has been switched to /dev/kvmfr0.
+  # VM shared folder: qemu runs unprivileged (runAsRoot = false) as
+  # qemu-libvirtd, so grant it traversal + access via ACLs instead of
+  # loosening home-dir permissions. The "x"-only ACL on ~ lets it traverse
+  # but not list; default ACLs apply to newly created files.
   systemd.tmpfiles.rules = [
-    "f /dev/shm/looking-glass 0660 linus qemu-libvirtd -"
-
-    # VM shared folder: qemu runs unprivileged (runAsRoot = false) as
-    # qemu-libvirtd, so grant it traversal + access via ACLs instead of
-    # loosening home-dir permissions. The "x"-only ACL on ~ lets it traverse
-    # but not list; default ACLs apply to newly created files.
     "a+ /home/linus           - - - - u:qemu-libvirtd:x"
     "a+ /home/linus/Mounts    - - - - u:qemu-libvirtd:r-x"
     "a+ /home/linus/Mounts/vm - - - - u:qemu-libvirtd:rwx"

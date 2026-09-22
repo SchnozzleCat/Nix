@@ -7,7 +7,6 @@
     # You can access packages and modules from different nixpkgs revs
     # at the same time. Here's an working example:
     nixpkgs-master.url = "github:nixos/nixpkgs/master";
-    # Also see the 'unstable-packages' overlay at 'overlays/default.nix'.
 
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
@@ -18,36 +17,6 @@
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    zjstatus = {
-      url = "github:dj95/zjstatus";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    spicetify-nix = {
-      url = "github:Gerg-L/spicetify-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    hyprland = {
-      url = "github:hyprwm/Hyprland";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    hyprland-plugins = {
-      url = "github:hyprwm/hyprland-plugins";
-      inputs.hyprland.follows = "hyprland";
-    };
-    Hyprspace = {
-      url = "github:KZDKM/Hyprspace";
-      inputs.hyprland.follows = "hyprland";
-    };
-    hyprfocus = {
-      url = "github:pyt0xic/hyprfocus";
-      inputs.hyprland.follows = "hyprland";
-    };
-    hypr-dynamic-cursors = {
-      url = "github:VirtCode/hypr-dynamic-cursors";
-      inputs.hyprland.follows = "hyprland";
-    };
     hyprland-qtutils = {
       url = "github:hyprwm/hyprland-qtutils";
       # Follow the main nixpkgs like the rest of the hyprland ecosystem
@@ -62,8 +31,6 @@
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    nix-software-center.url = "github:snowfallorg/nix-software-center";
 
     # nix-citizen.url = "github:LovingMelody/nix-citizen";
 
@@ -80,11 +47,6 @@
     };
 
     nixos-raspberrypi.url = "github:nvmd/nixos-raspberrypi/main";
-
-    sops-nix = {
-      url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
     googleworkspace-cli.url = "github:googleworkspace/cli";
 
@@ -122,15 +84,10 @@
     self,
     nixpkgs,
     home-manager,
-    hyprland,
     nixvim,
     nix-colors,
     # nix-citizen,
-    zjstatus,
-    Hyprspace,
-    nix-software-center,
     nixos-raspberrypi,
-    sops-nix,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -175,39 +132,13 @@
           hostname = "schnozzlecat-laptop";
         };
         modules = [
-          sops-nix.nixosModules.sops
           # > Our main nixos configuration file <
           ./nixos/configuration.nix
-        ];
-      };
-      schnozzlecat-server = nixos-raspberrypi.lib.nixosSystem {
-        specialArgs = {
-          inherit inputs outputs nixos-raspberrypi;
-          hostname = "schnozzlecat-server";
-        };
-        modules = [
-          sops-nix.nixosModules.sops
-          {
-            # Hardware specific configuration, see section below for a more complete
-            # list of modules
-            imports = with nixos-raspberrypi.nixosModules; [
-              raspberry-pi-5.base
-              raspberry-pi-5.page-size-16k
-              raspberry-pi-5.display-vc4
-              raspberry-pi-5.bluetooth
-            ];
-          }
-          {
-            boot.loader.raspberry-pi.bootloader = "kernel";
-          }
-          # > Our main nixos configuration file <
-          ./nixos/schnozzlecat-server.nix
         ];
       };
       rpi5 = nixos-raspberrypi.lib.nixosSystemFull {
         specialArgs = inputs;
         modules = [
-          sops-nix.nixosModules.sops
           inputs.home-manager.nixosModules.home-manager
           {
             hardware.raspberry-pi.config = {
@@ -302,8 +233,8 @@
             ...
           }: {
             imports = [
-              ./nixos/schnozzlecat-server.nix
-              ./home/linus-server.nix
+              ./hosts/rpi5/server.nix
+              ./hosts/rpi5/home.nix
             ];
             system.nixos.tags = let
               cfg = config.boot.loader.raspberry-pi;
@@ -360,7 +291,6 @@
           overlays = [
             self.overlays.additions
             self.overlays.modifications
-            self.overlays.unstable-packages
             self.overlays.master-packages
           ];
         };
@@ -372,9 +302,7 @@
           ./home/linus-desktop.nix
           nix-colors.homeManagerModules.default
           nixvim.homeModules.nixvim
-          self.homeModules.sunshine
           self.homeModules.godot4-mono-schnozzlecat
-          inputs.spicetify-nix.homeManagerModules.default
           inputs.nix-index-database.homeModules.nix-index
         ];
       };
@@ -385,7 +313,6 @@
           overlays = [
             self.overlays.additions
             self.overlays.modifications
-            self.overlays.unstable-packages
             self.overlays.master-packages
           ];
         };
@@ -397,35 +324,7 @@
           ./home/linus-laptop.nix
           nix-colors.homeManagerModules.default
           nixvim.homeModules.nixvim
-          self.homeModules.sunshine
           self.homeModules.godot4-mono-schnozzlecat
-          inputs.spicetify-nix.homeManagerModules.default
-          inputs.nix-index-database.homeModules.nix-index
-        ];
-      };
-      "linus@schnozzlecat-server" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.aarch64-linux; # Home-manager requires 'pkgs' instance
-        extraSpecialArgs = {
-          inherit inputs outputs nix-colors;
-        };
-        modules = [
-          # > Our main home-manager configuration file <
-          ./home/linus-server.nix
-          nix-colors.homeManagerModules.default
-          nixvim.homeModules.nixvim
-          inputs.nix-index-database.homeModules.nix-index
-        ];
-      };
-
-      "linus@schnozzlecat-vm" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
-        extraSpecialArgs = {
-          inherit inputs outputs nix-colors;
-        };
-        modules = [
-          # > Our main home-manager configuration file <
-          ./home/linus-vm.nix
-          nix-colors.homeManagerModules.default
           inputs.nix-index-database.homeModules.nix-index
         ];
       };

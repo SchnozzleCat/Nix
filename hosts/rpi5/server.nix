@@ -3,13 +3,7 @@
   lib,
   pkgs,
   ...
-}: let
-in {
-  imports = [
-    # Include the results of the hardware scan.
-    # ./hardware-configuration-schnozzlecat-server.nix
-  ];
-
+}: {
   boot.kernel.sysctl."net.ipv4.ip_forward" = 1;
   boot.kernel.sysctl."net.ipv6.conf.all.forwarding" = 1;
   boot.kernel.sysctl."dev.raid.speed_limit_max" = 300000;
@@ -31,13 +25,18 @@ in {
       protocol=cloudflare
       zone=schnozzlecat.xyz
       username=token
-      password=${import ../secrets/keys/cloudflare.key}
+      password=${import ../../secrets/keys/cloudflare.key}
       trace.schnozzlecat.xyz
     '';
   };
 
+  virtualisation.podman = {
+    enable = true;
+    dockerCompat = true;
+  };
+
   virtualisation.oci-containers = {
-    backend = "docker";
+    backend = "podman";
 
     containers = {
       pihole = {
@@ -67,7 +66,7 @@ in {
         image = "homeassistant/home-assistant:latest";
         volumes = [
           "/run/dbus:/run/dbus:ro"
-          "/var/lib/home-asssitant.yaml:/config"
+          "/var/lib/home-assistant:/config"
         ];
         environment = {
           TZ = "Europe/Berlin";
@@ -260,7 +259,7 @@ in {
       isNormalUser = true;
       extraGroups = [
         "wheel"
-        "docker"
+        "podman"
       ];
       hashedPassword = "$6$0rMCuSINeEd6ATar$d1xHn4kxrVfL359Pn.F8Ig8B.u5nCg5xE35b7qiOBfEK5ZOCP09RV/sad8HqIzGn7s8d118PLE4ydQLcxKIYv.";
       createHome = true;
