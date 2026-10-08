@@ -139,6 +139,7 @@ in {
             "buffer"
           ];
           per_filetype = {
+            pi-chat-prompt = ["pi"];
             sql = [
               "snippets"
               "dadbod"
@@ -146,6 +147,10 @@ in {
             ];
           };
           providers = {
+            pi = {
+              name = "Pi";
+              module = "pi.completion.blink";
+            };
             dadbod = {
               name = "Dadbod";
               module = "vim_dadbod_completion.blink";
