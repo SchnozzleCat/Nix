@@ -248,8 +248,33 @@
           publicKey = "261oRRpK/yeyXfcB34djnKVMfyLlk3pMyL/TNaGa4F4=";
           allowedIPs = ["10.1.0.2/32"];
         }
+        {
+          publicKey = "Fb6bxBN6kFT9zmcY0T9Zx2HF9FVIF8ctart+g+XVCE8=";
+          allowedIPs = ["10.1.0.3/32"];
+        }
       ];
     };
+  };
+
+  systemd.services.wg1-jellyfin-guard = {
+    description = "Restrict wg1 WireGuard clients to Jellyfin tcp/8096 in docker DOCKER-USER";
+    after = ["docker.service"];
+    wants = ["docker.service"];
+    wantedBy = ["multi-user.target"];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStop = ''
+        ${pkgs.iptables}/bin/iptables -w -D DOCKER-USER -i wg1 -p tcp --dport 8096 -j ACCEPT || true
+        ${pkgs.iptables}/bin/iptables -w -D DOCKER-USER -i wg1 -j DROP || true
+      '';
+    };
+    script = ''
+      ${pkgs.iptables}/bin/iptables -w -C DOCKER-USER -i wg1 -p tcp --dport 8096 -j ACCEPT 2>/dev/null || \
+        ${pkgs.iptables}/bin/iptables -w -I DOCKER-USER 1 -i wg1 -p tcp --dport 8096 -j ACCEPT
+      ${pkgs.iptables}/bin/iptables -w -C DOCKER-USER -i wg1 -j DROP 2>/dev/null || \
+        ${pkgs.iptables}/bin/iptables -w -I DOCKER-USER 2 -i wg1 -j DROP
+    '';
   };
 
   # This will additionally add your inputs to the system's legacy channels
