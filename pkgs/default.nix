@@ -10,4 +10,8 @@ in {
   agentic-af = pkgs.callPackage ./agentic-af {src = inputs.agentic-af;};
   raspberrypifw-uart10 = pkgs.callPackage ./raspberrypifw-uart10 {};
 
+  # bwrap-sandboxed pi coding agent (function, not a derivation -- call it:
+  # `pkgs.makeJailedPi {extensionPackages = [...];}`). Shared implementation
+  # with outputs.lib.makeJailedPi; see lib/jailed-pi.nix.
+  makeJailedPi = pkgs.callPackage ../lib/jailed-pi.nix {jail-nix = inputs.jail-nix;};
 }

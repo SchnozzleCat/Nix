@@ -55,20 +55,9 @@
 
     googleworkspace-cli.url = "github:googleworkspace/cli";
 
-    pi-jail = {
-      # The narHash is pinned because CppNix and Lix disagree on how to lock
-      # relative-path "subflake" inputs: CppNix writes them WITHOUT narHash
-      # (using a `parent` field Lix doesn't support), and Lix refuses to read
-      # hash-less path nodes ("lock file contains mutable lock"). A narHash
-      # pinned in the URL is the one form both accept.
-      #
-      # RITUAL: whenever you edit anything under flakes/pi-jail, the next
-      # build fails with "NAR hash mismatch in input ... expected ... got ..."
-      # -- paste the 'got' hash (percent-encode '+' as %2B and '=' as %3D)
-      # into this URL.
-      url = "path:./flakes/pi-jail?narHash=sha256-b9txS/dhy%2BcMFvq6PKDU0RUA6mn9Wgx5YYnBNkIrp5g%3D";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # Dependency of lib/jailed-pi.nix (the bwrap sandbox the jailed pi
+    # coding agent runs in), pinned like nixpkgs. See lib/jailed-pi.nix.
+    jail-nix.url = "sourcehut:~alexdavid/jail.nix";
 
     agentic-af = {
       url = "github:alex35mil/agentic-af/5505c49da4dd7a0171e6b921ad809f7636db02b7";
@@ -109,6 +98,7 @@
     # Formatter for your nix files, available through 'nix fmt'
     # Other options beside 'alejandra' include 'nixpkgs-fmt'
     formatter = forAllSystems (pkgs: pkgs.alejandra);
+
     # Dev shells: `nix develop ~/.nixos#<name>` (e.g. ue4-27 for Unreal Engine)
     devShells = forAllSystems (pkgs: import ./devshells {inherit pkgs inputs;});
     # Your custom packages and modifications, exported as overlays
@@ -119,6 +109,18 @@
     # Reusable home-manager modules you might want to export
     # These are usually stuff you would upstream into home-manager
     homeModules = import ./modules/home-manager;
+
+    # Shared library functions. Also reachable as pkgs.makeJailedPi wherever
+    # the additions overlay is applied.
+    lib = {
+      # bwrap-sandboxed pi coding agent; see lib/jailed-pi.nix for docs.
+      # Usage: outputs.lib.makeJailedPi pkgs { extraPkgs = [...]; }
+      makeJailedPi = pkgs:
+        import ./lib/jailed-pi.nix {
+          inherit pkgs;
+          jail-nix = inputs.jail-nix;
+        };
+    };
 
     # NixOS configuration entrypoint
     # Available through 'nixos-rebuild --flake .#your-hostname'
@@ -147,8 +149,7 @@
         # Native aarch64 evaluation: mostly binary-cache hits, no cross toolchain
         system = "aarch64-linux";
         specialArgs = {
-          inputs = inputs';
-          inherit outputs;
+          inherit inputs outputs;
         };
         modules = [
           inputs.home-manager.nixosModules.home-manager

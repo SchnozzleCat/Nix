@@ -99,12 +99,13 @@ in {
       TZDIR = "/etc/zoneinfo";
     };
     packages = with pkgs; [
-      # Jailed pi coding agent (bwrap sandbox, see flakes/pi-jail).
+      # Jailed pi coding agent (bwrap sandbox, see lib/jailed-pi.nix).
+      # The default `pi` invocation runs the jail's default package set.
       # `extensionPackages` loads the agentic-af extensions
       # (context, fetch, web-search, mcp, rules) via `pi -e` so they're
       # available in every session without editing settings.json. permission
       # is excluded from the TUI build (pi.nvim-only) -- see pkgs/agentic-af.
-      (inputs.pi-jail.lib.${pkgs.stdenv.hostPlatform.system}.makeJailedPi {
+      (pkgs.makeJailedPi {
         extensionPackages = [pkgs.agentic-af];
       })
 
