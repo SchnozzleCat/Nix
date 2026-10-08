@@ -63,6 +63,9 @@ in {
           ];
         };
       };
+      git = {
+        overrideGpg = true;
+      };
     };
   };
 
