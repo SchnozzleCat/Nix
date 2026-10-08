@@ -109,6 +109,8 @@
     # Formatter for your nix files, available through 'nix fmt'
     # Other options beside 'alejandra' include 'nixpkgs-fmt'
     formatter = forAllSystems (pkgs: pkgs.alejandra);
+    # Dev shells: `nix develop ~/.nixos#<name>` (e.g. ue4-27 for Unreal Engine)
+    devShells = forAllSystems (pkgs: import ./devshells {inherit pkgs inputs;});
     # Your custom packages and modifications, exported as overlays
     overlays = import ./overlays {inherit inputs;};
     # Reusable nixos modules you might want to export
