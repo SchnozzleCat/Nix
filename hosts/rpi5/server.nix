@@ -8,6 +8,10 @@
   boot.kernel.sysctl."net.ipv6.conf.all.forwarding" = 1;
   boot.kernel.sysctl."dev.raid.speed_limit_max" = 300000;
   boot.swraid.enable = true;
+  # RPi vendor kernel builds no TPM modules, so initrd TPM2 support can't
+  # resolve tpm-crb/tpm-tis and breaks modules-shrunk (nixos-hardware#858,
+  # nixpkgs#344963). The Pi has no TPM anyway.
+  boot.initrd.systemd.tpm2.enable = lib.mkForce false;
   boot.loader.grub.device = "nodev";
 
   nixpkgs = {
@@ -46,13 +50,28 @@
     dockerCompat = true;
   };
 
+  # Host directories for container bind mounts (oci-containers does not
+  # create these; podman fails with "statfs ...: no such file or directory")
+  systemd.tmpfiles.rules = [
+    "d /var/lib/home-assistant 0755 root root -"
+    "d /var/lib/jellyfin 0755 root root -"
+    "d /var/lib/jellyfin/config 0755 root root -"
+    "d /var/lib/jellyfin/cache 0755 root root -"
+    "d /var/lib/pihole 0755 root root -"
+    "d /var/lib/dnsmasq.d 0755 root root -"
+  ];
+
   virtualisation.oci-containers = {
     backend = "podman";
 
     containers = {
       pihole = {
         autoStart = true;
-        image = "pihole/pihole:latest";
+        # Fully-qualified: podman resolves short names only if
+        # virtualisation.containers.registries.settings defines
+        # unqualified-search.registries, which the default config no
+        # longer does (26.11 containers-common).
+        image = "docker.io/pihole/pihole:latest";
         volumes = [
           "/var/lib/pihole:/etc/pihole"
           "/var/lib/dnsmasq.d:/etc/dnsmasq.d"
@@ -70,11 +89,10 @@
           "--dns=127.0.0.1"
           "--dns=1.1.1.1"
         ];
-        workdir = "/var/lib/pihole/";
       };
       home-assistant = {
         autoStart = true;
-        image = "homeassistant/home-assistant:latest";
+        image = "docker.io/homeassistant/home-assistant:latest";
         volumes = [
           "/run/dbus:/run/dbus:ro"
           "/var/lib/home-assistant:/config"
@@ -89,7 +107,7 @@
       };
       jellyfin = {
         autoStart = true;
-        image = "jellyfin/jellyfin:latest";
+        image = "docker.io/jellyfin/jellyfin:latest";
         volumes = [
           "/var/lib/jellyfin/config:/config"
           "/var/lib/jellyfin/cache:/cache"

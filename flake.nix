@@ -51,7 +51,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixos-raspberrypi.url = "github:nvmd/nixos-raspberrypi/main";
+    nixos-hardware.url = "github:nixos/nixos-hardware";
 
     googleworkspace-cli.url = "github:googleworkspace/cli";
 
@@ -92,7 +92,7 @@
     nixvim,
     nix-colors,
     # nix-citizen,
-    nixos-raspberrypi,
+    nixos-hardware,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -141,79 +141,102 @@
           ./nixos/configuration.nix
         ];
       };
-      rpi5 = nixos-raspberrypi.lib.nixosSystemFull {
-        specialArgs = inputs;
+      rpi5 = nixpkgs.lib.nixosSystem {
+        # Native aarch64 evaluation: mostly binary-cache hits, no cross toolchain
+        system = "aarch64-linux";
+        specialArgs = {
+          inputs = inputs';
+          inherit outputs;
+        };
         modules = [
           inputs.home-manager.nixosModules.home-manager
           inputs.sops-nix.nixosModules.sops
+
+          # https://wiki.nixos.org/wiki/NixOS_on_ARM/Raspberry_Pi_5
+          # Downstream RPi kernel (built on Hydra/cache), VC4 KMS, extlinux boot
+          inputs.nixos-hardware.nixosModules.raspberry-pi-5
+
+          # SD image support: `nix build
+          # .#nixosConfigurations.rpi5.config.system.build.sdImage`
+          # (builds fine on x86_64 thanks to boot.binfmt.emulatedSystems).
+          # MBR + bootable flag, FIRMWARE/NIXOS_SD labels (matches the
+          # fileSystems below). nixos-hardware's firmware module overrides
+          # sdImage.populateFirmwareCommands with its own staging script.
+          "${inputs.nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
+
           {
-            hardware.raspberry-pi.config = {
+            hardware.raspberry-pi.configtxt.settings = {
               all = {
-                # [all] conditional filter, https://www.raspberrypi.com/documentation/computers/config_txt.html#conditional-filters
-
-                options = {
-                  experimental-features = {
-                    enable = true;
-                    value = "nix-command flakes";
-                  };
-
-                  # https://www.raspberrypi.com/documentation/computers/config_txt.html#enable_uart
-                  # in conjunction with `console=serial0,115200` in kernel command line (`cmdline.txt`)
-                  # creates a serial console, accessible using GPIOs 14 and 15 (pins
-                  #  8 and 10 on the 40-pin header)
-                  enable_uart = {
-                    enable = true;
-                    value = true;
-                  };
-                  # https://www.raspberrypi.com/documentation/computers/config_txt.html#uart_2ndstage
-                  # enable debug logging to the UART, also automatically enables
-                  # UART logging in `start.elf`
-                  uart_2ndstage = {
-                    enable = true;
-                    value = true;
-                  };
-                };
-
+                # NOTE: deliberately NOT enabling the UART here.
+                # With U-Boot in the boot chain (hardware.raspberry-pi.firmware.uboot),
+                # the mini UART's floating RX feeds ghost input into U-Boot and hangs
+                # the boot at the U-Boot splash. The nixos-hardware profile disables
+                # it for Pi 5 for exactly this reason; leave pi5.enable_uart = false.
+                # If serial debugging on the debug connector is ever needed:
+                #   pi5.enable_uart = lib.mkForce true;
+                #   boot.kernelParams = [ "console=ttyAMA10,115200n8" ];
+                # and keep a (grounded) 3.3V adapter attached.
                 # Base DTB parameters
-                # https://github.com/raspberrypi/linux/blob/a1d3defcca200077e1e382fe049ca613d16efd2b/arch/arm/boot/dts/overlays/README#L132
-                base-dt-params = {
-                  # https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#enable-pcie
-                  pciex1 = {
-                    enable = true;
-                    value = "on";
-                  };
-                  # PCIe Gen 3.0
-                  # https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#pcie-gen-3-0
-                  pciex1_gen = {
-                    enable = true;
-                    value = "3";
-                  };
-                };
+                # https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#enable-pcie
+                pciex1 = "on";
+                # PCIe Gen 3.0
+                # https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#pcie-gen-3-0
+                pciex1_gen = "3";
               };
             };
           }
+
+          { boot.tmp.useTmpfs = true; }
+
           (
             {
               config,
               pkgs,
               lib,
-              nixos-raspberrypi,
               ...
             }: {
-              imports = with nixos-raspberrypi.nixosModules; [
-                # Hardware configuration
-                raspberry-pi-5.base
-                raspberry-pi-5.display-vc4
-              ];
-            }
-          )
-          (
-            {
-              config,
-              pkgs,
-              ...
-            }: {
-              boot.loader.raspberry-pi.bootloader = "kernel";
+              # sd-image.nix pulls in the all-hardware profile (installer
+              # image kitchen sink); its initrd module list names modules
+              # the RPi vendor kernel doesn't build (dw-hdmi etc.), which
+              # breaks the initrd module shrink (modprobe FATAL). This
+              # image only ever boots on this one Pi 5, whose needs the
+              # nixos-hardware profile already covers.
+              hardware.enableAllHardware = lib.mkForce false;
+
+              # Stage GPU firmware, device trees, overlays, U-Boot and
+              # config.txt onto the firmware partition on every switch
+              hardware.raspberry-pi.firmware = {
+                enable = true;
+                uboot.enable = true;
+                # Stage device trees from the booted generation (the RPi
+                # kernel this profile builds) instead of the vendor
+                # raspberrypifw package. The vendor DTBs list the debug
+                # UART (uart10, serial@7d001000, the stdout-path console)
+                # as compatible "arm,pl011-axi", which U-Boot's pl01x
+                # driver cannot bind: U-Boot draws its splash logo and
+                # then hangs before reading extlinux.conf. The kernel
+                # DTS (bcm2712.dtsi) uses plain "arm,pl011" and boots.
+                # (Image builds can't use /run/current-system/dtbs, so
+                # they fall back to the package below - which is patched.)
+                useGenerationDeviceTree = true;
+                # Patched vendor firmware: all bcm2712* DTBs get uart10's
+                # compatible fixed up, covering the image-build path and
+                # every board stepping (incl. bcm2712d0-rpi-5-b.dtb).
+                package = pkgs.callPackage ./pkgs/raspberrypifw-uart10 {};
+              };
+              # extlinux.conf + kernels go to /boot on the root ext4
+              # (stock sd-image layout, default mirroredBoots) - keeps the
+              # small FAT firmware partition untouched by generations and
+              # avoids the noauto/automount mount timing issues.
+              # boot.loader.generic-extlinux-compatible.mirroredBoots uses
+              # its default [{ path = "/boot"; }] now.
+              sdImage = {
+                # GPU firmware + DTBs + overlays + U-Boot only (kernels live
+                # on the root partition via extlinux); 256M is comfortable.
+                firmwareSize = 256;
+                # Uncompressed .img, easier to inspect and flash with dd.
+                compressImage = false;
+              };
               fileSystems = {
                 "/boot/firmware" = {
                   device = "/dev/disk/by-label/FIRMWARE";
@@ -242,46 +265,11 @@
               ./hosts/rpi5/server.nix
               ./hosts/rpi5/home.nix
             ];
-            system.nixos.tags = let
-              cfg = config.boot.loader.raspberry-pi;
-            in [
-              "raspberry-pi-${cfg.variant}"
-              cfg.bootloader
+            system.nixos.tags = [
+              "raspberry-pi-5"
               config.boot.kernelPackages.kernel.version
             ];
           })
-          {
-            boot.tmp.useTmpfs = true;
-          }
-
-          # Advanced: Use non-default kernel from kernel-firmware bundle
-          (
-            {
-              config,
-              pkgs,
-              lib,
-              ...
-            }: let
-              kernelBundle = pkgs.linuxAndFirmware.v6_6_31;
-            in {
-              boot = {
-                loader.raspberry-pi.firmwarePackage = kernelBundle.raspberrypifw;
-                kernelPackages = kernelBundle.linuxPackages_rpi5;
-              };
-
-              nixpkgs.overlays = lib.mkAfter [
-                (self: super: {
-                  # This is used in (modulesPath + "/hardware/all-firmware.nix") when at least
-                  # enableRedistributableFirmware is enabled
-                  # I know no easier way to override this package
-                  inherit (kernelBundle) raspberrypiWirelessFirmware;
-                  # Some derivations want to use it as an input,
-                  # e.g. raspberrypi-dtbs, omxplayer, sd-image-* modules
-                  inherit (kernelBundle) raspberrypifw;
-                })
-              ];
-            }
-          )
         ];
       };
     };

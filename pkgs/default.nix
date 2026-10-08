@@ -8,4 +8,6 @@ in {
   godot-custom-windows-template = godotPkgs.godotPackages_4_7.godot-mono-windows-template;
   godot-custom-windows-template-debug = godotPkgs.godotPackages_4_7.godot-mono-windows-template-debug;
   agentic-af = pkgs.callPackage ./agentic-af {src = inputs.agentic-af;};
+  raspberrypifw-uart10 = pkgs.callPackage ./raspberrypifw-uart10 {};
+
 }
