@@ -92,8 +92,10 @@
       };
       luaConfig.post = ''
         vim.lsp.config("roslyn", {
-            settings = {
-            },
+          cmd = {
+            require("roslyn.utils").get_roslyn_lsp_path(),
+            "--stdio"
+          }
         })
 
         -- Workaround for seblyng/roslyn.nvim#358: roslyn-ls 5.7+ replaced the
