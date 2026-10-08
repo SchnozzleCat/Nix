@@ -90,6 +90,20 @@
         stdenv.cc.cc.lib
         icu
         openssl.out
+
+        (pkgs.buildEnv {
+          name = "combinedSdk";
+          paths = [
+            (
+              with pkgs.dotnetCorePackages;
+                combinePackages [
+                  sdk_10_0
+                  sdk_9_0
+                  sdk_8_0
+                ]
+            )
+          ];
+        })
       ];
 
       # Resolve a secret from the host's `pass` store at the moment the
