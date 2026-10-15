@@ -28,6 +28,7 @@
       cloudflare-token = {};
       cloudflared-credentials = {};
       wg-rpi5-private = {};
+      wg-jellyfin-private = {};
     };
   };
 
@@ -248,7 +249,9 @@
     wg1 = {
       ips = ["10.1.0.1/24"];
       listenPort = 51112;
-      privateKeyFile = "/home/linus/wireguard-keys/jellyfin.key";
+      # wg-jellyfin-private is decrypted by sops-nix at activation into
+      # /run/secrets/wg-jellyfin-private (see sops.secrets above).
+      privateKeyFile = config.sops.secrets.wg-jellyfin-private.path;
 
       # No NAT or forwarding needed, since traffic is local to the Pi
       postSetup = ''
@@ -277,24 +280,30 @@
     };
   };
 
+  # Restrict wg1 clients to Jellyfin tcp/8096 only.
+  # NOTE: we're on podman, not docker, so there is no DOCKER-USER chain.
+  # The equivalent hook is the FORWARD chain scoped to the podman bridge
+  # (netavark's default bridge for the rootful "podman" network is podman0).
+  # Container-published ports are DNAT'd in PREROUTING, so client traffic to
+  # Jellyfin traverses FORWARD (in-interface stays wg1), while traffic to
+  # host-network services (e.g. pihole) stays in INPUT (covered by the
+  # wg1 postSetup rules above).
   systemd.services.wg1-jellyfin-guard = {
-    description = "Restrict wg1 WireGuard clients to Jellyfin tcp/8096 in docker DOCKER-USER";
-    after = ["docker.service"];
-    wants = ["docker.service"];
+    description = "Restrict wg1 WireGuard clients to Jellyfin tcp/8096 in podman FORWARD";
     wantedBy = ["multi-user.target"];
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
       ExecStop = ''
-        ${pkgs.iptables}/bin/iptables -w -D DOCKER-USER -i wg1 -p tcp --dport 8096 -j ACCEPT || true
-        ${pkgs.iptables}/bin/iptables -w -D DOCKER-USER -i wg1 -j DROP || true
+        ${pkgs.iptables}/bin/iptables -w -D FORWARD -i wg1 -o podman0 -p tcp --dport 8096 -j ACCEPT || true
+        ${pkgs.iptables}/bin/iptables -w -D FORWARD -i wg1 -o podman0 -j DROP || true
       '';
     };
     script = ''
-      ${pkgs.iptables}/bin/iptables -w -C DOCKER-USER -i wg1 -p tcp --dport 8096 -j ACCEPT 2>/dev/null || \
-        ${pkgs.iptables}/bin/iptables -w -I DOCKER-USER 1 -i wg1 -p tcp --dport 8096 -j ACCEPT
-      ${pkgs.iptables}/bin/iptables -w -C DOCKER-USER -i wg1 -j DROP 2>/dev/null || \
-        ${pkgs.iptables}/bin/iptables -w -I DOCKER-USER 2 -i wg1 -j DROP
+      ${pkgs.iptables}/bin/iptables -w -C FORWARD -i wg1 -o podman0 -p tcp --dport 8096 -j ACCEPT 2>/dev/null || \
+        ${pkgs.iptables}/bin/iptables -w -I FORWARD 1 -i wg1 -o podman0 -p tcp --dport 8096 -j ACCEPT
+      ${pkgs.iptables}/bin/iptables -w -C FORWARD -i wg1 -o podman0 -j DROP 2>/dev/null || \
+        ${pkgs.iptables}/bin/iptables -w -I FORWARD 2 -i wg1 -o podman0 -j DROP
     '';
   };
 
@@ -318,6 +327,7 @@
   ];
 
   networking.hostName = "schnozzlecat-server";
+
   networking.wireless.enable = false;
   networking.wireless.iwd = {
     enable = true;
