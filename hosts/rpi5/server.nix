@@ -342,9 +342,17 @@
 
   security.sudo.wheelNeedsPassword = false;
 
+  # Required for users.users.linus.shell = fish below: installs fish
+  # system-wide and wires the nix PATH dirs into login shells.
+  programs.fish.enable = true;
+
   users.users = {
     linus = {
       isNormalUser = true;
+      # Matches the desktop (users.defaultUserShell = pkgs.fish there); the
+      # actual config (starship, aliases) comes from home/terminal.nix via
+      # hosts/rpi5/home.nix.
+      shell = pkgs.fish;
       extraGroups = [
         "wheel"
         "podman"
