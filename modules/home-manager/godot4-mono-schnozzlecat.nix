@@ -75,6 +75,22 @@ in {
       default = "4.7";
       description = "Version prefix. Must match a directory in pkgs/godot4-mono-schnozzlecat/ and the Godot version being built.";
     };
+    # Exposed so consumers (the jailed pi coding agent, see
+    # lib/jailed-pi.nix) can wire the custom fork's NuGet packages into
+    # their sandbox's dotnet toolchain:
+    #   (pkgs.makeJailedPi {
+    #     nugetPackages = config.programs.godot4-mono-schnozzlecat.nugetPackages;
+    #   })
+    nugetPackages = mkOption {
+      type = types.listOf types.package;
+      default = [pkg];
+      description = lib.mdDoc ''
+        Packages whose `share/nuget` trees (the custom fork's locally
+        versioned Godot.NET.Sdk / GodotSharp nupkgs) are exposed to tools
+        running inside the jailed pi coding agent. Defaults to the built
+        mono editor; set to `[]` to keep them out of the jail.
+      '';
+    };
     rev = mkOption {
       type = types.nullOr types.str;
       default = null;
