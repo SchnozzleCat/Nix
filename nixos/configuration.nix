@@ -83,30 +83,19 @@
     settings.general.inhibit_screensaver = 0;
   };
 
+  # Self-signed HTTPS dev certificate used by the Aspire dashboard
+  # (https://aspire.dev) and other dotnet dev-certs consumers. Pinned here
+  # so browsers trust https://localhost:17*. Public key only, safe to commit.
+  # Regenerate if the dev cert is renewed past its notAfter (check with
+  # `dotnet dev-certs https --check --trust`) by re-running:
+  #   dotnet dev-certs https -ep ~/.nixos/assets/aspire-dev-cert.pem \
+  #     --format PEM --no-password
+  # then `sudo nixos-rebuild switch`. NOTE: security.pki.certificates only
+  # reaches apps using the system CA bundle / NixOS-patched NSS (Firefox in
+  # nixpkgs). Prebuilt browsers like Zen ignore it -- import into Zen's
+  # profile NSS db with certutil (pkgs.nssTools) for those.
   security.pki.certificates = [
-    "-----BEGIN CERTIFICATE-----
-MIID0TCCArmgAwIBAgIHXJ+Tj8cL8zANBgkqhkiG9w0BAQsFADAUMRIwEAYDVQQD
-Ewlsb2NhbGhvc3QwHhcNMjYwNDE1MjEzMjMzWhcNMjcwNDE1MjEzMjMzWjAUMRIw
-EAYDVQQDEwlsb2NhbGhvc3QwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIB
-AQDSPyD8DAQpuYnRrVDJp1hjv2Qddam2NrMrdGBk5mFXTYyB9XxII+f9WHt55ejz
-DPV3wRou7tyr8Izsp12AEOXlFJQliKLVr/akDzsSwffjw6ihis8zDSH9TynEquI/
-NjK6tmYGK95ZCBHqtZV+n6RlL0tg/4DZC8QPaz5qgnkXTjJhX8qOOfMxmkaLw92Q
-6UA0j9uSX4JR/Uq47n5UguVo14h6yg4+BDzVeXxiwK4ZSFyoiUt6yDDvKvCiKRPl
-WZWGeYhEKY1alVojt7RJnw0inH7YNykeQTSfGN7IuAPpf71fqMwWYFxj6nKp8euv
-cf/ANlvgd3iJWPlZLXqjK+KZAgMBAAGjggEmMIIBIjAMBgNVHRMBAf8EAjAAMA4G
-A1UdDwEB/wQEAwIFoDAWBgNVHSUBAf8EDDAKBggrBgEFBQcDATCBgAYDVR0RAQH/
-BHYwdIIJbG9jYWxob3N0gg8qLmRldi5sb2NhbGhvc3SCDiouZGV2LmludGVybmFs
-ghRob3N0LmRvY2tlci5pbnRlcm5hbIIYaG9zdC5jb250YWluZXJzLmludGVybmFs
-hwR/AAABhxAAAAAAAAAAAAAAAAAAAAABMA8GCisGAQQBgjdUAQEEAQYwKQYDVR0O
-BCIEIB7058Kt1Yyghis0S9qRcQPBo28OLf3o0BnDUTTQ43hhMCsGA1UdIwQkMCKA
-IB7058Kt1Yyghis0S9qRcQPBo28OLf3o0BnDUTTQ43hhMA0GCSqGSIb3DQEBCwUA
-A4IBAQCd7H6gKmxXF3PVKd92wkTaI94PULnOtg4Xhus/KNcIcUsCaExC7YyTdIts
-olXRYvHMYMKB2JEX5O9vKMz2nm3tI7KMYdLAvhp0V4Ik8Lh1+6/0yf9Ic1J/ghT1
-h/cn7pEwPRyuRtnTAfgm0ghplgMzOkjF6q3ynOhQUOhME7F06J2fWlUeu/ifx9yU
-gTYfuJO6F9Cl5lRh525tSepHRAM2nYrKeicZZW5WT+9FvGLHxrHlzsaIMNMyBD73
-Oj729pCV7284H6Dm1fAkbWCjiSZjH5H+dydUV1XTbVM1psn97QtJQxGApLXg6Ewy
-R1tH9/wg2FSXDNZKCTJ5iSfZLBrL
------END CERTIFICATE-----"
+    (builtins.readFile ../assets/aspire-dev-cert.pem)
   ];
 
   programs.command-not-found.enable = false;
