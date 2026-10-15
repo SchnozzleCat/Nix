@@ -209,6 +209,8 @@ R1tH9/wg2FSXDNZKCTJ5iSfZLBrL
       wayland-scanner
       wayland
       libdecor
+      openssl.out
+      openssl
     ];
   };
 
