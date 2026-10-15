@@ -168,6 +168,27 @@
     externalInterface = "end0";
     internalInterfaces = ["wg0" "wg1"];
   };
+  # SMB share of /mnt/raid for Windows hosts
+  services.samba = {
+    enable = true;
+    openFirewall = true;
+    settings = {
+      global = {
+        "server min protocol" = "SMB2";
+      };
+      raid = {
+        path = "/mnt/raid/sarah";
+        browseable = "yes";
+        "read only" = "no";
+        "guest ok" = "no";
+        "valid users" = "linus";
+        # raid is root-owned; read/write everything as root
+        "force user" = "root";
+        "force group" = "root";
+      };
+    };
+  };
+
   # Open ports in the firewall
   networking.firewall = {
     enable = true;
