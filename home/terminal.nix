@@ -97,6 +97,8 @@ in {
     dive
     #quarto
     inputs.googleworkspace-cli.packages.${pkgs.stdenv.hostPlatform.system}.default
+    # Aspire CLI (https://aspire.dev/get-started/install-cli/)
+    inputs.aspire-cli.packages.${pkgs.stdenv.hostPlatform.system}.default
     # (wrap {
     #   pkg = pkgs.linear-cli;
     #   bin = "linear";

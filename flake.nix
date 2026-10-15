@@ -55,6 +55,13 @@
 
     googleworkspace-cli.url = "github:googleworkspace/cli";
 
+    # Aspire CLI (https://aspire.dev). Follows our nixpkgs to avoid a second
+    # nixpkgs evaluation in the closure.
+    aspire-cli = {
+      url = "github:microsoft/aspire";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Dependency of lib/jailed-pi.nix (the bwrap sandbox the jailed pi
     # coding agent runs in), pinned like nixpkgs. See lib/jailed-pi.nix.
     jail-nix.url = "sourcehut:~alexdavid/jail.nix";

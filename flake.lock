@@ -17,6 +17,26 @@
         "type": "github"
       }
     },
+    "aspire-cli": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791969091,
+        "narHash": "sha256-ZGoUS+5nQwDHxOmv85vZ7SsYh9I6B5cjandASid7nzA=",
+        "owner": "microsoft",
+        "repo": "aspire",
+        "rev": "d751daa037a850428cd12ebf1efe309a8690df10",
+        "type": "github"
+      },
+      "original": {
+        "owner": "microsoft",
+        "repo": "aspire",
+        "type": "github"
+      }
+    },
     "base16-schemes": {
       "flake": false,
       "locked": {
@@ -622,9 +642,11 @@
     "root": {
       "inputs": {
         "agentic-af": "agentic-af",
+        "aspire-cli": "aspire-cli",
         "googleworkspace-cli": "googleworkspace-cli",
         "home-manager": "home-manager",
         "hyprland-qtutils": "hyprland-qtutils",
+        "jail-nix": "jail-nix",
         "mesa-git-nix": "mesa-git-nix",
         "neovim-nightly-overlay": "neovim-nightly-overlay",
         "nix-colors": "nix-colors",
@@ -635,8 +657,7 @@
         "nixvim": "nixvim",
         "noctalia": "noctalia",
         "sops-nix": "sops-nix",
-        "zen-browser": "zen-browser",
-        "jail-nix": "jail-nix"
+        "zen-browser": "zen-browser"
       }
     },
     "sops-nix": {
