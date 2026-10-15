@@ -56,11 +56,45 @@ in ''
     float = true,
   })
 
+  -- LemonBattery is known at map time; a static rule floats it before the
+  -- layout places it (no flash). Everything else is handled by the hook below.
   hl.window_rule({
-    name = "special:godot-game",
+    name = "godot-game-lemonbattery",
     match = { initial_class = "LemonBattery" },
     float = true,
   })
+
+  -- Float all Godot game windows, not just LemonBattery.
+  -- Godot sets the game window's app_id/WM_CLASS to the project name, so a
+  -- static window rule can't match all games generically. Instead, on every
+  -- new window check the process behind it and float godot game processes,
+  -- excluding the editor (class "Godot" on X11) and project manager
+  -- (org.godotengine.Editor / .ProjectManager on native Wayland). Dialog
+  -- windows spawned by the editor keep the editor class and stay tiled.
+  hl.on("window.open", function(win)
+    local cls = (win.initial_class or ""):lower()
+
+    -- Editor / project manager windows: leave tiled.
+    if cls == "godot" or cls == "org.godotengine.editor" or cls == "org.godotengine.projectmanager" then
+      return
+    end
+
+    local pid = win.pid
+    if not pid or pid <= 0 then
+      return
+    end
+
+    local f = io.open("/proc/" .. pid .. "/comm", "r")
+    if not f then
+      return
+    end
+    local comm = f:read("l") or ""
+    f:close()
+
+    if comm:lower():find("godot", 1, true) then
+      hl.dispatch(hl.dsp.window.float({ action = "enable", window = win }))
+    end
+  end)
 
   hl.window_rule({
     name = "special:scratch_volume",
