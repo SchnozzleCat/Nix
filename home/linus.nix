@@ -10,6 +10,17 @@
 }: let
   colors = config.colorScheme.palette;
   app-browser = "${pkgs.brave}/bin/brave";
+  # Combined .NET SDKs. The real runtime tree (host/fxr, shared, packs, ...)
+  # lives at "${dotnet}/share/dotnet" (see nixpkgs' combine-packages.nix).
+  # DOTNET_ROOT must point there because framework-dependent apphost binaries
+  # are exec'd *around* dotnet (e.g. `aspire run` spawns the AppHost directly,
+  # so the bin/dotnet wrapper's env never reaches it).
+  dotnet = with pkgs.dotnetCorePackages;
+    combinePackages [
+      sdk_8_0
+      sdk_9_0
+      sdk_10_0
+    ];
 in {
   imports = [
     ./home.nix
@@ -97,6 +108,9 @@ in {
     sessionVariables = {
       EDITOR = "nvim";
       TZDIR = "/etc/zoneinfo";
+      # Lets framework-dependent apphost binaries (aspire AppHost, dotnet
+      # test host, ...) find the runtimes in the combined SDK tree.
+      DOTNET_ROOT = "${dotnet}/share/dotnet";
     };
     packages = with pkgs; [
       # Jailed pi coding agent (bwrap sandbox, see lib/jailed-pi.nix).
@@ -107,6 +121,22 @@ in {
       # is excluded from the TUI build (pi.nvim-only) -- see pkgs/agentic-af.
       (pkgs.makeJailedPi {
         extensionPackages = [pkgs.agentic-af];
+        # Aspire CLI (inputs.aspire-cli, see flake.nix): self-contained
+        # binary auto-patched against icu/openssl/zlib/stdenv.cc.lib --
+        # runtime libs the jail's commonPkgs already expose, so pi can
+        # `aspire run/publish/etc.` inside the sandbox.
+        extraPkgs = [
+          inputs.aspire-cli.packages.${pkgs.stdenv.hostPlatform.system}.default
+        ];
+        # Expose the custom godot fork's versioned Godot.NET.Sdk/GodotSharp
+        # NuGet packages to the jail's dotnet toolchain (offline restore
+        # source + fallback folder configured by lib/jailed-pi.nix), so pi
+        # can restore/build C# Godot projects inside the jail. Source of
+        # truth: modules/home-manager/godot4-mono-schnozzlecat.nix.
+        nugetPackages =
+          lib.optionals
+          config.programs.godot4-mono-schnozzlecat.enable
+          config.programs.godot4-mono-schnozzlecat.nugetPackages;
       })
 
       # OS
@@ -128,14 +158,7 @@ in {
       steamcmd
       tracy
       aseprite
-      (
-        with dotnetCorePackages;
-          combinePackages [
-            sdk_8_0
-            sdk_9_0
-            sdk_10_0
-          ]
-      )
+      dotnet
 
       jetbrains.datagrip
       inputs.hyprland-qtutils.packages."${pkgs.stdenv.hostPlatform.system}".default
