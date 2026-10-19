@@ -102,6 +102,27 @@ in {
     }
   '';
 
+  # pi instance reporter: every running pi process writes its state
+  # (working / done / waiting for input) to ~/.cache/pi-instances/<pid>.json,
+  # which the Noctalia "linus/pi-instances" plugin (home/linus-desktop.nix)
+  # reads for the bar widget light + details panel. Installed into pi's
+  # global auto-discovery location, so TUI, RPC and jailed (bwrap binds
+  # ~/.pi read-write) pi processes all load it. ~ (bwrap --clearenv) means
+  # XDG_CACHE_HOME is unset inside the jail, so both jailed and unjailed
+  # instances resolve the same ~/.cache/pi-instances directory. Overrides:
+  # PI_INSTANCES_STATE_DIR (see the extension source).
+  #
+  # `.text` (a real file), NOT `.source` (a symlink): the default `pi` is the
+  # bwrap jail (pkgs.makeJailedPi), which bind-mounts only the store paths in
+  # its own runtime closure. A home-manager `.source` symlink points into
+  # /nix/store/...-home-manager-files, which is NOT in that closure, so inside
+  # the jail the symlink dangles and pi's extension discovery silently skips
+  # it (statSync fails -> continue). Same reason `.pi/permission.settings.json`
+  # above uses `.text`. ~/.pi is bind-mounted read-write, so a real file here
+  # is visible (and hot-reloadable via /reload) in jailed and unjailed pi.
+  home.file.".pi/agent/extensions/instance-report.ts".text =
+    builtins.readFile ./config/pi/agent/extensions/instance-report.ts;
+
   home = {
     username = "linus";
     homeDirectory = "/home/linus";

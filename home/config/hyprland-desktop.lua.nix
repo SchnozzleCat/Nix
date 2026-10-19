@@ -21,6 +21,12 @@
 
   -- Desktop-specific binds
   hl.bind(mainMod .. " + o", hl.dsp.exec_cmd("swap-audio"))
+  -- Toggle the linus/pi-instances foldout (running pi coding-agent monitor,
+  -- see the plugin files under home/config/noctalia/pi-instances/) via the
+  -- count-aware `pi-instances` command: it opens the compact panel when at
+  -- most one agent is running and the full-size one otherwise. Not in the
+  -- shared config: the laptop binds mainMod+e to an SSH terminal.
+  hl.bind(mainMod .. " + e", hl.dsp.exec_cmd("pi-instances"))
   hl.bind(mainMod .. " + SHIFT + o",      hl.dsp.dpms({ action = "disable" }))
   hl.bind(mainMod .. " + CTRL + SHIFT + o", hl.dsp.dpms({ action = "enable" }))
 

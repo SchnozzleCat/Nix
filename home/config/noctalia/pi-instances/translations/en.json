@@ -1,0 +1,6 @@
+{
+  "settings.cycle_seconds.label": "Cycle seconds",
+  "settings.cycle_seconds.description": "How long the bar widget shows each running pi agent before cycling to the next one.",
+  "settings.notify_stop.label": "Notify when an agent stops working",
+  "settings.notify_stop.description": "Send a desktop notification (notify-send) when a running pi agent finishes its run or stops to wait for input."
+}

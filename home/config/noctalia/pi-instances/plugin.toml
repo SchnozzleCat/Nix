@@ -1,0 +1,61 @@
+id = "linus/pi-instances"
+name = "Pi Instances"
+version = "1.0.0"
+plugin_api = 24
+author = "linus"
+license = "MIT"
+icon = "robot"
+description = "Live status of running pi coding-agent instances (done / working / waiting for input) with a cycling bar widget and a details foldout panel, plus a done-notification service. Fed by the ~/.pi/agent/extensions/instance-report.ts pi extension."
+tags = ["agent", "monitor"]
+dependencies = ["notify-send"]
+
+# Toggle for the stop-notification service (notify.luau).
+[[setting]]
+key = "notify_stop"
+type = "bool"
+label_key = "settings.notify_stop.label"
+description_key = "settings.notify_stop.description"
+default = true
+
+[[widget]]
+id = "pi"
+entry = "widget.luau"
+
+  [[widget.setting]]
+  key = "cycle_seconds"
+  type = "int"
+  label_key = "settings.cycle_seconds.label"
+  description_key = "settings.cycle_seconds.description"
+  default = 5
+  min = 2
+  max = 60
+
+[[panel]]
+id = "instances"
+entry = "panel.luau"
+width = 520
+height = 440
+placement = "attached"
+position = "auto"
+open_near_click = true
+
+# Compact variant: shown when at most one instance is running. Panel sizes
+# are host-owned and fixed in the manifest (no runtime resize), so the
+# small surface is a second entry; whoever toggles (bar widget, the
+# `pi-instances` command, the Hyprland SUPER+E bind) counts the live
+# reports first and opens this one for 0-1 instances, `instances` for more.
+[[panel]]
+id = "instance"
+entry = "panel.luau"
+width = 520
+height = 280
+placement = "attached"
+position = "auto"
+open_near_click = true
+
+# Polls the instance reports once per second and sends a notify-send
+# desktop notification when a pi agent stops working (done, or waiting
+# for input).
+[[service]]
+id = "notify"
+entry = "notify.luau"
