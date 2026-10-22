@@ -174,6 +174,55 @@
     capSysAdmin = true;
   };
 
+  # HTTPS for lore.schnozzlecat.xyz:9889
+  #
+  # Topology: the router forwards public TCP 9889 -> local 9443. Caddy
+  # terminates TLS on 9443 and reverse-proxies the app on localhost:9889,
+  # so 9889 itself stays free for the app (Caddy can't bind and proxy the
+  # same port). The cert comes from Let's Encrypt via a Cloudflare DNS-01
+  # challenge: LE always contacts port 80/443 only, so with a public
+  # :9889 endpoint the HTTP-01/TLS-ALPN challenges can't be answered.
+  sops.secrets.cloudflare-token = {};
+
+  # The caddy.service unit references this path in EnvironmentFile, which
+  # systemd itself (root) reads before dropping privileges -- so the
+  # default root-only template mode is fine. sops-nix adds caddy.service
+  # ordering against secret installation from the unit file reference;
+  # the explicit after= below is belt-and-braces.
+  sops.templates."caddy-env" = {
+    content = ''
+      CLOUDFLARE_API_TOKEN=${config.sops.placeholder.cloudflare-token}
+    '';
+  };
+
+  services.caddy = {
+    enable = true;
+    package = pkgs.caddy.withPlugins {
+      # Cloudflare DNS provider for DNS-01 issuance. The hash covers the
+      # vendored dependency graph of THIS caddy version + this plugin
+      # version, so it goes stale when nixpkgs moves either. On a build
+      # failure with 'hash mismatch', replace with the reported 'got:'
+      # value and rebuild.
+      plugins = ["github.com/caddy-dns/cloudflare@v0.2.4"];
+      hash = "sha256-dQvk6ezY6TQ1J7PjhCXnThF/SqVgPwBO8/RXzHCY+js=";
+    };
+    virtualHosts."lore.schnozzlecat.xyz:9443" = {
+      extraConfig = ''
+        tls {
+          dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
+        reverse_proxy localhost:9889
+      '';
+    };
+  };
+
+  services.caddy.environmentFile = config.sops.templates."caddy-env".path;
+
+  systemd.services.caddy.after = ["sops-nix.service"];
+
+  # Router DNATs public 9889 -> 9443 (Caddy). Not 9889, so the app keeps it.
+  networking.firewall.allowedTCPPorts = [9443];
+
   users.users.linus.openssh.authorizedKeys.keys = [
     "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC3tGusi1VdNxad/qMykPp5l8aHMivjP9qUfKZ7uwBNh0aLtMvT8qGBam/TQMXoIrIvCq9K/hQR2LetsQ/+NmVdMS6Ejt1XGP90N0AoMIUbmMOF61JgUJv5NYS/O+7iEgAlVoyGylznufiaDk0pFrBKWVLHYsQASta5aZsnSdL1xTI5fEhjdLZpOslOStI43yY5IdsAkOpjcN6Z1eirTz0Ztft3bM0uNwNERMGHJ98EOsTMXBaTmU0js2q5el/9d08Y3mJ+5RQqm22hK+xFBdTIt5prvOO+sl6ywk/itCkfeDwKX2T3fhmEXwzS/83erRPvTrYZmguF541fHsYehFhyDWI+UE2enaSe6mXAY79dphajy1dIhph/uF18Im3mA5zHyCTrPPt+0SuneAPrnZCUagUB0QY15TD7LI/CcN+MxZazQULdX+Xsg4LC4QOg+1nPNVPosIXiwNLzGmGcow4LyUuUhRbz3UwyVMj6SKyVdXk9dc+8xGladq0GL9G+7Eg8cz1xzZOa4DzDc40Mk85EsNOWZqltgt+jTuGnIOS377U0nlmqpUURyu1jOQxylQQb7J0ESPiwvP/lb2q/GPTYDuYcslTPYoCSWd2LX5BGB5mAvQ9l9ocu26DZWB0sGp/kw13f2RxC7v7OEwvlNHD+2Vlokzhr0HyZasm0oV2y/w== openpgp:0x957E5326"
   ];
