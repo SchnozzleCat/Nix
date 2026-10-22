@@ -9,16 +9,16 @@
 #     overlay-applied package set: devshells, or an external flake/direnv
 #     .envrc, e.g.
 #
-#         inputs.dotfiles = { url = "github:SchnozzleCat/dotfiles"; };
-#         outputs = { self, nixpkgs, dotfiles, ... }: let
+#         inputs.schnozzlecat = { url = "github:SchnozzleCat/Nix"; };
+#         outputs = { self, nixpkgs, schnozzlecat, ... }: let
 #           pkgs = nixpkgs.legacyPackages.${system};
 #         in {
 #           devShells.${system}.default = pkgs.mkShell {
 #             packages = [
 #               # default invocation: `pi` with the default package set
-#               (dotfiles.lib.makeJailedPi pkgs {})
+#               (schnozzlecat.lib.makeJailedPi pkgs {})
 #               # or with project-specific extras
-#               (dotfiles.lib.makeJailedPi pkgs {extraPkgs = [pkgs.rustc];})
+#               (schnozzlecat.lib.makeJailedPi pkgs {extraPkgs = [pkgs.rustc];})
 #             ];
 #           };
 #         }
@@ -27,7 +27,7 @@
 #
 # The default invocation (`pi`) runs the default package set defined below;
 # extend it per-consumer via extraPkgs / extraCombinators / extensionPackages /
-# nugetPackages.
+# nugetPackages / agentSkills.
 #
 # NOTE: pass the package set you want INSIDE the jail. The host's
 # overlay-applied pkgs is the usual (and most consistent) choice.
@@ -361,6 +361,17 @@ in {
   extraCombinators ? [],
   extensionPackages ? [],
   nugetPackages ? [],
+  # A directory of agent skills (typically the home-manager `agent-skills`
+  # symlinkJoin bound at ~/.agents/skills on the host). The jail's runtime
+  # closure never includes ~/.agents, so pi's global skill discovery finds
+  # NOTHING inside the sandbox unless the bundle is bound in explicitly.
+  # bind-pkg ro-binds the bundle at ~/.agents/skills AND adds it to
+  # additionalRuntimeClosures, so the closure binding brings along the
+  # store paths the bundle's internal symlinks point at (symlinkJoin links
+  # each skill tree individually). Read-only by design: skills inside the
+  # jail are host-managed; mutable ad-hoc skills still work via the
+  # read-write ~/.pi bind (~/.pi/agent/skills).
+  agentSkills ? null,
 }: let
   extArgs =
     pkgs.lib.concatMapStringsSep " "
@@ -466,6 +477,29 @@ in {
         (unsafe-add-raw-args ''--setenv NUGET_PACKAGES "''$NUGET_PACKAGES"'')
       ])
     ]);
+  # Agent skills bundle jail options. The bundle (a symlinkJoin) binds at
+  # ~/.agents/skills. bwrap processes mounts in argument order and needs a
+  # bind target's parent to exist inside the sandbox, so --dir creates
+  # ~/.agents (and the skills mountpoint) in the ephemeral jail home BEFORE
+  # the --ro-bind runs -- which is why both live in RUNTIME_ARGS: static
+  # bwrap args (state.cmd) are emitted before "''${RUNTIME_ARGS[@]}" in the
+  # wrapper (see jail.nix's final text template), exactly like
+  # nugetJailOptions does for ~/.nuget. The bundle's internal symlinks
+  # point at other store paths, so its runtime closure is bound too, via
+  # add-pkg-deps -> additionalRuntimeClosures (this also prepends the
+  # bundle's non-existent /bin to $PATH, which is harmless).
+  agentSkillsJailOptions =
+    lib.optionals (agentSkills != null)
+    (with jail.combinators; [
+      (add-runtime ''
+        RUNTIME_ARGS+=(
+          --dir "$HOME/.agents"
+          --dir "$HOME/.agents/skills"
+          --ro-bind ${agentSkills} "$HOME/.agents/skills"
+        )
+      '')
+      (add-pkg-deps [agentSkills])
+    ]);
 in
   jail name program (with jail.combinators; (
     commonJailOptions
@@ -476,4 +510,5 @@ in
       (add-pkg-deps commonPkgs)
       (add-pkg-deps extraPkgs)
     ]
+    ++ agentSkillsJailOptions
   ))

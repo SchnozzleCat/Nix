@@ -21,6 +21,15 @@
       sdk_9_0
       sdk_10_0
     ];
+  # Declarative agent skills, linked at ~/.agents/skills. Also passed to
+  # makeJailedPi (agentSkills) so the jailed default pi ro-binds the same
+  # bundle into its sandbox -- the jail's runtime closure never includes
+  # ~/.agents on its own, so without this pi's skill discovery finds
+  # nothing inside the sandbox.
+  agent-skills = pkgs.symlinkJoin {
+    name = "agent-skills";
+    paths = [./config/skills] ++ import ./config/remote-agent-skills.nix {inherit pkgs;};
+  };
 in {
   imports = [
     ./home.nix
@@ -79,10 +88,7 @@ in {
     exec = "${app-browser} --app=https://derkyjadex.github.io/M8WebDisplay/";
   };
 
-  home.file.".agents/skills".source = pkgs.symlinkJoin {
-    name = "agent-skills";
-    paths = [./config/skills] ++ import ./config/remote-agent-skills.nix {inherit pkgs;};
-  };
+  home.file.".agents/skills".source = agent-skills;
 
   programs.quickshell = {
     enable = true;
@@ -141,6 +147,7 @@ in {
       # available in every session without editing settings.json. permission
       # is excluded from the TUI build (pi.nvim-only) -- see pkgs/agentic-af.
       (pkgs.makeJailedPi {
+        agentSkills = agent-skills;
         extensionPackages = [pkgs.agentic-af];
         # Aspire CLI (inputs.aspire-cli, see flake.nix): self-contained
         # binary auto-patched against icu/openssl/zlib/stdenv.cc.lib --

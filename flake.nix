@@ -125,6 +125,7 @@
       makeJailedPi = pkgs:
         import ./lib/jailed-pi.nix {
           inherit pkgs;
+          lib = nixpkgs.lib;
           jail-nix = inputs.jail-nix;
         };
     };
