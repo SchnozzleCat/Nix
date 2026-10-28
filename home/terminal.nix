@@ -160,15 +160,11 @@ in {
         }
         {
           on = ["<C-y>"];
-          run = ''
-            shell '${pkgs.dragon-drop}/bin/xdragon -a -x -T "$@"'
-          '';
+          run = "shell -- ${pkgs.dragon-drop}/bin/xdragon -a -x -T %s";
         }
         {
           on = ["c" "y"];
-          run = ''
-            shell '${pkgs.dragon-drop}/bin/xdragon -a -x -T "$@"'
-          '';
+          run = "shell -- ${pkgs.dragon-drop}/bin/xdragon -a -x -T %s";
         }
         {
           on = ["<C-g>"];
