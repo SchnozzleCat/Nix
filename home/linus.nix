@@ -42,7 +42,27 @@
   bb-auth-pkg =
     inputs.bb-auth-noctalia.packages."${pkgs.stdenv.hostPlatform.system}".bb-auth;
   bb-auth-plugin-pkg =
-    inputs.bb-auth-noctalia.packages."${pkgs.stdenv.hostPlatform.system}".noctalia-bb-auth-plugin;
+    (inputs.bb-auth-noctalia.packages."${pkgs.stdenv.hostPlatform.system}".noctalia-bb-auth-plugin).overrideAttrs
+      (old: {
+        postPatch =
+          (old.postPatch or "")
+          + ''
+            substituteInPlace bb-auth/service.luau \
+              --replace-fail \
+                '"Authentication successful"' \
+                'noctalia.state.get("source") == "pinentry" and "Secret submitted" or "Authentication successful"' \
+              --replace-fail \
+                'local PLUGIN_ID = "branrgx/bb-auth"' \
+                'local PLUGIN_ID = "branrgx/bb-auth"
+local INTERMEDIARY_NAMES = { ["gpg-agent"] = true, ["bb-auth"] = true, ["systemd"] = true }' \
+              --replace-fail \
+                'requestor.name or ""' \
+                'INTERMEDIARY_NAMES[requestor.name] and "" or (requestor.name or "")' \
+              --replace-fail \
+                'requestor.icon or ""' \
+                'INTERMEDIARY_NAMES[requestor.name] and "" or (requestor.icon or "")'
+          '';
+      });
 in {
   imports = [
     ./home.nix
