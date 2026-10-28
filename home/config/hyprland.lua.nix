@@ -35,7 +35,7 @@ in ''
   -- Also pin the hyprcursor base size: with cursor:enable_hyprcursor,
   -- Hyprland's own cursor reads HYPRCURSOR_SIZE (XCURSOR_SIZE is only used
   -- when it falls back to plain X cursors).
-  hl.env("HYPRCURSOR_SIZE", "24")
+  hl.env("HYPRCURSOR_SIZE", "18")
   hl.env("XCURSOR_THEME", "Bibata-Modern-Classic")
   hl.env("XDG_CURRENT_DESKTOP", "Hyprland")
   hl.env("XDG_SESSION_DESKTOP", "Hyprland")
