@@ -44,6 +44,10 @@ in {
   services.thermald.enable = true;
 
   security.pam.services.sddm.fprintAuth = true;
+  # Login-screen fingerprint: the greeter authenticates through greetd's PAM
+  # stack. Best effort -- if pam_fprintd misbehaves under greetd's minimal
+  # PAM conversation, remove this line and rely on the lock screen.
+  security.pam.services.greetd.fprintAuth = true;
 
   # fprintd's default polkit policy only allows self-enrollment from an
   # *active local seat*, which fails on this machine even in the graphical
@@ -57,6 +61,24 @@ in {
       }
     });
   '';
+
+  # Display manager: Noctalia Greeter (greetd-based) instead of SDDM. The
+  # nixpkgs module installs the package and sets up greetd, polkit and
+  # AccountsService. SDDM is force-disabled because the shared
+  # configuration.nix enables it unconditionally, and only one DM may be
+  # active. autoLogin is likewise disabled: greetd doesn't honor it (and
+  # login via fingerprint/password was wanted here anyway).
+  services.displayManager.sddm.enable = lib.mkForce false;
+  services.displayManager.autoLogin.enable = lib.mkForce false;
+
+  services.displayManager.noctalia-greeter = {
+    enable = true;
+    # Optional: match the desktop's cursor.
+    # cursorTheme = {
+    #   package = pkgs.bibata-cursors;
+    #   name = "Bibata-Modern-Classic";
+    # };
+  };
 
   # Power management via power-profiles-daemon (kept for noctalia's
   # power-profile widget: sometimes we want turbo even on battery).
