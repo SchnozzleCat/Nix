@@ -198,6 +198,14 @@ in ''
   -- 3-finger horizontal swipe to switch workspaces (touchpad)
   hl.gesture({ fingers = 3, direction = "horizontal", action = "workspace" })
 
+  -- 3-finger pinch: out = make bigger (fullscreen), in = make smaller (float)
+  hl.gesture({ fingers = 3, direction = "pinchout",  action = "float" })
+  hl.gesture({ fingers = 3, direction = "pinchin", action = "fullscreen" })
+
+  -- 3-finger vertical swipe: up = launcher, down = control center
+  hl.gesture({ fingers = 3, direction = "up",   action = function() hl.exec_cmd("noctalia msg panel-toggle launcher") end })
+  hl.gesture({ fingers = 3, direction = "down", action = function() hl.exec_cmd("noctalia msg panel-toggle control-center") end })
+
   -- --------------------------------------------------------
   -- Layouts
   -- --------------------------------------------------------
