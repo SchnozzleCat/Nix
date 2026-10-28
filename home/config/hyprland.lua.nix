@@ -193,6 +193,12 @@ in ''
   hl.animation({ leaf = "specialWorkspace", enabled = true, speed = 4, bezier = "default", style = "fade" })
 
   -- --------------------------------------------------------
+  -- Gestures
+  -- --------------------------------------------------------
+  -- 3-finger horizontal swipe to switch workspaces (touchpad)
+  hl.gesture({ fingers = 3, direction = "horizontal", action = "workspace" })
+
+  -- --------------------------------------------------------
   -- Layouts
   -- --------------------------------------------------------
   hl.config({
