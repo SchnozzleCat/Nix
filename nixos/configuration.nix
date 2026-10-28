@@ -236,11 +236,10 @@ in {
   services.udisks2.enable = true;
   hardware.logitech.wireless.enable = true;
 
-  # SDDM
+  # SDDM (default theme; the custom 'chili' theme was removed)
   services.displayManager.sddm = {
     enable = true;
     wayland.enable = true;
-    theme = "chili";
   };
 
   # Swaylock
@@ -371,13 +370,6 @@ in {
     podman-compose
     sshfs
     gamescope
-    (sddm-chili-theme.overrideAttrs (old: {
-      src = builtins.fetchGit {
-        url = "file:///home/linus/.nixos/repos/sddm-chili";
-        ref = "master";
-        rev = "4e662978bf69daa555cd418e5ee3b6444be7115c";
-      };
-    }))
   ];
 
   # Shell
