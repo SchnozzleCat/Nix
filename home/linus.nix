@@ -596,6 +596,7 @@ in {
 
     Service = {
       ExecStart = "${bb-auth-pkg}/bin/bb-auth --daemon";
+      Environment = "BB_AUTH_FALLBACK_PATH=${bb-auth-pkg}/libexec/bb-auth-fallback";
       Slice = "session.slice";
       Restart = "on-failure";
       RestartSec = 2;
