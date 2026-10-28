@@ -16,7 +16,11 @@ in ''
   -- Autostart
   -- --------------------------------------------------------
   hl.on("hyprland.start", function()
-    hl.exec_cmd("hyprctl setcursor Bibata-Modern-Classic 1")
+    -- Trailing arg is the BASE cursor size (px). Hyprland multiplies it by
+    -- the monitor scale itself (CursorManager::updateTheme: style size =
+    -- m_size * monitor-scale), so this must stay 24 -- a "1" here rendered
+    -- a ~2px cursor on the laptop's scaled output.
+    hl.exec_cmd("hyprctl setcursor Bibata-Modern-Classic 24")
     hl.exec_cmd("noctalia")
     hl.exec_cmd("pypr")
     hl.exec_cmd("solaar --window=hide")
@@ -28,6 +32,10 @@ in ''
   -- Environment variables
   -- --------------------------------------------------------
   hl.env("XCURSOR_SIZE", "24")
+  -- Also pin the hyprcursor base size: with cursor:enable_hyprcursor,
+  -- Hyprland's own cursor reads HYPRCURSOR_SIZE (XCURSOR_SIZE is only used
+  -- when it falls back to plain X cursors).
+  hl.env("HYPRCURSOR_SIZE", "24")
   hl.env("XCURSOR_THEME", "Bibata-Modern-Classic")
   hl.env("XDG_CURRENT_DESKTOP", "Hyprland")
   hl.env("XDG_SESSION_DESKTOP", "Hyprland")
