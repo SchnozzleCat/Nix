@@ -53,27 +53,21 @@ in {
     # package = inputs.neovim-nightly-overlay.packages.${pkgs.stdenv.hostPlatform.system}.neovim;
     extraPackages = with pkgs; [
       imagemagick
-      # nodePackages.ijavascript
-      (python312Packages.jupytext.overridePythonAttrs (old: {doCheck = false;}))
       nodejs
-      #quarto
       typescript
       jq
       lsof
       fd
-      (haskellPackages.ghcWithPackages (pkgs: with pkgs; [tidal]))
-      supercollider-with-sc3-plugins
       ripgrep
       zf
-      plantuml
       jdk
       imv
       (buildDotnetGlobalTool {
         pname = "EasyDotnet";
-        version = "3.1.3";
+        version = "3.4.31";
         executables = "dotnet-easydotnet";
 
-        nugetHash = "sha256-MasiP8L7t/wvUX2azAqG9DxLezr2nNl2DA0ZUKbnPD8=";
+        nugetHash = "sha256-udF/75cPvDJ1Go5+U0W11xfuhO5egMxyLuqEzCyr8po=";
 
         meta = with lib; {
           description = "C# JSON-RPC server powering the easy-dotnet.nvim Neovim plugin";
@@ -97,12 +91,6 @@ in {
         ];
       })
     ];
-    extraPython3Packages = python-pkgs:
-      with python-pkgs; [
-        pytest
-        prompt-toolkit
-        pyperclip
-      ];
     extraPlugins = parsedPlugins;
 
     extraConfigVim = ''
