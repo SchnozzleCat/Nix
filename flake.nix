@@ -160,6 +160,12 @@
           hostname = "schnozzlecat-laptop";
         };
         modules = [
+          # Framework 13 Pro (Intel Core Ultra Series 3): fwupd, initrd HID
+          # modules for the touchscreen, recent kernel. Requires a
+          # nixos-hardware lock rev that includes this module; if eval fails
+          # with 'attribute missing', run:
+          #   nix flake lock --update-input nixos-hardware
+          inputs.nixos-hardware.nixosModules.framework-intel-core-ultra-series3
           # > Our main nixos configuration file <
           ./nixos/configuration.nix
         ];
