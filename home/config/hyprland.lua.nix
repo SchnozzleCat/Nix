@@ -54,7 +54,7 @@ in ''
     name = "special:scratch_term",
     match = { class = "terminal-float" },
     float = true,
-    size = { "monitor_w * 0.75", "monitor_h * 0.60" },
+    size = { "monitor_w * 0.75", "monitor_h * 0.30" },
     move = { "monitor_w * 0.12", "monitor_h * 2.00" },
   })
 
