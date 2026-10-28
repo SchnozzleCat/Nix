@@ -10,6 +10,7 @@ keys:
   - &yubikey-remote age1yubikey1q2njznzjly49c2gd63jylgadufa3jz8kqxdayw93mld6l5tr4vgqje7jfzg
   - &desktop age19572naqqxlk2k4u3mdwry753845dg2m22yj2wmcfsmyyr402795spz8tg8
   - &rpi5 age1c75hvpdsndqjutc90las3nr6z4numapmytnegmyneu8qlh04wggqsmuuqk
+  - &laptop age1dtyyhw5lwrz4ca6x4q5lkwxpnsugm5wjrxus8njhj6277c0qta4qlpfmxs
 
 creation_rules:
   - path_regex: secrets\.yaml$
@@ -19,3 +20,4 @@ creation_rules:
           - *yubikey-remote
           - *desktop
           - *rpi5
+          - *laptop
