@@ -88,7 +88,10 @@ in {
     exec = "${app-browser} --app=https://derkyjadex.github.io/M8WebDisplay/";
   };
 
-  home.file.".agents/skills".source = agent-skills;
+  home.file.".agents/skills" = {
+    source = agent-skills;
+    recursive = true;
+  };
 
   programs.quickshell = {
     enable = true;
