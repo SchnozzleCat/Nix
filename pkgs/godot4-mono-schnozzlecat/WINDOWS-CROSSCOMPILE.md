@@ -62,9 +62,11 @@ Without it, nothing extra needs to be shipped for D3D12.
 
 ## Gotchas
 
-- The Steamworks SDK (`steamworks_sdk_164.zip`) must be in the store, same as
-  the Linux build (`nix-store --add-fixed sha256 steamworks_sdk_164.zip`).
-  The Mesa/NIR D3D12 deps are a plain fetchurl, no requireFile needed.
+- The Steamworks SDK (`steamworks_sdk_164.zip`) must exist at
+  `/home/linus/steamworks_sdk_164.zip`; it is consumed as the
+  `steamworks-sdk` flake input (see flake.nix), which Nix copies to a
+  content-addressed store path automatically. The
+  Mesa/NIR D3D12 deps are a plain fetchurl, no requireFile needed.
 - nixpkgs' mingw GCC uses the "mcf" threading model; Godot's posix-threads
   check only rejects the *win32* model, so it passes. `std::thread` works via
   mcfgthreads.

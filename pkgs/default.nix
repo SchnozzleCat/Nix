@@ -1,7 +1,11 @@
 # Custom packages, that can be defined similarly to ones from nixpkgs
 # You can build them using 'nix build .#example'
 {pkgs, inputs, ...}: let
-  godotPkgs = pkgs.callPackage ./godot4-mono-schnozzlecat {};
+  # steamworks-sdk is the Steamworks SDK zip flake input (see flake.nix); a
+  # store path, passed down to pkgs/godot4-mono-schnozzlecat.
+  godotPkgs = pkgs.callPackage ./godot4-mono-schnozzlecat {
+    steamworks-sdk = inputs.steamworks-sdk;
+  };
 in {
   godot-custom = godotPkgs.godotPackages_4_7.godot-mono;
   godot-custom-windows-editor = godotPkgs.godotPackages_4_7.godot-mono-windows;

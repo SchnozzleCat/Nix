@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  inputs,
   ...
 }:
 with lib; let
@@ -14,7 +15,13 @@ with lib; let
   sourceOverrides = lib.filterAttrs (_: v: v != null) {
     inherit (cfg) rev hash;
   };
-  godotPackages = (pkgs.callPackage ../../pkgs/godot4-mono-schnozzlecat {}).mkGodotPackages version sourceOverrides;
+  godotPackages =
+    (pkgs.callPackage ../../pkgs/godot4-mono-schnozzlecat {
+      steamworks-sdk = inputs.steamworks-sdk;
+    })
+    .mkGodotPackages
+    version
+    sourceOverrides;
   # Effective source rev (the override if set, otherwise the version dir's pin).
   rev = godotPackages.godot.rev;
   suffix = "schnozzlecat-${lib.substring 0 4 rev}";

@@ -74,8 +74,12 @@
   withX11 ? true,
   wslay,
   zstd,
-  requireFile,
   unzip,
+  # Steamworks SDK zip as a store path (a flake input; see flake.nix).
+  # Expected file: steamworks_sdk_164.zip, sha256
+  # 55c525b61de0fc820099b84ebd2cbd3890b9378dd3d12909c0f33d74ea05243c
+  # (`sha256sum` on the path).
+  steamworks-sdk,
   rev,
   # Source tree of the Tracy profiler (wolfpld/tracy), required when
   # `withTracy` is enabled:
@@ -131,12 +135,10 @@ assert withTracyTrackMemory -> withTracy; let
       else "${k}=${builtins.toJSON v}"
   );
 
-  sdk = requireFile {
-    name = "steamworks_sdk_164.zip";
-    message = "Please download the SDK and then add it with nix-store --add-fixed sha256 steamworks_sdk_164.zip";
-    # `sha256sum` on the path
-    sha256 = "55c525b61de0fc820099b84ebd2cbd3890b9378dd3d12909c0f33d74ea05243c";
-  };
+  # Steamworks SDK: passed in from default.nix as the `steamworks-sdk` flake
+  # input (a store path). Being content-addressed, it is stable across
+  # nixpkgs updates and re-copied automatically if GC ever removes it.
+  sdk = steamworks-sdk;
 
   isWindows = withPlatform == "windows";
 

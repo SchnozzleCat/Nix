@@ -71,6 +71,17 @@
       flake = false;
     };
 
+    # Steamworks SDK zip (download requires a Steamworks partner account),
+    # used by pkgs/godot4-mono-schnozzlecat. Kept outside the repo because
+    # it's an unfree ~60MB binary. Declaring it as a path input keeps pure
+    # eval happy (raw absolute path literals are forbidden there); Nix copies
+    # it into the store at a content-addressed path when the flake is
+    # evaluated, so GC also self-heals.
+    steamworks-sdk = {
+      url = "path:/home/linus/steamworks_sdk_164.zip";
+      flake = false;
+    };
+
     noctalia = {
       url = "github:noctalia-dev/noctalia";
       inputs.nixpkgs.follows = "nixpkgs";
