@@ -53,6 +53,29 @@
         "type": "github"
       }
     },
+    "bb-auth-noctalia": {
+      "inputs": {
+        "home-manager": [
+          "home-manager"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1790827619,
+        "narHash": "sha256-PA/NGLCJF1qgCWIGBKadtli+nbLS7Xc9pb4ghCkdyCo=",
+        "owner": "mvanderloo",
+        "repo": "bb-auth-noctalia-nix",
+        "rev": "bc2eccc1db2265b8cf53b72fdf3a10c04989dd66",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mvanderloo",
+        "repo": "bb-auth-noctalia-nix",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -643,6 +666,7 @@
       "inputs": {
         "agentic-af": "agentic-af",
         "aspire-cli": "aspire-cli",
+        "bb-auth-noctalia": "bb-auth-noctalia",
         "googleworkspace-cli": "googleworkspace-cli",
         "home-manager": "home-manager",
         "hyprland-qtutils": "hyprland-qtutils",

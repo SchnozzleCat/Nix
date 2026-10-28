@@ -18,6 +18,17 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Noctalia-styled authentication popups: bb-auth daemon + Noctalia UI
+    # plugin. Used for the gpg pinentry (see nixos/configuration.nix
+    # programs.gnupg.agent) and as polkit/keyring prompt UI (see
+    # home/linus.nix). Follows our nixpkgs/home-manager to avoid a second
+    # eval inventory in the lock.
+    bb-auth-noctalia = {
+      url = "github:mvanderloo/bb-auth-noctalia-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
+
     # Home manager
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
