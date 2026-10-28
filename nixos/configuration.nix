@@ -155,7 +155,15 @@ in {
   programs.gnupg.agent = {
     enable = true;
     enableSSHSupport = true;
-    pinentryPackage = pkgs.pinentry-all;
+    # Route the PIN prompt through bb-auth's pinentry bridge, whose UI
+    # provider is the Noctalia bb-auth plugin (see home/linus.nix): the
+    # prompt renders as a Noctalia-styled popup instead of pinentry
+    # curses in the terminal. pinentryPackage = null keeps this
+    # module from writing its own pinentry-program, letting the one from
+    # `settings` below stand.
+    pinentryPackage = null;
+    settings.pinentry-program =
+      "${inputs.bb-auth-noctalia.packages.${pkgs.stdenv.hostPlatform.system}.bb-auth}/bin/pinentry-bb";
   };
 
   programs.yubikey-touch-detector = {

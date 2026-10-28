@@ -30,6 +30,19 @@
     name = "agent-skills";
     paths = [./config/skills] ++ import ./config/remote-agent-skills.nix {inherit pkgs;};
   };
+  # bb-auth: unified auth daemon (polkit + GNOME keyring + gpg pinentry)
+  # with a Noctalia-styled UI instead of pinentry-curses in the terminal
+  # and the stale gcr dialog. pinentry-program is wired system-wide in
+  # nixos/configuration.nix (programs.gnupg.agent) to the daemon's
+  # pinentry-bb bridge, which talks to bb-auth; the daemon renders through
+  # the Noctalia plugin below and falls back to a built-in Qt prompt if
+  # the plugin/provider is unavailable.
+  # NOTE: Noctalia's built-in polkit agent must be disabled (Settings →
+  # Shell → polkit agent) so bb-auth doesn't compete for prompts.
+  bb-auth-pkg =
+    inputs.bb-auth-noctalia.packages."${pkgs.stdenv.hostPlatform.system}".bb-auth;
+  bb-auth-plugin-pkg =
+    inputs.bb-auth-noctalia.packages."${pkgs.stdenv.hostPlatform.system}".noctalia-bb-auth-plugin;
 in {
   imports = [
     ./home.nix
@@ -367,6 +380,9 @@ in {
           wait
         '';
       })
+
+      # bb-auth (noctalia plugin installed separately, see comment above)
+      bb-auth-pkg
     ];
   };
 
@@ -562,6 +578,46 @@ in {
       }
     ];
   };
+
+  # bb-auth + Noctalia plugin: Noctalia-styled popups for gpg pinentry,
+  # polkit and GNOME keyring prompts (see the bb-auth-pkg let binding
+  # above for the rationale). The user service starts with the graphical
+  # session; the plugin lives under the built-in "local" noctalia source
+  # at ~/.local/share/noctalia/plugins. Enable it once per machine with:
+  #   noctalia msg plugins enable branrgx/bb-auth
+
+  systemd.user.services.bb-auth = {
+    Unit = {
+      Description = "bb-auth - Noctalia authentication backend";
+      PartOf = [config.wayland.systemd.target];
+      After = [config.wayland.systemd.target];
+      ConditionEnvironment = "WAYLAND_DISPLAY";
+    };
+
+    Service = {
+      ExecStart = "${bb-auth-pkg}/bin/bb-auth --daemon";
+      Slice = "session.slice";
+      Restart = "on-failure";
+      RestartSec = 2;
+      TimeoutStopSec = 5;
+      UMask = "0077";
+    };
+
+    Install.WantedBy = [config.wayland.systemd.target];
+  };
+
+  # D-Bus activation: a pinentry/keyring request starts the daemon on
+  # demand if the session service isn't running yet.
+  xdg.dataFile."dbus-1/services/org.bb.auth.service".source =
+    "${bb-auth-pkg}/share/dbus-1/services/org.bb.auth.service";
+  xdg.dataFile."dbus-1/services/org.gnome.keyring.SystemPrompter.service".source =
+    "${bb-auth-pkg}/share/bb-auth/org.gnome.keyring.SystemPrompter.service";
+
+  # Noctalia UI provider for bb-auth, symlinked into Noctalia's built-in
+  # "local" plugin source so it can be enabled like the other local
+  # plugins (vm-status, pi-instances).
+  xdg.dataFile."noctalia/plugins/bb-auth".source =
+    "${bb-auth-plugin-pkg}/bb-auth";
 
   programs.alacritty = {
     enable = true;
