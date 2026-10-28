@@ -205,7 +205,6 @@ in {
       thunar
       tidal-hifi
       kubectl
-      awscli
       fswatch
       lmstudio
 
