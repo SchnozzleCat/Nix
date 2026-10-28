@@ -368,6 +368,11 @@ in {
       pi-ssd = ''sshfs -o sftp_server="/run/wrappers/bin/sudo $(ssh linus@192.168.200.66 -p 6969 'nix eval nixpkgs#openssh --raw')/libexec/sftp-server" -p 6969 linus@192.168.200.66:/mnt/ssd ~/Mounts/ssd'';
       pi-raid = ''sshfs -o sftp_server="/run/wrappers/bin/sudo $(ssh linus@192.168.200.66 -p 6969 'nix eval nixpkgs#openssh --raw')/libexec/sftp-server" -p 6969 linus@192.168.200.66:/mnt/raid ~/Mounts/raid'';
       pi-build = ''NIX_SSHOPTS="-p 6969" nixos-rebuild switch --target-host linus@192.168.200.66 --flake ~/.nixos#rpi5 --sudo'';
+      # Remote laptop deploy, desktop as build host. The laptop uses the
+      # integrated home-manager NixOS module, so this is the full deploy:
+      # builds both closures locally (godot/templates come from this
+      # machine's already-built store) and pushes them over ssh.
+      laptop-build = ''NIX_SSHOPTS="-p 6969" nixos-rebuild switch --target-host linus@192.168.200.60 --flake ~/.nixos#schnozzlecat-laptop --sudo'';
       pi-laptop = ''sshfs -o sftp_server="/run/wrappers/bin/sudo $(ssh linus@192.168.200.60 -p 6969 'nix eval nixpkgs#openssh --raw')/libexec/sftp-server" -p 6969 linus@192.168.200.60:/home/linus ~/Mounts/laptop'';
       neovim = ''nvim'';
     };
