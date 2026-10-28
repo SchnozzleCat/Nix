@@ -24,7 +24,14 @@ in {
     powertop
   ];
 
-  services.logind.lidSwitch = "suspend";
+  services.logind.settings.Login = {
+    HandleLidSwitch = "suspend-then-hibernate";
+    HandleLidSwitchExternalPower = "suspend"; # plugged in: just suspend
+  };
+  systemd.sleep.settings.Sleep.HibernateDelaySec = "1h";
+
+  boot.resumeDevice = "/dev/mapper/crypted";
+  boot.kernelParams = [ "resume_offset=131072" ];
 
   hardware.bluetooth = {
     enable = true;
