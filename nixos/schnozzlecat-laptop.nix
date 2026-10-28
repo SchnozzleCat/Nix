@@ -45,6 +45,19 @@ in {
 
   security.pam.services.sddm.fprintAuth = true;
 
+  # fprintd's default polkit policy only allows self-enrollment from an
+  # *active local seat*, which fails on this machine even in the graphical
+  # session and on the TTY. Allow wheel users to enroll/verify from any
+  # session instead.
+  security.polkit.extraConfig = ''
+    polkit.addRule(function(action, subject) {
+      var isFprint = action.id.indexOf("net.reactivated.fprint.") == 0;
+      if (isFprint && subject.isInGroup("wheel")) {
+        return polkit.Result.YES;
+      }
+    });
+  '';
+
   # Power management via power-profiles-daemon (kept for noctalia's
   # power-profile widget: sometimes we want turbo even on battery).
   # Auto-switching without auto-cpufreq: udev fires on AC plug/unplug and
