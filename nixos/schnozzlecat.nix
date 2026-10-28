@@ -8,23 +8,6 @@
   hostname,
   ...
 }: {
-  # Bleeding-edge Mesa (git main) with AMD-only drivers. Used as a workaround
-  # for Crimson Desert 1.05 respawn-time GPU wedges; community reports the
-  # crash stops on Mesa Git but persists on nixos-unstable Mesa 26.1.x stable.
-  # The module sets hardware.graphics.package / package32 for us.
-  imports = [
-    inputs.mesa-git-nix.nixosModules.default
-  ];
-
-  nixpkgs.overlays = [
-    inputs.mesa-git-nix.overlays.default
-  ];
-
-  mesa-git = {
-    enable = true;
-    drivers = ["amd"]; # 6950 XT only — keep build time sane
-  };
-
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
@@ -76,6 +59,12 @@
   '';
   boot.kernelParams = [
     "intel_iommu=on"
+    # Games (esp. under Proton/wine) use split lock accesses; the kernel's
+    # split lock detection #AC-faults and throttles the offending task to
+    # ~1/1000 speed and spams journalctl with
+    # "x86/split_lock_detect: #AC: <thread>/<pid> took a split_lock" lines.
+    # Modes: off, warn (default), fatal.
+    "split_lock_detect=off"
     "iommu=pt"
     "pcie_aspm=off"
     "amdgpu.runpm=0"
@@ -204,7 +193,7 @@
       # failure with 'hash mismatch', replace with the reported 'got:'
       # value and rebuild.
       plugins = ["github.com/caddy-dns/cloudflare@v0.2.4"];
-      hash = "sha256-dQvk6ezY6TQ1J7PjhCXnThF/SqVgPwBO8/RXzHCY+js=";
+      hash = "sha256-tubXIDCJnO2mvdnPlZclwDhNGaeeYLSt7lnni3+pXDo=";
     };
     virtualHosts."lore.schnozzlecat.xyz:9443" = {
       extraConfig = ''
