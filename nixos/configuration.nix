@@ -45,6 +45,11 @@ in {
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_latest;
+  # Recover from amdgpu ring hangs (GPU resets) instead of wedging the device.
+  # Heavy games (Control Resonant, Crimson Desert) were triggering gfx ring
+  # timeouts that invalidated Hyprland's explicit-sync fences -> SIGABRT.
+  # See hyprwm/Hyprland#16287.
+  boot.kernelParams = ["amdgpu.gpu_recovery=1"];
   boot.kernel.sysctl = {
     "vm.max_map_count" = 16777216;
     "fs.file-max" = 524288;
