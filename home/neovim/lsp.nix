@@ -19,35 +19,35 @@
       dockerls.enable = true;
       docker_compose_language_service.enable = true;
       ruff.enable = true;
-      ltex = {
-        enable = true;
-        config = {
-          filetypes = [
-            "tex"
-            "markdown"
-          ];
-
-          onAttach = {
-            function = ''
-              require("ltex_extra").setup {
-                load_langs = { "en-US" },
-                path = "ltex",
-                init_check = true,
-              }
-            '';
-          };
-          settings = {
-            language = "en-US";
-            dictionary = {
-              "en-US" = [
-                "Neovim"
-                "ltex-ls"
-              ];
-            };
-            checkFrequency = "save";
-          };
-        };
-      };
+      # ltex = {
+      #   enable = true;
+      #   config = {
+      #     filetypes = [
+      #       "tex"
+      #       "markdown"
+      #     ];
+      #
+      #     onAttach = {
+      #       function = ''
+      #         require("ltex_extra").setup {
+      #           load_langs = { "en-US" },
+      #           path = "ltex",
+      #           init_check = true,
+      #         }
+      #       '';
+      #     };
+      #     settings = {
+      #       language = "en-US";
+      #       dictionary = {
+      #         "en-US" = [
+      #           "Neovim"
+      #           "ltex-ls-plus"
+      #         ];
+      #       };
+      #       checkFrequency = "save";
+      #     };
+      #   };
+      # };
       digestif.enable = true;
       nil_ls.enable = true;
       clangd.enable = true;
