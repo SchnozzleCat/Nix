@@ -148,10 +148,11 @@ in {
       # `extensionPackages` loads the pi extensions via `pi -e` so they're
       # available in every session without editing settings.json. The
       # specs (and their pinned revs/hashes) live in
-      # home/config/pi-extensions.nix -- the neovim extraPlugins pattern.
-      # agentic-af is the prebuilt package (context, fetch, web-search,
-      # mcp, rules; permission excluded from the TUI build -- pi.nvim-only,
-      # see pkgs/agentic-af); the rest are built by pkgs.buildPiExtension.
+      # home/config/pi-extensions.nix -- the neovim extraPlugins pattern;
+      # pkgs.buildPiExtension (lib/pi-extension.nix) builds them.
+      # Currently: agentic-af (context, fetch, web-search, mcp, rules,
+      # with the pi.nvim-only `permission` extension pruned) and
+      # elidickinson/pi-claude-bridge (Claude Code inference provider).
       (pkgs.makeJailedPi {
         agentSkills = agent-skills;
         extensionPackages = map (

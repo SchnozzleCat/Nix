@@ -66,10 +66,9 @@
     # coding agent runs in), pinned like nixpkgs. See lib/jailed-pi.nix.
     jail-nix.url = "sourcehut:~alexdavid/jail.nix";
 
-    agentic-af = {
-      url = "github:alex35mil/agentic-af/5505c49da4dd7a0171e6b921ad809f7636db02b7";
-      flake = false;
-    };
+    # NOTE: the pi extensions (agentic-af, pi-claude-bridge) are NOT flake
+    # inputs; they are fetched and built by pkgs.buildPiExtension from the
+    # pinned revs in home/config/pi-extensions.nix. See lib/pi-extension.nix.
 
     # Steamworks SDK zip (download requires a Steamworks partner account),
     # used by pkgs/godot4-mono-schnozzlecat. Kept outside the repo because
@@ -144,9 +143,15 @@
       # Usage: outputs.lib.buildPiExtension pkgs
       #   { name = "owner/repo"; version = <rev>; hash; npmDepsHash; }
       buildPiExtension = pkgs:
-        import ./lib/pi-extension.nix {
-          inherit (pkgs) lib buildNpmPackage fetchFromGitHub runCommand;
-        };
+        (import ./lib/pi-extension.nix {
+          inherit (pkgs)
+            lib
+            applyPatches
+            buildNpmPackage
+            fetchFromGitHub
+            runCommand
+            ;
+        }).buildPiExtension;
     };
 
     # NixOS configuration entrypoint

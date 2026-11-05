@@ -11,7 +11,6 @@ in {
   godot-custom-windows-editor = godotPkgs.godotPackages_4_7.godot-mono-windows;
   godot-custom-windows-template = godotPkgs.godotPackages_4_7.godot-mono-windows-template;
   godot-custom-windows-template-debug = godotPkgs.godotPackages_4_7.godot-mono-windows-template-debug;
-  agentic-af = pkgs.callPackage ./agentic-af {src = inputs.agentic-af;};
   raspberrypifw-uart10 = pkgs.callPackage ./raspberrypifw-uart10 {};
 
   # bwrap-sandboxed pi coding agent (function, not a derivation -- call it:
@@ -21,7 +20,10 @@ in {
 
   # Pi extension builder (function, not a derivation -- call it:
   # `pkgs.buildPiExtension {name = "owner/repo"; version = <rev>; ...}`).
-  # Declarative specs live in home/config/pi-extensions.nix; shared
-  # implementation with outputs.lib.buildPiExtension; see lib/pi-extension.nix.
-  buildPiExtension = pkgs.callPackage ../lib/pi-extension.nix {};
+  # lib/pi-extension.nix exports the function inside an attrset (mirror of
+  # lib/jailed-pi.nix's attrset form); unwrap it here so callers get the
+  # function directly. Declarative specs live in
+  # home/config/pi-extensions.nix; shared implementation with
+  # outputs.lib.buildPiExtension.
+  buildPiExtension = (pkgs.callPackage ../lib/pi-extension.nix {}).buildPiExtension;
 }

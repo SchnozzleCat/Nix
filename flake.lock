@@ -1,22 +1,5 @@
 {
   "nodes": {
-    "agentic-af": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1781706982,
-        "narHash": "sha256-tbiBFyPamaFfPnCoriTfcnjNSDOYaWFQarxbCMiyZe8=",
-        "owner": "alex35mil",
-        "repo": "agentic-af",
-        "rev": "5505c49da4dd7a0171e6b921ad809f7636db02b7",
-        "type": "github"
-      },
-      "original": {
-        "owner": "alex35mil",
-        "repo": "agentic-af",
-        "rev": "5505c49da4dd7a0171e6b921ad809f7636db02b7",
-        "type": "github"
-      }
-    },
     "aspire-cli": {
       "inputs": {
         "nixpkgs": [
@@ -641,7 +624,6 @@
     },
     "root": {
       "inputs": {
-        "agentic-af": "agentic-af",
         "aspire-cli": "aspire-cli",
         "googleworkspace-cli": "googleworkspace-cli",
         "home-manager": "home-manager",

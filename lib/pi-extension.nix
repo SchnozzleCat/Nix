@@ -23,16 +23,19 @@
 #                          given; peerDependencies are NOT installed -- pi
 #                          supplies @earendil-works/pi-* and typebox from
 #                          its own bundle at load time, see pi docs
-#                          packages.md "Dependencies" and pkgs/agentic-af)
+#                          packages.md "Dependencies")
 #
 # Consumers only specify the repo and its pin (see
 # home/config/pi-extensions.nix for the list); npmDepsHash is the one
 # extra piece npm packaging adds and is only needed for repos with
-# runtime npm dependencies. Entries can also pass `src` (fetch From
-# GitLab etc.) or a prebuilt `pkg` (e.g. pkgs.agentic-af, which has
-# repo-specific lockfile patches) -- see the callers.
+# runtime npm dependencies. Two escape hatches for repo-specific quirks:
+# `patches` (source patches, e.g. npm lockfile integrity fixes -- both the
+# npm deps fetch and the main build see the patched tree) and `pruned`
+# (paths removed from the installed package dir). Entries can also pass
+# `src` (fetch From GitLab etc.) or a prebuilt `pkg` -- see the callers.
 {
   lib,
+  applyPatches,
   buildNpmPackage,
   fetchFromGitHub,
   runCommand,
@@ -72,9 +75,23 @@ in {
     # some repos a bundleable @earendil-works/* peer copy) out of the
     # package's node_modules.
     npmFlags ? [],
+    # Source patches applied up front, before anything derives from the
+    # source (the npm deps fetch included, which runs in a separate
+    # derivation that only sees `src`). Typical use: upstream lockfiles
+    # missing SRI integrity hashes, which buildNpmPackage's lock parser
+    # rejects; drop the patch from the spec when upstream fixes the lock.
+    patches ? [],
+    # Paths (relative to the package root) removed from the installed
+    # package directory. Typical use: dropping an extension whose load
+    # behavior belongs to a different pi surface (agentic-af's
+    # `permission` extension is pi.nvim-only and would otherwise stall
+    # tool calls in the TUI). Removing the directory is enough -- the
+    # package.json `pi` manifest glob then has nothing to load for it.
+    pruned ? [],
   }: let
     split = splitRepo name;
-    resolveSrc =
+    pruneCmds = lib.concatMapStringsSep "\n" (p: ''rm -rf "$out/${p}"'') pruned;
+    fetchedSrc =
       if src != null
       then src
       else
@@ -87,6 +104,18 @@ in {
             rev = version;
             inherit hash;
           };
+    # Patch before anything derives from the source: node fetchNpmDeps runs
+    # in a separate derivation that only sees `src`, so the patch must be
+    # in the tree up front or fetch and build read inconsistent locks.
+    resolveSrc =
+      if patches == []
+      then fetchedSrc
+      else
+        applyPatches {
+          name = "${split.repo}-source-patched";
+          src = fetchedSrc;
+          inherit patches;
+        };
   in
     if npmDepsHash == null
     then
@@ -97,6 +126,7 @@ in {
       runCommand split.repo {} ''
         mkdir -p "$out"
         cp -a "${resolveSrc}"/. "$out/"
+        ${pruneCmds}
       ''
     else
       buildNpmPackage {
@@ -126,6 +156,7 @@ in {
           # extensions can resolve their runtime deps at load time.
           mkdir -p "$out"
           cp -a ./. "$out/"
+          ${pruneCmds}
           runHook postInstall
         '';
       };
