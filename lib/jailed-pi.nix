@@ -58,11 +58,20 @@
   #   - host daemon forwarding (docker)
   #   - the container prompt (starship)
   #   - language SDKs only some projects need (R, dotnet, jdk, maven)
-  #   - GUI libs (xorg.*) -- the godot *build* libraries (xorg.*, wayland,
-  #     fontconfig, ...) are re-added below as godotBuildLibs/godotBuildEnv
-  #     so pi can compile Godot from source in the sandbox
+  #   - GUI libs (xorg.*) and the Godot-from-source build toolchain
+  #     (scons, pkg-config, perl, wayland-scanner, the engine's system
+  #     libs, godotJailOptions env injection...) -- pi used to be able to
+  #     compile the godot editor from source inside the sandbox, but the
+  #     closure cost on every non-godot project wasn't worth it. Drop
+  #     those deps per-project instead: a project devshell defines the
+  #     same merged buildEnv (dev outputs of the needed system libs,
+  #     mirroring pkgs/godot4-mono-schnozzlecat/common.nix) and passes it
+  #     via extraPkgs plus PKG_CONFIG_PATH / NIX_LDFLAGS set-env
+  #     combinators in extraCombinators (see the deleted godotBuildTools/
+  #     godotBuildLibs/godotBuildEnv/godotJailOptions in git history for
+  #     the exact recipe, including the -lharfbuzz-raster NIX_LDFLAGS
+  #     that Godot 4.7's system harfbuzz linkage needs).
   # What's left is the general-purpose dev toolbelt pi tends to reach for.
-  # The godot build libs are appended at the end via godotBuildDeps.
   commonPkgs = with pkgs; [
     bashInteractive
     coreutils
@@ -113,105 +122,11 @@
     icu
     openssl.out
 
+    python3
+    nodejs
+
     # .NET SDKs 10/9/8 combined (see dotnet-combined / combinedSdk below)
     combinedSdk
-  ]
-  ++ godotBuildDeps;
-
-  # Godot from-source build environment. Mirrors the !isWindows
-  # buildInputs / nativeBuildInputs of the custom fork packaging
-  # (pkgs/godot4-mono-schnozzlecat/common.nix), so pi can configure and
-  # compile Godot (scons from a source checkout) inside the jail.
-  #
-  # Build tools ...
-  godotBuildTools = with pkgs; [
-    scons
-    pkg-config # linuxbsd detect.py discovers every system lib via pkg-config
-    perl # source patches / SConstruct scripting
-    python3 # build_scripts (mono glue/assemblies) + scons backend
-    stdenv.cc # wrapped gcc/g++ (scons invokes it directly)
-    wayland-scanner # wayland protocol codegen required by the wayland build
-  ];
-
-  # ... and the system libraries the engine links against. harfbuzz
-  # matches the fork's "harfbuzz-icu" (raster + Cairo enabled -- required
-  # by Godot 4.7's system-harfbuzz linkage -- plus ICU).
-  godotBuildLibs = with pkgs;
-    [
-      embree
-      enet
-      freetype
-      glslang
-      graphite2
-      icu
-      libjpeg_turbo
-      libtheora
-      libwebp
-      mbedtls
-      miniupnpc
-      openxr-loader
-      pcre2
-      recastnavigation
-      wslay
-      zstd
-      (harfbuzz.override {
-        withRaster = true;
-        withCairo = true;
-        withIcu = true;
-      })
-    ]
-    ++ [
-      alsa-lib
-      dbus # screensaver / portal desktop settings
-      fontconfig # system fonts
-      glib
-      libGL
-      libpulseaudio
-      libdecor
-      libxkbcommon
-      speechd-minimal # text-to-speech
-      udev # gamepad connection callbacks
-      vulkan-loader
-      wayland
-    ]
-    ++ [ # x11
-      libX11
-      libXcursor
-      libXext
-      libXfixes
-      libXi
-      libXinerama
-      libXrandr
-      libXrender
-    ];
-
-  # Dev outputs of ALL godot build libs merged into ONE prefix, so every
-  # header and .pc file is reachable from a single PKG_CONFIG_PATH (the
-  # jail has no stdenv setup hooks to lay them out per-package).
-  godotBuildEnv = pkgs.buildEnv {
-    name = "godot-build-env";
-    paths = map lib.getDev godotBuildLibs;
-    pathsToLink = ["/lib" "/include" "/share"];
-  };
-
-  # Dropped into the jail via add-pkg-deps below: binds the merged env
-  # (whose closure carries every dev output the symlinks point at) and
-  # puts its bin dir on $PATH.
-  godotBuildDeps = godotBuildTools ++ [godotBuildEnv];
-
-  # Godot build-support jail options. The jail's base permission clears
-  # the environment, so the discovery/linkage paths must be re-injected:
-  #   - PKG_CONFIG_PATH: lets linuxbsd/detect.py find the system libs.
-  #   - NIX_LDFLAGS: the cc-wrapper reads this at link time; -L exposes
-  #     the merged lib dir (no setup hooks to do it), -rpath encodes it
-  #     into the built binary so volk's dlopen("libvulkan.so.1") and
-  #     friends resolve at runtime (the store-path patching the fork's
-  #     derivation applies only exists in that derivation's build).
-  #   - the trailing -lharfbuzz-raster mirrors the fork's preBuild
-  #     (Godot 4.7 + system harfbuzz needs explicit raster linkage).
-  godotJailOptions = with jail.combinators; [
-    (set-env "PKG_CONFIG_PATH" "${godotBuildEnv}/lib/pkgconfig:${godotBuildEnv}/share/pkgconfig")
-    (set-env "NIX_LDFLAGS" "-L${godotBuildEnv}/lib -rpath ${godotBuildEnv}/lib -lharfbuzz-raster")
   ];
 
   # Combined .NET SDKs (10/9/8). The real runtime tree (host/fxr, shared,
@@ -504,7 +419,6 @@ in
   jail name program (with jail.combinators; (
     commonJailOptions
     ++ nugetJailOptions
-    ++ godotJailOptions
     ++ extraCombinators
     ++ [
       (add-pkg-deps commonPkgs)

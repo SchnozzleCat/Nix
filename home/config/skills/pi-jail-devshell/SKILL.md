@@ -19,10 +19,14 @@ runtime closure, so the ONLY tools pi can reach are the ones in that
 closure. The default package set (`commonPkgs`) covers general-purpose dev:
 bash/coreutils/grep/find, git + jujutsu, just, curl/wget/jq, ripgrep/fd,
 archives, diff/patch, podman + docker clients, icu/openssl/libstdc++ runtime
-libs, combined .NET SDKs (10/9/8, with `DOTNET_ROOT` injected), and the full
-Godot 4 mono build environment.
+libs, python3, nodejs, and combined .NET SDKs (10/9/8, with `DOTNET_ROOT`
+injected). (The Godot-from-source build toolchain used to live here; it was
+removed from the base jail because of its closure cost -- see the
+`godotBuildTools/godotBuildLibs/godotBuildEnv/godotJailOptions` recipe in
+this file's git history if a project ever needs pi to build the editor
+inside the sandbox.)
 
-Anything else (node, python, rust, go, jdk, ...) must be added per-project
+Anything else (rust, go, jdk, ...) must be added per-project
 via `extraPkgs` in a flake devshell.
 
 ## Quick start: external flake devshell
@@ -124,9 +128,8 @@ in the closure:
 - **Rust**: `rustc`, `cargo`, `rustfmt`, `clippy`; for crates with C deps
   add `pkg-config` and the dev outputs of the specific libs. Because the
   jail has no stdenv setup hooks, multi-library native deps are easiest as
-  a merged `.env` of dev outputs passed via a `buildEnv` package (see
-  `godotBuildEnv` in `lib/jailed-pi.nix` for the pattern), referenced with
-  `PKG_CONFIG_PATH` via a `set-env` combinator.
+  a merged `buildEnv` of dev outputs (dev outputs symlinked into one
+  prefix), referenced with `PKG_CONFIG_PATH` via a `set-env` combinator.
 - **Go**: `go`.
 - **JVM**: `jdk`, `maven` or `gradle` (note the default jail deliberately
   excludes these to stay small; adding them grows the closure substantially).
