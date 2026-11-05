@@ -145,13 +145,21 @@ in {
     packages = with pkgs; [
       # Jailed pi coding agent (bwrap sandbox, see lib/jailed-pi.nix).
       # The default `pi` invocation runs the jail's default package set.
-      # `extensionPackages` loads the agentic-af extensions
-      # (context, fetch, web-search, mcp, rules) via `pi -e` so they're
-      # available in every session without editing settings.json. permission
-      # is excluded from the TUI build (pi.nvim-only) -- see pkgs/agentic-af.
+      # `extensionPackages` loads the pi extensions via `pi -e` so they're
+      # available in every session without editing settings.json. The
+      # specs (and their pinned revs/hashes) live in
+      # home/config/pi-extensions.nix -- the neovim extraPlugins pattern.
+      # agentic-af is the prebuilt package (context, fetch, web-search,
+      # mcp, rules; permission excluded from the TUI build -- pi.nvim-only,
+      # see pkgs/agentic-af); the rest are built by pkgs.buildPiExtension.
       (pkgs.makeJailedPi {
         agentSkills = agent-skills;
-        extensionPackages = [pkgs.agentic-af];
+        extensionPackages = map (
+          p:
+            if p ? pkg
+            then p.pkg
+            else pkgs.buildPiExtension p
+        ) (import ./config/pi-extensions.nix {inherit pkgs;});
         # Aspire CLI (inputs.aspire-cli, see flake.nix): self-contained
         # binary auto-patched against icu/openssl/zlib/stdenv.cc.lib --
         # runtime libs the jail's commonPkgs already expose, so pi can

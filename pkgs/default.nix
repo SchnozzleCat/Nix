@@ -18,4 +18,10 @@ in {
   # `pkgs.makeJailedPi {extensionPackages = [...];}`). Shared implementation
   # with outputs.lib.makeJailedPi; see lib/jailed-pi.nix.
   makeJailedPi = pkgs.callPackage ../lib/jailed-pi.nix {jail-nix = inputs.jail-nix;};
+
+  # Pi extension builder (function, not a derivation -- call it:
+  # `pkgs.buildPiExtension {name = "owner/repo"; version = <rev>; ...}`).
+  # Declarative specs live in home/config/pi-extensions.nix; shared
+  # implementation with outputs.lib.buildPiExtension; see lib/pi-extension.nix.
+  buildPiExtension = pkgs.callPackage ../lib/pi-extension.nix {};
 }

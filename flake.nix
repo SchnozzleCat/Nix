@@ -128,8 +128,8 @@
     # These are usually stuff you would upstream into home-manager
     homeModules = import ./modules/home-manager;
 
-    # Shared library functions. Also reachable as pkgs.makeJailedPi wherever
-    # the additions overlay is applied.
+    # Shared library functions. Also reachable as pkgs.makeJailedPi and
+    # pkgs.buildPiExtension wherever the additions overlay is applied.
     lib = {
       # bwrap-sandboxed pi coding agent; see lib/jailed-pi.nix for docs.
       # Usage: outputs.lib.makeJailedPi pkgs { extraPkgs = [...]; }
@@ -138,6 +138,14 @@
           inherit pkgs;
           lib = nixpkgs.lib;
           jail-nix = inputs.jail-nix;
+        };
+      # Pi extension builder from a pinned git repo; see
+      # lib/pi-extension.nix for docs.
+      # Usage: outputs.lib.buildPiExtension pkgs
+      #   { name = "owner/repo"; version = <rev>; hash; npmDepsHash; }
+      buildPiExtension = pkgs:
+        import ./lib/pi-extension.nix {
+          inherit (pkgs) lib buildNpmPackage fetchFromGitHub runCommand;
         };
     };
 
