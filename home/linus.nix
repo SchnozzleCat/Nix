@@ -152,7 +152,10 @@ in {
       # pkgs.buildPiExtension (lib/pi-extension.nix) builds them.
       # Currently: agentic-af (context, fetch, web-search, mcp, rules,
       # with the pi.nvim-only `permission` extension pruned) and
-      # elidickinson/pi-claude-bridge (Claude Code inference provider).
+      # earendil-works/pi-claude-code (Claude Code subscription provider;
+      # spawns the real `claude` CLI, provided below as nixpkgs
+      # `claude-code` -- an autoPatchelfed official bun binary; login
+      # state persists via the ~/.claude rw-bind in lib/jailed-pi.nix).
       (pkgs.makeJailedPi {
         agentSkills = agent-skills;
         extensionPackages = map (
@@ -167,6 +170,9 @@ in {
         # `aspire run/publish/etc.` inside the sandbox.
         extraPkgs = [
           inputs.aspire-cli.packages.${pkgs.stdenv.hostPlatform.system}.default
+          # claude binary for the pi-claude-code extension (PATH comes only
+          # from the jail closure, see lib/jailed-pi.nix).
+          pkgs.claude-code
         ];
         # Expose the custom godot fork's versioned Godot.NET.Sdk/GodotSharp
         # NuGet packages to the jail's dotnet toolchain (offline restore

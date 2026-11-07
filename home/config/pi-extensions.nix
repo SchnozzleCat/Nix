@@ -25,8 +25,7 @@
 #     flake prefetch github:<owner>/<repo>/<rev>
 # to get `hash`, then set `npmDepsHash` to pkgs.lib.fakeHash and paste the
 # "got: sha256-..." into the spec from the failed build.
-{pkgs}:
-[
+{pkgs}: [
   {
     name = "alex35mil/agentic-af";
     version = "2b100534808ee99c0085214b1583db7877ef73bf"; # main, 2026-11-05
@@ -45,10 +44,24 @@
     #     into the jail.
     pruned = ["extensions/permissions" "workflows"];
   }
+  # Claude Code subscription provider. Unlike pi-claude-bridge it does
+  # NOT depend on the Agent SDK's bundled claude binary: it spawns the
+  # real `claude` CLI (`claude -p`, so PATH/name configurable via
+  # PI_CLAUDE_CODE_COMMAND). `claude-code` (nixpkgs; autoPatchelfed
+  # official bun binary) is added to the jail's extraPkgs in
+  # home/linus.nix, and ~/.claude(+.json) are rw-bound in
+  # lib/jailed-pi.nix so the `claude auth login` state persists.
+  # Dependency-free (peerDeps only), hence no npmDepsHash.
   {
-    name = "elidickinson/pi-claude-bridge";
-    version = "4cde27e88c143b6e80b9e6452629df72ef4e2496";
-    hash = "sha256-AdoX9TMFInomCDhyh7PLW/nGcZLRJMwCnvtWPw/wbgg=";
-    npmDepsHash = "sha256-nS1KZnHHwTVV7B32tc7B7ZYssoPbKLo9GcXZr2Shot8=";
+    name = "earendil-works/pi-claude-code";
+    version = "d5b5e04c314d3452d357174d16d10dda34daa2d2"; # main, 2026-11-05
+    # Drop PR #23 (CLAUDE_CODE_ENTRYPOINT=pi-agent): with Anthropic's
+    # extra-usage rule live, that unrecognized entrypoint gets every
+    # request classified as third-party and blocked; bare sdk-cli (the
+    # default for headless runs) still draws from plan limits. Verified
+    # applying cleanly against the pin. See the comment in the patch and
+    # repo issue #22. Revisit when upstream settles the entrypoint story.
+    patches = [./patches/pi-claude-code-drop-entrypoint.patch];
+    hash = "sha256-86zfGr9YoM+I/PmWHDJb8AbcxhYC1m8aOeghJjvN414=";
   }
 ]

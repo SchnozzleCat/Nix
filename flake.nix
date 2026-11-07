@@ -66,7 +66,7 @@
     # coding agent runs in), pinned like nixpkgs. See lib/jailed-pi.nix.
     jail-nix.url = "sourcehut:~alexdavid/jail.nix";
 
-    # NOTE: the pi extensions (agentic-af, pi-claude-bridge) are NOT flake
+    # NOTE: the pi extensions (agentic-af, pi-claude-code) are NOT flake
     # inputs; they are fetched and built by pkgs.buildPiExtension from the
     # pinned revs in home/config/pi-extensions.nix. See lib/pi-extension.nix.
 
@@ -150,6 +150,9 @@
             buildNpmPackage
             fetchFromGitHub
             runCommand
+            patchelf
+            glibc
+            stdenv
             ;
         }).buildPiExtension;
     };

@@ -221,6 +221,15 @@
     (readwrite (noescape "~/.pi"))
     (readwrite (noescape "~/.cache"))
 
+    # Claude Code state (login credentials, settings, project list). The
+    # pi-claude-code extension spawns the real `claude` CLI, which
+    # authenticates out of this directory; without a rw-bind every jail
+    # run would be logged out. The .claude.json onboarding/MCP-state file
+    # also lives directly under $HOME; try-rw-bind tolerates it not
+    # existing yet.
+    (readwrite (noescape "~/.claude"))
+    (try-rw-bind (noescape "~/.claude.json") (noescape "~/.claude.json"))
+
     # Forward the host's podman/docker socket into the jail so pi can run
     # `docker` / `podman` against the host daemon.
     #

@@ -33,12 +33,22 @@
 # npm deps fetch and the main build see the patched tree) and `pruned`
 # (paths removed from the installed package dir). Entries can also pass
 # `src` (fetch From GitLab etc.) or a prebuilt `pkg` -- see the callers.
+#
+# Bundled prebuilt ELF binaries (e.g. the @anthropic-ai/claude-agent-sdk
+# native executable inside pi-claude-bridge) hardcode an FHS interpreter
+# (/lib64/ld-linux-...), which never exists on NixOS -- and in particular
+# not inside the bwrap jail, which only mounts its own store closure. The
+# `nativeDeps` option repoints such binaries at the actual store loader
+# at build time so they launch inside the jail.
 {
   lib,
   applyPatches,
   buildNpmPackage,
   fetchFromGitHub,
   runCommand,
+  patchelf,
+  glibc,
+  stdenv,
 }: let
   # Same "owner/repo" split as the neovim buildPlugin utility.
   splitRepo = name: let
@@ -88,6 +98,13 @@ in {
     # tool calls in the TUI). Removing the directory is enough -- the
     # package.json `pi` manifest glob then has nothing to load for it.
     pruned ? [],
+    # Library packages made available to bundled prebuilt ELF binaries:
+    # any executable in the installed package whose ELF interpreter is an
+    # FHS path (e.g. /lib64/ld-linux-x86-64.so.2) gets patched to point at
+    # this system's store glibc loader, plus an rpath covering these libs.
+    # Pass [] to skip the rpath (the loader's own directory still resolves
+    # glibc's basic libs; the rpath also keeps them in the jail closure).
+    nativeDeps ? [glibc],
   }: let
     split = splitRepo name;
     pruneCmds = lib.concatMapStringsSep "\n" (p: ''rm -rf "$out/${p}"'') pruned;
@@ -116,6 +133,41 @@ in {
           src = fetchedSrc;
           inherit patches;
         };
+    # Store-path dynamic loader for this host (NixOS never has /lib64).
+    # NOTE: derived from stdenv.hostPlatform, NOT builtins.currentSystem --
+    # the latter is an eval impurity rejected by restricted/flake eval.
+    nativeLoader =
+      "${glibc}/lib/"
+      + (
+        {
+          x86_64-linux = "ld-linux-x86-64.so.2";
+          aarch64-linux = "ld-linux-aarch64.so.1";
+          i686-linux = "ld-linux.so.2";
+        }.${stdenv.hostPlatform.system} or (throw "unsupported system for nativeDeps: ${stdenv.hostPlatform.system}")
+      );
+    nativeRpath = lib.makeLibraryPath nativeDeps;
+    # Patch any ELF executable in $out that carries an FHS-style (absolute,
+    # non-store) interpreter. Shared objects and static binaries fail the
+    # --print-interpreter check and are left alone.
+    # Built as a list of double-quoted lines (concatStringsSep "\n") rather
+    # than one indented string: the shell idiom `read -r -d ''` contains a
+    # quote run that interacts badly with Nix's indented-string '' escapes
+    # and once emitted a mangled installPhase ("unexpected EOF while looking
+    # for matching `''`"). Double-quoted lines hold `''` and `'/` literal
+    # with only `"` needing \" escapes; unambiguous under Nix scan.
+    patchNativeBinaries = lib.concatStringsSep "\n" [
+      "find \"$out\" -type f -print0 | while IFS= read -r -d '' f; do"
+      "  if patchelf --print-interpreter \"$f\" 2>/dev/null | grep -q '^/'; then"
+      "    echo \"patching native interpreter of: $f\""
+      "    patchelf --set-interpreter \"${nativeLoader}\" \"$f\""
+      (
+        if nativeDeps == []
+        then "  :"
+        else "    patchelf --set-rpath \"${nativeRpath}\" \"$f\""
+      )
+      "  fi"
+      "done"
+    ];
   in
     if npmDepsHash == null
     then
@@ -123,10 +175,11 @@ in {
       # tree as the pi package directory. NOTE: if the extension actually
       # imports an npm package at runtime this will fail at pi load time --
       # add npmDepsHash to the spec then.
-      runCommand split.repo {} ''
+      runCommand split.repo {nativeBuildInputs = [patchelf];} ''
         mkdir -p "$out"
         cp -a "${resolveSrc}"/. "$out/"
         ${pruneCmds}
+        ${patchNativeBinaries}
       ''
     else
       buildNpmPackage {
@@ -141,6 +194,9 @@ in {
         # is just a data payload).
         dontNpmBuild = true;
         dontNpmCheck = true;
+        # patchelf: pkgNativeBinaries (bundled prebuilt ELFs) runs in the
+        # install phase below.
+        nativeBuildInputs = [patchelf];
 
         npmFlags = ["--legacy-peer-deps" "--omit=dev"] ++ npmFlags;
 
@@ -157,6 +213,7 @@ in {
           mkdir -p "$out"
           cp -a ./. "$out/"
           ${pruneCmds}
+          ${patchNativeBinaries}
           runHook postInstall
         '';
       };
