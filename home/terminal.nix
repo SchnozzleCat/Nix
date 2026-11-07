@@ -320,6 +320,62 @@ in {
         end
         rm -f -- "$tmp"
       end
+
+      # gwt create <name>:  create a git worktree ~/Worktrees/<repo>-<name> and
+      #   cd into it. If it already exists, just cd to it. Reuses the branch
+      #   named <name> when it exists, otherwise creates it.
+      # gwt remove <name>:  delete the worktree (folder + git's linked admin
+      #   state) so git isn't left with a stale/prunable worktree entry.
+      function gwt
+        if test (count $argv) -lt 2
+          echo "usage: gwt create <name>"; echo "       gwt remove <name>"
+          return 1
+        end
+        set -l cmd $argv[1]
+        set -l name $argv[2]
+        set -l repo (basename $PWD)
+        set -l dir ~/Worktrees/$repo-$name
+        switch $cmd
+          case create
+            mkdir -p ~/Worktrees
+            if test -d $dir
+              cd -- $dir
+              return 0
+            end
+            if git show-ref --verify --quiet refs/heads/$name
+              git worktree add $dir $name
+            else
+              git worktree add -b $name $dir
+            end
+            and cd -- $dir
+          case remove
+            if test -d $dir
+              # If you're inside the worktree, jump to the main repo first,
+              # since git refuses to remove the worktree you're standing in.
+              if test $PWD = $dir; or string match -q -- "$dir/*" $PWD
+                cd -- (dirname (git -C $dir rev-parse --path-format=absolute --git-common-dir))
+              end
+              if git worktree remove $dir
+                echo "removed worktree: $dir"
+              else
+                echo "git worktree remove failed (uncommitted changes? locked?) -- note uncommitted work is lost; use 'git worktree remove --force $dir' to delete anyway" >&2
+                return 1
+              end
+            else if test -e $dir
+              echo "$dir exists but is not a directory" >&2
+              return 1
+            else
+              echo "no worktree at $dir"
+            end
+            # Clean git's admin data if the folder was already rm -rf'd so
+            # 'git worktree list'/'git branch' don't report a stale entry.
+            git worktree prune
+          case '*'
+            echo "gwt: unknown subcommand: $cmd"
+            echo "usage: gwt create <name>"; echo "       gwt remove <name>"
+            return 1
+        end
+      end
       clear
 
       # Teide Color Palette

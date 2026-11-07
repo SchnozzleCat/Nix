@@ -125,6 +125,8 @@
     python3
     nodejs
 
+    pre-commit
+
     # .NET SDKs 10/9/8 combined (see dotnet-combined / combinedSdk below)
     combinedSdk
   ];
@@ -138,13 +140,12 @@
   # `aspire run` spawns the AppHost directly, so the bin/dotnet wrapper's
   # env never reaches it) -- they need DOTNET_ROOT injected explicitly;
   # see the set-env combinator in commonJailOptions below.
-  dotnet-combined =
-    with pkgs.dotnetCorePackages;
-      combinePackages [
-        sdk_10_0
-        sdk_9_0
-        sdk_8_0
-      ];
+  dotnet-combined = with pkgs.dotnetCorePackages;
+    combinePackages [
+      sdk_10_0
+      sdk_9_0
+      sdk_8_0
+    ];
 
   combinedSdk = pkgs.buildEnv {
     name = "combinedSdk";
@@ -253,7 +254,6 @@
     (set-env "DOCKER_HOST" "unix:///run/podman/podman.sock")
     (set-env "CONTAINER_HOST" "unix:///run/podman/podman.sock")
   ];
-
   # The sandbox builder.
   #
   # `extraCombinators` lets a consuming devshell inject project-specific
@@ -279,159 +279,161 @@
   # toolchain inside the jail: the custom Godot.NET.Sdk / GodotSharp
   # nupkgs become restorable, so pi can build C# Godot projects that
   # target the fork's versioned SDK. See `nugetBundle` below.
-in {
-  name ? "pi",
-  extraPkgs ? [],
-  extraCombinators ? [],
-  extensionPackages ? [],
-  nugetPackages ? [],
-  # A directory of agent skills (typically the home-manager `agent-skills`
-  # symlinkJoin bound at ~/.agents/skills on the host). The jail's runtime
-  # closure never includes ~/.agents, so pi's global skill discovery finds
-  # NOTHING inside the sandbox unless the bundle is bound in explicitly.
-  # bind-pkg ro-binds the bundle at ~/.agents/skills AND adds it to
-  # additionalRuntimeClosures, so the closure binding brings along the
-  # store paths the bundle's internal symlinks point at (symlinkJoin links
-  # each skill tree individually). Read-only by design: skills inside the
-  # jail are host-managed; mutable ad-hoc skills still work via the
-  # read-write ~/.pi bind (~/.pi/agent/skills).
-  agentSkills ? null,
-}: let
-  extArgs =
-    pkgs.lib.concatMapStringsSep " "
-    (p: "-e ${p}")
-    extensionPackages;
-  program =
-    if extensionPackages == []
-    then pi-pkg
-    else
-      pkgs.writeShellApplication {
-        inherit name;
-        # Keep pi itself in the wrapper's closure even if a future
-        # change stops interpolating the path into `text`.
-        runtimeInputs = [pi-pkg];
-        text = ''exec ${pkgs.lib.getExe pi-pkg} ${extArgs} "$@"'';
-      };
+in
+  {
+    name ? "pi",
+    extraPkgs ? [],
+    extraCombinators ? [],
+    extensionPackages ? [],
+    nugetPackages ? [],
+    # A directory of agent skills (typically the home-manager `agent-skills`
+    # symlinkJoin bound at ~/.agents/skills on the host). The jail's runtime
+    # closure never includes ~/.agents, so pi's global skill discovery finds
+    # NOTHING inside the sandbox unless the bundle is bound in explicitly.
+    # bind-pkg ro-binds the bundle at ~/.agents/skills AND adds it to
+    # additionalRuntimeClosures, so the closure binding brings along the
+    # store paths the bundle's internal symlinks point at (symlinkJoin links
+    # each skill tree individually). Read-only by design: skills inside the
+    # jail are host-managed; mutable ad-hoc skills still work via the
+    # read-write ~/.pi bind (~/.pi/agent/skills).
+    agentSkills ? null,
+  }: let
+    extArgs =
+      pkgs.lib.concatMapStringsSep " "
+      (p: "-e ${p}")
+      extensionPackages;
+    program =
+      if extensionPackages == []
+      then pi-pkg
+      else
+        pkgs.writeShellApplication {
+          inherit name;
+          # Keep pi itself in the wrapper's closure even if a future
+          # change stops interpolating the path into `text`.
+          runtimeInputs = [pi-pkg];
+          text = ''exec ${pkgs.lib.getExe pi-pkg} ${extArgs} "$@"'';
+        };
 
-  # Bundle containing ONLY the NuGet artifacts of the packages passed via
-  # `nugetPackages` (e.g. the custom godot-mono fork). Layout (bound
-  # read-only at `/nuget` inside the jail):
-  #
-  #   /nuget/packages/     extracted package trees (NUGET_FALLBACK_PACKAGES)
-  #   /nuget/source/       flat folder of .nupkg files (NuGet package source)
-  #   /nuget/NuGet.Config  user-level config pointing at /nuget/source
-  #
-  # The contents are dereference-copied on purpose: the godot nuget trees
-  # are stitched together with store-path symlinks and the editor's
-  # runtime closure is huge. Copying makes the bundle self-contained, so
-  # the jail can ro-bind this ONE small store path instead of pulling the
-  # whole godot editor closure into the sandbox.
-  nugetBundle = pkgs.runCommand "${name}-nuget"
-    # `name` is the wrapper's name ("pi"); the combinators below
-    # interpolate this store path into the wrapper text.
-    {}
-    ''
-      set -eu
-      mkdir -p "$out"/nuget/source "$out"/nuget/packages
-      for pkg in ${lib.concatStringsSep " " (map (p: "${p}") nugetPackages)}; do
-        # `cp -rL` dereferences: the godot nuget trees are stitched
-        # together with store symlinks, and the bundle must stay
-        # self-contained (see above).
-        if [ -d "$pkg"/share/nuget/packages ]; then
-          cp -rL "$pkg"/share/nuget/packages/. "$out"/nuget/packages/
-        fi
-        # Flatten every .nupkg the package ships: `share/nuget/source`
-        # (the godot build moves GodotSharp/Tools/nupkgs there) plus
-        # any libexec subdir shipping its own set (e.g. the locally
-        # versioned Godot.NET.Sdk nupkgs pushed via --push-nupkgs-local).
-        for dir in "$pkg"/share/nuget/source "$pkg"/libexec; do
-          [ -d "$dir" ] || continue
-          find "$dir" -type f -name '*.nupkg' \
-            -exec cp {} "$out"/nuget/source/ \;
+    # Bundle containing ONLY the NuGet artifacts of the packages passed via
+    # `nugetPackages` (e.g. the custom godot-mono fork). Layout (bound
+    # read-only at `/nuget` inside the jail):
+    #
+    #   /nuget/packages/     extracted package trees (NUGET_FALLBACK_PACKAGES)
+    #   /nuget/source/       flat folder of .nupkg files (NuGet package source)
+    #   /nuget/NuGet.Config  user-level config pointing at /nuget/source
+    #
+    # The contents are dereference-copied on purpose: the godot nuget trees
+    # are stitched together with store-path symlinks and the editor's
+    # runtime closure is huge. Copying makes the bundle self-contained, so
+    # the jail can ro-bind this ONE small store path instead of pulling the
+    # whole godot editor closure into the sandbox.
+    nugetBundle =
+      pkgs.runCommand "${name}-nuget"
+      # `name` is the wrapper's name ("pi"); the combinators below
+      # interpolate this store path into the wrapper text.
+      {}
+      ''
+        set -eu
+        mkdir -p "$out"/nuget/source "$out"/nuget/packages
+        for pkg in ${lib.concatStringsSep " " (map (p: "${p}") nugetPackages)}; do
+          # `cp -rL` dereferences: the godot nuget trees are stitched
+          # together with store symlinks, and the bundle must stay
+          # self-contained (see above).
+          if [ -d "$pkg"/share/nuget/packages ]; then
+            cp -rL "$pkg"/share/nuget/packages/. "$out"/nuget/packages/
+          fi
+          # Flatten every .nupkg the package ships: `share/nuget/source`
+          # (the godot build moves GodotSharp/Tools/nupkgs there) plus
+          # any libexec subdir shipping its own set (e.g. the locally
+          # versioned Godot.NET.Sdk nupkgs pushed via --push-nupkgs-local).
+          for dir in "$pkg"/share/nuget/source "$pkg"/libexec; do
+            [ -d "$dir" ] || continue
+            find "$dir" -type f -name '*.nupkg' \
+              -exec cp {} "$out"/nuget/source/ \;
+          done
         done
-      done
-      cat >"$out"/nuget/NuGet.Config <<'EOF'
-      <?xml version="1.0" encoding="utf-8"?>
-      <configuration>
-        <packageSources>
-          <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
-          <add key="jail-godot-nuget" value="/nuget/source" />
-        </packageSources>
-      </configuration>
-      EOF
-    '';
+        cat >"$out"/nuget/NuGet.Config <<'EOF'
+        <?xml version="1.0" encoding="utf-8"?>
+        <configuration>
+          <packageSources>
+            <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+            <add key="jail-godot-nuget" value="/nuget/source" />
+          </packageSources>
+        </configuration>
+        EOF
+      '';
 
-  # Wire the nuget bundle into the jail's dotnet toolchain.
-  # `set-env` can only inject build-time literals, so the two runtime
-  # pieces (per-user NUGET_PACKAGES under the rw-mounted ~/.cache, and
-  # the NuGet.Config inside the ephemeral jail $HOME) run on the host
-  # right before bwrap starts and append themselves via RUNTIME_ARGS,
-  # mirroring the pass-env trick below.
-  nugetJailOptions =
-    lib.optionals (nugetPackages != [])
-    (with jail.combinators; [
-      # The bundle contains ONLY nuget artifacts, so a plain ro-bind
-      # (no runtime-closure binding) is enough; nothing inside it needs
-      # other store paths because everything was dereference-copied.
-      (ro-bind "${nugetBundle}/nuget" "/nuget")
+    # Wire the nuget bundle into the jail's dotnet toolchain.
+    # `set-env` can only inject build-time literals, so the two runtime
+    # pieces (per-user NUGET_PACKAGES under the rw-mounted ~/.cache, and
+    # the NuGet.Config inside the ephemeral jail $HOME) run on the host
+    # right before bwrap starts and append themselves via RUNTIME_ARGS,
+    # mirroring the pass-env trick below.
+    nugetJailOptions =
+      lib.optionals (nugetPackages != [])
+      (with jail.combinators; [
+        # The bundle contains ONLY nuget artifacts, so a plain ro-bind
+        # (no runtime-closure binding) is enough; nothing inside it needs
+        # other store paths because everything was dereference-copied.
+        (ro-bind "${nugetBundle}/nuget" "/nuget")
 
-      # Offline restore source for the custom (versioned) SDK packages.
-      (set-env "NUGET_FALLBACK_PACKAGES" "/nuget/packages/")
+        # Offline restore source for the custom (versioned) SDK packages.
+        (set-env "NUGET_FALLBACK_PACKAGES" "/nuget/packages/")
 
-      # User-level NuGet.Config inside the ephemeral jail home. bwrap's
-      # `--dir` creates the leading dirs in the (tmpfs) home before the
-      # ro-bind mounts the config file into place.
-      (compose [
+        # User-level NuGet.Config inside the ephemeral jail home. bwrap's
+        # `--dir` creates the leading dirs in the (tmpfs) home before the
+        # ro-bind mounts the config file into place.
+        (compose [
+          (add-runtime ''
+            RUNTIME_ARGS+=(
+              --dir "$HOME/.nuget"
+              --dir "$HOME/.nuget/NuGet"
+              --ro-bind ${nugetBundle}/nuget/NuGet.Config "$HOME/.nuget/NuGet/NuGet.Config"
+            )
+          '')
+        ])
+
+        # Persist the dotnet global packages folder in ~/.cache (bound
+        # read-write by commonJailOptions) so restore results survive
+        # across jail sessions.
+        (compose [
+          (add-runtime ''
+            NUGET_PACKAGES="$HOME"/.cache/nuget/packages
+          '')
+          (unsafe-add-raw-args ''--setenv NUGET_PACKAGES "''$NUGET_PACKAGES"'')
+        ])
+      ]);
+    # Agent skills bundle jail options. The bundle (a symlinkJoin) binds at
+    # ~/.agents/skills. bwrap processes mounts in argument order and needs a
+    # bind target's parent to exist inside the sandbox, so --dir creates
+    # ~/.agents (and the skills mountpoint) in the ephemeral jail home BEFORE
+    # the --ro-bind runs -- which is why both live in RUNTIME_ARGS: static
+    # bwrap args (state.cmd) are emitted before "''${RUNTIME_ARGS[@]}" in the
+    # wrapper (see jail.nix's final text template), exactly like
+    # nugetJailOptions does for ~/.nuget. The bundle's internal symlinks
+    # point at other store paths, so its runtime closure is bound too, via
+    # add-pkg-deps -> additionalRuntimeClosures (this also prepends the
+    # bundle's non-existent /bin to $PATH, which is harmless).
+    agentSkillsJailOptions =
+      lib.optionals (agentSkills != null)
+      (with jail.combinators; [
         (add-runtime ''
           RUNTIME_ARGS+=(
-            --dir "$HOME/.nuget"
-            --dir "$HOME/.nuget/NuGet"
-            --ro-bind ${nugetBundle}/nuget/NuGet.Config "$HOME/.nuget/NuGet/NuGet.Config"
+            --dir "$HOME/.agents"
+            --dir "$HOME/.agents/skills"
+            --ro-bind ${agentSkills} "$HOME/.agents/skills"
           )
         '')
-      ])
-
-      # Persist the dotnet global packages folder in ~/.cache (bound
-      # read-write by commonJailOptions) so restore results survive
-      # across jail sessions.
-      (compose [
-        (add-runtime ''
-          NUGET_PACKAGES="$HOME"/.cache/nuget/packages
-        '')
-        (unsafe-add-raw-args ''--setenv NUGET_PACKAGES "''$NUGET_PACKAGES"'')
-      ])
-    ]);
-  # Agent skills bundle jail options. The bundle (a symlinkJoin) binds at
-  # ~/.agents/skills. bwrap processes mounts in argument order and needs a
-  # bind target's parent to exist inside the sandbox, so --dir creates
-  # ~/.agents (and the skills mountpoint) in the ephemeral jail home BEFORE
-  # the --ro-bind runs -- which is why both live in RUNTIME_ARGS: static
-  # bwrap args (state.cmd) are emitted before "''${RUNTIME_ARGS[@]}" in the
-  # wrapper (see jail.nix's final text template), exactly like
-  # nugetJailOptions does for ~/.nuget. The bundle's internal symlinks
-  # point at other store paths, so its runtime closure is bound too, via
-  # add-pkg-deps -> additionalRuntimeClosures (this also prepends the
-  # bundle's non-existent /bin to $PATH, which is harmless).
-  agentSkillsJailOptions =
-    lib.optionals (agentSkills != null)
-    (with jail.combinators; [
-      (add-runtime ''
-        RUNTIME_ARGS+=(
-          --dir "$HOME/.agents"
-          --dir "$HOME/.agents/skills"
-          --ro-bind ${agentSkills} "$HOME/.agents/skills"
-        )
-      '')
-      (add-pkg-deps [agentSkills])
-    ]);
-in
-  jail name program (with jail.combinators; (
-    commonJailOptions
-    ++ nugetJailOptions
-    ++ extraCombinators
-    ++ [
-      (add-pkg-deps commonPkgs)
-      (add-pkg-deps extraPkgs)
-    ]
-    ++ agentSkillsJailOptions
-  ))
+        (add-pkg-deps [agentSkills])
+      ]);
+  in
+    jail name program (with jail.combinators; (
+      commonJailOptions
+      ++ nugetJailOptions
+      ++ extraCombinators
+      ++ [
+        (add-pkg-deps commonPkgs)
+        (add-pkg-deps extraPkgs)
+      ]
+      ++ agentSkillsJailOptions
+    ))

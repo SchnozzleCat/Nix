@@ -227,7 +227,6 @@ in {
       pyprland
       blueman
       hyprshade
-      csharprepl
 
       # Web
       qbittorrent
@@ -236,12 +235,14 @@ in {
       jellyfin-desktop
 
       rimsort
+      pre-commit
 
       # Dev
       steamcmd
       tracy
       aseprite
       dotnet
+      spacetimedb
 
       jetbrains.datagrip
       inputs.hyprland-qtutils.packages."${pkgs.stdenv.hostPlatform.system}".default
