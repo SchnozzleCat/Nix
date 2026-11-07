@@ -173,7 +173,44 @@ in {
           # claude binary for the pi-claude-code extension (PATH comes only
           # from the jail closure, see lib/jailed-pi.nix).
           pkgs.claude-code
+        ]
+        # The custom godot fork itself: the exact editor derivation the
+        # home module installs on the host (identical rev + Tracy flags to
+        # the NuGet packages wired via nugetPackages below), put on the
+        # jail's PATH so pi can run the engine inside the sandbox
+        # (`godot --headless` project import/validation, --export-release
+        # against the NuGet-restored SDK, custom build scripts). pulls the
+        # editor's runtime closure into every pi session -- see the
+        # closure-cost notes in lib/jailed-pi.nix.
+        ++ lib.optionals config.programs.godot4-mono-schnozzlecat.enable [
+          config.programs.godot4-mono-schnozzlecat.editorPackage
         ];
+        # Editor data + export templates live on the HOST home
+        # (~/.local/share/godot/{editor/*,export_templates/*}, populated by
+        # the home module), which the jail's ephemeral $HOME does not
+        # expose. Bind the fork's data directory in read-write (the
+        # in-jail editor writes its own state into it) -- --bind-try
+        # tolerates it not existing yet (pre-activation, or module
+        # disabled). Parent dirs are created at runtime like
+        # agentSkillsJailOptions does for ~/.agents: bwrap processes mounts
+        # in argument order, and the runtime args run after the static
+        # ones (see lib/jailed-pi.nix).
+        extraCombinators =
+          lib.optionals config.programs.godot4-mono-schnozzlecat.enable
+          (with (inputs.jail-nix.lib.init pkgs).combinators; [
+            (compose [
+              (add-runtime ''
+                RUNTIME_ARGS+=(
+                  --dir "$HOME/.local"
+                  --dir "$HOME/.local/share"
+                  --bind-try "$HOME/.local/share/godot" "$HOME/.local/share/godot"
+                  --bind-try "$HOME/.config/godot" "$HOME/.config/godot"
+                  # (~/.cache/godot needs no bind: ~/.cache is already bound
+                  # read-write by commonJailOptions.)
+                )
+              '')
+            ])
+          ]);
         # Expose the custom godot fork's versioned Godot.NET.Sdk/GodotSharp
         # NuGet packages to the jail's dotnet toolchain (offline restore
         # source + fallback folder configured by lib/jailed-pi.nix), so pi

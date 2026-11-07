@@ -98,6 +98,21 @@ in {
         mono editor; set to `[]` to keep them out of the jail.
       '';
     };
+    # The exact editor derivation this module installs on the host (same rev
+    # + Tracy flags as the nugetPackages default above). Exposed so
+    # consumers can put the SAME build on the jailed pi agent's sandbox
+    # PATH (see home/linus.nix) instead of re-deriving a variant with
+    # different rev/tracy flags.
+    editorPackage = mkOption {
+      type = types.package;
+      readOnly = true;
+      default = pkg;
+      description = lib.mdDoc ''
+        The custom fork's mono editor package (`godot-mono` with all
+        configured source/profiler overrides applied). Read-only: consumers
+        forward this package, they don't change it.
+      '';
+    };
     rev = mkOption {
       type = types.nullOr types.str;
       default = null;
