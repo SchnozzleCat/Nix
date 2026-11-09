@@ -124,6 +124,7 @@
 
     python3
     nodejs
+    gnused
 
     pre-commit
 
