@@ -309,6 +309,7 @@
             imports = [
               ./hosts/rpi5/server.nix
               ./hosts/rpi5/kernel.nix
+              ./hosts/rpi5/fluxer.nix
               ./hosts/rpi5/home.nix
             ];
             system.nixos.tags = [

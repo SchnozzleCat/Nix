@@ -1,0 +1,50 @@
+# Local overrides on top of the vendored bundle (kept separate so the bundle
+# can be replaced verbatim on upgrade).
+services:
+  # Host Caddy terminates TLS and proxies to this plain-HTTP edge.
+  edge:
+    ports: !override
+      - "${FLUXER_EDGE_BIND:-127.0.0.1:8080}:8080"
+    environment:
+      FLUXER_EDGE_SITE_ADDRESS: ":8080"
+      FLUXER_EDGE_TLS_DIRECTIVE: ""
+      FLUXER_EDGE_TRUSTED_PROXIES: ${FLUXER_EDGE_TRUSTED_PROXIES:-private_ranges}
+    volumes:
+      - ${FLUXER_DATA_DIR:?}/edge-data:/data
+      - ${FLUXER_DATA_DIR:?}/edge-config:/config
+
+  # Pinned address: host coturn maps our public IP to it (external-ip in
+  # fluxer.nix), so TURN relays straight over the bridge, no NAT hairpin.
+  livekit:
+    networks:
+      fluxer:
+        ipv4_address: ${FLUXER_LIVEKIT_IP:?}
+
+  # Persistent data on the RAID instead of podman's volume store (SD card).
+  # These bind mounts replace the bundle's named volumes (compose merges
+  # volumes by mount target). The images chown their data dir on start or
+  # run as root; media-proxy (uid 10001) gets a world-writable sticky dir.
+  postgres:
+    volumes:
+      - ${FLUXER_DATA_DIR:?}/postgres:/var/lib/postgresql/data
+  valkey:
+    volumes:
+      - ${FLUXER_DATA_DIR:?}/valkey:/data
+  nats:
+    volumes:
+      - ${FLUXER_DATA_DIR:?}/nats:/data
+  meilisearch:
+    volumes:
+      - ${FLUXER_DATA_DIR:?}/meilisearch:/meili_data
+  seaweedfs:
+    volumes:
+      - ${FLUXER_DATA_DIR:?}/seaweedfs:/data
+  media-proxy:
+    volumes:
+      - ${FLUXER_DATA_DIR:?}/media-proxy-tmp:/tmp
+
+networks:
+  fluxer:
+    ipam:
+      config:
+        - subnet: ${FLUXER_SUBNET:?}
