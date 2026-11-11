@@ -9,7 +9,7 @@
   hostname,
   ...
 }: let
-  # Combined .NET SDKs (same 8/9/10 set as home/linus.nix). Landed here
+  # Combined .NET SDKs (same 8/9/10/11 set as home/linus.nix). Landed here
   # because home-manager's sessionVariables aren't sourced by fish --
   # and the default shell IS fish. Framework-dependent apphost binaries
   # are exec'd *around* dotnet (e.g. `aspire run` spawns the AppHost
@@ -20,6 +20,7 @@
       sdk_8_0
       sdk_9_0
       sdk_10_0
+      sdk_11_0
     ];
 in {
   environment.variables.DOTNET_ROOT = "${dotnet-env}/share/dotnet";

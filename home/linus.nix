@@ -20,6 +20,7 @@
       sdk_8_0
       sdk_9_0
       sdk_10_0
+      sdk_11_0
     ];
   # Declarative agent skills, linked at ~/.agents/skills. Also passed to
   # makeJailedPi (agentSkills) so the jailed default pi ro-binds the same

@@ -128,7 +128,7 @@
 
     pre-commit
 
-    # .NET SDKs 10/9/8 combined (see dotnet-combined / combinedSdk below)
+    # .NET SDKs 11/10/9/8 combined (see dotnet-combined / combinedSdk below)
     combinedSdk
   ];
 
@@ -143,6 +143,7 @@
   # see the set-env combinator in commonJailOptions below.
   dotnet-combined = with pkgs.dotnetCorePackages;
     combinePackages [
+      sdk_11_0
       sdk_10_0
       sdk_9_0
       sdk_8_0
