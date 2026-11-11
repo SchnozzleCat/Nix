@@ -131,6 +131,15 @@
 
     # .NET SDKs 11/10/9/8 combined (see dotnet-combined / combinedSdk below)
     combinedSdk
+
+    # Display/GPU runtime libs so GUI apps (e.g. Godot) can open a window
+    # on the host's Wayland compositor; see the wayland/GPU block in
+    # commonJailOptions.
+    wayland
+    libxkbcommon
+    libGL
+    vulkan-loader
+    mesa
   ];
 
   # Combined .NET SDKs (10/9/8). The real runtime tree (host/fxr, shared,
@@ -256,6 +265,31 @@
     (try-rw-bind "/run/podman/podman.sock" "/run/podman/podman.sock")
     (set-env "DOCKER_HOST" "unix:///run/podman/podman.sock")
     (set-env "CONTAINER_HOST" "unix:///run/podman/podman.sock")
+
+    # Wayland + GPU passthrough (e.g. to run Godot). The socket path is
+    # only known at invocation time, so resolve it on the host before bwrap
+    # starts (RUNTIME_ARGS, like the nuget/skills binds below). Skipped if
+    # the host has no Wayland session. NOTE: this lets the sandbox talk to
+    # your compositor (screenshots/input injection depending on protocols).
+    (add-runtime ''
+      if [ -n "''${WAYLAND_DISPLAY:-}" ] && [ -n "''${XDG_RUNTIME_DIR:-}" ] \
+        && [ -S "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY" ]; then
+        RUNTIME_ARGS+=(
+          --dir "$XDG_RUNTIME_DIR"
+          --ro-bind "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY" "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY"
+          --setenv XDG_RUNTIME_DIR "$XDG_RUNTIME_DIR"
+          --setenv WAYLAND_DISPLAY "$WAYLAND_DISPLAY"
+        )
+      fi
+      RUNTIME_ARGS+=(
+        --dev-bind-try /dev/dri /dev/dri
+        --ro-bind-try /sys/dev /sys/dev
+        --ro-bind-try /sys/devices /sys/devices
+      )
+    '')
+    (set-env "LD_LIBRARY_PATH" (pkgs.lib.makeLibraryPath (with pkgs; [wayland libxkbcommon libGL vulkan-loader mesa])))
+    (set-env "LIBGL_DRIVERS_PATH" "${pkgs.mesa}/lib/dri")
+    (set-env "__EGL_VENDOR_LIBRARY_FILENAMES" "${pkgs.mesa}/share/glvnd/egl_vendor.d/50_mesa.json")
   ];
   # The sandbox builder.
   #
