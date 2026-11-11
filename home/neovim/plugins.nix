@@ -925,7 +925,10 @@ in {
             enable = true;
             settings.filetypes = ["c" "cpp"];
           };
-          csharpier.enable = true;
+          csharpier = {
+            enable = true;
+            settings.filetypes = ["cs" "csproj" "xml" "msbuild"];
+          };
           gdformat.enable = true;
           isort.enable = true;
           markdownlint.enable = true;
@@ -936,7 +939,6 @@ in {
           };
           phpcbf.enable = true;
           stylua.enable = true;
-          xmllint.enable = true;
         };
       };
     };
