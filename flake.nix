@@ -197,7 +197,8 @@
           inputs.sops-nix.nixosModules.sops
 
           # https://wiki.nixos.org/wiki/NixOS_on_ARM/Raspberry_Pi_5
-          # Downstream RPi kernel (built on Hydra/cache), VC4 KMS, extlinux boot
+          # Downstream RPi kernel, VC4 KMS, extlinux boot. The kernel isn't
+          # cached; hosts/rpi5/kernel.nix cross-compiles it on x86_64.
           inputs.nixos-hardware.nixosModules.raspberry-pi-5
 
           # SD image support: `nix build
@@ -307,6 +308,7 @@
           }: {
             imports = [
               ./hosts/rpi5/server.nix
+              ./hosts/rpi5/kernel.nix
               ./hosts/rpi5/home.nix
             ];
             system.nixos.tags = [
