@@ -190,23 +190,24 @@ in {
         # binary auto-patched against icu/openssl/zlib/stdenv.cc.lib --
         # runtime libs the jail's commonPkgs already expose, so pi can
         # `aspire run/publish/etc.` inside the sandbox.
-        extraPkgs = [
-          inputs.aspire-cli.packages.${pkgs.stdenv.hostPlatform.system}.default
-          # claude binary for the pi-claude-code extension (PATH comes only
-          # from the jail closure, see lib/jailed-pi.nix).
-          pkgs.claude-code
-        ]
-        # The custom godot fork itself: the exact editor derivation the
-        # home module installs on the host (identical rev + Tracy flags to
-        # the NuGet packages wired via nugetPackages below), put on the
-        # jail's PATH so pi can run the engine inside the sandbox
-        # (`godot --headless` project import/validation, --export-release
-        # against the NuGet-restored SDK, custom build scripts). pulls the
-        # editor's runtime closure into every pi session -- see the
-        # closure-cost notes in lib/jailed-pi.nix.
-        ++ lib.optionals config.programs.godot4-mono-schnozzlecat.enable [
-          config.programs.godot4-mono-schnozzlecat.editorPackage
-        ];
+        extraPkgs =
+          [
+            inputs.aspire-cli.packages.${pkgs.stdenv.hostPlatform.system}.default
+            # claude binary for the pi-claude-code extension (PATH comes only
+            # from the jail closure, see lib/jailed-pi.nix).
+            pkgs.claude-code
+          ]
+          # The custom godot fork itself: the exact editor derivation the
+          # home module installs on the host (identical rev + Tracy flags to
+          # the NuGet packages wired via nugetPackages below), put on the
+          # jail's PATH so pi can run the engine inside the sandbox
+          # (`godot --headless` project import/validation, --export-release
+          # against the NuGet-restored SDK, custom build scripts). pulls the
+          # editor's runtime closure into every pi session -- see the
+          # closure-cost notes in lib/jailed-pi.nix.
+          ++ lib.optionals config.programs.godot4-mono-schnozzlecat.enable [
+            config.programs.godot4-mono-schnozzlecat.editorPackage
+          ];
         # Editor data + export templates live on the HOST home
         # (~/.local/share/godot/{editor/*,export_templates/*}, populated by
         # the home module), which the jail's ephemeral $HOME does not
