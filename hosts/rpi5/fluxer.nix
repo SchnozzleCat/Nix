@@ -51,6 +51,7 @@
   bundle = ./fluxer;
   turnMinPort = 49160;
   turnMaxPort = 49260; # one relay port per participant (~100)
+  lanInterface = config.networking.nat.externalInterface; # end0
 in {
   virtualisation.containers.containersConf.settings.network.dns_bind_port = aardvarkPort;
 
@@ -126,12 +127,23 @@ in {
   # expects. The relay address reported to clients stays the LAN IP, which
   # LiveKit (the only peer) can reach directly. The public IP is dynamic, so
   # it's fetched at runtime.
+  #
+  # relay-ip pins relay sockets to the LAN address (DHCP, so looked up at
+  # start); otherwise coturn picks among all interface addresses (wg*,
+  # podman bridges, IPv6) and the relay address clients see is arbitrary.
   systemd.services.coturn = {
     wants = ["fluxer-public-ip.service"];
     after = ["fluxer-public-ip.service"];
+    path = [pkgs.iproute2 pkgs.gawk];
     preStart = lib.mkAfter ''
       if [ -s ${publicIpFile} ]; then
         echo "external-ip=$(cat ${publicIpFile})/${livekitIp}" >> /run/coturn/turnserver.cfg
+      fi
+      lan=$(ip -4 -o addr show dev ${lanInterface} scope global | awk '{split($4, a, "/"); print a[1]; exit}')
+      if [ -n "$lan" ]; then
+        echo "relay-ip=$lan" >> /run/coturn/turnserver.cfg
+      else
+        echo "no IPv4 on ${lanInterface}; coturn picks its relay address itself" >&2
       fi
     '';
   };
@@ -149,7 +161,8 @@ in {
     script = ''
       ip=""
       for _ in 1 2 3 4 5 6; do
-        ip=$(curl -fsS --max-time 10 https://cloudflare.com/cdn-cgi/trace | sed -n 's/^ip=//p') || true
+        # -4: over IPv6 the trace reports the v6 address, which we can't use.
+        ip=$(curl -4 -fsS --max-time 10 https://cloudflare.com/cdn-cgi/trace | sed -n 's/^ip=//p') || true
         echo "$ip" | grep -Eq '^([0-9]{1,3}\.){3}[0-9]{1,3}$' && break
         ip=""
         sleep 5
@@ -239,27 +252,40 @@ in {
       # media-proxy runs as uid 10001 and needs a writable /tmp.
       install -d -m 1777 ${dataDir}/media-proxy-tmp
 
-      # Secrets: generated once, never overwritten.
-      if [ ! -f .env ]; then
+      # Secrets: generated once, never overwritten. Built in a temp file and
+      # moved into place only when every value was generated, so a failed or
+      # interrupted run can't leave a partial .env that sticks forever
+      # ($(...) failures don't trip set -e, hence the explicit checks).
+      if [ ! -s .env ]; then
         umask 077
-        hex() { openssl rand -hex 32; }
-        {
-          echo "FLUXER_SETTINGS_LOADED=true"
-          for key in POSTGRES_PASSWORD MEILI_MASTER_KEY FLUXER_S3_SECRET_KEY FLUXER_SUDO_MODE_SECRET \
-            FLUXER_CONNECTION_INITIATION_SECRET FLUXER_PROFILE_PSEUDONYM_SECRET FLUXER_GATEWAY_RPC_AUTH_TOKEN \
-            FLUXER_ERLANG_COOKIE FLUXER_MEDIA_PROXY_SECRET_KEY FLUXER_ADMIN_SECRET_KEY_BASE \
-            FLUXER_ADMIN_OAUTH_CLIENT_SECRET LIVEKIT_API_SECRET FLUXER_SETUP_TOKEN; do
-            echo "$key=$(hex)"
-          done
-          echo "FLUXER_S3_ACCESS_KEY=fluxer"
-          echo "LIVEKIT_API_KEY=fluxer"
-          echo "FLUXER_MEDIA_PROXY_UPLOAD_RELAY_SECRET_BASE64=$(openssl rand -base64 32)"
-          echo "FLUXER_ACTIVITYPUB_SIGNING_KEY_BASE64=$(openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -outform DER | base64 | tr -d '\n')"
-          openssl ecparam -name prime256v1 -genkey -noout -out vapid.pem
-          echo "FLUXER_VAPID_PUBLIC_KEY=$(openssl ec -in vapid.pem -pubout -outform DER 2>/dev/null | tail -c 65 | base64 | tr '/+' '_-' | tr -d '=\n')"
-          echo "FLUXER_VAPID_PRIVATE_KEY=$(openssl ec -in vapid.pem -outform DER 2>/dev/null | tail -c +8 | head -c 32 | base64 | tr '/+' '_-' | tr -d '=\n')"
-          rm -f vapid.pem
-        } > .env
+        tmp=$(mktemp .env.XXXXXX)
+        trap 'rm -f "$tmp" vapid.pem' EXIT
+        # put KEY VALUE [expected length]
+        put() {
+          if [ -z "$2" ] || { [ -n "''${3:-}" ] && [ "''${#2}" -ne "$3" ]; }; then
+            echo "failed to generate $1" >&2
+            exit 1
+          fi
+          echo "$1=$2" >> "$tmp"
+        }
+        put FLUXER_SETTINGS_LOADED true
+        for key in POSTGRES_PASSWORD MEILI_MASTER_KEY FLUXER_S3_SECRET_KEY FLUXER_SUDO_MODE_SECRET \
+          FLUXER_CONNECTION_INITIATION_SECRET FLUXER_PROFILE_PSEUDONYM_SECRET FLUXER_GATEWAY_RPC_AUTH_TOKEN \
+          FLUXER_ERLANG_COOKIE FLUXER_MEDIA_PROXY_SECRET_KEY FLUXER_ADMIN_SECRET_KEY_BASE \
+          FLUXER_ADMIN_OAUTH_CLIENT_SECRET LIVEKIT_API_SECRET FLUXER_SETUP_TOKEN; do
+          put "$key" "$(openssl rand -hex 32)" 64
+        done
+        put FLUXER_S3_ACCESS_KEY fluxer
+        put LIVEKIT_API_KEY fluxer
+        put FLUXER_MEDIA_PROXY_UPLOAD_RELAY_SECRET_BASE64 "$(openssl rand -base64 32)" 44
+        put FLUXER_ACTIVITYPUB_SIGNING_KEY_BASE64 "$(openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -outform DER | base64 | tr -d '\n')"
+        openssl ecparam -name prime256v1 -genkey -noout -out vapid.pem
+        # Raw P-256 keys, base64url: 65-byte point -> 87 chars, 32-byte scalar -> 43.
+        put FLUXER_VAPID_PUBLIC_KEY "$(openssl ec -in vapid.pem -pubout -outform DER 2>/dev/null | tail -c 65 | base64 | tr '/+' '_-' | tr -d '=\n')" 87
+        put FLUXER_VAPID_PRIVATE_KEY "$(openssl ec -in vapid.pem -outform DER 2>/dev/null | tail -c +8 | head -c 32 | base64 | tr '/+' '_-' | tr -d '=\n')" 43
+        mv "$tmp" .env
+        rm -f vapid.pem
+        trap - EXIT
       fi
 
       # Declarative settings (rewritten on every start).
