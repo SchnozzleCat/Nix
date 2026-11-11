@@ -133,6 +133,27 @@ in {
   home.file.".pi/agent/extensions/instance-report.ts".text =
     builtins.readFile ./config/pi/agent/extensions/instance-report.ts;
 
+  # Blockbench MCP for pi (pi's native MCP support reads the global
+  # <agent-dir>/mcp.json). The jasonjgardner/blockbench-mcp-plugin runs the
+  # MCP server (streamable HTTP) inside the Blockbench desktop app, so
+  # there is nothing to package: just point at it. Load the plugin in
+  # Blockbench via File > Plugins > Load Plugin from URL:
+  #   https://jasonjgardner.github.io/blockbench-mcp-plugin/mcp.js
+  # (port/endpoint: Settings > General > MCP Server Port / Endpoint;
+  # defaults :3000/bb-mcp). The jail shares the host network, so localhost
+  # is reachable.
+  #
+  # Written as a REAL file by an activation step, NOT via home.file (even
+  # `.text` creates a symlink into home-manager-files, which isn't in the
+  # jail's closure and dangles inside the bwrap sandbox).
+  home.activation.piMcpConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    run mkdir -p "$HOME/.pi/agent"
+    run rm -f "$HOME/.pi/agent/mcp.json"
+    run install -m 644 ${pkgs.writeText "pi-mcp.json" (builtins.toJSON {
+      mcpServers.blockbench.url = "http://localhost:3000/bb-mcp";
+    })} "$HOME/.pi/agent/mcp.json"
+  '';
+
   home = {
     username = "linus";
     homeDirectory = "/home/linus";
@@ -151,8 +172,8 @@ in {
       # specs (and their pinned revs/hashes) live in
       # home/config/pi-extensions.nix -- the neovim extraPlugins pattern;
       # pkgs.buildPiExtension (lib/pi-extension.nix) builds them.
-      # Currently: agentic-af (context, fetch, web-search, mcp, rules,
-      # with the pi.nvim-only `permission` extension pruned) and
+      # Currently: agentic-af (context, fetch, web-search, rules,
+      # with the pi.nvim-only `permission` and redundant `mcp` extensions pruned) and
       # earendil-works/pi-claude-code (Claude Code subscription provider;
       # spawns the real `claude` CLI, provided below as nixpkgs
       # `claude-code` -- an autoPatchelfed official bun binary; login
@@ -244,6 +265,7 @@ in {
       aseprite
       dotnet
       spacetimedb
+      blockbench
 
       jetbrains.datagrip
       inputs.hyprland-qtutils.packages."${pkgs.stdenv.hostPlatform.system}".default

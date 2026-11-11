@@ -42,7 +42,10 @@
     #     (./workflows/extensions, ./workflows/skills) simply load nothing
     #     with the directory gone. Revisit if you ever wire tracker creds
     #     into the jail.
-    pruned = ["extensions/permissions" "workflows"];
+    #   extensions/mcp -- redundant: pi 1.3+ ships native MCP support, and
+    #     this only wraps it with tool metadata/decorators. Dropping it
+    #     leaves pi's built-in /mcp (reads <agent-dir>/mcp.json) in charge.
+    pruned = ["extensions/permissions" "extensions/mcp" "workflows"];
   }
   # Claude Code subscription provider. Unlike pi-claude-bridge it does
   # NOT depend on the Agent SDK's bundled claude binary: it spawns the
