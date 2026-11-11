@@ -126,6 +126,7 @@
     nodejs
     gnused
 
+    wl-clipboard
     pre-commit
 
     # .NET SDKs 11/10/9/8 combined (see dotnet-combined / combinedSdk below)
