@@ -176,6 +176,20 @@ assert withTracyTrackMemory -> withTracy; let
       ]
     else null;
 
+  # Runtime-only SDK set for the wrapped editor (user projects may target
+  # net11.0). Kept out of `combined-sdk`: the build restores GodotSharp with
+  # the highest SDK, and 11.0 wants 8.0.34 targeting packs we don't have.
+  runtime-sdk =
+    if withMono
+    then
+      dotnetCorePackages.combinePackages [
+        dotnet-sdk
+        dotnet-sdk_alt
+        dotnetCorePackages.sdk_10_0-source
+        dotnetCorePackages.sdk_11_0
+      ]
+    else null;
+
   dottedVersion = lib.replaceStrings ["-"] ["."] version + lib.optionalString withMono ".mono";
 
   harfbuzz-raster = harfbuzz.override {
@@ -516,7 +530,12 @@ assert withTracyTrackMemory -> withTracy; let
 
           # aliasing bugs exist with hardening+LTO
           # https://github.com/godotengine/godot/pull/104501
-          ccflags = "-fno-strict-aliasing";
+          ccflags =
+            "-fno-strict-aliasing"
+            # mingw GCC 16.2 ICEs (segfault in tree_ssa_iv_optimize /
+            # iv_ca_set_add_invs) on scene/resources/3d/primitive_meshes.cpp.
+            # Disable the induction-variable optimization pass as a workaround.
+            + lib.optionalString isWindows " -fno-ivopts";
           linkflags =
             "-Wl,--build-id"
             + lib.optionalString (withTracy && withTracyExportCapi)
@@ -996,7 +1015,8 @@ assert withTracyTrackMemory -> withTracy; let
             outputs
             meta
             ;
-          inherit unwrapped combined-sdk;
+          inherit unwrapped;
+          combined-sdk = runtime-sdk;
 
           dontUnpack = true;
           dontConfigure = true;

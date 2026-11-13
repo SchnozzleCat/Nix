@@ -450,8 +450,8 @@ in {
   programs.godot4-mono-schnozzlecat = {
     enable = true;
     version = "4.7";
-    rev = "7da4fae2b0456e15ec8b606396735c9a000f5d16";
-    hash = "sha256-gE6s+TLi4i0THXpL5xXNdqvjA2PlYQPtsUPnj+L0u8o=";
+    rev = "45964b6299b008362e001c68f2069a91e417caf7";
+    hash = "sha256-G+GmP/+LW6FoBunUwgZtGbW70Y/piUVff4dOuORkf84=";
     withTracy = true;
     withTracyTrackMemory = true;
     withTracyExportCapi = true;

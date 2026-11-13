@@ -16,6 +16,34 @@
     # });
     utillinux = prev.util-linux;
 
+    # .NET 11 GA (11.0.100) instead of nixpkgs' from-source 11.0.0-rc.3 SDK.
+    # Uses the binary release manifest in pkgs/dotnet-11/releases.nix (the
+    # nixpkgs 11.0/releases.nix regenerated for 11.0.0 / 11.0.100). Drop this
+    # once nixpkgs ships GA.
+    dotnetCorePackages = let
+      ga = prev.dotnetCorePackages.buildDotnetSdk ../pkgs/dotnet-11/releases.nix;
+    in
+      prev.dotnetCorePackages
+      // {
+        inherit (ga) sdk_11_0 sdk_11_0_1xx runtime_11_0 aspnetcore_11_0;
+      };
+
+    # Pin csharpier to 1.4.0 (nixpkgs ships 1.3.0). nugetHash is an argument
+    # of buildDotnetGlobalTool (not an attr), so re-invoke it instead of
+    # using overrideAttrs. Replace fakeHash with the "got:" hash from the
+    # first build.
+    csharpier = prev.buildDotnetGlobalTool {
+      pname = "csharpier";
+      version = "1.4.0";
+      executables = "csharpier";
+      # 1.4.0 ships tools/net10.0 + net11.0; the default SDK is older and
+      # reports DotnetToolSettings.xml as missing.
+      dotnet-sdk = final.dotnetCorePackages.sdk_11_0;
+      dotnet-runtime = final.dotnetCorePackages.sdk_11_0;
+      nugetHash = "sha256-lClVZLgx5Mg+SoC7BEy3xm/Tq0Ud+XPDLGnTYer9IGw=";
+      inherit (prev.csharpier) meta;
+    };
+
     # Match the host/IDD nightly build (B7-826) installed in the win11 VM.
     # The stable B7 client in nixpkgs has LGMP/IDD protocol skew against the
     # nightly host; pinning the client to the same commit keeps them in sync.
