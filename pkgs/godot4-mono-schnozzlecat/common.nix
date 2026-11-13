@@ -10,6 +10,7 @@
   exportTemplatesHash,
   fetchFromGitHub,
   fetchpatch,
+  fetchurl,
   fontconfig,
   freetype,
   glib,
@@ -109,6 +110,13 @@
   # editor binary (impossible without wine when cross-compiling).
   mono-glue ? null,
   withTracy ? false,
+  # Linux targets built "portably" like the official export templates:
+  # Godot's buildroot toolchain (old glibc sysroot, see buildroot-sdk.nix),
+  # all thirdparty libraries builtin and system libraries (X11, Wayland, GL,
+  # Vulkan, ALSA, Pulse, ...) dlopen'ed at runtime (use_sowrap). The result
+  # references nothing in /nix/store and runs on any glibc >= 2.34 distro;
+  # on NixOS itself run it with steam-run (or nix-ld).
+  portableTargets ? ["template_release"],
 }:
 assert lib.asserts.assertOneOf "withPrecision" withPrecision [
   "single"
@@ -202,8 +210,16 @@ assert withTracyTrackMemory -> withTracy; let
     harfbuzz = harfbuzz-raster;
   };
 
+  # Only built when some target is portable (the SDK is a ~150MB download).
+  buildroot-sdk = callPackage ./buildroot-sdk.nix {};
+  accesskit-sdk = fetchurl {
+    url = "https://github.com/godotengine/godot-accesskit-c-static/releases/download/0.21.2/accesskit-c-0.21.2.zip";
+    hash = "sha256-AqCGkbePxvj4j2VG6Ze5+QtOy+31ylxiHbqxRKSxiWQ=";
+  };
+
   mkTarget = target: let
     editor = target == "editor";
+    portable = !isWindows && lib.elem target portableTargets;
     suffix = lib.optionalString withMono "-mono" + lib.optionalString (!editor) "-template";
     binary = lib.concatStringsSep "." (
       [
@@ -441,7 +457,10 @@ assert withTracyTrackMemory -> withTracy; let
         ++ lib.optional (editor && !isWindows) "man";
       # Splitting debug info uses objcopy against the built binary; that
       # doesn't work for PE (windows) binaries with the Linux host objcopy.
-      separateDebugInfo = !isWindows;
+      # Portable builds have no Nix bintools (stdenvNoCC).
+      separateDebugInfo = !isWindows && !portable;
+
+      # (portable-only attrs: see `portableAttrs` below)
 
       __structuredAttrs = true;
 
@@ -458,7 +477,21 @@ assert withTracyTrackMemory -> withTracy; let
       };
 
       preConfigure =
+        lib.optionalString portable ''
+          # The buildroot toolchain (gcc, binutils, pkg-config, wayland-scanner)
+          # must win over everything else on PATH.
+          export PATH=${buildroot-sdk}/bin:$PATH
+          echo "Portable build with $(gcc --version | head -1)"
+
+          # AccessKit (screen reader support), statically linked like in the
+          # official builds (misc/scripts/install_accesskit.py).
+          # (Not its default bin/build_deps/: bin/ is installed as-is.)
+          mkdir -p nix-deps
+          unzip -q ${accesskit-sdk} -d nix-deps
+          mv nix-deps/accesskit-c-* nix-deps/accesskit
+          sconsFlagsArray+=("accesskit_sdk_path=$PWD/nix-deps/accesskit")
         ''
+        + ''
           echo "Extracting Steamworks SDK..."
           mkdir -p modules/godotsteam/sdk
           unzip -o ${sdk} -d modules/godotsteam
@@ -504,7 +537,7 @@ assert withTracyTrackMemory -> withTracy; let
       # Godot 4.7 with system HarfBuzz needs explicit raster linkage, but this
       # should be resolved upstream with 4.7.1.
       # See https://github.com/godotengine/godot/pull/120568
-      preBuild = lib.optionalString (!isWindows && lib.versionAtLeast version "4.7") ''
+      preBuild = lib.optionalString (!isWindows && !portable && lib.versionAtLeast version "4.7") ''
         export NIX_LDFLAGS="$NIX_LDFLAGS -lharfbuzz-raster"
       '';
 
@@ -524,7 +557,12 @@ assert withTracyTrackMemory -> withTracy; let
           # Tracy builds always keep symbols: they are needed for Tracy's
           # sampling features to work.
           # https://docs.godotengine.org/en/stable/engine_details/development/profiling/tracy.html
-          debug_symbols = withTracy || !isWindows || target == "template_debug";
+          # Portable builds have no separateDebugInfo, so symbols would stay in
+          # the shipped binary; keep them only where needed.
+          debug_symbols =
+            if portable
+            then withTracy || target == "template_debug"
+            else withTracy || !isWindows || target == "template_debug";
 
           module_mono_enabled = withMono;
 
@@ -535,7 +573,10 @@ assert withTracyTrackMemory -> withTracy; let
             # mingw GCC 16.2 ICEs (segfault in tree_ssa_iv_optimize /
             # iv_ca_set_add_invs) on scene/resources/3d/primitive_meshes.cpp.
             # Disable the induction-variable optimization pass as a workaround.
-            + lib.optionalString isWindows " -fno-ivopts";
+            + lib.optionalString isWindows " -fno-ivopts"
+            # Sysroot header paths would otherwise end up in the DWARF info
+            # as store references (rejected by outputChecks).
+            + lib.optionalString portable " -ffile-prefix-map=${buildroot-sdk}=/buildroot-sdk";
           linkflags =
             "-Wl,--build-id"
             + lib.optionalString (withTracy && withTracyExportCapi)
@@ -580,7 +621,15 @@ assert withTracyTrackMemory -> withTracy; let
             wayland = withWayland; # Compile with Wayland support
             x11 = withX11; # Compile with X11 support
 
-            use_sowrap = false;
+            # Portable: dlopen system libraries at runtime (official default).
+            use_sowrap = portable;
+          }
+          // lib.optionalAttrs portable {
+            # (accesskit_sdk_path is added as an absolute path in
+            # preConfigure, see sconsFlagsArray.)
+            # Keep build paths out of the debug info (Tracy builds keep
+            # symbols); see ccflags for the SDK's own paths.
+            debug_paths_relative = true;
           }
         )
         // lib.optionalAttrs (lib.versionOlder version "4.4") {
@@ -658,7 +707,8 @@ assert withTracyTrackMemory -> withTracy; let
         # The windows build uses all builtin (vendored) libraries, since
         # cross-compiled system libraries for mingw are not available in
         # nixpkgs.
-        + lib.optionalString (!isWindows) ''
+        # Portable builds keep Godot's builtin (vendored) thirdparty libraries.
+        + lib.optionalString (!isWindows && !portable) ''
           # disable all builtin libraries by default
           perl -pi -e '{ $r |= s:(opts.Add\(BoolVariable\("builtin_.*, )True(\)\)):\1False\2: } END { exit ($r != 1) }' SConstruct
         ''
@@ -667,7 +717,8 @@ assert withTracyTrackMemory -> withTracy; let
             --replace-fail /usr/include/recastnavigation ${lib.escapeShellArg (lib.getDev recastnavigation)}/include/recastnavigation
 
         ''
-        + lib.optionalString (!isWindows) ''
+        # Portable builds resolve GL/Vulkan by soname from the host system.
+        + lib.optionalString (!isWindows && !portable) ''
           ${lib.optionalString (libGL != null) ''
             substituteInPlace thirdparty/glad/egl.c \
               --replace-fail \
@@ -701,7 +752,8 @@ assert withTracyTrackMemory -> withTracy; let
           pkg-config
         ];
 
-      buildInputs =
+      # Portable builds take everything from the buildroot sysroot/builtins.
+      buildInputs = lib.optionals (!portable) (
         lib.optionals (!isWindows) [
           embree
           enet
@@ -754,7 +806,8 @@ assert withTracyTrackMemory -> withTracy; let
             glib
           ]
           ++ lib.optional withUdev udev
-        );
+        )
+      );
 
       nativeBuildInputs =
         [
@@ -764,9 +817,12 @@ assert withTracyTrackMemory -> withTracy; let
         ]
         ++ lib.optionals (!isWindows) [
           installShellFiles
+        ]
+        # (portable: the buildroot SDK ships its own sysroot-aware ones)
+        ++ lib.optionals (!isWindows && !portable) [
           pkg-config
         ]
-        ++ lib.optionals (!isWindows && withWayland) [wayland-scanner]
+        ++ lib.optionals (!isWindows && !portable && withWayland) [wayland-scanner]
         ++ lib.optionals (editor && withMono) [
           combined-sdk
         ]
@@ -809,6 +865,11 @@ assert withTracyTrackMemory -> withTracy; let
         # logic will include it in exported games alongside steam_api64.dll).
         + lib.optionalString (!editor && isWindows) ''
           cp modules/godotsteam/sdk/redistributable_bin/win64/steam_api64.dll bin/
+        ''
+        # Portable templates find libsteam_api.so via RPATH $ORIGIN; ship it
+        # next to the binary (exported games need it beside the executable).
+        + lib.optionalString portable ''
+          cp modules/godotsteam/sdk/redistributable_bin/linux64/libsteam_api.so bin/
         '';
 
       installPhase =
@@ -979,7 +1040,22 @@ assert withTracyTrackMemory -> withTracy; let
       };
     };
 
-    unwrapped = stdenv.mkDerivation (
+    # Portable builds: keep the binary exactly as linked by the buildroot
+    # toolchain (interpreter /lib64/ld-linux-x86-64.so.2, RPATH $ORIGIN for
+    # libsteam_api.so; no RPATH shrinking/stripping by Nix), and fail the
+    # build if anything still points into the store. Merged in only for
+    # portable targets, so the other derivations (e.g. the editor) stay
+    # unchanged and don't rebuild.
+    portableAttrs = {
+      dontFixup = true;
+      # (__structuredAttrs: top-level allowedReferences would be ignored)
+      outputChecks.out.allowedReferences = ["out"];
+    };
+
+    # Portable builds must not use the Nix cc-wrapper (it injects store
+    # paths, the Nix glibc and its dynamic linker); the toolchain comes from
+    # the buildroot SDK on PATH instead.
+    unwrapped = (if portable then stdenvNoCC else stdenv).mkDerivation (
       if (editor && withMono)
       then
         dotnetCorePackages.addNuGetDeps {
@@ -998,6 +1074,8 @@ assert withTracyTrackMemory -> withTracy; let
           };
         }
         attrs
+      else if portable
+      then finalAttrs: attrs finalAttrs // portableAttrs
       else attrs
     );
 
