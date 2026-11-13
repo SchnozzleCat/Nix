@@ -242,7 +242,13 @@ in {
         nugetPackages =
           lib.optionals
           config.programs.godot4-mono-schnozzlecat.enable
-          config.programs.godot4-mono-schnozzlecat.nugetPackages;
+          config.programs.godot4-mono-schnozzlecat.nugetPackages
+          # The 2dog feed (tool, engine, natives, fork Godot.NET.Sdk) for
+          # `dnx 2dog ...` / building 2dog hosts inside the jail.
+          ++ lib.optionals
+          (config.programs.godot4-mono-schnozzlecat.enable
+            && config.programs.godot4-mono-schnozzlecat.twodog.enable)
+          [config.programs.godot4-mono-schnozzlecat.twodog.package];
       })
 
       # OS
@@ -455,6 +461,9 @@ in {
     withTracy = true;
     withTracyTrackMemory = true;
     withTracyExportCapi = true;
+    # 2dog (Godot as a .NET library) built against the fork; `2dog-fork`
+    # runs its CLI (dnx), see pkgs/2dog-schnozzlecat.
+    twodog.enable = true;
   };
 
   programs.imv = {

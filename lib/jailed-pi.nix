@@ -383,19 +383,40 @@ in
           # (the godot build moves GodotSharp/Tools/nupkgs there) plus
           # any libexec subdir shipping its own set (e.g. the locally
           # versioned Godot.NET.Sdk nupkgs pushed via --push-nupkgs-local).
-          for dir in "$pkg"/share/nuget/source "$pkg"/libexec; do
+          # The 2dog fork build ships a flat feed in share/2dog-feed.
+          for dir in "$pkg"/share/nuget/source "$pkg"/share/2dog-feed "$pkg"/libexec; do
             [ -d "$dir" ] || continue
             find "$dir" -type f -name '*.nupkg' \
               -exec cp {} "$out"/nuget/source/ \;
           done
         done
-        cat >"$out"/nuget/NuGet.Config <<'EOF'
+        # With the 2dog fork feed in the bundle, add package source mapping:
+        # its 2dog/Godot packages must never be taken from nuget.org's
+        # same-named public packages (https://2dog.dev/godot-forks.html).
+        # Without it, keep the plain config (stock Godot projects can still
+        # restore their Godot.NET.Sdk from nuget.org).
+        mapping=""
+        if compgen -G "$out/nuget/source/2dog.*.nupkg" >/dev/null; then
+          mapping='
+          <packageSourceMapping>
+            <packageSource key="jail-godot-nuget">
+              <package pattern="2dog" />
+              <package pattern="2dog.*" />
+              <package pattern="Godot.*" />
+              <package pattern="GodotSharp*" />
+            </packageSource>
+            <packageSource key="nuget.org">
+              <package pattern="*" />
+            </packageSource>
+          </packageSourceMapping>'
+        fi
+        cat >"$out"/nuget/NuGet.Config <<EOF
         <?xml version="1.0" encoding="utf-8"?>
         <configuration>
           <packageSources>
             <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
             <add key="jail-godot-nuget" value="/nuget/source" />
-          </packageSources>
+          </packageSources>$mapping
         </configuration>
         EOF
       '';

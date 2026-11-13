@@ -117,6 +117,23 @@
   # references nothing in /nix/store and runs on any glibc >= 2.34 distro;
   # on NixOS itself run it with steam-run (or nix-ld).
   portableTargets ? ["template_release"],
+  # --- 2dog (libgodot) support, see pkgs/2dog-schnozzlecat ---------------
+  # Use this source tree instead of fetching SchnozzleCat/godot@rev (e.g. the
+  # fork merged into 2dog's libgodot tree). `rev` stays the fork's rev, used
+  # for the version status.
+  srcOverride ? null,
+  # Extra SCons flags (attrset, same encoding as the built-in ones), applied
+  # last so they win, e.g. {library_type = "shared_library";}.
+  extraSconsFlags ? {},
+  # Build only the binary; skip glue generation, the C# assemblies, the
+  # desktop entry/man page/nuget layout and the export-template symlinks.
+  # The derivation then installs bin/ as-is into $out/bin (see 2dog).
+  rawOutput ? false,
+  # The 2dog tree links harfbuzz-vector as well (platform/linuxbsd/detect.py).
+  withHarfbuzzVector ? false,
+  # Build this SCons target as the main derivation instead of the editor
+  # (only meaningful with rawOutput, e.g. 2dog's template_release libgodot).
+  rawTarget ? "editor",
 }:
 assert lib.asserts.assertOneOf "withPrecision" withPrecision [
   "single"
@@ -200,10 +217,11 @@ assert withTracyTrackMemory -> withTracy; let
 
   dottedVersion = lib.replaceStrings ["-"] ["."] version + lib.optionalString withMono ".mono";
 
-  harfbuzz-raster = harfbuzz.override {
-    withRaster = lib.versionAtLeast version "4.7";
-    withCairo = lib.versionAtLeast version "4.7";
-  };
+  harfbuzz-raster = harfbuzz.override ({
+      withRaster = lib.versionAtLeast version "4.7";
+      withCairo = lib.versionAtLeast version "4.7";
+    }
+    // lib.optionalAttrs withHarfbuzzVector {withVector = true;});
 
   harfbuzz-icu = harfbuzz-raster.override {
     withIcu = true;
@@ -443,22 +461,28 @@ assert withTracyTrackMemory -> withTracy; let
       inherit version;
       inherit rev;
 
-      src = fetchFromGitHub {
-        owner = "SchnozzleCat";
-        repo = "godot";
-        inherit rev;
-        inherit hash;
-      };
+      src =
+        if srcOverride != null
+        then srcOverride
+        else
+          fetchFromGitHub {
+            owner = "SchnozzleCat";
+            repo = "godot";
+            inherit rev;
+            inherit hash;
+          };
 
       outputs =
         [
           "out"
         ]
-        ++ lib.optional (editor && !isWindows) "man";
+        ++ lib.optional (editor && !isWindows && !rawOutput) "man";
       # Splitting debug info uses objcopy against the built binary; that
       # doesn't work for PE (windows) binaries with the Linux host objcopy.
-      # Portable builds have no Nix bintools (stdenvNoCC).
-      separateDebugInfo = !isWindows && !portable;
+      # Portable builds have no Nix bintools (stdenvNoCC). rawOutput (2dog
+      # libgodot) builds ship their binaries in NuGet packages and need no
+      # separate debug output.
+      separateDebugInfo = !isWindows && !portable && !rawOutput;
 
       # (portable-only attrs: see `portableAttrs` below)
 
@@ -507,7 +531,7 @@ assert withTracyTrackMemory -> withTracy; let
           cp -r ${mono-glue}/GodotSharp/GodotSharp/Generated modules/mono/glue/GodotSharp/GodotSharp/
           cp -r ${mono-glue}/GodotSharp/GodotSharpEditor/Generated modules/mono/glue/GodotSharp/GodotSharpEditor/
         ''
-        + lib.optionalString (editor && withMono) ''
+        + lib.optionalString (editor && withMono && nugetDeps != null) ''
 
           # TODO: avoid pulling in dependencies of windows-only project
           dotnet sln modules/mono/editor/GodotTools/GodotTools.sln \
@@ -654,6 +678,7 @@ assert withTracyTrackMemory -> withTracy; let
           profiler_sample_callstack = withTracySampleCallstack;
           profiler_track_memory = withTracyTrackMemory;
         }
+        // extraSconsFlags
       );
 
       enableParallelBuilding = true;
@@ -831,7 +856,7 @@ assert withTracyTrackMemory -> withTracy; let
         ];
 
       postBuild =
-        lib.optionalString (editor && withMono)
+        lib.optionalString (editor && withMono && !rawOutput)
           # The steam_api library must live next to the built binary.
           (
             if isWindows
@@ -842,7 +867,7 @@ assert withTracyTrackMemory -> withTracy; let
               cp modules/godotsteam/sdk/redistributable_bin/linux64/libsteam_api.so bin/libsteam_api.so
             ''
           )
-        + lib.optionalString (editor && withMono) (
+        + lib.optionalString (editor && withMono && !rawOutput) (
           if isWindows
           then
             # Glue was pre-generated on Linux (see the `mono-glue` argument);
@@ -863,7 +888,7 @@ assert withTracyTrackMemory -> withTracy; let
         # The windows export templates also link against steam_api64, so the
         # runtime DLL has to be shipped next to them (the editor's export
         # logic will include it in exported games alongside steam_api64.dll).
-        + lib.optionalString (!editor && isWindows) ''
+        + lib.optionalString (!editor && isWindows && !rawOutput) ''
           cp modules/godotsteam/sdk/redistributable_bin/win64/steam_api64.dll bin/
         ''
         # Portable templates find libsteam_api.so via RPATH $ORIGIN; ship it
@@ -873,7 +898,14 @@ assert withTracyTrackMemory -> withTracy; let
         '';
 
       installPhase =
-        if isWindows
+        if rawOutput
+        then ''
+          runHook preInstall
+          mkdir -p "$out"/bin
+          cp -r bin/. "$out"/bin/
+          runHook postInstall
+        ''
+        else if isWindows
         then
           if editor
           then
@@ -1056,7 +1088,7 @@ assert withTracyTrackMemory -> withTracy; let
     # paths, the Nix glibc and its dynamic linker); the toolchain comes from
     # the buildroot SDK on PATH instead.
     unwrapped = (if portable then stdenvNoCC else stdenv).mkDerivation (
-      if (editor && withMono)
+      if (editor && withMono && nugetDeps != null)
       then
         dotnetCorePackages.addNuGetDeps {
           inherit nugetDeps;
@@ -1080,7 +1112,7 @@ assert withTracyTrackMemory -> withTracy; let
     );
 
     wrapper =
-      if (editor && withMono && !isWindows)
+      if (editor && withMono && !isWindows && !rawOutput)
       then
         stdenv.mkDerivation (finalAttrs: {
           __structuredAttrs = true;
@@ -1151,4 +1183,8 @@ assert withTracyTrackMemory -> withTracy; let
   in
     wrapper;
 in
-  mkTarget "editor"
+  mkTarget (
+    if rawOutput
+    then rawTarget
+    else "editor"
+  )

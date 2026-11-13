@@ -66,14 +66,52 @@ with lib; let
   winTracyTemplateDir = "${winEditor.export-template}/share/godot/export_templates/${version}.mono";
   winTracyTemplateDebugDir = "${winEditor.export-template-debug}/share/godot/export_templates/${version}.mono";
 
-  nugetConfig = ''
-    <?xml version="1.0" encoding="utf-8"?>
-    <configuration>
-      <packageSources>
-        <add key="${version}-${suffix}" value="${pkg}/libexec/${suffix}"/>
-      </packageSources>
-    </configuration>
-  '';
+  # 2dog (Godot as a .NET library, https://2dog.dev) built against the same
+  # fork rev + Tracy flags: a local NuGet feed (pkgs/2dog-schnozzlecat).
+  twodogCfg = cfg.twodog;
+  twodogPkg = pkgs.callPackage ../../pkgs/2dog-schnozzlecat {
+    steamworks-sdk = inputs.steamworks-sdk;
+    forkRev = cfg.rev;
+    forkHash = cfg.hash;
+    inherit (cfg) withTracy withTracyTrackMemory withTracyExportCapi;
+    inherit (twodogCfg) withWindows withWeb withWebThreads withWebGpu;
+  };
+  twodogFeed = "${twodogPkg}/share/2dog-feed";
+
+  # With 2dog enabled, package source mapping makes the 2dog/Godot packages
+  # resolve ONLY from the local feeds (never from nuget.org's identically
+  # named public packages), per https://2dog.dev/godot-forks.html. All
+  # other packages keep coming from nuget.org.
+  nugetConfig =
+    if !twodogCfg.enable
+    then ''
+      <?xml version="1.0" encoding="utf-8"?>
+      <configuration>
+        <packageSources>
+          <add key="${version}-${suffix}" value="${pkg}/libexec/${suffix}"/>
+        </packageSources>
+      </configuration>
+    ''
+    else ''
+      <?xml version="1.0" encoding="utf-8"?>
+      <configuration>
+        <packageSources>
+          <add key="${version}-${suffix}" value="${pkg}/libexec/${suffix}"/>
+          <add key="2dog-${suffix}" value="${twodogFeed}"/>
+        </packageSources>
+        <packageSourceMapping>
+          <packageSource key="2dog-${suffix}">
+            <package pattern="2dog"/>
+            <package pattern="2dog.*"/>
+            <package pattern="Godot.*"/>
+            <package pattern="GodotSharp*"/>
+          </packageSource>
+          <packageSource key="nuget.org">
+            <package pattern="*"/>
+          </packageSource>
+        </packageSourceMapping>
+      </configuration>
+    '';
 in {
   options.programs.godot4-mono-schnozzlecat = {
     enable = mkEnableOption (lib.mdDoc ''Godot4-mono SchnozzleCat'');
@@ -172,6 +210,49 @@ in {
         Tracy session instead of creating its own profiler client.
       '';
     };
+
+    twodog = {
+      enable = mkEnableOption (lib.mdDoc ''
+        2dog (https://2dog.dev) built against this fork: a local NuGet feed
+        with the `2dog` tool, templates, engine and natives (linux-x64,
+        win-x64, browser-wasm) plus the fork's Godot.NET.Sdk, wired into
+        ~/NuGet.Config with package source mapping, so `dnx 2dog new/add
+        ...`, `dotnet run` and `dotnet publish` of the hosts use the fork
+        (the 2dog/Godot package ids resolve from the local feed only). Also provides the .NET wasm-tools workload packs
+        for browser hosts (DOTNETSDK_WORKLOAD_PACK_ROOTS), since workloads
+        cannot be installed into the Nix store SDK.
+      '');
+      withWindows = mkOption {
+        type = types.bool;
+        default = true;
+        description = "Build the win-x64 natives (MinGW cross build). Without, 2dog.win-x64 is an empty stub.";
+      };
+      withWeb = mkOption {
+        type = types.bool;
+        default = true;
+        description = "Build the browser-wasm natives (emscripten 3.1.56 static libgodot).";
+      };
+      withWebThreads = mkOption {
+        type = types.bool;
+        default = true;
+        description = "Also build the multithreaded web payload (WasmEnableThreads hosts).";
+      };
+      withWebGpu = mkOption {
+        type = types.bool;
+        default = true;
+        description = "Include the WebGPU rendering driver (native Dawn on desktop, emdawnwebgpu on web), like 2dog's official builds.";
+      };
+      package = mkOption {
+        type = types.package;
+        readOnly = true;
+        default = twodogPkg;
+        description = lib.mdDoc ''
+          The 2dog NuGet feed package (`share/2dog-feed`). Its
+          `passthru` exposes `twodogVersion` (the version `dnx 2dog@...`
+          takes), `godotSdkVersion` and the individual native builds.
+        '';
+      };
+    };
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -216,6 +297,29 @@ in {
     })
     (mkIf cfg.installWindowsEditor {
       home.file.".local/share/godot/windows-editor".source = winEditor;
+    })
+    (mkIf twodogCfg.enable {
+      # The global ~/NuGet.Config written above is the first config NuGet
+      # reads after the project's own ones; it already carries the 2dog
+      # feed + mapping (see nugetConfig).
+      #
+      # wasm-tools for `dotnet publish` of browser-wasm hosts: the SDK picks
+      # workload packs up from these roots even when `dotnet workload list`
+      # shows nothing (2dog's `add --web` merely prints a hint then).
+      home.sessionVariables.DOTNETSDK_WORKLOAD_PACK_ROOTS = "${twodogPkg.passthru.wasmPackRoot}";
+      # (fish does not read home.sessionVariables)
+      programs.fish.interactiveShellInit = ''
+        set -gx DOTNETSDK_WORKLOAD_PACK_ROOTS ${twodogPkg.passthru.wasmPackRoot}
+      '';
+      # `dnx 2dog ...` already resolves the fork's tool (source mapping:
+      # the `2dog` id only comes from the local feed). `2dog-fork` pins the
+      # exact version for when the feed holds several builds (it doesn't,
+      # but project-level nuget.configs can add other feeds).
+      home.packages = [
+        (pkgs.writeShellScriptBin "2dog-fork" ''
+          exec dotnet dnx --yes "2dog@${twodogPkg.passthru.twodogVersion}" "$@"
+        '')
+      ];
     })
   ]);
 }
