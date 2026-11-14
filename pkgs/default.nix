@@ -11,6 +11,13 @@ in {
   godot-custom-windows-editor = godotPkgs.godotPackages_4_7.godot-mono-windows;
   godot-custom-windows-template = godotPkgs.godotPackages_4_7.godot-mono-windows-template;
   godot-custom-windows-template-debug = godotPkgs.godotPackages_4_7.godot-mono-windows-template-debug;
+
+  # 2dog (Godot as a .NET library, https://2dog.dev) built against the fork:
+  # a local NuGet feed with the 2dog tool/templates/engine/natives and the
+  # fork's Godot.NET.Sdk. Wired up by programs.godot4-mono-schnozzlecat.twodog.
+  twodog-custom = pkgs.callPackage ./2dog-schnozzlecat {
+    steamworks-sdk = inputs.steamworks-sdk;
+  };
   raspberrypifw-uart10 = pkgs.callPackage ./raspberrypifw-uart10 {};
 
   # bwrap-sandboxed pi coding agent (function, not a derivation -- call it:
