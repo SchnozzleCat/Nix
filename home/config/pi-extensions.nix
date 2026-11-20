@@ -47,24 +47,6 @@
     #     leaves pi's built-in /mcp (reads <agent-dir>/mcp.json) in charge.
     pruned = ["extensions/permissions" "extensions/mcp" "workflows"];
   }
-  # Claude Code subscription provider. Unlike pi-claude-bridge it does
-  # NOT depend on the Agent SDK's bundled claude binary: it spawns the
-  # real `claude` CLI (`claude -p`, so PATH/name configurable via
-  # PI_CLAUDE_CODE_COMMAND). `claude-code` (nixpkgs; autoPatchelfed
-  # official bun binary) is added to the jail's extraPkgs in
-  # home/linus.nix, and ~/.claude(+.json) are rw-bound in
-  # lib/jailed-pi.nix so the `claude auth login` state persists.
-  # Dependency-free (peerDeps only), hence no npmDepsHash.
-  {
-    name = "earendil-works/pi-claude-code";
-    version = "d5b5e04c314d3452d357174d16d10dda34daa2d2"; # main, 2026-11-05
-    # Drop PR #23 (CLAUDE_CODE_ENTRYPOINT=pi-agent): with Anthropic's
-    # extra-usage rule live, that unrecognized entrypoint gets every
-    # request classified as third-party and blocked; bare sdk-cli (the
-    # default for headless runs) still draws from plan limits. Verified
-    # applying cleanly against the pin. See the comment in the patch and
-    # repo issue #22. Revisit when upstream settles the entrypoint story.
-    patches = [./patches/pi-claude-code-drop-entrypoint.patch];
-    hash = "sha256-86zfGr9YoM+I/PmWHDJb8AbcxhYC1m8aOeghJjvN414=";
-  }
+  # NOTE: earendil-works/pi-claude-code (+ the `claude` CLI) is no longer
+  # listed here: lib/jailed-pi.nix bakes both into every jail.
 ]

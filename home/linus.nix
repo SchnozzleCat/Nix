@@ -193,9 +193,6 @@ in {
         extraPkgs =
           [
             inputs.aspire-cli.packages.${pkgs.stdenv.hostPlatform.system}.default
-            # claude binary for the pi-claude-code extension (PATH comes only
-            # from the jail closure, see lib/jailed-pi.nix).
-            pkgs.claude-code
           ]
           # The custom godot fork itself: the exact editor derivation the
           # home module installs on the host (identical rev + Tracy flags to

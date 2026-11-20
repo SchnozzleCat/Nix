@@ -49,6 +49,31 @@
   # will break the build (see the 0.80.x -> 0.84.4 packaging rework).
   pi-pkg = pkgs.pi-coding-agent;
 
+  # Claude Code support, baked into EVERY jail (host and devshells alike):
+  # the `claude` CLI on PATH plus the pi-claude-code extension that spawns
+  # it and provides the Claude models. `claude-code` is unfree; consumers
+  # using plain `nixpkgs.legacyPackages` would fail to evaluate, so unless
+  # their pkgs already allows unfree, re-import nixpkgs allowing ONLY it.
+  claude-code =
+    if pkgs.config.allowUnfree or false
+    then pkgs.claude-code
+    else
+      (import pkgs.path {
+        system = pkgs.stdenv.hostPlatform.system;
+        config.allowUnfreePredicate = p: lib.getName p == "claude-code";
+      }).claude-code;
+
+  # Built via pkgs.callPackage so it works for external consumers too
+  # (they only pass pkgs/lib/jail-nix).
+  claudeCodeExtension =
+    (pkgs.callPackage ./pi-extension.nix {}).buildPiExtension {
+      name = "earendil-works/pi-claude-code";
+      version = "d5b5e04c314d3452d357174d16d10dda34daa2d2"; # main, 2026-11-05
+      # Drop PR #23 (CLAUDE_CODE_ENTRYPOINT=pi-agent): see the patch header.
+      patches = [../home/config/patches/pi-claude-code-drop-entrypoint.patch];
+      hash = "sha256-86zfGr9YoM+I/PmWHDJb8AbcxhYC1m8aOeghJjvN414=";
+    };
+
   # Common packages available to the jailed pi agent.
   #
   # Lifted from the existing pi-sandbox container image
@@ -126,8 +151,12 @@
     nodejs
     gnused
 
+    # claude CLI for the pi-claude-code extension (see claude-code above)
+    claude-code
+
     wl-clipboard
     pre-commit
+    gh
 
     # .NET SDKs 11/10/9/8 combined (see dotnet-combined / combinedSdk below)
     combinedSdk
@@ -338,9 +367,10 @@ in
     extArgs =
       pkgs.lib.concatMapStringsSep " "
       (p: "-e ${p}")
-      extensionPackages;
+      allExtensions;
+    allExtensions = [claudeCodeExtension] ++ extensionPackages;
     program =
-      if extensionPackages == []
+      if allExtensions == []
       then pi-pkg
       else
         pkgs.writeShellApplication {
