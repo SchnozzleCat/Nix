@@ -62,6 +62,7 @@ in {
       zf
       jdk
       imv
+      plantuml
       (buildDotnetGlobalTool {
         pname = "EasyDotnet";
         version = "3.4.31";

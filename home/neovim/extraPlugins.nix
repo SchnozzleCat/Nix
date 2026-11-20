@@ -10,16 +10,23 @@ with pkgs.vimPlugins; [
     src = pkgs.fetchFromGitLab {
       owner = "itaranto";
       repo = "preview.nvim";
-      rev = "b97da7fb9444701afb30f0949a35bdf01a8c5c28";
-      hash = "sha256-oY/vjythAKaOjlLNTil0uooDrhW2dakvpCpgnRsCLGc=";
+      rev = "94a3f893c56556beaa9a9b867f2f3a5bd0315d39";
+      hash = "sha256-Uyqh12ijSvJeo2jeLVNrbN6x/joxN1yQBxv01UNXi3E=";
     };
     spec.after = ''
       function()
+        vim.filetype.add({ extension = { puml = 'plantuml', pu = 'plantuml', plantuml = 'plantuml' } })
         require('preview').setup {
           previewers_by_ft = {
               plantuml = {
                 name = 'plantuml_svg',
-                renderer = { type = 'command', opts = { cmd = { 'imv' } } },
+                renderer = { type = 'imv' },
+              },
+            },
+            previewers = {
+              plantuml_svg = {
+                -- Defaults include -Smonochrome=reverse, which forces black & white.
+                args = { '-pipe', '-tsvg', '-darkmode' },
               },
             },
             render_on_write = true,
