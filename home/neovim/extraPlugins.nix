@@ -132,6 +132,12 @@ with pkgs.vimPlugins; [
       end
     '';
   }
+
+  {
+    name = "georgeguimaraes/review.nvim";
+    version = "v1.12.0";
+    hash = "sha256-Rjqbcp7LS/LD2D3sctJrMytbYeO1fjtArQBAxo0g0L4=";
+  }
   {
     name = "iofq/dart.nvim";
     version = "0.1.4";
