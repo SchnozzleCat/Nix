@@ -16,6 +16,18 @@
     # });
     utillinux = prev.util-linux;
 
+    # virtualenv 21.14.12 imports `packaging` but nixpkgs doesn't list it as a
+    # dependency -> ModuleNotFoundError when pre-commit (which hardcodes
+    # virtualenv's store path) installs python hooks. Patch virtualenv only in
+    # pre-commit's private package set so nothing else rebuilds.
+    pre-commit = prev.pre-commit.override {
+      python3Packages = prev.python3Packages.overrideScope (pyFinal: pyPrev: {
+        virtualenv = pyPrev.virtualenv.overridePythonAttrs (old: {
+          dependencies = (old.dependencies or []) ++ [pyFinal.packaging];
+        });
+      });
+    };
+
     # Pin csharpier to 1.4.0 (nixpkgs ships 1.3.0). nugetHash is an argument
     # of buildDotnetGlobalTool (not an attr), so re-invoke it instead of
     # using overrideAttrs. Replace fakeHash with the "got:" hash from the
