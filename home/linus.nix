@@ -463,7 +463,7 @@ in {
     withTracyExportCapi = true;
     # 2dog (Godot as a .NET library) built against the fork; `2dog-fork`
     # runs its CLI (dnx), see pkgs/2dog-schnozzlecat.
-    twodog.enable = true;
+    # twodog.enable = true;
   };
 
   programs.imv = {
