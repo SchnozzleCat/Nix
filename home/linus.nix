@@ -307,6 +307,7 @@ in {
       proton-vpn
       nvtopPackages.full
       csharpier
+      tuicr
 
       # Shell Scripts
       (writeShellApplication {
