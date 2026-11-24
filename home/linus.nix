@@ -288,6 +288,7 @@ in {
       bruno
       thunar
       sone
+      material-maker
       kubectl
       fswatch
       lmstudio

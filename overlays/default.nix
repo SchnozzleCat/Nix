@@ -71,6 +71,25 @@
       buildInputs = old.buildInputs ++ [final.fuse3 final.libunwind final.elfutils];
     });
 
+    # material-maker segfaults on launch: a patchelf regression corrupts the
+    # binary when --set-interpreter and --set-rpath run in one call
+    # (nixpkgs#583880, patchelf#672). Patch RPATH first, then the interpreter
+    # (nixpkgs PR #579438). Drop once the patchelf revert reaches unstable.
+    material-maker = prev.material-maker.overrideAttrs (old: {
+      fixupPhase = ''
+        runHook preFixup
+
+        patchelf \
+          --set-rpath ${final.lib.makeLibraryPath old.buildInputs} \
+          $out/share/material-maker/material-maker
+        patchelf \
+          --set-interpreter '${final.stdenv.cc.bintools.dynamicLinker}' \
+          $out/share/material-maker/material-maker
+
+        runHook postFixup
+      '';
+    });
+
     # inline-snapshot 0.32.5's own test suite fails 3 tests on this nixpkgs
     # rev, which cascades into fastapi and openapi-core (both use it as a
     # check input) and ultimately breaks the rest.nvim python extra that
