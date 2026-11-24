@@ -19,6 +19,7 @@ in {
     steamworks-sdk = inputs.steamworks-sdk;
   };
   raspberrypifw-uart10 = pkgs.callPackage ./raspberrypifw-uart10 {};
+  spine = pkgs.callPackage ./spine {};
 
   # bwrap-sandboxed pi coding agent (function, not a derivation -- call it:
   # `pkgs.makeJailedPi {extensionPackages = [...];}`). Shared implementation

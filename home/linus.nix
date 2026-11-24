@@ -270,6 +270,7 @@ in {
       dotnet
       spacetimedb
       blockbench
+      spine # Spine 2D launcher, pkgs/spine
 
       jetbrains.datagrip
       inputs.hyprland-qtutils.packages."${pkgs.stdenv.hostPlatform.system}".default
