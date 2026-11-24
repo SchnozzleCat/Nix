@@ -456,11 +456,11 @@ in {
   programs.godot4-mono-schnozzlecat = {
     enable = true;
     version = "4.7";
-    rev = "45964b6299b008362e001c68f2069a91e417caf7";
-    hash = "sha256-G+GmP/+LW6FoBunUwgZtGbW70Y/piUVff4dOuORkf84=";
-    withTracy = true;
-    withTracyTrackMemory = true;
-    withTracyExportCapi = true;
+    rev = "cccf1e596139054a0d097aa02dc56380315a9d6e";
+    hash = "";
+    # withTracy = true;
+    # withTracyTrackMemory = true;
+    # withTracyExportCapi = true;
     # 2dog (Godot as a .NET library) built against the fork; `2dog-fork`
     # runs its CLI (dnx), see pkgs/2dog-schnozzlecat.
     # twodog.enable = true;

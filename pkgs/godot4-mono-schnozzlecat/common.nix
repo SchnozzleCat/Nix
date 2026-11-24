@@ -8,7 +8,7 @@
   embree,
   enet,
   exportTemplatesHash,
-  fetchFromGitHub,
+  fetchGit ? builtins.fetchGit,
   fetchpatch,
   fetchurl,
   fontconfig,
@@ -465,11 +465,11 @@ assert withTracyTrackMemory -> withTracy; let
         if srcOverride != null
         then srcOverride
         else
-          fetchFromGitHub {
-            owner = "SchnozzleCat";
-            repo = "godot";
+          # Local checkout at the pinned rev (clean tree, no build artifacts).
+          # The rev must exist in ~/Repositories/godot.
+          fetchGit {
+            url = "file:///home/linus/Repositories/godot";
             inherit rev;
-            inherit hash;
           };
 
       outputs =
