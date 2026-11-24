@@ -478,9 +478,23 @@ in {
     };
   };
 
+  # Register .bbmodel so it gets its own MIME type (otherwise it is detected
+  # as plain JSON/text and opened by the editor).
+  xdg.dataFile."mime/packages/blockbench.xml".text = ''
+    <?xml version="1.0" encoding="UTF-8"?>
+    <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+      <mime-type type="application/x-blockbench-model">
+        <comment>Blockbench model</comment>
+        <sub-class-of type="application/json"/>
+        <glob pattern="*.bbmodel"/>
+      </mime-type>
+    </mime-info>
+  '';
+
   xdg.mimeApps = {
     enable = true;
     associations.added = {
+      "application/x-blockbench-model" = ["blockbench.desktop"];
       "inode/directory" = ["yazi.desktop"];
       "application/pdf" = ["org.pwmt.zathura.desktop"];
       "image/*" = ["imv.desktop"];
@@ -489,6 +503,7 @@ in {
       "image/svg+xml" = ["imv.desktop"];
     };
     defaultApplications = {
+      "application/x-blockbench-model" = ["blockbench.desktop"];
       "inode/directory" = ["yazi.desktop"];
       "application/pdf" = ["org.pwmt.zathura.desktop"];
       "image/*" = ["imv.desktop"];
