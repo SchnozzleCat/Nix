@@ -16,18 +16,6 @@
     # });
     utillinux = prev.util-linux;
 
-    # .NET 11 GA (11.0.100) instead of nixpkgs' from-source 11.0.0-rc.3 SDK.
-    # Uses the binary release manifest in pkgs/dotnet-11/releases.nix (the
-    # nixpkgs 11.0/releases.nix regenerated for 11.0.0 / 11.0.100). Drop this
-    # once nixpkgs ships GA.
-    dotnetCorePackages = let
-      ga = prev.dotnetCorePackages.buildDotnetSdk ../pkgs/dotnet-11/releases.nix;
-    in
-      prev.dotnetCorePackages
-      // {
-        inherit (ga) sdk_11_0 sdk_11_0_1xx runtime_11_0 aspnetcore_11_0;
-      };
-
     # Pin csharpier to 1.4.0 (nixpkgs ships 1.3.0). nugetHash is an argument
     # of buildDotnetGlobalTool (not an attr), so re-invoke it instead of
     # using overrideAttrs. Replace fakeHash with the "got:" hash from the

@@ -16,7 +16,7 @@
 #   against (`VERSION.info` must be >= 25.3 for Godot 4.6/4.7).
 #
 # This is the `x86_64-gcc` (MSVCRT, posix threads, GCC) variant, matching
-# nixpkgs' `pkgsCross.mingwW64` (MinGW-w64 GCC with msvcrt CRT).
+# nixpkgs' `pkgsCross.mingw-msvcrt-x86_64` (MinGW-w64 GCC with msvcrt CRT).
 stdenvNoCC.mkDerivation {
   pname = "godot-nir-static";
   version = "25.3.1-3";

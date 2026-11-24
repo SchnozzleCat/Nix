@@ -34,7 +34,7 @@ because glue generation is a runtime action of a built editor binary:
    runs the Linux mono editor with `--generate-mono-glue`, producing the
    generated C# API bindings (`GodotSharp/{GodotSharp,GodotSharpEditor}/Generated`).
 2. **Windows build (MinGW)**: `common.nix` with `withPlatform = "windows"`
-   evaluated through `pkgs.pkgsCross.mingwW64.callPackage`. The generated
+   evaluated through `pkgs.pkgsCross.mingw-msvcrt-x86_64.callPackage`. The generated
    bindings are copied into the source tree, the engine is built with
    `scons platform=windows arch=x86_64 use_mingw=yes module_mono_enabled=yes`,
    and `build_assemblies.py --godot-platform=windows` produces the C#
@@ -48,7 +48,7 @@ Notable build options for Windows:
   (`godot-nir-static-x86_64-gcc-release.zip` from
   https://github.com/godotengine/godot-nir-static, packaged in
   `d3d12-deps.nix` — the `x86_64-gcc`/MSVCRT variant matching
-  `pkgsCross.mingwW64`).
+  `pkgsCross.mingw-msvcrt-x86_64`).
 - `lto=none`, Vulkan + OpenGL + D3D12 rendering drivers.
 - AccessKit runs in dynamic mode (no MSVC SDK needed).
 

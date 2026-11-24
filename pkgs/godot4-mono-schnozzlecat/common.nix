@@ -168,7 +168,7 @@ assert withTracyTrackMemory -> withTracy; let
   isWindows = withPlatform == "windows";
 
   # For platform=windows this derivation must be evaluated in a cross
-  # environment (e.g. via pkgs.pkgsCross.mingwW64.callPackage), so that
+  # environment (e.g. via pkgs.pkgsCross.mingw-msvcrt-x86_64.callPackage), so that
   # `stdenv` is the x86_64-w64-mingw32 cross stdenv. SCons uses its own
   # arch names for the windows platform.
   arch =

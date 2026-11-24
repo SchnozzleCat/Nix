@@ -164,10 +164,10 @@
 
       # Classical (non-mono) Windows editor; mostly useful for testing the
       # cross-compilation pipeline without the .NET overhead.
-      godot-windows = pkgs.pkgsCross.mingwW64.callPackage ./common.nix (windowsCommonArgs // {withMono = false;});
+      godot-windows = pkgs.pkgsCross.mingw-msvcrt-x86_64.callPackage ./common.nix (windowsCommonArgs // {withMono = false;});
 
       # Mono-enabled (C#) Windows editor + export templates.
-      godot-mono-windows = pkgs.pkgsCross.mingwW64.callPackage ./common.nix (
+      godot-mono-windows = pkgs.pkgsCross.mingw-msvcrt-x86_64.callPackage ./common.nix (
         windowsCommonArgs
         // {
           withMono = true;

@@ -67,7 +67,7 @@ in {
       # Same plugin/hash as nixos/schnozzlecat.nix. If the build reports a
       # hash mismatch, replace with the reported 'got:' value.
       plugins = ["github.com/caddy-dns/cloudflare@v0.2.4"];
-      hash = "sha256-tubXIDCJnO2mvdnPlZclwDhNGaeeYLSt7lnni3+pXDo=";
+      hash = "sha256-QSiwKqKvSxhksWBF4/MlBOpyXba5xOQ2sRwA0R7399E=";
     };
     environmentFile = config.sops.templates."caddy-env".path;
     virtualHosts."${domain}:${toString publicPort}".extraConfig = ''
