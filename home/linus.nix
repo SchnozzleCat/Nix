@@ -287,7 +287,7 @@ in {
       ssh-to-age
       bruno
       thunar
-      tidal-hifi
+      sone
       kubectl
       fswatch
       lmstudio
