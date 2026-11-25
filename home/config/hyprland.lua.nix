@@ -24,7 +24,7 @@ in ''
     hl.exec_cmd("noctalia")
     hl.exec_cmd("pypr")
     hl.exec_cmd("solaar --window=hide")
-    hl.exec_cmd("hyprctl dispatch layoutmsg \"preselect r\"")
+    hl.dispatch(hl.dsp.layout("preselect r"))
     hl.exec_cmd("corectrl --minimize-systray")
   end)
 

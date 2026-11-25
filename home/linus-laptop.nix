@@ -22,8 +22,8 @@
         }
         {
           timeout = 360;
-          on-timeout = "hyprctl dispatch dpms off";
-          on-resume = "hyprctl dispatch dpms on";
+          on-timeout = "hyprctl dispatch 'hl.dsp.dpms({ action = \"off\" })'";
+          on-resume = "hyprctl dispatch 'hl.dsp.dpms({ action = \"on\" })'";
         }
       ];
     };
@@ -61,7 +61,15 @@
     })
     (writeShellApplication {
       name = "remote-desktop";
-      text = ''hyprctl dispatch submap empty && hyprctl keyword monitor "eDP-1, 1920x1080@120, 0x0, 1" && ${pkgs.moonlight-embedded}/bin/moonlight stream 192.168.200.20 -app Desktop -1080 && hyprctl dispatch submap reset && hyprctl keyword monitor "eDP-1, 2880x1800@120, 0x0, 1.6"'';
+      text = ''
+        # Hyprland 0.55+ (Lua config): hyprctl dispatch evaluates a Lua expression
+        # and hyprctl keyword is gone -> use hl.dsp.* / hl.monitor({ ... }) via eval.
+        hyprctl dispatch 'hl.dsp.submap("empty")' \
+          && hyprctl eval 'hl.monitor({ output = "eDP-1", mode = "1920x1080@120", position = "0x0", scale = 1 })' \
+          && ${pkgs.moonlight-embedded}/bin/moonlight stream 192.168.200.20 -app Desktop -1080 \
+          && hyprctl dispatch 'hl.dsp.submap("reset")' \
+          && hyprctl eval 'hl.monitor({ output = "eDP-1", mode = "2880x1920@120", position = "0x0", scale = 1.67 })'
+      '';
     })
   ];
 
