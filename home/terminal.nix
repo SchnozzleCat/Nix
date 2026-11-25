@@ -432,7 +432,7 @@ in {
       # conflicting file to <name>.hm-backup instead of erroring out (the
       # equivalent of 'home-manager switch -b backup'). Same flake lockfile
       # on both machines is mandatory (store paths must match).
-      transfer-laptop = ''nix build ~/.nixos#homeConfigurations."linus@schnozzlecat-laptop".activationPackage -o /tmp/laptop-hm; and NIX_SSHOPTS="-p 6969" nix copy --to ssh://linus@192.168.200.13 /tmp/laptop-hm; and ssh -p 6969 linus@192.168.200.13 "HOME_MANAGER_BACKUP_EXT=hm-backup $(readlink -f /tmp/laptop-hm)/activate"'';
+      transfer-laptop = ''nix build ~/.nixos#homeConfigurations."linus@schnozzlecat-laptop".activationPackage -o /tmp/laptop-hm; and NIX_SSHOPTS="-p 6969" nix copy --to ssh://linus@192.168.200.14 /tmp/laptop-hm; and ssh -p 6969 linus@192.168.200.14 "HOME_MANAGER_BACKUP_EXT=hm-backup $(readlink -f /tmp/laptop-hm)/activate"'';
       pi-laptop = ''sshfs -o sftp_server="/run/wrappers/bin/sudo $(ssh linus@192.168.200.60 -p 6969 'nix eval nixpkgs#openssh --raw')/libexec/sftp-server" -p 6969 linus@192.168.200.60:/home/linus ~/Mounts/laptop'';
       neovim = ''nvim'';
     };
