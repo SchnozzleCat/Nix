@@ -44,7 +44,13 @@ in {
   services.udisks2.enable = true;
 
   # sched-ext userspace scheduler, matching the desktop.
-  services.scx.scheduler = "scx_bpfland";
+  services.scx-loader = {
+    enable = true;
+    config = {
+      default_sched = "scx_bpfland";
+      default_mode = "Auto";
+    };
+  };
 
   powerManagement.enable = true;
 
